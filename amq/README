@@ -1,0 +1,5 @@
+# Building scripts
+
+* Use the `amq_build.sh` script to build the broker images suite.
+* Use the `amq_deploy_broker.sh` to run the broker images suite & the operator
+  on a local minikube instance.
