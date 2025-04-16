@@ -1,0 +1,95 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57501-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 8226E3E69E
+	for <archive-asf-public@cust-asf.ponee.io>; Wed,  2 Oct 2024 15:48:18 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 2F9DC67C02
+	for <archive-asf-public@cust-asf.ponee.io>; Wed,  2 Oct 2024 15:48:18 +0000 (UTC)
+Received: (qmail 3173912 invoked by uid 998); 2 Oct 2024 15:48:14 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 3173867 invoked by uid 116); 2 Oct 2024 15:48:13 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Wed, 02 Oct 2024 15:48:13 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id DF1A7C21D0;
+	Wed,  2 Oct 2024 15:48:12 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.003
+X-Spam-Level: 
+X-Spam-Status: No, score=0.003 tagged_above=-999 required=6.31
+	tests=[RCVD_IN_MSPIKE_H3=0.001, RCVD_IN_MSPIKE_WL=0.001,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]
+	autolearn=disabled
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id hTJKo-oo7Dzv; Wed,  2 Oct 2024 15:48:12 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=217.70.183.198; helo=relay6-d.mail.gandi.net; envelope-from=jb@nanthrax.net; receiver=<UNKNOWN> 
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 5413E81FBC;
+	Wed,  2 Oct 2024 15:48:12 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D9B16C0003;
+	Wed,  2 Oct 2024 15:48:05 +0000 (UTC)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4a3075662b6so2303633137.1;
+        Wed, 02 Oct 2024 08:48:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVaAh0K30lWuJqtROdwWcOd7CVzCEJbxxVGmTnvsQovqXABxoCsxxjPac6IGa+dskBIbwyT6A==@activemq.apache.org
+X-Gm-Message-State: AOJu0Yxb+GPIIInbON6Ls9UDB2ntV6PCjL/d5QAl6RrgwdovalRmj69D
+	12uHdC1jT7jG4DOglHlhqH7CdOSUKPG9DD2M2Z+cV4qH/oQrcq30y6uGOW3hdECzEUVgkKQe1Sm
+	xDdG5r/tN7fGt+gSgQp4m5ajRvIM=
+X-Google-Smtp-Source: AGHT+IFMd1iOiik3AnTmVmzBEjeZkNJBZ8OWQPVjfxLbZZIFGWn9p/XNIyj4b28u8cVa45hEWXj3KoJwVQdlXdWwiUQ=
+X-Received: by 2002:a05:6102:dce:b0:49b:e112:b741 with SMTP id
+ ada2fe7eead31-4a3e685cdc8mr3904590137.11.1727884084796; Wed, 02 Oct 2024
+ 08:48:04 -0700 (PDT)
+MIME-Version: 1.0
+From: =?UTF-8?Q?Jean=2DBaptiste_Onofr=C3=A9?= <jb@nanthrax.net>
+Date: Wed, 2 Oct 2024 17:47:48 +0200
+X-Gmail-Original-Message-ID: <CAB8EV3TwNjswCtb8+QhkNPMfVgyfwQ7Fu7xB9t8qLbHt68wUOQ@mail.gmail.com>
+Message-ID: <CAB8EV3TwNjswCtb8+QhkNPMfVgyfwQ7Fu7xB9t8qLbHt68wUOQ@mail.gmail.com>
+Subject: [ANN] Apache ActiveMQ 5.18.6 has been released!
+To: dev@activemq.apache.org, users@activemq.apache.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: jb@nanthrax.net
+
+The ActiveMQ team is pleased to announce Apache ActiveMQ 5.18.6 release.
+
+It's a maintenance release on the ActiveMQ 5.18.x series, bringing:
+- fixes on the STOMP protocol
+- fix on KahaDB (on the recovery files)
+- improvements on the WebConsole (e.g. cache control policy)
+- dependency updates (spring, jetty, =E2=80=A6)
+
+You can find details on the Release Notes:
+https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=3D12311210=
+&version=3D12354938
+
+You can download ActiveMQ 5.18.6 here:
+https://activemq.apache.org/components/classic/download/
+
+Enjoy!
+
+Regards
+--
+The Apache ActiveMQ team
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+

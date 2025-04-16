@@ -1,0 +1,79 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57540-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id D0E353E689
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 16:01:06 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id D37524AA88
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 16:00:44 +0000 (UTC)
+Received: (qmail 1193484 invoked by uid 998); 14 Oct 2024 16:00:42 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1193412 invoked by uid 116); 14 Oct 2024 16:00:42 -0000
+Received: from mailrelay1-he-de.apache.org (HELO mailrelay1-he-de.apache.org) (116.203.21.61)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 14 Oct 2024 16:00:42 +0000
+Authentication-Results: apache.org; auth=none
+Received: from security-vm-he-fi.apache.org (unknown [IPv6:2a01:4f9:c010:94e9::1])
+	by mailrelay1-he-de.apache.org (ASF Mail Server at mailrelay1-he-de.apache.org) with ESMTPS id 5048141849;
+	Mon, 14 Oct 2024 16:00:42 +0000 (UTC)
+Received: by security-vm-he-fi.apache.org (ASF Mail Server at security-vm-he-fi.apache.org, from userid 0)
+	id E64B53FEAC; Mon, 14 Oct 2024 16:00:41 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+From: Justin Bertram <jbertram@apache.org>
+To: announce@apache.org, users@activemq.apache.org
+Reply-To: users@activemq.apache.org
+Subject: CVE-2023-50780: Apache ActiveMQ Artemis: Authenticated users could
+ perform RCE via Jolokia MBeans 
+Message-ID: <29bb865f-eb19-1c72-f637-90e60e8f639e@apache.org>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 14 Oct 2024 16:00:41 +0000
+MIME-Version: 1.0
+
+Severity: moderate
+
+Affected versions:
+
+- Apache ActiveMQ Artemis before 2.29.0
+
+Description:
+
+Apache ActiveMQ Artemis allows access to diagnostic information and =
+controls through MBeans, which are also exposed through the authenticated =
+Jolokia endpoint. Before version 2.29.0, this also included the Log4J2 =
+MBean. This MBean is not meant for exposure to non-administrative users. =
+This could eventually allow an authenticated attacker to write arbitrary =
+files to the filesystem and indirectly achieve RCE.
+
+
+Users are recommended to upgrade to version 2.29.0 or later, which fixes =
+the issue.
+
+This issue is being tracked as ARTEMIS-4150=20
+
+Credit:
+
+Matei "Mal" Badanoiu (finder)
+
+References:
+
+https://activemq.apache.org/
+https://www.cve.org/CVERecord?id=3DCVE-2023-50780
+https://issues.apache.org/jira/browse/ARTEMIS-4150
+
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+

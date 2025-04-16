@@ -1,0 +1,1992 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57524-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 0E0623E697
+	for <archive-asf-public@cust-asf.ponee.io>; Mon,  7 Oct 2024 17:39:42 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id E2A9745867
+	for <archive-asf-public@cust-asf.ponee.io>; Mon,  7 Oct 2024 17:39:40 +0000 (UTC)
+Received: (qmail 3584615 invoked by uid 998); 7 Oct 2024 17:39:39 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 3584569 invoked by uid 116); 7 Oct 2024 17:39:38 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 07 Oct 2024 17:39:38 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 0BE832000B3
+	for <users@activemq.apache.org>; Mon,  7 Oct 2024 17:39:38 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -0.195
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.195 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, RCVD_IN_DNSWL_BLOCKED=0.001,
+	RCVD_IN_MSPIKE_H3=0.001, RCVD_IN_MSPIKE_WL=0.001,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id g5YhHbnriS_f for <users@activemq.apache.org>;
+	Mon,  7 Oct 2024 17:39:37 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=209.85.160.53; helo=mail-oa1-f53.google.com; envelope-from=mattrpav@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id DF2C3C0C5D
+	for <users@activemq.apache.org>; Mon,  7 Oct 2024 17:39:36 +0000 (UTC)
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-27e1f62e30eso2585895fac.0
+        for <users@activemq.apache.org>; Mon, 07 Oct 2024 10:39:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728322776; x=1728927576; darn=activemq.apache.org;
+        h=message-id:in-reply-to:to:references:date:subject:mime-version
+         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B4Y2yXVrzlU5/WcidbZ/aiadzTK/AyfulJNXAnUA9Dg=;
+        b=JgkqPX+2yHu2Yv9wTkCxrnZDundtTCZaR5XuBHUgrx6cMfGe4jxpGjCsUSPKESxA1x
+         yPhNPo5lLF8hqLByABFZtpkMJl3vtbk8zu1T6pId4D2gBjJ0vMfK7xoIkptBfjmZcE+4
+         DYSFLKfNQ5rt54AFpS1dSxjFj09lro1a2fSReE3YeydOGVsAgLq6FumFzru8YUQJgBUL
+         4GIKqJdjps5h9MW0WfFa2sp12m7fDc5JgZoa3sUDn14coSjqhgY9OmUCIjVtARrnyHnJ
+         htixS6jiQiylnwhKsagFo0sqImjco3cI7Eg1COq7S/ZDeV7vLOysJBaQUkOSR5dSf8Gr
+         EFKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728322776; x=1728927576;
+        h=message-id:in-reply-to:to:references:date:subject:mime-version
+         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B4Y2yXVrzlU5/WcidbZ/aiadzTK/AyfulJNXAnUA9Dg=;
+        b=CVoRk1hO1PVSIMT3D/ktYyM6R004sfJDA2Z6Pr+5Ckiqcu49/JcWtvpTcNDemlCDCN
+         72eKUvZc2FypQ7kHfmXov5GCvjJjEQsm8G78v2cbaMTqn4t1tJrpRN8HsBsltw57qY/o
+         tB3h77oDB32/4zUp6xCZaKMhs8Uzcl7t6y/4dHbrRn893ezELiDXaaZTqX6MOwyOpIKa
+         bk1JaA51/F56dCiNg0WF1W6jK1Rp9qZGiZRqE6IEXSxqec4ZY1mZIz+luqGV2NEhuDO4
+         LDras1pWHsDf6mJ5k/elwfjqgddpAMlayt3uAMszRM56QGB4tUiynQDhteXxEoaD/EG/
+         ZitQ==
+X-Gm-Message-State: AOJu0YyqIC4Lr4aFi5Fkljv2NaB5NM8yjGryyNz+s3FIeB/nIAd6YQvr
+	xgOro/a+TbSloKPJjpY2uTGJXiVX03w2UHBv4kfGAWMAkDuWAKM86D8QTg==
+X-Google-Smtp-Source: AGHT+IE+QeMvy898WcL1qXkptcZ9fN9okLs/ZrLT3jDcxMjUhpA+IxAZ1L0vm5cHp8reDCK8T4wn4A==
+X-Received: by 2002:a05:6870:d182:b0:259:8858:a330 with SMTP id 586e51a60fabf-28816e2e782mr219080fac.22.1728322775917;
+        Mon, 07 Oct 2024 10:39:35 -0700 (PDT)
+Received: from smtpclient.apple (108-85-129-236.lightspeed.austtx.sbcglobal.net. [108.85.129.236])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-287d71964aesm2331231fac.31.2024.10.07.10.39.34
+        for <users@activemq.apache.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Oct 2024 10:39:35 -0700 (PDT)
+From: Matt Pavlovich <mattrpav@gmail.com>
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: Bridging Artemis with classic
+Date: Mon, 7 Oct 2024 12:39:24 -0500
+References: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>
+ <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com>
+ <CAF+kE=QPgjc0TTXo48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.gmail.com>
+ <CAOOFvV_fzb8pdW_y8=8g=XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com>
+ <CAF+kE=Qn3jBr_hBhr-18aKKc8xoE+YtaMBDVJyQ+6hqRHa1+BQ@mail.gmail.com>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+In-Reply-To: <CAF+kE=Qn3jBr_hBhr-18aKKc8xoE+YtaMBDVJyQ+6hqRHa1+BQ@mail.gmail.com>
+Message-Id: <49A52E01-8487-453C-AFDE-85AEDA2760A1@gmail.com>
+X-Mailer: Apple Mail (2.3776.700.51)
+
+Hi Kunal-
+
+I expect you=E2=80=99ll get a wide range of responses here =3D). =
+ActiveMQ has two brokers, and they do similar things but it essentially =
+comes down to who is the best fit for supporting your organizations=E2=80=99=
+ ActiveMQ infrastructure?
+
+I take exception to Justin=E2=80=99s comments here =E2=80=94 ActiveMQ =
+Classic has a fresh round of modernized releases that are more than =
+dependency updates. There is a healthy list of improvements for =
+observability, extensibility, and improvements for support of =
+multi-tenant message flows. Plans are being made for ActiveMQ Classic =
+7.x, as well as an approach for applying modernization without requiring =
+fork-lift upgrade.
+
+I=E2=80=99d also put an asterisk on the notion that recent commits are a =
+reliable indicator of future community engagement. ActiveMQ Classic is =
+very stable, processes billions and billions of messages per day and =
+perhaps doesn=E2=80=99t need as many fixes?
+
+Thanks,
+Matt Pavlovich
+
+> On Oct 4, 2024, at 11:07=E2=80=AFPM, Justin Bertram =
+<jbertram@apache.org> wrote:
+>=20
+> Development on Classic has slowed considerably since focus has shifted =
+to
+> Artemis. Most of the folks who've contributed the most code to Classic
+> historically have either left the project or moved over to Artemis. =
+The
+> Artemis repo has almost 100 more total committers and almost as many
+> commits as the Classic repo despite being roughly half its age. That =
+said,
+> Classic has a dedicated following of folks who are either unable to =
+migrate
+> (e.g. due to constraints in a legacy environment) or simply don't need =
+to.
+> For these folks there are regular releases which mainly consist of
+> dependency upgrades (e.g. to deal with security issues) and bug fixes.
+>=20
+> Ken mentioned that both Artemis and Classic have different feature =
+sets,
+> and while that's technically true there is, of course, a tremendous =
+amount
+> of overlap. Pretty much every feature in Classic now has an exact or
+> functionally equivalent feature in Artemis.
+>=20
+> You'd need to get in touch with Amazon to get more details about what =
+might
+> or might not be on their roadmap. Generally speaking, we have no =
+visibility
+> into that as Apache community members.
+>=20
+>=20
+> Justin
+>=20
+> On Thu, Oct 3, 2024 at 8:56=E2=80=AFPM Kunal Rao =
+<kunal@mechination.com.au> wrote:
+>=20
+>> Thanks Justin.
+>> I am planning to use Amazon MQ (only supports classic) as a central =
+broker
+>> and Artemis as satellite brokers with the assumption that artemis is =
+a more
+>> supported product and classic is treated as legacy with regards to
+>> development and support.
+>> Firstly, Is my assumption correct?
+>>=20
+>> We are considering three options:
+>> 1. Use "classic" everywhere. Amazon MQ can be used as a central =
+broker.
+>> 2. Use "artemis" everywhere. benefits of Artemis outweigh "classic" =
+and the
+>> use of managed service in Amazon MQ.
+>> 3. Hybrid approach. Use Amazon MQ centrally ( hoping artemis is on =
+their
+>> roadmap) and Artemis on all satellite brokers.
+>>=20
+>> I would love to hear your thoughts on this please.
+>>=20
+>> Once again thanks for the prompt response.
+>>=20
+>> Kunal
+>>=20
+>> On Fri, 4 Oct 2024 at 00:51, Justin Bertram <jbertram@apache.org> =
+wrote:
+>>=20
+>>> Just to clarify...ActiveMQ Classic doesn't support the Core protocol =
+so
+>>> that is why you can't use a Core bridge to integrate.
+>>>=20
+>>>=20
+>>> Justin
+>>>=20
+>>> On Thu, Oct 3, 2024 at 8:29=E2=80=AFAM Justin Bertram =
+<jbertram@apache.org>
+>> wrote:
+>>>=20
+>>>> Yes. You can bridge messages from Artemis to Classic and vice =
+versa.
+>>>> However, you can't use a Core bridge to do it. Core bridges, as the
+>> name
+>>>> suggests, use the Core protocol. A Core bridge can't use the AMQP
+>>> protocol.
+>>>>=20
+>>>> I recommend Camel since it's mature, powerful, and ubiquitous. You =
+can
+>>> set
+>>>> up Camel routes on either Artemis or Classic. Here's [1] an example =
+of
+>>> how
+>>>> to do it on Artemis.
+>>>>=20
+>>>> It's also possible to use the JMS bridge that ships with Artemis =
+[2].
+>>>>=20
+>>>>=20
+>>>> Justin
+>>>>=20
+>>>> [1]
+>>>>=20
+>>>=20
+>> =
+https://github.com/apache/activemq-artemis-examples/tree/main/examples/fea=
+tures/standard/camel
+>>>> [2]
+>>>>=20
+>>>=20
+>> =
+https://github.com/apache/activemq-artemis-examples/tree/main/examples/fea=
+tures/sub-modules/inter-broker-bridge/artemis-jms-bridge
+>>>>=20
+>>>> On Thu, Oct 3, 2024 at 2:38=E2=80=AFAM Kunal Rao =
+<kunal@mechination.com.au>
+>>> wrote:
+>>>>=20
+>>>>> Hi,
+>>>>>=20
+>>>>> Is it possible to bridge artemis with classic broker?
+>>>>> I am trying with AMQP protocol.
+>>>>>=20
+>>>>> I am getting this error
+>>>>>=20
+>>>>> p1broker-1       | 2024-10-03 07:34:50,270 WARN
+>>>>> [org.apache.activemq.artemis.core.server] AMQ224091: Bridge
+>>>>> BridgeImpl@6a3012f8 [name=3Damqp-bridge,
+>>> queue=3DQueueImpl[name=3Dp1broker.out,
+>>>>> postOffice=3DPostOfficeImpl =
+[server=3DActiveMQServerImpl::name=3D0.0.0.0],
+>>>>> temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl
+>> (identity=3DBridge
+>>>>> amqp-bridge)
+>>>>> =
+[initialConnectors=3D[TransportConfiguration(name=3Dactivemq-classic-amqp,=
+
+>>>>>=20
+>>>>>=20
+>>>=20
+>> =
+factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConnec=
+torFactory)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],
+>>>>> discoveryGroupConfiguration=3Dnull]] is unable to connect to
+>> destination.
+>>>>> Retrying
+>>>>> centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0
+>> client.
+>>>>> ARTEMIS,0
+>>>>> centralbroker-1  |  WARN | Transport Connection to: tcp://
+>>>>> 172.19.0.3:33778
+>>>>> failed: Connection from client using unsupported AMQP attempted
+>>>>>=20
+>>>>> broker.xml
+>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>>>>=20
+>>>>> <acceptors>
+>>>>>=20
+>>>>> <acceptor name=3D"artemis">
+>>>>> tcp://
+>>>>>=20
+>>>>>=20
+>>>=20
+>> =
+0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;a=
+mqpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,O=
+PENWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplic=
+ateDetection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObje=
+cts=3Dfalse
+>>>>> </acceptor>
+>>>>>=20
+>>>>> <!-- AMQP Acceptor. Listens on default AMQP port for AMQP =
+traffic.-->
+>>>>> <acceptor name=3D"amqp">
+>>>>> tcp://
+>>>>>=20
+>>>>>=20
+>>>=20
+>> =
+0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;pr=
+otocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amq=
+pMinLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-time=
+out=3D0
+>>>>> </acceptor>
+>>>>>=20
+>>>>> <!-- STOMP Acceptor. -->
+>>>>> <acceptor name=3D"stomp">
+>>>>> tcp://
+>>>>>=20
+>>>>>=20
+>>>=20
+>> =
+0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=
+rotocols=3DSTOMP;useEpoll=3Dtrue
+>>>>> </acceptor>
+>>>>>=20
+>>>>> <!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and =
+STOMP
+>> for
+>>>>> legacy HornetQ
+>>>>> clients. -->
+>>>>> <acceptor name=3D"hornetq">
+>>>>> tcp://
+>>>>>=20
+>>>>>=20
+>>>=20
+>> =
+0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;proto=
+cols=3DHORNETQ,STOMP;useEpoll=3Dtrue
+>>>>> </acceptor>
+>>>>>=20
+>>>>> <!-- MQTT Acceptor -->
+>>>>> <acceptor name=3D"mqtt">
+>>>>> tcp://
+>>>>>=20
+>>>>>=20
+>>>=20
+>> =
+0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;pr=
+otocols=3DMQTT;useEpoll=3Dtrue
+>>>>> </acceptor>
+>>>>>=20
+>>>>> </acceptors>
+>>>>>=20
+>>>>> <bridges>
+>>>>> <bridge name=3D"amqp-bridge">
+>>>>> <queue-name>p1broker.out</queue-name>
+>>>>> <forwarding-address>centralbroker.in</forwarding-address>
+>>>>> <user>admin</user>
+>>>>> <password>admin</password>
+>>>>> <static-connectors>
+>>>>> <connector-ref>activemq-classic-amqp</connector-ref>
+>>>>> </static-connectors>
+>>>>> </bridge>
+>>>>> </bridges>
+>>>>>=20
+>>>>>=20
+>>>>> <connectors>
+>>>>> <connector name=3D"activemq-classic-amqp">
+>>>>> tcp://centralbroker:5672?protocols=3DAMQP</connector>
+>>>>> </connectors>
+>>>>>=20
+>>>>>=20
+>>>>> activemq.xml
+>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>>>>=20
+>>>>> <transportConnectors>
+>>>>> <!-- DOS protection, limit concurrent connections to 1000 and =
+frame
+>> size
+>>>>> to
+>>>>> 100MB -->
+>>>>> <transportConnector name=3D"openwire"
+>>>>> uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;
+>>>>> wireFormat.maxFrameSize=3D104857600000" />
+>>>>> <transportConnector name=3D"amqp"
+>>>>> uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;
+>>>>> wireFormat.maxFrameSize=3D104857600" />
+>>>>> <transportConnector name=3D"stomp"
+>>>>> uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;
+>>>>> wireFormat.maxFrameSize=3D104857600" />
+>>>>> <transportConnector name=3D"mqtt"
+>>>>> uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;
+>>>>> wireFormat.maxFrameSize=3D104857600" />
+>>>>> <transportConnector name=3D"ws"
+>>>>> uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;
+>>>>> wireFormat.maxFrameSize=3D104857600" />
+>>>>> </transportConnectors>
+>>>>>=20
+>>>>>=20
+>>>>> what am i doing wrong?
+>>>>>=20
+>>>>> Cheers
+>>>>> Kunal
+>>>>>=20
+>>>>=20
+>>>=20
+>>=20
+
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57519-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 612663E80C
+	for <archive-asf-public@cust-asf.ponee.io>; Sat,  5 Oct 2024 04:07:37 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id C42A4626BE
+	for <archive-asf-public@cust-asf.ponee.io>; Sat,  5 Oct 2024 04:07:36 +0000 (UTC)
+Received: (qmail 4112071 invoked by uid 998); 5 Oct 2024 04:07:35 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 4112051 invoked by uid 116); 5 Oct 2024 04:07:35 -0000
+Received: from ec2-52-204-25-47.compute-1.amazonaws.com (HELO mailrelay1-ec2-va.apache.org) (52.204.25.47)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Sat, 05 Oct 2024 04:07:35 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	by mailrelay1-ec2-va.apache.org (ASF Mail Server at mailrelay1-ec2-va.apache.org) with ESMTPSA id CABAB4006F
+	for <users@activemq.apache.org>; Sat,  5 Oct 2024 04:07:31 +0000 (UTC)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c88e4a7c53so3033969a12.0
+        for <users@activemq.apache.org>; Fri, 04 Oct 2024 21:07:31 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzXJ5VN3XSQiCwid6pUdTq/SCNB7gMfYixivBMgLsH101FQwbFW
+	bn2QiOhjTejj5U/OZb+2kYY9bio0drTfpjvBu2UC3T/dsynjk6cplw1r+3BcsOHoesHRFnNV7Ns
+	CzHzLUiTZs264xoRZkmYZx0xSmMmUNvMBe2eVPw==
+X-Google-Smtp-Source: AGHT+IFvw9QkLFPvDL5E3q1JfK/7nQY34KXI1mzw82KLGCxqvOnGhgsWrptckDie0xEdF+fHSNzpMPF8bNkmkzg/E3M=
+X-Received: by 2002:a05:6402:358f:b0:5c8:77a5:d480 with SMTP id
+ 4fb4d7f45d1cf-5c8d2cff6e1mr2928440a12.1.1728101250940; Fri, 04 Oct 2024
+ 21:07:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>
+ <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com>
+ <CAF+kE=QPgjc0TTXo48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.gmail.com> <CAOOFvV_fzb8pdW_y8=8g=XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com>
+In-Reply-To: <CAOOFvV_fzb8pdW_y8=8g=XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com>
+From: Justin Bertram <jbertram@apache.org>
+Date: Fri, 4 Oct 2024 23:07:04 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=Qn3jBr_hBhr-18aKKc8xoE+YtaMBDVJyQ+6hqRHa1+BQ@mail.gmail.com>
+Message-ID: <CAF+kE=Qn3jBr_hBhr-18aKKc8xoE+YtaMBDVJyQ+6hqRHa1+BQ@mail.gmail.com>
+Subject: Re: Bridging Artemis with classic
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="00000000000032e0c00623b2ed97"
+
+--00000000000032e0c00623b2ed97
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Development on Classic has slowed considerably since focus has shifted to
+Artemis. Most of the folks who've contributed the most code to Classic
+historically have either left the project or moved over to Artemis. The
+Artemis repo has almost 100 more total committers and almost as many
+commits as the Classic repo despite being roughly half its age. That said,
+Classic has a dedicated following of folks who are either unable to migrate
+(e.g. due to constraints in a legacy environment) or simply don't need to.
+For these folks there are regular releases which mainly consist of
+dependency upgrades (e.g. to deal with security issues) and bug fixes.
+
+Ken mentioned that both Artemis and Classic have different feature sets,
+and while that's technically true there is, of course, a tremendous amount
+of overlap. Pretty much every feature in Classic now has an exact or
+functionally equivalent feature in Artemis.
+
+You'd need to get in touch with Amazon to get more details about what might
+or might not be on their roadmap. Generally speaking, we have no visibility
+into that as Apache community members.
+
+
+Justin
+
+On Thu, Oct 3, 2024 at 8:56=E2=80=AFPM Kunal Rao <kunal@mechination.com.au>=
+ wrote:
+
+> Thanks Justin.
+> I am planning to use Amazon MQ (only supports classic) as a central broke=
+r
+> and Artemis as satellite brokers with the assumption that artemis is a mo=
+re
+> supported product and classic is treated as legacy with regards to
+> development and support.
+> Firstly, Is my assumption correct?
+>
+> We are considering three options:
+> 1. Use "classic" everywhere. Amazon MQ can be used as a central broker.
+> 2. Use "artemis" everywhere. benefits of Artemis outweigh "classic" and t=
+he
+> use of managed service in Amazon MQ.
+> 3. Hybrid approach. Use Amazon MQ centrally ( hoping artemis is on their
+> roadmap) and Artemis on all satellite brokers.
+>
+> I would love to hear your thoughts on this please.
+>
+> Once again thanks for the prompt response.
+>
+> Kunal
+>
+> On Fri, 4 Oct 2024 at 00:51, Justin Bertram <jbertram@apache.org> wrote:
+>
+> > Just to clarify...ActiveMQ Classic doesn't support the Core protocol so
+> > that is why you can't use a Core bridge to integrate.
+> >
+> >
+> > Justin
+> >
+> > On Thu, Oct 3, 2024 at 8:29=E2=80=AFAM Justin Bertram <jbertram@apache.=
+org>
+> wrote:
+> >
+> > > Yes. You can bridge messages from Artemis to Classic and vice versa.
+> > > However, you can't use a Core bridge to do it. Core bridges, as the
+> name
+> > > suggests, use the Core protocol. A Core bridge can't use the AMQP
+> > protocol.
+> > >
+> > > I recommend Camel since it's mature, powerful, and ubiquitous. You ca=
+n
+> > set
+> > > up Camel routes on either Artemis or Classic. Here's [1] an example o=
+f
+> > how
+> > > to do it on Artemis.
+> > >
+> > > It's also possible to use the JMS bridge that ships with Artemis [2].
+> > >
+> > >
+> > > Justin
+> > >
+> > > [1]
+> > >
+> >
+> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=
+atures/standard/camel
+> > > [2]
+> > >
+> >
+> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=
+atures/sub-modules/inter-broker-bridge/artemis-jms-bridge
+> > >
+> > > On Thu, Oct 3, 2024 at 2:38=E2=80=AFAM Kunal Rao <kunal@mechination.c=
+om.au>
+> > wrote:
+> > >
+> > >> Hi,
+> > >>
+> > >> Is it possible to bridge artemis with classic broker?
+> > >> I am trying with AMQP protocol.
+> > >>
+> > >> I am getting this error
+> > >>
+> > >> p1broker-1       | 2024-10-03 07:34:50,270 WARN
+> > >>  [org.apache.activemq.artemis.core.server] AMQ224091: Bridge
+> > >> BridgeImpl@6a3012f8 [name=3Damqp-bridge,
+> > queue=3DQueueImpl[name=3Dp1broker.out,
+> > >> postOffice=3DPostOfficeImpl [server=3DActiveMQServerImpl::name=3D0.0=
+.0.0],
+> > >> temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl
+> (identity=3DBridge
+> > >> amqp-bridge)
+> > >> [initialConnectors=3D[TransportConfiguration(name=3Dactivemq-classic=
+-amqp,
+> > >>
+> > >>
+> >
+> factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConne=
+ctorFactory)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],
+> > >> discoveryGroupConfiguration=3Dnull]] is unable to connect to
+> destination.
+> > >> Retrying
+> > >> centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0
+> client.
+> > >> ARTEMIS,0
+> > >> centralbroker-1  |  WARN | Transport Connection to: tcp://
+> > >> 172.19.0.3:33778
+> > >> failed: Connection from client using unsupported AMQP attempted
+> > >>
+> > >> broker.xml
+> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >>
+> > >> <acceptors>
+> > >>
+> > >> <acceptor name=3D"artemis">
+> > >> tcp://
+> > >>
+> > >>
+> >
+> 0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=
+amqpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,O=
+PENWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplica=
+teDetection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObject=
+s=3Dfalse
+> > >> </acceptor>
+> > >>
+> > >> <!-- AMQP Acceptor. Listens on default AMQP port for AMQP traffic.--=
+>
+> > >> <acceptor name=3D"amqp">
+> > >> tcp://
+> > >>
+> > >>
+> >
+> 0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=
+rotocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amq=
+pMinLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-timeo=
+ut=3D0
+> > >> </acceptor>
+> > >>
+> > >> <!-- STOMP Acceptor. -->
+> > >> <acceptor name=3D"stomp">
+> > >> tcp://
+> > >>
+> > >>
+> >
+> 0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=
+protocols=3DSTOMP;useEpoll=3Dtrue
+> > >> </acceptor>
+> > >>
+> > >> <!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and STOMP
+> for
+> > >> legacy HornetQ
+> > >> clients. -->
+> > >> <acceptor name=3D"hornetq">
+> > >> tcp://
+> > >>
+> > >>
+> >
+> 0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;prot=
+ocols=3DHORNETQ,STOMP;useEpoll=3Dtrue
+> > >> </acceptor>
+> > >>
+> > >> <!-- MQTT Acceptor -->
+> > >> <acceptor name=3D"mqtt">
+> > >> tcp://
+> > >>
+> > >>
+> >
+> 0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=
+rotocols=3DMQTT;useEpoll=3Dtrue
+> > >> </acceptor>
+> > >>
+> > >> </acceptors>
+> > >>
+> > >> <bridges>
+> > >> <bridge name=3D"amqp-bridge">
+> > >> <queue-name>p1broker.out</queue-name>
+> > >> <forwarding-address>centralbroker.in</forwarding-address>
+> > >> <user>admin</user>
+> > >> <password>admin</password>
+> > >> <static-connectors>
+> > >> <connector-ref>activemq-classic-amqp</connector-ref>
+> > >> </static-connectors>
+> > >> </bridge>
+> > >> </bridges>
+> > >>
+> > >>
+> > >> <connectors>
+> > >> <connector name=3D"activemq-classic-amqp">
+> > >> tcp://centralbroker:5672?protocols=3DAMQP</connector>
+> > >> </connectors>
+> > >>
+> > >>
+> > >> activemq.xml
+> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >>
+> > >> <transportConnectors>
+> > >> <!-- DOS protection, limit concurrent connections to 1000 and frame
+> size
+> > >> to
+> > >> 100MB -->
+> > >> <transportConnector name=3D"openwire"
+> > >> uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;
+> > >> wireFormat.maxFrameSize=3D104857600000" />
+> > >> <transportConnector name=3D"amqp"
+> > >> uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;
+> > >> wireFormat.maxFrameSize=3D104857600" />
+> > >> <transportConnector name=3D"stomp"
+> > >> uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;
+> > >> wireFormat.maxFrameSize=3D104857600" />
+> > >> <transportConnector name=3D"mqtt"
+> > >> uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;
+> > >> wireFormat.maxFrameSize=3D104857600" />
+> > >> <transportConnector name=3D"ws"
+> > >> uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;
+> > >> wireFormat.maxFrameSize=3D104857600" />
+> > >> </transportConnectors>
+> > >>
+> > >>
+> > >> what am i doing wrong?
+> > >>
+> > >> Cheers
+> > >> Kunal
+> > >>
+> > >
+> >
+>
+
+--00000000000032e0c00623b2ed97--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57516-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 802123E69C
+	for <archive-asf-public@cust-asf.ponee.io>; Fri,  4 Oct 2024 01:56:03 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id C328B469CF
+	for <archive-asf-public@cust-asf.ponee.io>; Fri,  4 Oct 2024 01:55:43 +0000 (UTC)
+Received: (qmail 1987649 invoked by uid 998); 4 Oct 2024 01:55:41 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1987623 invoked by uid 116); 4 Oct 2024 01:55:39 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Fri, 04 Oct 2024 01:55:39 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id A984A2001C6
+	for <users@activemq.apache.org>; Fri,  4 Oct 2024 01:55:39 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 2.057
+X-Spam-Level: **
+X-Spam-Status: No, score=2.057 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, MANY_SUBDOM=3.099,
+	NORMAL_HTTP_TO_IP=0.001, NUMERIC_HTTP_ADDR=0.001,
+	RCVD_IN_DNSWL_BLOCKED=0.001, RCVD_IN_MSPIKE_H2=-1.048,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001, WEIRD_PORT=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (1024-bit key) header.d=mechination.com.au
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id lX-YuSC8o7OF for <users@activemq.apache.org>;
+	Fri,  4 Oct 2024 01:55:38 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=209.85.128.177; helo=mail-yw1-f177.google.com; envelope-from=kunal@mechination.com.au; receiver=<UNKNOWN> 
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id 5BB4EC0C42
+	for <users@activemq.apache.org>; Fri,  4 Oct 2024 01:55:38 +0000 (UTC)
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6e214c3d045so13319637b3.0
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 18:55:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mechination.com.au; s=google; t=1728006932; x=1728611732; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6DqxGUxy8gfTgph9XDCWTivdD6E2P79ObHDYQWEJrws=;
+        b=fblJnPJF45V5Acp7xnkVLRoZJt94SVt8kSSvfUFscv0XEnhBMGC+F+xPnkJq7w2url
+         4idLzUkGlFpP8u4oTGnV2UL3z6htEFbMqTTell3g7xiq4NpndwXs7w86HZg9Q1h8csHa
+         7ZcPKe4al3cx8WTauAjJS9WNJG0cqWLEkNiNs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728006932; x=1728611732;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6DqxGUxy8gfTgph9XDCWTivdD6E2P79ObHDYQWEJrws=;
+        b=Dx8U4J5AqdkRkxzlHlwZ8f2OwnMuKIYA5axkvCp+hYrO/2QA8Bi2uXYJ0hkhlqk4RQ
+         5yYT4nTmsq0vjuiRrfIAtz268WtpRC4DCf4G4CO7SW6PFbZzG89a1MSgbv0BxFlTUh6Z
+         Uyxs7VpPo2HmUT1nB5iXy9qXQNYugxns9+UiqtecmezYcyQp0n2RcOybdNqv0LKTNMTq
+         kB7FOSHXO7s7SspQoCOTxRbo+JnZfM4iEwq7qawPNjnTAbSeeR6S+Kgh6Gu8yh8vA0Lf
+         lIEg901lunyJ5B+z7enm10LgBN5CyCVFqwp5tUTx8kIeTTSA3xOwcEB/Qs2a/suXGSBy
+         ADLw==
+X-Gm-Message-State: AOJu0YwBfCWjcNe+aRmHwNLAkQ4lxrKjuzu7u2Zrjw6UoTlgkj2t3vLp
+	YK9Y82zui44iTodcntc80H+Ge+Zf3JMoUMKIqtRdiD0eJ9CmDqX7FsyOVgtJdRroROvjCV7D8Tz
+	g9EkeOqSB896O1b2O1etYW2LogInByR+/AyVCaIUBAkkMED3q
+X-Google-Smtp-Source: AGHT+IE3w5UvsW1DfIgr1zvsDcoWuWvi0K7ZzAq1RZFowya3eM+MRu4vKto9+tG+Xo1AL4TsdtywkzVwubaVUzoN8yc=
+X-Received: by 2002:a05:690c:7009:b0:6e0:12e:e470 with SMTP id
+ 00721157ae682-6e2c7238be0mr12370367b3.25.1728006931714; Thu, 03 Oct 2024
+ 18:55:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>
+ <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com> <CAF+kE=QPgjc0TTXo48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.gmail.com>
+In-Reply-To: <CAF+kE=QPgjc0TTXo48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.gmail.com>
+From: Kunal Rao <kunal@mechination.com.au>
+Date: Fri, 4 Oct 2024 09:55:20 +0800
+Message-ID: <CAOOFvV_fzb8pdW_y8=8g=XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com>
+Subject: Re: Bridging Artemis with classic
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="00000000000055c92806239cf752"
+
+--00000000000055c92806239cf752
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Thanks Justin.
+I am planning to use Amazon MQ (only supports classic) as a central broker
+and Artemis as satellite brokers with the assumption that artemis is a more
+supported product and classic is treated as legacy with regards to
+development and support.
+Firstly, Is my assumption correct?
+
+We are considering three options:
+1. Use "classic" everywhere. Amazon MQ can be used as a central broker.
+2. Use "artemis" everywhere. benefits of Artemis outweigh "classic" and the
+use of managed service in Amazon MQ.
+3. Hybrid approach. Use Amazon MQ centrally ( hoping artemis is on their
+roadmap) and Artemis on all satellite brokers.
+
+I would love to hear your thoughts on this please.
+
+Once again thanks for the prompt response.
+
+Kunal
+
+On Fri, 4 Oct 2024 at 00:51, Justin Bertram <jbertram@apache.org> wrote:
+
+> Just to clarify...ActiveMQ Classic doesn't support the Core protocol so
+> that is why you can't use a Core bridge to integrate.
+>
+>
+> Justin
+>
+> On Thu, Oct 3, 2024 at 8:29=E2=80=AFAM Justin Bertram <jbertram@apache.or=
+g> wrote:
+>
+> > Yes. You can bridge messages from Artemis to Classic and vice versa.
+> > However, you can't use a Core bridge to do it. Core bridges, as the nam=
+e
+> > suggests, use the Core protocol. A Core bridge can't use the AMQP
+> protocol.
+> >
+> > I recommend Camel since it's mature, powerful, and ubiquitous. You can
+> set
+> > up Camel routes on either Artemis or Classic. Here's [1] an example of
+> how
+> > to do it on Artemis.
+> >
+> > It's also possible to use the JMS bridge that ships with Artemis [2].
+> >
+> >
+> > Justin
+> >
+> > [1]
+> >
+> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=
+atures/standard/camel
+> > [2]
+> >
+> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=
+atures/sub-modules/inter-broker-bridge/artemis-jms-bridge
+> >
+> > On Thu, Oct 3, 2024 at 2:38=E2=80=AFAM Kunal Rao <kunal@mechination.com=
+.au>
+> wrote:
+> >
+> >> Hi,
+> >>
+> >> Is it possible to bridge artemis with classic broker?
+> >> I am trying with AMQP protocol.
+> >>
+> >> I am getting this error
+> >>
+> >> p1broker-1       | 2024-10-03 07:34:50,270 WARN
+> >>  [org.apache.activemq.artemis.core.server] AMQ224091: Bridge
+> >> BridgeImpl@6a3012f8 [name=3Damqp-bridge,
+> queue=3DQueueImpl[name=3Dp1broker.out,
+> >> postOffice=3DPostOfficeImpl [server=3DActiveMQServerImpl::name=3D0.0.0=
+.0],
+> >> temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl (identity=
+=3DBridge
+> >> amqp-bridge)
+> >> [initialConnectors=3D[TransportConfiguration(name=3Dactivemq-classic-a=
+mqp,
+> >>
+> >>
+> factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConne=
+ctorFactory)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],
+> >> discoveryGroupConfiguration=3Dnull]] is unable to connect to destinati=
+on.
+> >> Retrying
+> >> centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0 clien=
+t.
+> >> ARTEMIS,0
+> >> centralbroker-1  |  WARN | Transport Connection to: tcp://
+> >> 172.19.0.3:33778
+> >> failed: Connection from client using unsupported AMQP attempted
+> >>
+> >> broker.xml
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>
+> >> <acceptors>
+> >>
+> >> <acceptor name=3D"artemis">
+> >> tcp://
+> >>
+> >>
+> 0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=
+amqpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,O=
+PENWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplica=
+teDetection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObject=
+s=3Dfalse
+> >> </acceptor>
+> >>
+> >> <!-- AMQP Acceptor. Listens on default AMQP port for AMQP traffic.-->
+> >> <acceptor name=3D"amqp">
+> >> tcp://
+> >>
+> >>
+> 0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=
+rotocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amq=
+pMinLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-timeo=
+ut=3D0
+> >> </acceptor>
+> >>
+> >> <!-- STOMP Acceptor. -->
+> >> <acceptor name=3D"stomp">
+> >> tcp://
+> >>
+> >>
+> 0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=
+protocols=3DSTOMP;useEpoll=3Dtrue
+> >> </acceptor>
+> >>
+> >> <!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and STOMP fo=
+r
+> >> legacy HornetQ
+> >> clients. -->
+> >> <acceptor name=3D"hornetq">
+> >> tcp://
+> >>
+> >>
+> 0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;prot=
+ocols=3DHORNETQ,STOMP;useEpoll=3Dtrue
+> >> </acceptor>
+> >>
+> >> <!-- MQTT Acceptor -->
+> >> <acceptor name=3D"mqtt">
+> >> tcp://
+> >>
+> >>
+> 0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=
+rotocols=3DMQTT;useEpoll=3Dtrue
+> >> </acceptor>
+> >>
+> >> </acceptors>
+> >>
+> >> <bridges>
+> >> <bridge name=3D"amqp-bridge">
+> >> <queue-name>p1broker.out</queue-name>
+> >> <forwarding-address>centralbroker.in</forwarding-address>
+> >> <user>admin</user>
+> >> <password>admin</password>
+> >> <static-connectors>
+> >> <connector-ref>activemq-classic-amqp</connector-ref>
+> >> </static-connectors>
+> >> </bridge>
+> >> </bridges>
+> >>
+> >>
+> >> <connectors>
+> >> <connector name=3D"activemq-classic-amqp">
+> >> tcp://centralbroker:5672?protocols=3DAMQP</connector>
+> >> </connectors>
+> >>
+> >>
+> >> activemq.xml
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>
+> >> <transportConnectors>
+> >> <!-- DOS protection, limit concurrent connections to 1000 and frame si=
+ze
+> >> to
+> >> 100MB -->
+> >> <transportConnector name=3D"openwire"
+> >> uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;
+> >> wireFormat.maxFrameSize=3D104857600000" />
+> >> <transportConnector name=3D"amqp"
+> >> uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;
+> >> wireFormat.maxFrameSize=3D104857600" />
+> >> <transportConnector name=3D"stomp"
+> >> uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;
+> >> wireFormat.maxFrameSize=3D104857600" />
+> >> <transportConnector name=3D"mqtt"
+> >> uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;
+> >> wireFormat.maxFrameSize=3D104857600" />
+> >> <transportConnector name=3D"ws"
+> >> uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;
+> >> wireFormat.maxFrameSize=3D104857600" />
+> >> </transportConnectors>
+> >>
+> >>
+> >> what am i doing wrong?
+> >>
+> >> Cheers
+> >> Kunal
+> >>
+> >
+>
+
+--00000000000055c92806239cf752--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57517-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 053583E69C
+	for <archive-asf-public@cust-asf.ponee.io>; Fri,  4 Oct 2024 06:22:36 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id C7B7564127
+	for <archive-asf-public@cust-asf.ponee.io>; Fri,  4 Oct 2024 06:22:35 +0000 (UTC)
+Received: (qmail 2260028 invoked by uid 998); 4 Oct 2024 06:22:34 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 2260009 invoked by uid 116); 4 Oct 2024 06:22:33 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Fri, 04 Oct 2024 06:22:33 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id 6ECC4C2206
+	for <users@activemq.apache.org>; Fri,  4 Oct 2024 06:22:33 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 2.548
+X-Spam-Level: **
+X-Spam-Status: No, score=2.548 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,
+	MANY_SUBDOM=3.199, NORMAL_HTTP_TO_IP=0.001, NUMERIC_HTTP_ADDR=0.001,
+	RCVD_IN_MSPIKE_H2=-0.906, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001, WEIRD_PORT=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id 8HVd4XNDBSZj for <users@activemq.apache.org>;
+	Fri,  4 Oct 2024 06:22:32 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=209.85.208.182; helo=mail-lj1-f182.google.com; envelope-from=kenliao94@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id A6F0DC0C55
+	for <users@activemq.apache.org>; Fri,  4 Oct 2024 06:22:31 +0000 (UTC)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fad100dd9fso27101431fa.3
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 23:22:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728022950; x=1728627750; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2FwVX8BRyRal9NJSxg4YZCapjPHqmD2hsWyEbtAmTvI=;
+        b=i3j2my10opAvM3XcY4DPr4f+Ueci2UC0NR6iNW5xMcITD0gOEcD1dIxtc4RkqAxv20
+         XY2sB4Q4Qtrib9N82TZK6OrNnVmjGRs0n0venR1uZGI+c0e94CnbU1OKNFdo7HqXDJh+
+         Tu4sf5X6gF2H0WdpncB55W44uW4bZeRvcmPUBiUzqprzsXkBbTvAMEsXLIZmgmnrJmrF
+         b6YTnpYBOKZiF78suWMw4c9wzCMviTm2EkNu0F9LF83akSgC1hBLmT3tePSOE15UBZRo
+         +eylVNVViB1hsnaqvnDJtJ6oGjVGSfVvZaPjpex3Yg1iXVUw38SH5W/gBYcWCVP7+BWp
+         QFOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728022950; x=1728627750;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2FwVX8BRyRal9NJSxg4YZCapjPHqmD2hsWyEbtAmTvI=;
+        b=iWY8jxNqSxJEfcjde0rTfgPsodaS4PcVuZGWtEgqs1RYPdvYUcKD2nAn89W7sd97E/
+         M7GSbBBQLYKpuZmjNaOw7qtHB+UL9EcYFagkS/F1OW6lGVHgTwFF3hmciPqgzOsVxWer
+         jCRtE54fKhmTqw16pHscIZD5IiHBVv0k5EdrQBPG4boWWf4/Vc102AV5qcG/q9DT6pvF
+         L283JWeEl4Q8k1K721y91lkAGTP+riHftR069IPgbIO04q1n9Pg9o5MDXR9kMrK3EX52
+         Qife9azkoumrpkQvZqYGgbPRObqrahczJOCsSeSGWUxsg+W16gsc5HnBKhM5034Y26/r
+         8ENg==
+X-Gm-Message-State: AOJu0YzGqMc4ls5C0MaCUe3sCNd1fadGZ+rQskW8Y65cIw0VqMi1nt7t
+	fIVkO/suMWAQvTnpwA1Mp5eWR7q5Agw50YzACrIZ+eEXGIjfrZwpAqJmEfCfWgG52oN/eKLj4r+
+	TARuAscDmRKqHkflF9cwdo1iuWu2wbFhDumE=
+X-Google-Smtp-Source: AGHT+IGtFQkyFXCrLAdJt/EgGsQvL/eIXFgPDaGEN6gWArTEWjVMGJ22FCmUh4d9ZrvrVN3jn+p5tvMrHXKbAA3yGYE=
+X-Received: by 2002:a2e:e01:0:b0:2fa:cdac:8732 with SMTP id
+ 38308e7fff4ca-2faf3d70720mr8953431fa.30.1728022949518; Thu, 03 Oct 2024
+ 23:22:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>
+ <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com>
+ <CAF+kE=QPgjc0TTXo48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.gmail.com> <CAOOFvV_fzb8pdW_y8=8g=XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com>
+In-Reply-To: <CAOOFvV_fzb8pdW_y8=8g=XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com>
+From: Ken Liao <kenliao94@gmail.com>
+Date: Thu, 3 Oct 2024 23:22:17 -0700
+Message-ID: <CA+i58o0ZAaqgHKMQqN_KRk5ZgtX3EDuH5Ec_vGdS1n_LQTHVRA@mail.gmail.com>
+Subject: Re: Bridging Artemis with classic
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="00000000000011eae20623a0b287"
+
+--00000000000011eae20623a0b287
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Kunal,
+
+What kind of workload is your broker cluster designed for? I don't think
+there is an easy answer here as these two brokers have different sets of
+features implemented. It really depends on your requirements on supported
+features and performance. For instance, if your application requires JMS
+2.0, then Artemis provides full support and ActiveMQ only provides partial
+support.
+
+That being said, I believe there is still a community of active
+contributors for ActiveMQ Classic out there adding and planning to add new
+features. You can browse its Jira tickets
+<https://issues.apache.org/jira/projects/AMQ/issues/AMQ-9590?filter=3Dallis=
+sues>
+to get a sense of what activities are happening.
+
+Thanks,
+Ken
+
+On Thu, Oct 3, 2024 at 6:56=E2=80=AFPM Kunal Rao <kunal@mechination.com.au>=
+ wrote:
+
+> Thanks Justin.
+> I am planning to use Amazon MQ (only supports classic) as a central broke=
+r
+> and Artemis as satellite brokers with the assumption that artemis is a mo=
+re
+> supported product and classic is treated as legacy with regards to
+> development and support.
+> Firstly, Is my assumption correct?
+>
+> We are considering three options:
+> 1. Use "classic" everywhere. Amazon MQ can be used as a central broker.
+> 2. Use "artemis" everywhere. benefits of Artemis outweigh "classic" and t=
+he
+> use of managed service in Amazon MQ.
+> 3. Hybrid approach. Use Amazon MQ centrally ( hoping artemis is on their
+> roadmap) and Artemis on all satellite brokers.
+>
+> I would love to hear your thoughts on this please.
+>
+> Once again thanks for the prompt response.
+>
+> Kunal
+>
+> On Fri, 4 Oct 2024 at 00:51, Justin Bertram <jbertram@apache.org> wrote:
+>
+> > Just to clarify...ActiveMQ Classic doesn't support the Core protocol so
+> > that is why you can't use a Core bridge to integrate.
+> >
+> >
+> > Justin
+> >
+> > On Thu, Oct 3, 2024 at 8:29=E2=80=AFAM Justin Bertram <jbertram@apache.=
+org>
+> wrote:
+> >
+> > > Yes. You can bridge messages from Artemis to Classic and vice versa.
+> > > However, you can't use a Core bridge to do it. Core bridges, as the
+> name
+> > > suggests, use the Core protocol. A Core bridge can't use the AMQP
+> > protocol.
+> > >
+> > > I recommend Camel since it's mature, powerful, and ubiquitous. You ca=
+n
+> > set
+> > > up Camel routes on either Artemis or Classic. Here's [1] an example o=
+f
+> > how
+> > > to do it on Artemis.
+> > >
+> > > It's also possible to use the JMS bridge that ships with Artemis [2].
+> > >
+> > >
+> > > Justin
+> > >
+> > > [1]
+> > >
+> >
+> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=
+atures/standard/camel
+> > > [2]
+> > >
+> >
+> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=
+atures/sub-modules/inter-broker-bridge/artemis-jms-bridge
+> > >
+> > > On Thu, Oct 3, 2024 at 2:38=E2=80=AFAM Kunal Rao <kunal@mechination.c=
+om.au>
+> > wrote:
+> > >
+> > >> Hi,
+> > >>
+> > >> Is it possible to bridge artemis with classic broker?
+> > >> I am trying with AMQP protocol.
+> > >>
+> > >> I am getting this error
+> > >>
+> > >> p1broker-1       | 2024-10-03 07:34:50,270 WARN
+> > >>  [org.apache.activemq.artemis.core.server] AMQ224091: Bridge
+> > >> BridgeImpl@6a3012f8 [name=3Damqp-bridge,
+> > queue=3DQueueImpl[name=3Dp1broker.out,
+> > >> postOffice=3DPostOfficeImpl [server=3DActiveMQServerImpl::name=3D0.0=
+.0.0],
+> > >> temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl
+> (identity=3DBridge
+> > >> amqp-bridge)
+> > >> [initialConnectors=3D[TransportConfiguration(name=3Dactivemq-classic=
+-amqp,
+> > >>
+> > >>
+> >
+> factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConne=
+ctorFactory)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],
+> > >> discoveryGroupConfiguration=3Dnull]] is unable to connect to
+> destination.
+> > >> Retrying
+> > >> centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0
+> client.
+> > >> ARTEMIS,0
+> > >> centralbroker-1  |  WARN | Transport Connection to: tcp://
+> > >> 172.19.0.3:33778
+> > >> failed: Connection from client using unsupported AMQP attempted
+> > >>
+> > >> broker.xml
+> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >>
+> > >> <acceptors>
+> > >>
+> > >> <acceptor name=3D"artemis">
+> > >> tcp://
+> > >>
+> > >>
+> >
+> 0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=
+amqpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,O=
+PENWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplica=
+teDetection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObject=
+s=3Dfalse
+> > >> </acceptor>
+> > >>
+> > >> <!-- AMQP Acceptor. Listens on default AMQP port for AMQP traffic.--=
+>
+> > >> <acceptor name=3D"amqp">
+> > >> tcp://
+> > >>
+> > >>
+> >
+> 0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=
+rotocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amq=
+pMinLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-timeo=
+ut=3D0
+> > >> </acceptor>
+> > >>
+> > >> <!-- STOMP Acceptor. -->
+> > >> <acceptor name=3D"stomp">
+> > >> tcp://
+> > >>
+> > >>
+> >
+> 0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=
+protocols=3DSTOMP;useEpoll=3Dtrue
+> > >> </acceptor>
+> > >>
+> > >> <!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and STOMP
+> for
+> > >> legacy HornetQ
+> > >> clients. -->
+> > >> <acceptor name=3D"hornetq">
+> > >> tcp://
+> > >>
+> > >>
+> >
+> 0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;prot=
+ocols=3DHORNETQ,STOMP;useEpoll=3Dtrue
+> > >> </acceptor>
+> > >>
+> > >> <!-- MQTT Acceptor -->
+> > >> <acceptor name=3D"mqtt">
+> > >> tcp://
+> > >>
+> > >>
+> >
+> 0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=
+rotocols=3DMQTT;useEpoll=3Dtrue
+> > >> </acceptor>
+> > >>
+> > >> </acceptors>
+> > >>
+> > >> <bridges>
+> > >> <bridge name=3D"amqp-bridge">
+> > >> <queue-name>p1broker.out</queue-name>
+> > >> <forwarding-address>centralbroker.in</forwarding-address>
+> > >> <user>admin</user>
+> > >> <password>admin</password>
+> > >> <static-connectors>
+> > >> <connector-ref>activemq-classic-amqp</connector-ref>
+> > >> </static-connectors>
+> > >> </bridge>
+> > >> </bridges>
+> > >>
+> > >>
+> > >> <connectors>
+> > >> <connector name=3D"activemq-classic-amqp">
+> > >> tcp://centralbroker:5672?protocols=3DAMQP</connector>
+> > >> </connectors>
+> > >>
+> > >>
+> > >> activemq.xml
+> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >>
+> > >> <transportConnectors>
+> > >> <!-- DOS protection, limit concurrent connections to 1000 and frame
+> size
+> > >> to
+> > >> 100MB -->
+> > >> <transportConnector name=3D"openwire"
+> > >> uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;
+> > >> wireFormat.maxFrameSize=3D104857600000" />
+> > >> <transportConnector name=3D"amqp"
+> > >> uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;
+> > >> wireFormat.maxFrameSize=3D104857600" />
+> > >> <transportConnector name=3D"stomp"
+> > >> uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;
+> > >> wireFormat.maxFrameSize=3D104857600" />
+> > >> <transportConnector name=3D"mqtt"
+> > >> uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;
+> > >> wireFormat.maxFrameSize=3D104857600" />
+> > >> <transportConnector name=3D"ws"
+> > >> uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;
+> > >> wireFormat.maxFrameSize=3D104857600" />
+> > >> </transportConnectors>
+> > >>
+> > >>
+> > >> what am i doing wrong?
+> > >>
+> > >> Cheers
+> > >> Kunal
+> > >>
+> > >
+> >
+>
+
+--00000000000011eae20623a0b287--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57515-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 347193E6D6
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 16:51:15 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 4CF32630C5
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 16:49:42 +0000 (UTC)
+Received: (qmail 1198331 invoked by uid 998); 3 Oct 2024 16:49:41 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1198308 invoked by uid 116); 3 Oct 2024 16:49:40 -0000
+Received: from ec2-52-204-25-47.compute-1.amazonaws.com (HELO mailrelay1-ec2-va.apache.org) (52.204.25.47)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 03 Oct 2024 16:49:40 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	by mailrelay1-ec2-va.apache.org (ASF Mail Server at mailrelay1-ec2-va.apache.org) with ESMTPSA id 1F81C3E915
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 16:49:40 +0000 (UTC)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5398cc2fcb7so1436646e87.1
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 09:49:40 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yx4TkfHdlZ4+b7TWQOejtZxL11crnuGzJ8iDI38bVJwh76RizeP
+	vv3vNAax8S7THkLkY/+8KPUxVvcjzbUuGFOSN/QI2lfX/1qofBGjbD10D3F4hx3n3XPBmTcVwj+
+	SW0zzLnWXbOYyoTRw/WIGaJPJCkrSx+BcShGu8g==
+X-Google-Smtp-Source: AGHT+IEYwLe4oqCxdX62NTmEeJ0mlNhuuivBaRzNI3jcw1u51rESasx0mt8DQHiMDH9bC1gTW8ueLPeQrqnEfAhTr7c=
+X-Received: by 2002:a05:6512:23a1:b0:52c:fd46:bf07 with SMTP id
+ 2adb3069b0e04-539ab8c1ae7mr16984e87.49.1727974179042; Thu, 03 Oct 2024
+ 09:49:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>
+ <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com>
+In-Reply-To: <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com>
+From: Justin Bertram <jbertram@apache.org>
+Date: Thu, 3 Oct 2024 11:49:12 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=QPgjc0TTXo48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.gmail.com>
+Message-ID: <CAF+kE=QPgjc0TTXo48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.gmail.com>
+Subject: Re: Bridging Artemis with classic
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="0000000000001fb0de0623955774"
+
+--0000000000001fb0de0623955774
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Just to clarify...ActiveMQ Classic doesn't support the Core protocol so
+that is why you can't use a Core bridge to integrate.
+
+
+Justin
+
+On Thu, Oct 3, 2024 at 8:29=E2=80=AFAM Justin Bertram <jbertram@apache.org>=
+ wrote:
+
+> Yes. You can bridge messages from Artemis to Classic and vice versa.
+> However, you can't use a Core bridge to do it. Core bridges, as the name
+> suggests, use the Core protocol. A Core bridge can't use the AMQP protoco=
+l.
+>
+> I recommend Camel since it's mature, powerful, and ubiquitous. You can se=
+t
+> up Camel routes on either Artemis or Classic. Here's [1] an example of ho=
+w
+> to do it on Artemis.
+>
+> It's also possible to use the JMS bridge that ships with Artemis [2].
+>
+>
+> Justin
+>
+> [1]
+> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=
+atures/standard/camel
+> [2]
+> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=
+atures/sub-modules/inter-broker-bridge/artemis-jms-bridge
+>
+> On Thu, Oct 3, 2024 at 2:38=E2=80=AFAM Kunal Rao <kunal@mechination.com.a=
+u> wrote:
+>
+>> Hi,
+>>
+>> Is it possible to bridge artemis with classic broker?
+>> I am trying with AMQP protocol.
+>>
+>> I am getting this error
+>>
+>> p1broker-1       | 2024-10-03 07:34:50,270 WARN
+>>  [org.apache.activemq.artemis.core.server] AMQ224091: Bridge
+>> BridgeImpl@6a3012f8 [name=3Damqp-bridge, queue=3DQueueImpl[name=3Dp1brok=
+er.out,
+>> postOffice=3DPostOfficeImpl [server=3DActiveMQServerImpl::name=3D0.0.0.0=
+],
+>> temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl (identity=3DB=
+ridge
+>> amqp-bridge)
+>> [initialConnectors=3D[TransportConfiguration(name=3Dactivemq-classic-amq=
+p,
+>>
+>> factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConn=
+ectorFactory)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],
+>> discoveryGroupConfiguration=3Dnull]] is unable to connect to destination=
+.
+>> Retrying
+>> centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0 client.
+>> ARTEMIS,0
+>> centralbroker-1  |  WARN | Transport Connection to: tcp://
+>> 172.19.0.3:33778
+>> failed: Connection from client using unsupported AMQP attempted
+>>
+>> broker.xml
+>> =3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>
+>> <acceptors>
+>>
+>> <acceptor name=3D"artemis">
+>> tcp://
+>>
+>> 0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576=
+;amqpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,=
+OPENWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplic=
+ateDetection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObjec=
+ts=3Dfalse
+>> </acceptor>
+>>
+>> <!-- AMQP Acceptor. Listens on default AMQP port for AMQP traffic.-->
+>> <acceptor name=3D"amqp">
+>> tcp://
+>>
+>> 0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=
+protocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;am=
+qpMinLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-time=
+out=3D0
+>> </acceptor>
+>>
+>> <!-- STOMP Acceptor. -->
+>> <acceptor name=3D"stomp">
+>> tcp://
+>>
+>> 0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576=
+;protocols=3DSTOMP;useEpoll=3Dtrue
+>> </acceptor>
+>>
+>> <!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and STOMP for
+>> legacy HornetQ
+>> clients. -->
+>> <acceptor name=3D"hornetq">
+>> tcp://
+>>
+>> 0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;pro=
+tocols=3DHORNETQ,STOMP;useEpoll=3Dtrue
+>> </acceptor>
+>>
+>> <!-- MQTT Acceptor -->
+>> <acceptor name=3D"mqtt">
+>> tcp://
+>>
+>> 0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=
+protocols=3DMQTT;useEpoll=3Dtrue
+>> </acceptor>
+>>
+>> </acceptors>
+>>
+>> <bridges>
+>> <bridge name=3D"amqp-bridge">
+>> <queue-name>p1broker.out</queue-name>
+>> <forwarding-address>centralbroker.in</forwarding-address>
+>> <user>admin</user>
+>> <password>admin</password>
+>> <static-connectors>
+>> <connector-ref>activemq-classic-amqp</connector-ref>
+>> </static-connectors>
+>> </bridge>
+>> </bridges>
+>>
+>>
+>> <connectors>
+>> <connector name=3D"activemq-classic-amqp">
+>> tcp://centralbroker:5672?protocols=3DAMQP</connector>
+>> </connectors>
+>>
+>>
+>> activemq.xml
+>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>
+>> <transportConnectors>
+>> <!-- DOS protection, limit concurrent connections to 1000 and frame size
+>> to
+>> 100MB -->
+>> <transportConnector name=3D"openwire"
+>> uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;
+>> wireFormat.maxFrameSize=3D104857600000" />
+>> <transportConnector name=3D"amqp"
+>> uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;
+>> wireFormat.maxFrameSize=3D104857600" />
+>> <transportConnector name=3D"stomp"
+>> uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;
+>> wireFormat.maxFrameSize=3D104857600" />
+>> <transportConnector name=3D"mqtt"
+>> uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;
+>> wireFormat.maxFrameSize=3D104857600" />
+>> <transportConnector name=3D"ws"
+>> uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;
+>> wireFormat.maxFrameSize=3D104857600" />
+>> </transportConnectors>
+>>
+>>
+>> what am i doing wrong?
+>>
+>> Cheers
+>> Kunal
+>>
+>
+
+--0000000000001fb0de0623955774--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57505-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 00A803E6D6
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 13:30:40 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id D18DC68B66
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 13:30:11 +0000 (UTC)
+Received: (qmail 793224 invoked by uid 998); 3 Oct 2024 13:30:10 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 793205 invoked by uid 116); 3 Oct 2024 13:30:09 -0000
+Received: from mailrelay1-he-de.apache.org (HELO mailrelay1-he-de.apache.org) (116.203.21.61)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 03 Oct 2024 13:30:09 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	by mailrelay1-he-de.apache.org (ASF Mail Server at mailrelay1-he-de.apache.org) with ESMTPSA id C54D83EBFE
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 13:30:09 +0000 (UTC)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2facf40737eso12445111fa.0
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 06:30:09 -0700 (PDT)
+X-Gm-Message-State: AOJu0YwQMnvmSK9HHYX3uXZNG4sJtXcTeyA2svZc06EscXU6WaDJ3jHv
+	eKKkwyws3sJRUQaM0s6mRTgHDxovUJgIx5dCjlSRkxt22MOn1qfAbX9SRPr7AEc+wmZ1t6uIBv+
+	PunAB4AwA2U8l0gT7Y/mYu9nXEVsVbGWkeZ4ZQg==
+X-Google-Smtp-Source: AGHT+IFiGO18fvkJANAhDzgMRTUGPdq6GIzbFCUT3RH9yyPKHfE37vZw6iKxZJG+BLjEDMj2n4hgl5X29PMAOgjRNCE=
+X-Received: by 2002:a2e:be28:0:b0:2fa:d31a:1b77 with SMTP id
+ 38308e7fff4ca-2fae1024545mr42126041fa.9.1727962209255; Thu, 03 Oct 2024
+ 06:30:09 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>
+In-Reply-To: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>
+From: Justin Bertram <jbertram@apache.org>
+Date: Thu, 3 Oct 2024 08:29:42 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com>
+Message-ID: <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com>
+Subject: Re: Bridging Artemis with classic
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="000000000000ab30060623928de8"
+
+--000000000000ab30060623928de8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Yes. You can bridge messages from Artemis to Classic and vice versa.
+However, you can't use a Core bridge to do it. Core bridges, as the name
+suggests, use the Core protocol. A Core bridge can't use the AMQP protocol.
+
+I recommend Camel since it's mature, powerful, and ubiquitous. You can set
+up Camel routes on either Artemis or Classic. Here's [1] an example of how
+to do it on Artemis.
+
+It's also possible to use the JMS bridge that ships with Artemis [2].
+
+
+Justin
+
+[1]
+https://github.com/apache/activemq-artemis-examples/tree/main/examples/feat=
+ures/standard/camel
+[2]
+https://github.com/apache/activemq-artemis-examples/tree/main/examples/feat=
+ures/sub-modules/inter-broker-bridge/artemis-jms-bridge
+
+On Thu, Oct 3, 2024 at 2:38=E2=80=AFAM Kunal Rao <kunal@mechination.com.au>=
+ wrote:
+
+> Hi,
+>
+> Is it possible to bridge artemis with classic broker?
+> I am trying with AMQP protocol.
+>
+> I am getting this error
+>
+> p1broker-1       | 2024-10-03 07:34:50,270 WARN
+>  [org.apache.activemq.artemis.core.server] AMQ224091: Bridge
+> BridgeImpl@6a3012f8 [name=3Damqp-bridge, queue=3DQueueImpl[name=3Dp1broke=
+r.out,
+> postOffice=3DPostOfficeImpl [server=3DActiveMQServerImpl::name=3D0.0.0.0]=
+,
+> temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl (identity=3DBr=
+idge
+> amqp-bridge)
+> [initialConnectors=3D[TransportConfiguration(name=3Dactivemq-classic-amqp=
+,
+>
+> factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConne=
+ctorFactory)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],
+> discoveryGroupConfiguration=3Dnull]] is unable to connect to destination.
+> Retrying
+> centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0 client.
+> ARTEMIS,0
+> centralbroker-1  |  WARN | Transport Connection to: tcp://172.19.0.3:3377=
+8
+> failed: Connection from client using unsupported AMQP attempted
+>
+> broker.xml
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> <acceptors>
+>
+> <acceptor name=3D"artemis">
+> tcp://
+>
+> 0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=
+amqpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,O=
+PENWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplica=
+teDetection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObject=
+s=3Dfalse
+> </acceptor>
+>
+> <!-- AMQP Acceptor. Listens on default AMQP port for AMQP traffic.-->
+> <acceptor name=3D"amqp">
+> tcp://
+>
+> 0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=
+rotocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amq=
+pMinLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-timeo=
+ut=3D0
+> </acceptor>
+>
+> <!-- STOMP Acceptor. -->
+> <acceptor name=3D"stomp">
+> tcp://
+>
+> 0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=
+protocols=3DSTOMP;useEpoll=3Dtrue
+> </acceptor>
+>
+> <!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and STOMP for
+> legacy HornetQ
+> clients. -->
+> <acceptor name=3D"hornetq">
+> tcp://
+>
+> 0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;prot=
+ocols=3DHORNETQ,STOMP;useEpoll=3Dtrue
+> </acceptor>
+>
+> <!-- MQTT Acceptor -->
+> <acceptor name=3D"mqtt">
+> tcp://
+>
+> 0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=
+rotocols=3DMQTT;useEpoll=3Dtrue
+> </acceptor>
+>
+> </acceptors>
+>
+> <bridges>
+> <bridge name=3D"amqp-bridge">
+> <queue-name>p1broker.out</queue-name>
+> <forwarding-address>centralbroker.in</forwarding-address>
+> <user>admin</user>
+> <password>admin</password>
+> <static-connectors>
+> <connector-ref>activemq-classic-amqp</connector-ref>
+> </static-connectors>
+> </bridge>
+> </bridges>
+>
+>
+> <connectors>
+> <connector name=3D"activemq-classic-amqp">
+> tcp://centralbroker:5672?protocols=3DAMQP</connector>
+> </connectors>
+>
+>
+> activemq.xml
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> <transportConnectors>
+> <!-- DOS protection, limit concurrent connections to 1000 and frame size =
+to
+> 100MB -->
+> <transportConnector name=3D"openwire"
+> uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;
+> wireFormat.maxFrameSize=3D104857600000" />
+> <transportConnector name=3D"amqp"
+> uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;
+> wireFormat.maxFrameSize=3D104857600" />
+> <transportConnector name=3D"stomp"
+> uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;
+> wireFormat.maxFrameSize=3D104857600" />
+> <transportConnector name=3D"mqtt"
+> uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;
+> wireFormat.maxFrameSize=3D104857600" />
+> <transportConnector name=3D"ws"
+> uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;
+> wireFormat.maxFrameSize=3D104857600" />
+> </transportConnectors>
+>
+>
+> what am i doing wrong?
+>
+> Cheers
+> Kunal
+>
+
+--000000000000ab30060623928de8--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57504-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 201993E6D6
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 07:38:40 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 07EBA68BF9
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 07:38:39 +0000 (UTC)
+Received: (qmail 182058 invoked by uid 998); 3 Oct 2024 07:38:10 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 181710 invoked by uid 116); 3 Oct 2024 07:38:08 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 03 Oct 2024 07:38:08 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id 9C697C21F7
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 07:38:08 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 3.202
+X-Spam-Level: ***
+X-Spam-Status: No, score=3.202 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, MANY_SUBDOM=3.199,
+	NORMAL_HTTP_TO_IP=0.001, NUMERIC_HTTP_ADDR=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001, WEIRD_PORT=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (1024-bit key) header.d=mechination.com.au
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id rPajzc9IZMYh for <users@activemq.apache.org>;
+	Thu,  3 Oct 2024 07:38:07 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2607:f8b0:4864:20::1136; helo=mail-yw1-x1136.google.com; envelope-from=kunal@mechination.com.au; receiver=<UNKNOWN> 
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 816CC81FC6
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 07:38:07 +0000 (UTC)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-6e21ac45b70so5371037b3.1
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 00:38:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mechination.com.au; s=google; t=1727941086; x=1728545886; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ejhuBsMN5eEQGZZoRv8Ru3JghzLU5fwjMxrWnzz4SCU=;
+        b=P5KJ/l8CRVGPk8rUHY/smGGerLsrUTiqBilNEXSFwvFCfGWP7uWbwVBZJNg2dbOnwl
+         HOXGLzkRqPr/7kW+1XQxn5hS2joCj0IQvxHLDp4BwE1zX5DIJ5Mry4Le+J3/ZJf/xQ8a
+         mMAfQr3iRQxGI506JQq+55Ys1eXmp5QCEpN+U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727941086; x=1728545886;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ejhuBsMN5eEQGZZoRv8Ru3JghzLU5fwjMxrWnzz4SCU=;
+        b=KNfoFpxsHE7WSMgpRmCgQqKWUVapZzoIZf/Yo6HR3JwY/vwdVGbTChElkmW1pgGyYw
+         vkxfs+/yEoRtzXODNd2Yn5zJSHMIruBeimMXwIV0G+OKUKj7AeJMQoneEkRuAf+sJDvj
+         nIstZWkOjkeEJN1zMl4KmOw0CkZ38uRecCjUdfTQH+PBXJDFtVC3jY73qhDym17biHpy
+         8mKIOeA99nBl+QnmuaYAmVuzQajUx8CVu/xYWZLqlJtEpcl/KrQuAtQuEz8bYrSDjpyV
+         oKiApMx8wJrHEaFkZ8Le1Fg8iPFy3n4362+CFS5HV/mHTvwa/phZzVhZAvCmqByUpctU
+         5PeQ==
+X-Gm-Message-State: AOJu0YyknEo3FQQxkBV+dZsAZJx/qbQRPU138rSF1V1/lEDBw0qCa3XH
+	nAwgt77GgwwBMiNNODpt+jEMdVBlhTorQoMPM5PT+NWQudxrqIsQC4yBpIkrHZTNm661cl/XPOM
+	z0KwZruv5Bkki63bAW1WwoWxxyFdcKnM99H5CeBQnhIifrmaZFbU=
+X-Google-Smtp-Source: AGHT+IHNc0o1941j3Kl3fJxMe12sDNFZwVgrLE3VlTa0qKONAFLctOzdv1rLM4JYgqmQIpez5hbSpvADe219X2FuBNQ=
+X-Received: by 2002:a05:690c:508a:b0:6af:8662:ff37 with SMTP id
+ 00721157ae682-6e2a2b112d6mr37549377b3.21.1727941085813; Thu, 03 Oct 2024
+ 00:38:05 -0700 (PDT)
+MIME-Version: 1.0
+From: Kunal Rao <kunal@mechination.com.au>
+Date: Thu, 3 Oct 2024 15:37:55 +0800
+Message-ID: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>
+Subject: Bridging Artemis with classic
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="0000000000009d004206238da215"
+
+--0000000000009d004206238da215
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+Is it possible to bridge artemis with classic broker?
+I am trying with AMQP protocol.
+
+I am getting this error
+
+p1broker-1       | 2024-10-03 07:34:50,270 WARN
+ [org.apache.activemq.artemis.core.server] AMQ224091: Bridge
+BridgeImpl@6a3012f8 [name=3Damqp-bridge, queue=3DQueueImpl[name=3Dp1broker.=
+out,
+postOffice=3DPostOfficeImpl [server=3DActiveMQServerImpl::name=3D0.0.0.0],
+temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl (identity=3DBrid=
+ge
+amqp-bridge)
+[initialConnectors=3D[TransportConfiguration(name=3Dactivemq-classic-amqp,
+factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConnect=
+orFactory)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],
+discoveryGroupConfiguration=3Dnull]] is unable to connect to destination.
+Retrying
+centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0 client.
+ARTEMIS,0
+centralbroker-1  |  WARN | Transport Connection to: tcp://172.19.0.3:33778
+failed: Connection from client using unsupported AMQP attempted
+
+broker.xml
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+<acceptors>
+
+<acceptor name=3D"artemis">
+tcp://
+0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;am=
+qpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,OPE=
+NWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplicate=
+Detection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObjects=
+=3Dfalse
+</acceptor>
+
+<!-- AMQP Acceptor. Listens on default AMQP port for AMQP traffic.-->
+<acceptor name=3D"amqp">
+tcp://
+0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;pro=
+tocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpM=
+inLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-timeout=
+=3D0
+</acceptor>
+
+<!-- STOMP Acceptor. -->
+<acceptor name=3D"stomp">
+tcp://
+0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;pr=
+otocols=3DSTOMP;useEpoll=3Dtrue
+</acceptor>
+
+<!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and STOMP for
+legacy HornetQ
+clients. -->
+<acceptor name=3D"hornetq">
+tcp://
+0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;protoc=
+ols=3DHORNETQ,STOMP;useEpoll=3Dtrue
+</acceptor>
+
+<!-- MQTT Acceptor -->
+<acceptor name=3D"mqtt">
+tcp://
+0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;pro=
+tocols=3DMQTT;useEpoll=3Dtrue
+</acceptor>
+
+</acceptors>
+
+<bridges>
+<bridge name=3D"amqp-bridge">
+<queue-name>p1broker.out</queue-name>
+<forwarding-address>centralbroker.in</forwarding-address>
+<user>admin</user>
+<password>admin</password>
+<static-connectors>
+<connector-ref>activemq-classic-amqp</connector-ref>
+</static-connectors>
+</bridge>
+</bridges>
+
+
+<connectors>
+<connector name=3D"activemq-classic-amqp">
+tcp://centralbroker:5672?protocols=3DAMQP</connector>
+</connectors>
+
+
+activemq.xml
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+<transportConnectors>
+<!-- DOS protection, limit concurrent connections to 1000 and frame size to
+100MB -->
+<transportConnector name=3D"openwire"
+uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;
+wireFormat.maxFrameSize=3D104857600000" />
+<transportConnector name=3D"amqp"
+uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;
+wireFormat.maxFrameSize=3D104857600" />
+<transportConnector name=3D"stomp"
+uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;
+wireFormat.maxFrameSize=3D104857600" />
+<transportConnector name=3D"mqtt"
+uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;
+wireFormat.maxFrameSize=3D104857600" />
+<transportConnector name=3D"ws"
+uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;
+wireFormat.maxFrameSize=3D104857600" />
+</transportConnectors>
+
+
+what am i doing wrong?
+
+Cheers
+Kunal
+
+--0000000000009d004206238da215--

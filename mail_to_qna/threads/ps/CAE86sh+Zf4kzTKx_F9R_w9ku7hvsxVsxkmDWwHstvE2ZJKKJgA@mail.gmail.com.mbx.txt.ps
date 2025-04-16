@@ -1,0 +1,1558 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 38 24 574 768
+%%Title: Enscript Output
+%%For: Thomas Lavocat
+%%Creator: GNU Enscript 1.6.6
+%%CreationDate: Tue Apr  1 15:59:19 2025
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 6
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 6
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 6
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      fname length fmodstr length add pagenumstr length add 95 6 idiv add d_header_w 6 idiv le{
+        5 0 moveto fname show
+        45 0 rmoveto fmodstr show
+        45 0 rmoveto pagenumstr show
+      } {
+        5 0 moveto fmodstr show
+        45 0 rmoveto pagenumstr show
+        fname length d_header_w 6 idiv idiv 1 add 10 mul 5 exch moveto
+        1 1 fname length d_header_w 6 idiv idiv
+        {
+          dup fname exch 1 sub d_header_w 6 idiv mul d_header_w 6 idiv getinterval show
+          5 exch 10 mul fname length d_header_w 6 idiv idiv 1 add 10 mul exch sub moveto
+        } for
+        5 10 moveto
+        fname fname length d_header_w 6 idiv idiv d_header_w 6 idiv mul dup fname length exch sub getinterval show
+      }ifelse
+    }ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 536 def
+/d_page_h 744 def
+/d_header_x 0 def
+/d_header_y 700 def
+/d_header_w 536 def
+/d_header_h 44 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 536 def
+/d_footer_h 0 def
+/d_output_w 536 def
+/d_output_h 700 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (./CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 676 M
+(Return-Path: <users-return-57549-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 665 M
+(rg>) s
+5 654 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 643 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 632 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 621 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id CA97D3E680) s
+5 610 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 09:45:31 +0000 \(UT) s
+5 599 M
+(C\)) s
+5 588 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 577 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 566 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 555 M
+(        \(No client certificate requested\)) s
+5 544 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 533 M
+(MTPS id A3150619D6) s
+5 522 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 09:45:31 +0000 \(UT) s
+5 511 M
+(C\)) s
+5 500 M
+(Received: \(qmail 818688 invoked by uid 998\); 21 Oct 2024 09:45:30 -0000) s
+5 489 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 478 M
+(Precedence: bulk) s
+5 467 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 456 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 445 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 434 M
+(List-Id: <users.activemq.apache.org>) s
+5 423 M
+(Reply-To: users@activemq.apache.org) s
+5 412 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 401 M
+(Received: \(qmail 818668 invoked by uid 116\); 21 Oct 2024 09:45:29 -0000) s
+5 390 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 379 M
+(6.100\)) s
+5 368 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Mon, 21 Oct 2024 09:45:29 +0000) s
+5 357 M
+(Authentication-Results: apache.org; auth=none) s
+5 346 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 335 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 324 M
+(ith ESMTP id 9A2CD20023F) s
+5 313 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 09:45:29 +0000 \(UTC\)) s
+5 302 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 291 M
+(X-Spam-Flag: NO) s
+5 280 M
+(X-Spam-Score: 0) s
+5 269 M
+(X-Spam-Level: ) s
+5 258 M
+(X-Spam-Status: No, score=0 tagged_above=-999 required=6.31) s
+5 247 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 236 M
+(        DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,) s
+5 225 M
+(        SPF_PASS=-0.001] autolearn=disabled) s
+5 214 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 203 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 192 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 181 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 170 M
+(10024\)) s
+5 159 M
+(        with ESMTP id njLsodawNEVi for <users@activemq.apache.org>;) s
+5 148 M
+(        Mon, 21 Oct 2024 09:45:29 +0000 \(UTC\)) s
+5 137 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2a00:1450:4864:20::52e; helo) s
+5 126 M
+(=mail-ed1-x52e.google.com; envelope-from=bruscinodf@gmail.com; receiver=<UNKNOWN> ) s
+5 115 M
+(Received: from mail-ed1-x52e.google.com \(mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:) s
+5 104 M
+(20::52e]\)) s
+5 93 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 82 M
+(d 446FD820CB) s
+5 71 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 09:45:29 +0000 \(UTC\)) s
+5 60 M
+(Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-5c942ef8d83so673032a12) s
+5 49 M
+(.0) s
+5 38 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 02:45:29 -0700 \(PDT\)) s
+5 27 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 16 M
+(        d=gmail.com; s=20230601; t=1729503928; x=1730108728; darn=activemq.apache.org;) s
+5 5 M
+(        h=cc:to:subject:message-id:date:from:in-reply-to:references) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (./CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(         :mime-version:from:to:cc:subject:date:message-id:reply-to;) s
+5 676 M
+(        bh=7td4RxVbQmRlsWel6x0MqQjz9ZwUa4Nm9F2TVmdB40o=;) s
+5 665 M
+(        b=YwdrAXP6Zs8yT0C6p0dv9xtPh3spfExp3g+y9MOyjPDFG3eQayqoYHu3Yd0d2JQB2B) s
+5 654 M
+(         Z1xm1wTQI5wQ0G4SY9/ptfwLnNG0JVj46xf151wYxlvwx/F6EOf/4+mvKPVtLAMrBOwp) s
+5 643 M
+(         zhvHEiePkyyV64WjftG2ebdyAz+VdeFX6xGJ2mwW9Aeba47lpIVA8tbFZdUhNA3Jy5R3) s
+5 632 M
+(         YJF3uDyxgA/va3qjdvtJpIxLIFG4jE8/ftGSBLb2wAPKUSe9uMjm98NROPY7y6uyrBRv) s
+5 621 M
+(         5eHON+Znj+iXVWFKH7RzA8sN81klrMkWDHLyVYi29ts0LHvOTZlF2eZ9zWMwrrAgwWWT) s
+5 610 M
+(         bVvQ==) s
+5 599 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 588 M
+(        d=1e100.net; s=20230601; t=1729503928; x=1730108728;) s
+5 577 M
+(        h=cc:to:subject:message-id:date:from:in-reply-to:references) s
+5 566 M
+(         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id) s
+5 555 M
+(         :reply-to;) s
+5 544 M
+(        bh=7td4RxVbQmRlsWel6x0MqQjz9ZwUa4Nm9F2TVmdB40o=;) s
+5 533 M
+(        b=kXl3PcXDmg0M1tLDMx0UArBVEaqCdZeyeFhsb/OepzEVlDveaJxlYN5wh0QilmqhIN) s
+5 522 M
+(         9EKgZRUesAyX0+iM6Hyfifn1jyeZwMDbf3YfBXafWmvg6zUatn3eb2Aw4Yb+7HdqPi20) s
+5 511 M
+(         /PDP6cxeRt3JTBlhU/btoe7PtjS5scaTVQrp9etIRTnECAFzhhY+S9dw/CZN3drv+rP5) s
+5 500 M
+(         HyCY5LBtV2pQo09tnONlQLK3vt+jJNFRlJy7853ybBh1nBzQHYZ7pLMN4glTJEHGVxy3) s
+5 489 M
+(         VUTgRp2f5kMjSt0kOCdPZo4h0REczPHWDbIxvB7qgl4npT4f4xHsDa2tHANCWy1nmbTs) s
+5 478 M
+(         78mQ==) s
+5 467 M
+(X-Gm-Message-State: AOJu0YxjA/5vGtPXl/aWRaJ65sH6lLFdjEP/Mx8DJGNTuv78Ui66tTMT) s
+5 456 M
+(        8L8Wra7Uz3znXmvFoQZOPt+lyL07TDhPuDXMHzirI9XdAUiJWu7KObtQbYhdq/SGWZiYiLZH2Qr) s
+5 445 M
+(        8OLfxrohRwXzsxBZQq49RxSmo3Z93eqGp+wA=) s
+5 434 M
+(X-Google-Smtp-Source: AGHT+IHyYAqtTx85row0TLQTrpT6GIlgdIHutXxkdODKhk+Ni7qiTH76ebTjg6OK1) s
+5 423 M
+(reAmnBjI2QMk7u6PbouVkrRR2s=) s
+5 412 M
+(X-Received: by 2002:a05:6402:40c3:b0:5c3:eb29:50c5 with SMTP id) s
+5 401 M
+( 4fb4d7f45d1cf-5ca0af89464mr3922785a12.9.1729503928236; Mon, 21 Oct 2024) s
+5 390 M
+( 02:45:28 -0700 \(PDT\)) s
+5 379 M
+(MIME-Version: 1.0) s
+5 368 M
+(References: <DB9PR02MB7842CAADB53F7C93964D6AB78C432@DB9PR02MB7842.eurprd02.prod.outlook) s
+5 357 M
+(.com>) s
+5 346 M
+(In-Reply-To: <DB9PR02MB7842CAADB53F7C93964D6AB78C432@DB9PR02MB7842.eurprd02.prod.outloo) s
+5 335 M
+(k.com>) s
+5 324 M
+(From: Domenico Francesco Bruscino <bruscinodf@gmail.com>) s
+5 313 M
+(Date: Mon, 21 Oct 2024 11:45:16 +0200) s
+5 302 M
+(Message-ID: <CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com>) s
+5 291 M
+(Subject: Re: SSL verification check) s
+5 280 M
+(To: richard.john@capgemini.com.invalid) s
+5 269 M
+(Cc: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 258 M
+(Content-Type: multipart/alternative; boundary="00000000000047c2ae0624f98301") s
+5 236 M
+(--00000000000047c2ae0624f98301) s
+5 225 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 203 M
+(Hi John,) s
+5 181 M
+(I don't think you can disable SSL certificate verification checks) s
+5 170 M
+(in LDAPLoginModule but you could use a tool like stunnel to forward you SSL) s
+5 159 M
+(traffic disabling certificate verification checks.) s
+5 137 M
+(Regards,) s
+5 126 M
+(Domenico) s
+5 104 M
+(On Mon, 21 Oct 2024 at 10:54, John, Richard) s
+5 93 M
+(<richard.john@capgemini.com.invalid> wrote:) s
+5 71 M
+(> Good morning.) s
+5 60 M
+(>) s
+5 49 M
+(> Is it possible to disable SSL certificate verification checks \(just for) s
+5 38 M
+(> test purposes\) - specifically the checks against SANs in the certificate -) s
+5 27 M
+(> for LDAPS calls via the LDAPLoginModule?) s
+5 16 M
+(>) s
+5 5 M
+(> Thanks) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 3 def
+/fname (./CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(>) s
+5 676 M
+(> ________________________________) s
+5 665 M
+(>) s
+5 654 M
+(> Capgemini is a trading name used by the Capgemini Group of companies which) s
+5 643 M
+(> includes Capgemini UK plc, a company registered in England and Wales) s
+5 632 M
+(> \(number 943935\) whose registered office is at No. 1, Forge End, Woking,) s
+5 621 M
+(> Surrey, GU21 6DB.) s
+5 610 M
+(> This message contains information that may be privileged or confidential) s
+5 599 M
+(> and is the property of the Capgemini Group. It is intended only for the) s
+5 588 M
+(> person to whom it is addressed. If you are not the intended recipient, you) s
+5 577 M
+(> are not authorized to read, print, retain, copy, disseminate, distribute,) s
+5 566 M
+(> or use this message or any part thereof. If you receive this message in) s
+5 555 M
+(> error, please notify the sender immediately and delete all copies of this) s
+5 544 M
+(> message.) s
+5 533 M
+(>) s
+5 511 M
+(--00000000000047c2ae0624f98301--) s
+5 500 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 489 M
+(Return-Path: <users-return-57556-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 478 M
+(rg>) s
+5 467 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 456 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 445 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 434 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 1AC0C3E724) s
+5 423 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 18:11:59 +0000 \(UT) s
+5 412 M
+(C\)) s
+5 401 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 390 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 379 M
+(        \(No client certificate requested\)) s
+5 368 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 357 M
+(ESMTPS id 3F32C45BE4) s
+5 346 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 18:11:31 +0000 \(UT) s
+5 335 M
+(C\)) s
+5 324 M
+(Received: \(qmail 2080821 invoked by uid 998\); 21 Oct 2024 18:11:29 -0000) s
+5 313 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 302 M
+(Precedence: bulk) s
+5 291 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 280 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 269 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 258 M
+(List-Id: <users.activemq.apache.org>) s
+5 247 M
+(Reply-To: users@activemq.apache.org) s
+5 236 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 225 M
+(Received: \(qmail 2080786 invoked by uid 116\); 21 Oct 2024 18:11:29 -0000) s
+5 214 M
+(Received: from ec2-52-204-25-47.compute-1.amazonaws.com \(HELO mailrelay1-ec2-va.apache.) s
+5 203 M
+(org\) \(52.204.25.47\)) s
+5 192 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Mon, 21 Oct 2024 18:11:29 +0000) s
+5 181 M
+(Authentication-Results: apache.org; auth=none) s
+5 170 M
+(Received: from smtpclient.apple \(107-140-187-69.lightspeed.austtx.sbcglobal.net [107.14) s
+5 159 M
+(0.187.69]\)) s
+5 148 M
+(        by mailrelay1-ec2-va.apache.org \(ASF Mail Server at mailrelay1-ec2-va.apache.or) s
+5 137 M
+(g\) with ESMTPSA id B0C8C3FCCF) s
+5 126 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 18:11:28 +0000 \(UTC\)) s
+5 115 M
+(From: Matt Pavlovich <mattrpav@apache.org>) s
+5 104 M
+(Content-Type: multipart/alternative;) s
+5 93 M
+(        boundary="Apple-Mail=_8858299C-A380-4E49-8353-E4F07844012A") s
+5 82 M
+(Mime-Version: 1.0 \(Mac OS X Mail 16.0 \\\(3818.100.11.1.3\\\)\)) s
+5 71 M
+(Subject: Re: SSL verification check) s
+5 60 M
+(Date: Mon, 21 Oct 2024 13:11:26 -0500) s
+5 49 M
+(References: <DB9PR02MB7842CAADB53F7C93964D6AB78C432@DB9PR02MB7842.eurprd02.prod.outlook) s
+5 38 M
+(.com>) s
+5 27 M
+(To: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 16 M
+(In-Reply-To: <DB9PR02MB7842CAADB53F7C93964D6AB78C432@DB9PR02MB7842.eurprd02.prod.outloo) s
+5 5 M
+(k.com>) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 4 def
+/fname (./CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Message-Id: <6D25D43E-A9B7-4241-A73E-2A9A162B0E3A@apache.org>) s
+5 676 M
+(X-Mailer: Apple Mail \(2.3818.100.11.1.3\)) s
+5 654 M
+(--Apple-Mail=_8858299C-A380-4E49-8353-E4F07844012A) s
+5 643 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 632 M
+(Content-Type: text/plain;) s
+5 621 M
+(        charset=utf-8) s
+5 599 M
+(Hi John-) s
+5 577 M
+(Yes, you can do this with a little code stubbing for your unit test.) s
+5 555 M
+(WARNING: Do not ship any of these dummy test classes to production or =) s
+5 544 M
+(other operational environments.) s
+5 522 M
+(1. Create a dummy ssl socket factory class) s
+5 511 M
+(2. Create a test class that extends the ActiveMQ LDAPLoginModule and =) s
+5 500 M
+(override the openContext method) s
+5 489 M
+(3. Pass an environment variable to the LDAP InitialDirContext pointing =) s
+5 478 M
+(to your custom dummy ssl socket factory class:) s
+5 467 M
+(env.put \("java.naming.ldap.factory.socket", =) s
+5 456 M
+(NonVerifyingSSLSocketFactory.class.getName \(\)\);) s
+5 445 M
+(4. Run tests using dummy ssl and localhost) s
+5 423 M
+(ActiveMQ LDAPLoginModule openContext method:) s
+5 412 M
+(=) s
+5 401 M
+(https://github.com/apache/activemq/blob/4ff78ddab993d62408c8e63ce63a63d575=) s
+5 390 M
+(7fe039/activemq-jaas/src/main/java/org/apache/activemq/jaas/LDAPLoginModul=) s
+5 379 M
+(e.java#L482) s
+5 357 M
+(Stack overflow: =) s
+5 346 M
+(https://stackoverflow.com/questions/52600211/how-to-programmatically-disab=) s
+5 335 M
+(le-certificate-hostname-verification-in-java-ldap-j) s
+5 313 M
+(Thanks,) s
+5 302 M
+(Matt Pavlovich) s
+5 280 M
+(> On Oct 21, 2024, at 3:53=E2=80=AFAM, John, Richard <richard.john@c) s
+5 269 M
+(> apgemini.com.INVALID> wrote:) s
+5 258 M
+(>=20) s
+5 247 M
+(> Good morning.) s
+5 236 M
+(>=20) s
+5 225 M
+(> Is it possible to disable SSL certificate verification checks \(just =) s
+5 214 M
+(for test purposes\) - specifically the checks against SANs in the =) s
+5 203 M
+(certificate - for LDAPS calls via the LDAPLoginModule?) s
+5 192 M
+(>=20) s
+5 181 M
+(> Thanks) s
+5 170 M
+(>=20) s
+5 159 M
+(> ________________________________) s
+5 148 M
+(>=20) s
+5 137 M
+(> Capgemini is a trading name used by the Capgemini Group of companies =) s
+5 126 M
+(which includes Capgemini UK plc, a company registered in England and =) s
+5 115 M
+(Wales \(number 943935\) whose registered office is at No. 1, Forge End, =) s
+5 104 M
+(Woking, Surrey, GU21 6DB.) s
+5 93 M
+(> This message contains information that may be privileged or =) s
+5 82 M
+(confidential and is the property of the Capgemini Group. It is intended =) s
+5 71 M
+(only for the person to whom it is addressed. If you are not the intended =) s
+5 60 M
+(recipient, you are not authorized to read, print, retain, copy, =) s
+5 49 M
+(disseminate, distribute, or use this message or any part thereof. If you =) s
+5 38 M
+(receive this message in error, please notify the sender immediately and =) s
+5 27 M
+(delete all copies of this message.) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 5 def
+/fname (./CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(--Apple-Mail=_8858299C-A380-4E49-8353-E4F07844012A--) s
+5 676 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 665 M
+(Return-Path: <users-return-57548-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 654 M
+(rg>) s
+5 643 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 632 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 621 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 610 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 2501A3E680) s
+5 599 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 08:54:30 +0000 \(UT) s
+5 588 M
+(C\)) s
+5 577 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 566 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 555 M
+(        \(No client certificate requested\)) s
+5 544 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 533 M
+(ESMTPS id 9819F43AB0) s
+5 522 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 08:53:59 +0000 \(UT) s
+5 511 M
+(C\)) s
+5 500 M
+(Received: \(qmail 686801 invoked by uid 998\); 21 Oct 2024 08:53:57 -0000) s
+5 489 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 478 M
+(Precedence: bulk) s
+5 467 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 456 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 445 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 434 M
+(List-Id: <users.activemq.apache.org>) s
+5 423 M
+(Reply-To: users@activemq.apache.org) s
+5 412 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 401 M
+(Received: \(qmail 686776 invoked by uid 116\); 21 Oct 2024 08:53:56 -0000) s
+5 390 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 379 M
+(6.100\)) s
+5 368 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Mon, 21 Oct 2024 08:53:56 +0000) s
+5 357 M
+(Authentication-Results: apache.org; auth=none) s
+5 346 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 335 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 324 M
+(ith ESMTP id C227220015A) s
+5 313 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 08:53:56 +0000 \(UTC\)) s
+5 302 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 291 M
+(X-Spam-Flag: NO) s
+5 280 M
+(X-Spam-Score: 0.005) s
+5 269 M
+(X-Spam-Level: ) s
+5 258 M
+(X-Spam-Status: No, score=0.005 tagged_above=-999 required=6.31) s
+5 247 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 236 M
+(        DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,) s
+5 225 M
+(        RCVD_IN_MSPIKE_H4=0.001, RCVD_IN_MSPIKE_WL=0.001,) s
+5 214 M
+(        RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,) s
+5 203 M
+(        RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,) s
+5 192 M
+(        URIBL_BLOCKED=0.001] autolearn=disabled) s
+5 181 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 170 M
+(        dkim=pass \(2048-bit key\) header.d=capgemini.com) s
+5 159 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 148 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 137 M
+(10024\)) s
+5 126 M
+(        with ESMTP id 6Ir8N2vvre0a for <users@activemq.apache.org>;) s
+5 115 M
+(        Mon, 21 Oct 2024 08:53:56 +0000 \(UTC\)) s
+5 104 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=194.165.193.163; helo=esa2.h) s
+5 93 M
+(c2065-58.eu.iphmx.com; envelope-from=richard.john@capgemini.com; receiver=<UNKNOWN> ) s
+5 82 M
+(Received: from esa2.hc2065-58.eu.iphmx.com \(esa2.hc2065-58.eu.iphmx.com [194.165.193.16) s
+5 71 M
+(3]\)) s
+5 60 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 49 M
+(d 59B0C82089) s
+5 38 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 08:53:56 +0000 \(UTC\)) s
+5 27 M
+(X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 16 M
+(  d=capgemini.com; i=@capgemini.com; q=dns/txt; s=group3;) s
+5 5 M
+(  t=1729500835; x=1761036835;) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 6 def
+/fname (./CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(  h=from:to:subject:date:message-id:mime-version;) s
+5 676 M
+(  bh=9sIqNcrc3dfL3rsM2TxrVRVjsq2xARErl31VuF+10wA=;) s
+5 665 M
+(  b=bfEpT09T4/iT4OkllRmtH/97yNPFt62fpBH62gb3+hZLSd/KEazdyz1+) s
+5 654 M
+(   HE1rCmLYnJAbxUwJzeSOMg/+sxkU4k4+ECf8tiWsrb4G0thBNGNQxpos2) s
+5 643 M
+(   gtAr1dEzix9KKtCg13NT/OnM4nF370h3efkiF3ZlJzAsgFy3OPuvuvo1P) s
+5 632 M
+(   S5QocB8NpjOobFeu/PIbGPcBDviTtxqwnJF2Vlu58OEdTRR/DqzkU9jiQ) s
+5 621 M
+(   7Cz5+sld2TGD8lozdQ+bsDmD1W4kRP8nv4O49oAAyJAA6nbzmq+Tx5hJ4) s
+5 610 M
+(   AZdIG17RFJWSaVIUNFYB/YEisAD/rP9+UFGV0x0BXvYgk8H4XjPC7i4Z9) s
+5 599 M
+(   A==;) s
+5 588 M
+(X-CSE-ConnectionGUID: vSNUdXp5TzOzKXePSyda4g==) s
+5 577 M
+(X-CSE-MsgGUID: trKAJ+jDSDKFrk5TZckFhA==) s
+5 566 M
+(X-IronPort-RemoteIP: 80.253.212.219) s
+5 555 M
+(X-IronPort-MID: 13482651) s
+5 544 M
+(X-IronPort-Reputation: None) s
+5 533 M
+(X-IronPort-Listener: OutgoingMail) s
+5 522 M
+(X-IronPort-SenderGroup: APPLIST) s
+5 511 M
+(X-IronPort-MailFlowPolicy: $APPRELAY) s
+5 500 M
+(X-IronPort-AV: E=Sophos;i="6.10,215,1719871200"; ) s
+5 489 M
+(   d="scan'208,217";a="13482651") s
+5 478 M
+(Received: from spfnldca02.capgemini.com \([80.253.212.219]\)) s
+5 467 M
+(  by ob1.hc2065-58.eu.iphmx.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 21 Oct 2024 10:5) s
+5 456 M
+(3:49 +0200) s
+5 445 M
+(X-CSE-ConnectionGUID: dCefbMCvRMicuhb6iXtnmw==) s
+5 434 M
+(X-CSE-MsgGUID: +7mxijhFQU2tl2pOz6Oi8w==) s
+5 423 M
+(X-IronPort-AV: E=Sophos;i="6.11,220,1725314400"; ) s
+5 412 M
+(   d="scan'208,217";a="285778206") s
+5 401 M
+(Received: from intdlp.capgemini.com \(HELO NLDCADLP03.CORP.CAPGEMINI.COM\) \([10.36.128.10) s
+5 390 M
+(2]\)) s
+5 379 M
+(  by IRFRPAR-C695-02-D2-incoming.capgemini.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA3) s
+5 368 M
+(84; 21 Oct 2024 10:53:50 +0200) s
+5 357 M
+(Received: from NLDCADLP03.CORP.CAPGEMINI.COM \(NLDCADLP03.CORP.CAPGEMINI.COM [127.0.0.1]) s
+5 346 M
+(\)) s
+5 335 M
+(        by NLDCADLP03.CORP.CAPGEMINI.COM \(Service\) with ESMTP id 50344A37) s
+5 324 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 10:53:47 +0200 \(CEST\)) s
+5 313 M
+(Received: from EUR03-VI1-obe.outbound.protection.outlook.com \(unknown [104.47.30.107]\)) s
+5 302 M
+(        \(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 \(256/256 bits\)\)) s
+5 291 M
+(        \(No client certificate requested\)) s
+5 280 M
+(        by NLDCADLP03.CORP.CAPGEMINI.COM \(Service\) with ESMTPS id 342EE14BDE9) s
+5 269 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 10:53:47 +0200 \(CEST\)) s
+5 258 M
+(ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;) s
+5 247 M
+( b=XJKf7hkp/Lpczh5/obOkHWjQlTu697xE0ZL/FK5suXKxvu8EmbNnKpFhbhg4ww4ShuVVos5R+jMHvsNPwLtt) s
+5 236 M
+(Qf2PMha+tu2k0VhVRwrMYWPAVkz9tYr1rfWKhl5Ys/gguJAWSgUkPDKJjglO/L7A7aswcAa07a/UYLjOJg9Nvf7) s
+5 225 M
+(bB1J7WR4nx7DjkGe1HU410vkNzcr182yWFHdKIi5l4Ulyf9AnMYnfjTWlgmwypPElMMxEHbBa1Uxn0rHVfWk6MM) s
+5 214 M
+(nWq18S52g8IfCkj0WVwrvf/8yaK4Djw5Q3q6zULzOk3awCgHTb1PRdYPUAw3OsDkoQRLetnmb7y1CQiEWpuA==) s
+5 203 M
+(ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;) s
+5 192 M
+( s=arcselector10001;) s
+5 181 M
+( h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-Messag) s
+5 170 M
+(eData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageDat) s
+5 159 M
+(a-1;) s
+5 148 M
+( bh=aePhGSu+2qF1grjrQ576j9I6URAmHwcZq3ZukMkoQ5s=;) s
+5 137 M
+( b=m7jvXcwrZMCTgze5V6tMfDuBP/uz7kwcYDEh+k1YnI77KgzVs7QymWb9+yV+ZjBCrf9Xfum0gGDKMc68IfgY) s
+5 126 M
+(qtGpyNoMehM7Q1MaQJ3IgN6n1y78ponEorgOX7yoWg7gYzfYaEHJVypF2bvxLf5CvNhkDAjRGTO77Iu3F9JzbTm) s
+5 115 M
+(fU35BoPxSSTA7iZpqq575seJ65pcdNkp/7dvCNmodAD+3f05aeuwkRNLhOJPkIqbMVEP2QuJ8qCuSr2DgcU1tGm) s
+5 104 M
+(eesqr4TwpsmpvdEnYBbJrQyXOThktFhX4QyRw66TA3dFIs//UWKuQmo5RhCV3sZY6VbaLEBL9JhB32pbZkZQ==) s
+5 93 M
+(ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass) s
+5 82 M
+( smtp.mailfrom=capgemini.com; dmarc=pass action=none) s
+5 71 M
+( header.from=capgemini.com; dkim=pass header.d=capgemini.com; arc=none) s
+5 60 M
+(Received: from DB9PR02MB7842.eurprd02.prod.outlook.com \(2603:10a6:10:330::16\)) s
+5 49 M
+( by VI1PR02MB6448.eurprd02.prod.outlook.com \(2603:10a6:800:196::14\) with) s
+5 38 M
+( Microsoft SMTP Server \(version=TLS1_2,) s
+5 27 M
+( cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\) id 15.20.8069.28; Mon, 21 Oct) s
+5 16 M
+( 2024 08:53:48 +0000) s
+5 5 M
+(Received: from DB9PR02MB7842.eurprd02.prod.outlook.com) s
+_R
+S
+%%Page: (7) 7
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 7 def
+/fname (./CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (7) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+( \([fe80::9cbf:f010:c6f0:ebcd]\) by DB9PR02MB7842.eurprd02.prod.outlook.com) s
+5 676 M
+( \([fe80::9cbf:f010:c6f0:ebcd%7]\) with mapi id 15.20.8069.027; Mon, 21 Oct 2024) s
+5 665 M
+( 08:53:48 +0000) s
+5 654 M
+(From: "John, Richard" <richard.john@capgemini.com.INVALID>) s
+5 643 M
+(To: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 632 M
+(Subject: SSL verification check) s
+5 621 M
+(Thread-Topic: SSL verification check) s
+5 610 M
+(Thread-Index: AdsjlmNRq40wshU8Q2SWKB5OZZiFVw==) s
+5 599 M
+(Date: Mon, 21 Oct 2024 08:53:48 +0000) s
+5 588 M
+(Message-ID: <DB9PR02MB7842CAADB53F7C93964D6AB78C432@DB9PR02MB7842.eurprd02.prod.outlook) s
+5 577 M
+(.com>) s
+5 566 M
+(Accept-Language: en-US) s
+5 555 M
+(Content-Language: en-US) s
+5 544 M
+(X-MS-Has-Attach: ) s
+5 533 M
+(X-MS-TNEF-Correlator: ) s
+5 522 M
+(authentication-results: dkim=none \(message not signed\)) s
+5 511 M
+( header.d=none;dmarc=none action=none header.from=capgemini.com;) s
+5 500 M
+(x-ms-publictraffictype: Email) s
+5 489 M
+(x-ms-traffictypediagnostic: DB9PR02MB7842:EE_|VI1PR02MB6448:EE_) s
+5 478 M
+(x-ms-office365-filtering-correlation-id: 4789fd31-a3e7-4124-14d1-08dcf1ade107) s
+5 467 M
+(x-ms-exchange-senderadcheck: 1) s
+5 456 M
+(x-ms-exchange-antispam-relay: 0) s
+5 445 M
+(x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|8096899003|3807070001) s
+5 434 M
+(8;) s
+5 423 M
+(x-microsoft-antispam-message-info: =?us-ascii?Q?FFGhihbM3yo3dc0p6ch8vK1cgbyoJkCaIWU9dos) s
+5 412 M
+(BPaHlAnONTOPJgRywSRc+?=) s
+5 401 M
+( =?us-ascii?Q?U8WP5bAkwlSPHDjQ5JI2v7DP+bsXPzwWUsEUnQHjo2SeAtWcVU3xf8yYuz6G?=) s
+5 390 M
+( =?us-ascii?Q?oqt75eohGxXpMGo7Io32JTKqPf8Gdyt0ur2pRNfbwkOpI0Mr1D6j55t3IzGR?=) s
+5 379 M
+( =?us-ascii?Q?iscYaL64SPqlpVi7vGYnp9RJiIfncJRmL6BdA4c7kitHPgTNb+0chrjlTn6K?=) s
+5 368 M
+( =?us-ascii?Q?pXEUaQpM6OyKJjVeotE/kvhwAnr4UrcD4z4Pw/mjqD43QGo/7zXZWezIR2ZQ?=) s
+5 357 M
+( =?us-ascii?Q?+x6sVntPPR4m0P+hRSs3u1uLLuTc/Nz1E+ac3Fzm5bOvF6nMI0Dg1YiZKhuC?=) s
+5 346 M
+( =?us-ascii?Q?AoFQEVnlwCNdrx/fIMq6PzX38UvCMP8973Yq7FwMyT+X/RAdF9sRrekAUi5N?=) s
+5 335 M
+( =?us-ascii?Q?4otstKkYa25csZkCG+IOJxrtGm+zJXbN2VBjVJLKw6kXsajQXd3hLLu4k1LQ?=) s
+5 324 M
+( =?us-ascii?Q?s99aIu5/MlW4CnirUQg4s5j3BmyRcckUkMt360srF/8RCIITkgjHaArzj4BO?=) s
+5 313 M
+( =?us-ascii?Q?bybRhQmutslwQjJor3e7gt0Srd3h4+E5rFwMA1GSzhSbi2vV3EGV24g/1cZ/?=) s
+5 302 M
+( =?us-ascii?Q?VP9hk5dDIy3CvjTHahEWUEcIP2d+veNMBT6rU+CtNXmwkpNFl2l8BMd8ehHw?=) s
+5 291 M
+( =?us-ascii?Q?96b6VmeL2bMn3E/tpuhZ2AwY/kVzweGyVJFtz6wiYZc6m+cKw/bS4knG1tpc?=) s
+5 280 M
+( =?us-ascii?Q?6NAwpK/L6JRluWAs9XMroBzVilp6qCfp+ufvzvX+8IHpDolStLx88/+myrq+?=) s
+5 269 M
+( =?us-ascii?Q?40GUUTwsU7ljIqZH4WLmHvM43+nBoQvd7iP46oe0dDBLmZZXRAYagSiFs7/d?=) s
+5 258 M
+( =?us-ascii?Q?oKyjrkRDzDvYGYmOx8/Y/ddIJtSKWPWym38NLu/3KyOtKzoDMKq5W4NbcPEj?=) s
+5 247 M
+( =?us-ascii?Q?mgtIa3Nb/PJVAvgVDYNjpRRXfXZI7htFQMGAvNY1kfcafgDHVm4/0MoQ4Nm3?=) s
+5 236 M
+( =?us-ascii?Q?boZgDnIu6PJFMDS1hg/+HSlg2A3N/qwJ2qcYu22Ycd0F8x7rDSDbg/xeFwOb?=) s
+5 225 M
+( =?us-ascii?Q?BfUgQ+csCpTsuR/YYw3+y3Lv4VXzgWMYVcDfcE+oNF7g7Fb+E+cCeEvcJxO7?=) s
+5 214 M
+( =?us-ascii?Q?6B/MyAdffLYZ6+rVNrMat3fyqmW22T6rK27+dsOWq3aN44w9jr6npf481CNB?=) s
+5 203 M
+( =?us-ascii?Q?kGN6rlJV/hP75dpxVHrvX5yihUJPjtm2l5a00oc758ELeNdnQEPFf/nvHTA+?=) s
+5 192 M
+( =?us-ascii?Q?oXukAtae0pBBFb9XPEtraWztZX7wEH2cGgOjOjow099Pi7Tqm2JqW9SzpVym?=) s
+5 181 M
+( =?us-ascii?Q?3KcT0NMUkI/dUFsdsE4M8tedx8XstjYAV5ss2+fZwZByecMbTp3caAQ4tHlY?=) s
+5 170 M
+( =?us-ascii?Q?+soaU8zO39Ral05Ea9R7DMTqADCLhJev6+Dn2eboQEznCaGmzV4njE8wNrC8?=) s
+5 159 M
+( =?us-ascii?Q?AMtey4o=3D?=) s
+5 148 M
+(x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:N) s
+5 137 M
+(SPM;H:DB9PR02MB7842.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:\(13230040\)\(1800799024\)\() s
+5 126 M
+(366016\)\(376014\)\(8096899003\)\(38070700018\);DIR:OUT;SFP:1101;) s
+5 115 M
+(x-ms-exchange-antispam-messagedata-chunkcount: 1) s
+5 104 M
+(x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?UssJxhzRw1ejJKKYmNNBG607QQTVPtT19hz6) s
+5 93 M
+(9TvnjN/nL2PRUdZZNtV5CkjB?=) s
+5 82 M
+( =?us-ascii?Q?QMaMe6spcLX11PaFMlgG2b6p2Cqww3P4URIGtmy/Jvf+S+dxH3t/8sLaCcVj?=) s
+5 71 M
+( =?us-ascii?Q?MBU1SET0sjgULkOpfERqVplF7RRTbU3QQvLvDU0WinKyd++RbkpUAy+jlETU?=) s
+5 60 M
+( =?us-ascii?Q?5+UdFhiXLW/zbw69z88qhe53rTaAvAY2H3sTjd0MLHYoRgPpOto5PUL2kNu9?=) s
+5 49 M
+( =?us-ascii?Q?yfiUAvH2vDW3TmwCvVrJ5pvrE04LgiJGm3K9NZZDzzkrUCWaO2K5RsKAoIs4?=) s
+5 38 M
+( =?us-ascii?Q?IysORrbskaEvX9D6LoBTcDBJrsk+KD5M+mBTlAtuV4HXBmkp0LV4fUexrP97?=) s
+5 27 M
+( =?us-ascii?Q?AekmlkyddyPr3XAzKo4d2cYbz3X1pjhVYXITWmW+q+oJXJzssM2D7kojpLV3?=) s
+5 16 M
+( =?us-ascii?Q?PDikXeKsws2wwSgZw+CzCk5ghnHhVJmRIHmGx+TDOubty+818Y7ypO4qMC9o?=) s
+5 5 M
+( =?us-ascii?Q?HnxwwV3Wd5rs5DC5VsDTQwKFl11yw2+wLCg1GixrSTjDIMK0nhRY7vs0W8Td?=) s
+_R
+S
+%%Page: (8) 8
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 8 def
+/fname (./CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (8) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+( =?us-ascii?Q?pPX0xfkHJHRz3ihTiFgCszK8RXoKZ+oCSzNOfcgsbSuTbYroIESv5fcdyUUv?=) s
+5 676 M
+( =?us-ascii?Q?5hwxEoa/9+OWoWbBYuXTT4xSOwTgQYdIJlYRRVXQlHhQR+NsWk9EygCmQHHa?=) s
+5 665 M
+( =?us-ascii?Q?UXFUoHC4jbOlEK+miYixH4ff9PwrS6Ip3TDF2hCYMq8yrPolZ0+8y0E2iPto?=) s
+5 654 M
+( =?us-ascii?Q?wCm8F9b5QAI0vN95I9ohpJhOmhL6blWOMx0A4MeEv88O/G2mugmM8bVt5p2s?=) s
+5 643 M
+( =?us-ascii?Q?QBSpoiboTBPduejNkv14gLJcddWf5mSkxFAklGPs0Oil/k7TABYCvgTcQQ8+?=) s
+5 632 M
+( =?us-ascii?Q?y8ploLb+86b9S4+W9MX+CxcOdS5aGxnoql4EnKkHCF0fy88MsjZLdDrL42JZ?=) s
+5 621 M
+( =?us-ascii?Q?h7uWy1wnPC9lJePxpXm8dp98x6aQIUeC/eOV/SLh+ZwU0FGCNWpvgEZxNTWp?=) s
+5 610 M
+( =?us-ascii?Q?XAcstMr5UDbjV331eOE2n330Hcv5Yj60oKSpFQqniMLVf1xsBG7NBUilZTBs?=) s
+5 599 M
+( =?us-ascii?Q?0CqVD4dG+rp8GTF4yju7T058f1Fgws0GwmCV8sSh0JFA8BzQDJ6miEfXv+UV?=) s
+5 588 M
+( =?us-ascii?Q?9aYL56DcxefiRvvREO3gLX5NUIjLrO6if8mPi7fnYeil1MI1Kv9DB/yKt/K5?=) s
+5 577 M
+( =?us-ascii?Q?j5VvBQ2WUf8nmnOwLWw6w6G+6K7hAE155ZBAKDOiHH7DhNhK8jI0YpP3ZKKz?=) s
+5 566 M
+( =?us-ascii?Q?98XXNr/wEvERZAz8dTOD90utwvxYybein8Wb0UqYymRq3HUXfaPt0Rzil+9J?=) s
+5 555 M
+( =?us-ascii?Q?wv4iMAtwPPFN6lPC5n2asFbkv11k4olWC6zUUCNI44/crB7+f/KpkxqoAkaW?=) s
+5 544 M
+( =?us-ascii?Q?RErvCojOCw6h+BfPkD1O5wrMMC/XjGRxYw4ka9fiTy7RzrWDHfkNSXPr5boc?=) s
+5 533 M
+( =?us-ascii?Q?sL/xOX6V3phY+HDA2dw6vXUSxa0HS5kD4DkNcAeJ1XdOc9xzpBJ1a7gGaNqj?=) s
+5 522 M
+( =?us-ascii?Q?WH3ki65M/mvHvGMkZ3Xir1tokUHHh32zTsKBTCewnPjtAsKepgVWrBLng6Aw?=) s
+5 511 M
+( =?us-ascii?Q?UyH6o7+47rUscDmxX0xc/c5qCqBai1wH4QAJYrdqvNAQSKqYZc0gO5KTTsNl?=) s
+5 500 M
+( =?us-ascii?Q?ZNV2MN2aIEKbOsSocP7BQNFk4EcednjEzcPxMwsvqQ7+YMpmuThU81w3zrX1?=) s
+5 489 M
+( =?us-ascii?Q?FA=3D=3D?=) s
+5 478 M
+(Content-Type: multipart/alternative;) s
+5 467 M
+(        boundary="_000_DB9PR02MB7842CAADB53F7C93964D6AB78C432DB9PR02MB7842eurp_") s
+5 456 M
+(MIME-Version: 1.0) s
+5 445 M
+(X-OriginatorOrg: capgemini.com) s
+5 434 M
+(X-MS-Exchange-CrossTenant-AuthAs: Internal) s
+5 423 M
+(X-MS-Exchange-CrossTenant-AuthSource: DB9PR02MB7842.eurprd02.prod.outlook.com) s
+5 412 M
+(X-MS-Exchange-CrossTenant-Network-Message-Id: 4789fd31-a3e7-4124-14d1-08dcf1ade107) s
+5 401 M
+(X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2024 08:53:48.6205) s
+5 390 M
+( \(UTC\)) s
+5 379 M
+(X-MS-Exchange-CrossTenant-fromentityheader: Hosted) s
+5 368 M
+(X-MS-Exchange-CrossTenant-id: 76a2ae5a-9f00-4f6b-95ed-5d33d77c4d61) s
+5 357 M
+(X-MS-Exchange-CrossTenant-mailboxtype: HOSTED) s
+5 346 M
+(X-MS-Exchange-CrossTenant-userprincipalname: bUAKMAjBDsY9+7L1K1QouTTqHQZRMtVMLsoPZJjyN3) s
+5 335 M
+(PuXdG36pw+qQ1uJni+yCKUTalItBqEayrbDK25pG7MTMMl2z/axNpnWm325UJAvV8=) s
+5 324 M
+(X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB6448) s
+5 302 M
+(--_000_DB9PR02MB7842CAADB53F7C93964D6AB78C432DB9PR02MB7842eurp_) s
+5 291 M
+(Content-Type: text/plain; charset="us-ascii") s
+5 280 M
+(MIME-Version: 1.0) s
+5 269 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 247 M
+(Good morning.) s
+5 225 M
+(Is it possible to disable SSL certificate verification checks \(just for tes=) s
+5 214 M
+(t purposes\) - specifically the checks against SANs in the certificate - for=) s
+5 203 M
+( LDAPS calls via the LDAPLoginModule?) s
+5 181 M
+(Thanks) s
+5 159 M
+(________________________________) s
+5 137 M
+(Capgemini is a trading name used by the Capgemini Group of companies which =) s
+5 126 M
+(includes Capgemini UK plc, a company registered in England and Wales \(numbe=) s
+5 115 M
+(r 943935\) whose registered office is at No. 1, Forge End, Woking, Surrey, G=) s
+5 104 M
+(U21 6DB.) s
+5 93 M
+(This message contains information that may be privileged or confidential an=) s
+5 82 M
+(d is the property of the Capgemini Group. It is intended only for the perso=) s
+5 71 M
+(n to whom it is addressed. If you are not the intended recipient, you are n=) s
+5 60 M
+(ot authorized to read, print, retain, copy, disseminate, distribute, or use=) s
+5 49 M
+( this message or any part thereof. If you receive this message in error, pl=) s
+5 38 M
+(ease notify the sender immediately and delete all copies of this message.) s
+5 16 M
+(--_000_DB9PR02MB7842CAADB53F7C93964D6AB78C432DB9PR02MB7842eurp_--) s
+_R
+S
+%%Trailer
+%%Pages: 8
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

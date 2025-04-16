@@ -1,0 +1,506 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57588-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 94DF63E680
+	for <archive-asf-public@cust-asf.ponee.io>; Sat, 26 Oct 2024 16:16:21 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 723F46137C
+	for <archive-asf-public@cust-asf.ponee.io>; Sat, 26 Oct 2024 16:16:21 +0000 (UTC)
+Received: (qmail 2259962 invoked by uid 998); 26 Oct 2024 16:16:20 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 2259941 invoked by uid 116); 26 Oct 2024 16:16:19 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Sat, 26 Oct 2024 16:16:19 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 815A7200273
+	for <users@activemq.apache.org>; Sat, 26 Oct 2024 16:16:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -0.197
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.197 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, RCVD_IN_DNSWL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmx.de
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id JZnw-r_7lS8S for <users@activemq.apache.org>;
+	Sat, 26 Oct 2024 16:16:18 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=212.227.15.15; helo=mout.gmx.net; envelope-from=r.c.g@gmx.de; receiver=<UNKNOWN> 
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id D8B8481E51
+	for <users@activemq.apache.org>; Sat, 26 Oct 2024 16:16:18 +0000 (UTC)
+X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1729959378; x=1730564178; i=r.c.g@gmx.de;
+	bh=FzNi8R9I/RpI9AQECwky0ebUeFBpSj4uTJpAcdnaiPc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=lw6+4LnvBdZAVWtiThzs6dCndY5xxEEIo7zYjw2Q/i/4Xe1VyaqK804aiV2as+ww
+	 vUItvAgK7Q9rKJPbSiMjbyTJbLiVW6+XR8G7ddoHwQUWa1nGKYJJCzqNe/kplIcBy
+	 1Akq6M2KA76sUI45T4GWJAFySMPnzlPjDdJKBsOrwHvSMORLUPB7ITRaSgv3w/9e8
+	 cQgPA6vMGT1DgcKQ57qCBAEy0cXurdAMp14iJIm5Vhuey0ptXZuIhbdih+MtfDSMc
+	 f1uelxVGV9b9OVugIdLM4uRDgY1CFnffN+1Ut8B4nTnL7uoJLUYucIuOz6Z2r44DH
+	 h2HSZ56PmxjNz/OIyQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.0.0.89] ([195.52.165.142]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MBlxW-1tAGqc20kO-00FnDj for
+ <users@activemq.apache.org>; Sat, 26 Oct 2024 18:16:18 +0200
+Message-ID: <bf12046b-9322-4ee6-90c3-fe2a6e833abf@gmx.de>
+Date: Sat, 26 Oct 2024 18:16:18 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: ActiveMQ 6.x, STOMP via WebSocket, No factory for Upgrade:
+ websocket in ServerConnector
+To: users@activemq.apache.org
+References: <5483d346-17ba-4e53-b6df-f9bab4db9a17@gmx.de>
+Content-Language: en-US
+From: Ruediger Gad <r.c.g@gmx.de.INVALID>
+In-Reply-To: <5483d346-17ba-4e53-b6df-f9bab4db9a17@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:h8PyuH4Wa8JbBmrcwUCezrjHzAfu8O8Zj8833zEdcRoHEVTcvM8
+ VOiAhlP5k7OvP2u0qMWYGrk5SBsb5/pxRUx8E0AXWX4mF1KwPy9cmNgEFaFP7K3Oz0E1zLl
+ 2sX/IzmtbtLFoDKKpFGxGUM3njuBgEkmZ57pEEEkjr3YViKc8VHfjiogQ74LNaalpP4j4Rd
+ +8EanI/qrOqNwitoHmmjA==
+UI-OutboundReport: notjunk:1;M01:P0:dKv7bywoHqw=;B5X74GlHFjJ5kMJ2ZknuMiUTN0H
+ eRx29MnctgIO45/zBZiN7ylr/5SaqNMrAMc0AFNnovuDycOUUoBOTcTVKisW4SfWmvMXkzxzE
+ d40r/VpX4OgIl1fmCG9CByO+/+L5kiddGx9xBxZpnqHqbYiWXgXX1G9GNSUCMPCMaPvR5bfMK
+ ERQFPXroJk0wzZxwhat2QpruZ+pj9yRfrMNRReyasU38Ewdu0zqdW9IOmPKBIR+fY47c7Nefp
+ 65scYHXyF0iY7cGhXmGsp3RvtIwDw3TZ8VDzNQYoeHRv5hnX9FmNMhVqT3bB5lvXS4SBo6HpE
+ B0tchaJluqw6HWUosgApyNe3sQ+kKpfBhl8XZARZpVtoFoxiWBSStvlmUij9Yl435lfvM+9Kg
+ cDugaWh5pqk+K3xxy8K1Bjv/lYIdeiyzFVBenpC4+Ls3T1AGeKRhJmV9cYqZuKE0ejI1fBY7d
+ fOmvUrcBCJcEZuHc4uKBZ+DD9hnbymgnf+IPN9VZqSCjEKC8Z/3zGUE3a9Ckh2etQbI/W66HM
+ JTA5u7OARBvu6g6kQoKF2XKCYMX2Lt2vpjSloyMzdumNz9fH57uXYcYdpgG0pl6kiYMcqwXVY
+ hyHIW8SlW0OW2ZVDXq4hW+C47pSa8j9D2oeT6fjeICTTcEGMKEX1CEgiC+dWxYAewtA/s0Ps6
+ vXwgltliMQsDuZUGDpM2pns8ahdAqnuzbFFW3S8ZOHNkLdLcP/8laun4lfact7hPM+r+S0Rxw
+ h82Frmgyimyc72fhfgir6V9uh0mHvESci9M+CtZtw2DoCpsfYr8m6xdPtFlPw/bm6w29BpsfH
+ diQ9UEP78RLt9KPt1i8tFCbQ==
+
+Hi,
+
+I've been looking into this longer than I'd like to admit. xD
+Just after sending the question to the mailing list I got another idea,
+which seems to have led me to a solution.
+
+Explicitly setting the Sec-WebSocket-Protocol header to "stomp" seems to
+have fixed the problem.
+I pushed the change to my example in the following commit:
+https://github.com/ruedigergad/activemq_ws_stomp_test/commit/53e39107a9bf2=
+d18f0832802318ceacb73e6a7c7
+
+Sorry for the noise and thanks a lot to everyone working on ActiveMQ!
+
+
+
+Cheers,
+
+Ruediger
+
+
+
+
+On 26/10/2024 14:15, Ruediger Gad wrote:
+> Hi,
+>
+> I'm new to the mailing list.
+> I hope this is the right place to send my question to.
+> If this is not the right place, please point me in the appropriate
+> direction.
+>
+> I have a problem with ActiveMQ 6.x as follows:
+> - I try to use an embedded broker, i.e., I set everything up
+> programmatically in Java code.
+> - I want to use STOMP via WebSockets.
+> - I think the problem happens when the server side tries to update the
+> HTTP connection to the WebSocket protocol.
+> - I think the most relevant error message is:
+> [qtp1661882384-126] DEBUG org.eclipse.jetty.server.HttpChannelOverHttp -
+> No factory for Upgrade: websocket in ServerConnector@514f2020{HTTP/1.1,
+> (http/1.1)}{localhost:33444}
+>
+> I created a minimum "working" (well.. failing xD) example here:
+> https://github.com/ruedigergad/activemq_ws_stomp_test
+>
+> There, I also put instructions on running it and a bit more context of
+> the error message etc.
+>
+> If it helps, I can also send more context here but I wanted to keep the
+> initial message short.
+> Please let me know what additional information could be helpful to be
+> added here via e-mail.
+>
+> My original code is in Clojure and is a bit more involved.
+> So, I try to limit the discussion to the minimum example linked below.
+> With ActiveMQ 5.x my Clojure code works but I cannot get it working with
+> ActiveMQ 6.x, so far.
+> If it is helpful, I can try to also provide a minimum Java code example
+> for a version for ActiveMQ 5.x for comparison.
+>
+> Do you have any idea how the problem could be fixed?
+>
+>
+>
+> Thanks in advance and cheers,
+>
+> Ruediger
+>
+>
+>
+>
+> ---------------------------------------------------------------------
+> To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+> For additional commands, e-mail: users-help@activemq.apache.org
+> For further information, visit: https://activemq.apache.org/contact
+>
+>
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57592-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 20E8C3E67F
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 29 Oct 2024 06:17:05 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 09C3264322
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 29 Oct 2024 06:17:05 +0000 (UTC)
+Received: (qmail 3280335 invoked by uid 998); 29 Oct 2024 06:17:04 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 3280302 invoked by uid 116); 29 Oct 2024 06:17:03 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Tue, 29 Oct 2024 06:17:03 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id D0637C234C
+	for <users@activemq.apache.org>; Tue, 29 Oct 2024 06:17:02 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.003
+X-Spam-Level: 
+X-Spam-Status: No, score=0.003 tagged_above=-999 required=6.31
+	tests=[RCVD_IN_MSPIKE_H3=0.001, RCVD_IN_MSPIKE_WL=0.001,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]
+	autolearn=disabled
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id UFBDlo04PtMk for <users@activemq.apache.org>;
+	Tue, 29 Oct 2024 06:17:02 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=217.70.183.198; helo=relay6-d.mail.gandi.net; envelope-from=jb@nanthrax.net; receiver=<UNKNOWN> 
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 245748211A
+	for <users@activemq.apache.org>; Tue, 29 Oct 2024 06:16:32 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3A8E4C0002
+	for <users@activemq.apache.org>; Tue, 29 Oct 2024 06:16:31 +0000 (UTC)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4a4861a689eso1419164137.2
+        for <users@activemq.apache.org>; Mon, 28 Oct 2024 23:16:30 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yz1tojMe/Z6IRU5fb/dypKt6DnMjzDKDXu1jeu+nDiHTmHtgBo0
+	uCJ9tvvvNlU3CmOllC0RF4xkpNKiHZYfgcSeJiiTjdb+BICTHPOhoqnKrfn4JhxJoorOCM7dh24
+	NE5U8lxNbxygzN+Yc9o9aiqJnwEs=
+X-Google-Smtp-Source: AGHT+IH3BUhH5MCsqrorDRDmiZNhMrCl8IaaewbcvPFZ5Hpw9e4mL4O7uoZpnrnoRDqNqh0b2oZg8nLobZDlC+hb2yI=
+X-Received: by 2002:a05:6102:3a07:b0:4a7:4900:4b83 with SMTP id
+ ada2fe7eead31-4a8cfb7c821mr8396885137.15.1730182589967; Mon, 28 Oct 2024
+ 23:16:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <5483d346-17ba-4e53-b6df-f9bab4db9a17@gmx.de> <bf12046b-9322-4ee6-90c3-fe2a6e833abf@gmx.de>
+In-Reply-To: <bf12046b-9322-4ee6-90c3-fe2a6e833abf@gmx.de>
+From: =?UTF-8?Q?Jean=2DBaptiste_Onofr=C3=A9?= <jb@nanthrax.net>
+Date: Tue, 29 Oct 2024 07:16:13 +0100
+X-Gmail-Original-Message-ID: <CAB8EV3T-5pBiyErcS2J1jJ4aaTgq0LBAZRR_4veaxku_VFD29w@mail.gmail.com>
+Message-ID: <CAB8EV3T-5pBiyErcS2J1jJ4aaTgq0LBAZRR_4veaxku_VFD29w@mail.gmail.com>
+Subject: Re: ActiveMQ 6.x, STOMP via WebSocket, No factory for Upgrade:
+ websocket in ServerConnector
+To: users@activemq.apache.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: jb@nanthrax.net
+
+Hi
+
+Thanks for the update.
+
+As it's on the client side, I don't think we have to change anything
+on the STOMP transport broker side.
+
+Regards
+JB
+
+On Sat, Oct 26, 2024 at 6:16=E2=80=AFPM Ruediger Gad <r.c.g@gmx.de.invalid>=
+ wrote:
+>
+> Hi,
+>
+> I've been looking into this longer than I'd like to admit. xD
+> Just after sending the question to the mailing list I got another idea,
+> which seems to have led me to a solution.
+>
+> Explicitly setting the Sec-WebSocket-Protocol header to "stomp" seems to
+> have fixed the problem.
+> I pushed the change to my example in the following commit:
+> https://github.com/ruedigergad/activemq_ws_stomp_test/commit/53e39107a9bf=
+2d18f0832802318ceacb73e6a7c7
+>
+> Sorry for the noise and thanks a lot to everyone working on ActiveMQ!
+>
+>
+>
+> Cheers,
+>
+> Ruediger
+>
+>
+>
+>
+> On 26/10/2024 14:15, Ruediger Gad wrote:
+> > Hi,
+> >
+> > I'm new to the mailing list.
+> > I hope this is the right place to send my question to.
+> > If this is not the right place, please point me in the appropriate
+> > direction.
+> >
+> > I have a problem with ActiveMQ 6.x as follows:
+> > - I try to use an embedded broker, i.e., I set everything up
+> > programmatically in Java code.
+> > - I want to use STOMP via WebSockets.
+> > - I think the problem happens when the server side tries to update the
+> > HTTP connection to the WebSocket protocol.
+> > - I think the most relevant error message is:
+> > [qtp1661882384-126] DEBUG org.eclipse.jetty.server.HttpChannelOverHttp =
+-
+> > No factory for Upgrade: websocket in ServerConnector@514f2020{HTTP/1.1,
+> > (http/1.1)}{localhost:33444}
+> >
+> > I created a minimum "working" (well.. failing xD) example here:
+> > https://github.com/ruedigergad/activemq_ws_stomp_test
+> >
+> > There, I also put instructions on running it and a bit more context of
+> > the error message etc.
+> >
+> > If it helps, I can also send more context here but I wanted to keep the
+> > initial message short.
+> > Please let me know what additional information could be helpful to be
+> > added here via e-mail.
+> >
+> > My original code is in Clojure and is a bit more involved.
+> > So, I try to limit the discussion to the minimum example linked below.
+> > With ActiveMQ 5.x my Clojure code works but I cannot get it working wit=
+h
+> > ActiveMQ 6.x, so far.
+> > If it is helpful, I can try to also provide a minimum Java code example
+> > for a version for ActiveMQ 5.x for comparison.
+> >
+> > Do you have any idea how the problem could be fixed?
+> >
+> >
+> >
+> > Thanks in advance and cheers,
+> >
+> > Ruediger
+> >
+> >
+> >
+> >
+> > ---------------------------------------------------------------------
+> > To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+> > For additional commands, e-mail: users-help@activemq.apache.org
+> > For further information, visit: https://activemq.apache.org/contact
+> >
+> >
+>
+> ---------------------------------------------------------------------
+> To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+> For additional commands, e-mail: users-help@activemq.apache.org
+> For further information, visit: https://activemq.apache.org/contact
+>
+>
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57587-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id E3AB63E817
+	for <archive-asf-public@cust-asf.ponee.io>; Sat, 26 Oct 2024 12:15:57 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id EFB9B46402
+	for <archive-asf-public@cust-asf.ponee.io>; Sat, 26 Oct 2024 12:15:56 +0000 (UTC)
+Received: (qmail 1979396 invoked by uid 998); 26 Oct 2024 12:15:55 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1979365 invoked by uid 116); 26 Oct 2024 12:15:54 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Sat, 26 Oct 2024 12:15:54 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id 174EBC2334
+	for <users@activemq.apache.org>; Sat, 26 Oct 2024 12:15:54 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -1.104
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.104 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, RCVD_IN_MSPIKE_H2=-0.906,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmx.de
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id CdvJj0dzS-x8 for <users@activemq.apache.org>;
+	Sat, 26 Oct 2024 12:15:53 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=212.227.17.22; helo=mout.gmx.net; envelope-from=r.c.g@gmx.de; receiver=<UNKNOWN> 
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id B0B6ABFB43
+	for <users@activemq.apache.org>; Sat, 26 Oct 2024 12:15:52 +0000 (UTC)
+X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1729944951; x=1730549751; i=r.c.g@gmx.de;
+	bh=V0OuXGDKimmW7kDraJ18bToqpBFFETfWHc+j3IxQDbc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
+	 Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=uV9bRw5JQUTIfLIzScB3sxCIkohuvuLkKAX2QwyYBxvx229RnOCIdhraBWCb0jXO
+	 DFjpZjdk91ITkvBCjnLxlPZC6D5VLX5lHYQFtI/YhyZI8RjBQvdBIIQmwgA9ua30i
+	 z/7kd5rO1GJUUVMEXM4Qqkc/PEIGX6g1tLTFPszNXcAyHJWSM6wl1GUkgh63HVob3
+	 XC+Hbal+M7l9odsADDDlmV2q3Tcg7uDwOOlzJmABvTSlbliV3SPx3YqfjyW3s8VaI
+	 RR2GW+KbSviREVueqVgi0S3CsGJqeeFpSMX5yFx21gfI/isBaTvkvPHuWzarxcB1P
+	 +hN+o5NHU2F7+rgCWQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.0.0.89] ([195.52.165.142]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MqJqN-1tiyWa1ODr-00dk2g for
+ <users@activemq.apache.org>; Sat, 26 Oct 2024 14:15:51 +0200
+Message-ID: <5483d346-17ba-4e53-b6df-f9bab4db9a17@gmx.de>
+Date: Sat, 26 Oct 2024 14:15:50 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: users@activemq.apache.org
+Content-Language: en-US
+From: Ruediger Gad <r.c.g@gmx.de.INVALID>
+Subject: ActiveMQ 6.x, STOMP via WebSocket, No factory for Upgrade: websocket
+ in ServerConnector
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rvtIoG/Hd+9JAUT3zvCXgrlDyQONekhH8WCiWIIOckx8VI0Qp9P
+ GfOYRC+ty/cIPoRTgpbTCEnfhkGFcFM4bKtlgIu4hO09sOS2yOD5+EouZnz1+1kd+/lQjx6
+ yJLE9maNyFriXX4aXAsKyjzkSyazRIMF4ptjQKWtshl2QtihpJ9kmoH1BLClmb4Z/cleRjA
+ YaKrN+g2oumq4DOEFYRog==
+UI-OutboundReport: notjunk:1;M01:P0:hFT2PwAijK8=;G/AMmmAW8VTjNePyPCb0VscrJm+
+ OTRyrDuQk++F4E2jn4JXlHCf9bfCO8o09siXgunIIiYGBtrS0u5M3wsvUgUpJkykXG97L1BLD
+ epvK29Ap/kqBFhhoBdCogKPu6AqYiw6Cu7dtZmn/oSWbDSEtKIcOPnze2vuLor3APYuziTGVE
+ Qv9GIg9LekkuZ3KFlqHc1U3vpzdxpfQC4K4dQy9CLCVev5xLLnkugeMlOD9ivwpWRpoxtwbYJ
+ 2NpxQtmikjdvSs3kwFxfgZxE+sZLnrmp+URza6Al9NE1Ke6Y/A0blc+yEf9nqNNlykEXMdn/L
+ NKi0EkOVzry6chTbGb5PBzVQmCeBDgod/CYdtI4K457diRBt0uRyLuMymqKUKsvSNiAVBlzcV
+ 7a9MTY0L354+TtlleFaHz/+Ob8M1Ee5E4n32bSnRTB81tX8s7F8fs1zR1wk5OCyod98Dv21sg
+ aTWksrOMM1X0e41jlO7k1GQYAySN84SC/t9ejt/7RL4KOHMIig1YBQbdcreQFI+uB+e76fVTM
+ jJq85TUMxGMSvxRGpRksT+DEu8ht88CbcD1FGDUm+L4XR4MOd6DQjP+/2laaYcYzgGQ5DT51x
+ MrTrANa3XSuYGMBQF0jWQI44Duw0sx6VeoqTvJ+PylnPRjel+VNNjg+fukC84awKaLMNdpN4X
+ I5sBtkZek/gGNoVQsGlzm1XoNU6gBBlDgUrBbHLDYyRERr5lkYLCajoul8Q+KSsY0PZJhj1XA
+ unRA4JWbVfbrUvIlg7bkoIpH4uz3+88bF/XG6HSx8nsEqMhSI5506VOVX4aOzpzuuCheZrTLW
+ nFvLcz+naC328E6jEF8h/duQ==
+
+Hi,
+
+I'm new to the mailing list.
+I hope this is the right place to send my question to.
+If this is not the right place, please point me in the appropriate
+direction.
+
+I have a problem with ActiveMQ 6.x as follows:
+- I try to use an embedded broker, i.e., I set everything up
+programmatically in Java code.
+- I want to use STOMP via WebSockets.
+- I think the problem happens when the server side tries to update the
+HTTP connection to the WebSocket protocol.
+- I think the most relevant error message is:
+[qtp1661882384-126] DEBUG org.eclipse.jetty.server.HttpChannelOverHttp -
+No factory for Upgrade: websocket in ServerConnector@514f2020{HTTP/1.1,
+(http/1.1)}{localhost:33444}
+
+I created a minimum "working" (well.. failing xD) example here:
+https://github.com/ruedigergad/activemq_ws_stomp_test
+
+There, I also put instructions on running it and a bit more context of
+the error message etc.
+
+If it helps, I can also send more context here but I wanted to keep the
+initial message short.
+Please let me know what additional information could be helpful to be
+added here via e-mail.
+
+My original code is in Clojure and is a bit more involved.
+So, I try to limit the discussion to the minimum example linked below.
+With ActiveMQ 5.x my Clojure code works but I cannot get it working with
+ActiveMQ 6.x, so far.
+If it is helpful, I can try to also provide a minimum Java code example
+for a version for ActiveMQ 5.x for comparison.
+
+Do you have any idea how the problem could be fixed?
+
+
+
+Thanks in advance and cheers,
+
+Ruediger
+
+
+
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+

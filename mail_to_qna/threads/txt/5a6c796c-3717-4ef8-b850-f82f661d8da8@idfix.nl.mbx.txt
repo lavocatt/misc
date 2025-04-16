@@ -1,0 +1,1065 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57566-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id B83013E680
+	for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 09:32:10 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id C565D4D131
+	for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 09:32:09 +0000 (UTC)
+Received: (qmail 2503298 invoked by uid 998); 23 Oct 2024 09:32:08 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 2503214 invoked by uid 116); 23 Oct 2024 09:32:06 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Wed, 23 Oct 2024 09:32:06 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id C0CA9C22DC
+	for <users@activemq.apache.org>; Wed, 23 Oct 2024 09:32:06 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.201
+X-Spam-Level: 
+X-Spam-Status: No, score=0.201 tagged_above=-999 required=6.31
+	tests=[HTML_MESSAGE=0.2, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]
+	autolearn=disabled
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id GXsZ79VwHanl for <users@activemq.apache.org>;
+	Wed, 23 Oct 2024 09:32:05 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=136.144.238.65; helo=jambo4.jambo-mobile.com; envelope-from=bisil@idfix.nl; receiver=<UNKNOWN> 
+Received: from jambo4.jambo-mobile.com (jambo4.jambo-mobile.com [136.144.238.65])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id D01DF816C9
+	for <users@activemq.apache.org>; Wed, 23 Oct 2024 09:32:05 +0000 (UTC)
+Received: from [192.168.1.106] (86-95-102-82.fixed.kpn.net [86.95.102.82])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by jambo4.jambo-mobile.com (Postfix) with ESMTPSA id 260926C0152
+	for <users@activemq.apache.org>; Wed, 23 Oct 2024 11:32:05 +0200 (CEST)
+Content-Type: multipart/alternative;
+ boundary="------------YzUlPTEl5gNZ2DCWOwswCX0F"
+Message-ID: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>
+Date: Wed, 23 Oct 2024 11:32:04 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Content-Language: en-US
+From: Bisil <bisil@idfix.nl>
+Subject: Question regarding problems with JDBC persistence
+
+--------------YzUlPTEl5gNZ2DCWOwswCX0F
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hello,
+
+Inside Wildfly 23.0.0 we are running ActiveMQ Artemis Message Broker 
+2.16.0 with JDBC persistence on SQLServer for ~25 message queues. In 
+some production environments we have moderate-to-high message volumes 
+and since processing can be relatively slow temporary message pileup is 
+not uncommon.
+
+In one particular environment we are experiencing OutOfMemory issues 
+during startup. There are about 60K messages in 2 of the queues while 
+the message table contains over 350M records causing memory exhaustion 
+during startup. Running in a controlled environment with ~60G heap 
+startup succeeds and through JProfiler we observe that all message table 
+records are selected and appear to be collected in memory. After that 
+they are processed and discarded dropping memory usage down to a 
+fraction of its peak. Using the JBoss CLI to inspect the queues then 
+shows we have indeed 60K messages in 2 queues.
+
+Inspecting the contents of the message table we see limited counts of 
+record types 13 (ADD_RECORD_TX) and 14 (UPDATE_RECORD_TX) roughly 
+equivalent to the 60K message count. All remaining records are type 11 
+(ADD_RECORD).
+
+When we removed all type 11 records restart was fast with limited memory 
+load and we still see 60K messages in the 2 queues.
+
+In the past we have observed similar numbers and startup problems in 
+other environments which lead us to truncate the AMQ persistence tables 
+to be able to restart the server without an OutOfMemoryException. But we 
+are looking for a way to prevent this situation from happening.
+
+So my questions are:
+
+- Is the large record count in the message table expected behavior?
+
+- Is there anything we can/should do to limit the number of records in 
+the message table?
+
+- Is removing all type 11 records a valid workaround? If no, what would 
+be the side-effect?
+
+Thanks for your help!
+
+Silvio
+
+--------------YzUlPTEl5gNZ2DCWOwswCX0F--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57570-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 960803E724
+	for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 20:28:20 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 7A3B8661A5
+	for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 20:28:20 +0000 (UTC)
+Received: (qmail 3817918 invoked by uid 998); 23 Oct 2024 20:28:19 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 3817901 invoked by uid 116); 23 Oct 2024 20:28:19 -0000
+Received: from ec2-52-204-25-47.compute-1.amazonaws.com (HELO mailrelay1-ec2-va.apache.org) (52.204.25.47)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Wed, 23 Oct 2024 20:28:19 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	by mailrelay1-ec2-va.apache.org (ASF Mail Server at mailrelay1-ec2-va.apache.org) with ESMTPSA id AF0253F1F9
+	for <users@activemq.apache.org>; Wed, 23 Oct 2024 20:28:18 +0000 (UTC)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c937b5169cso338143a12.1
+        for <users@activemq.apache.org>; Wed, 23 Oct 2024 13:28:18 -0700 (PDT)
+X-Gm-Message-State: AOJu0YyAvmc4Xja1wv2hJvMxHo4tbLOq+ZNuK2/swZ8+kLFV9XjtmB41
+	7ENG1Er8Q/ofkR3CCGUwXBVF3xcFQlTKNT5bD1FHiyJ99RNTo7lvkYi4OyxD4GItcuvEjTKSrrE
+	2RdfYnB1MKX3VwcqVDZ/foWleoCo5AaYlqI6cVA==
+X-Google-Smtp-Source: AGHT+IEm/szwFxz4XLQUmkzxdELvdDafT7gNTjBj06XPaKYKvmNSd11gjgNMEYmGok34rjvZxY4zJwmcgeS2m8FEXMU=
+X-Received: by 2002:a05:6402:3489:b0:5cb:7388:816a with SMTP id
+ 4fb4d7f45d1cf-5cb8b4e295amr4138326a12.1.1729715297823; Wed, 23 Oct 2024
+ 13:28:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>
+In-Reply-To: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>
+From: Justin Bertram <jbertram@apache.org>
+Date: Wed, 23 Oct 2024 15:27:51 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>
+Message-ID: <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>
+Subject: Re: Question regarding problems with JDBC persistence
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="000000000000e3cff706252ab9f7"
+
+--000000000000e3cff706252ab9f7
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+This sounds similar to an issue involving duplicate IDs proliferating in
+the journal. I can't find the specific Jira at the moment, but the issue
+was something like a huge build-up of duplicate ID records. Can you inspect
+the "userRecordType" for the offending rows?
+
+Also, how are you sending your message exactly? Do you need duplicate
+detection?
+
+Lastly, 2.16.0 is quite old at this point. There's been improvements to
+JDBC since then which you'd almost certainly benefit from (not to mention
+all the other bug-fixes and features). Are you open to upgrading?
+
+
+Justin
+
+On Wed, Oct 23, 2024 at 4:32=E2=80=AFAM Bisil <bisil@idfix.nl> wrote:
+
+> Hello,
+>
+> Inside Wildfly 23.0.0 we are running ActiveMQ Artemis Message Broker
+> 2.16.0 with JDBC persistence on SQLServer for ~25 message queues. In
+> some production environments we have moderate-to-high message volumes
+> and since processing can be relatively slow temporary message pileup is
+> not uncommon.
+>
+> In one particular environment we are experiencing OutOfMemory issues
+> during startup. There are about 60K messages in 2 of the queues while
+> the message table contains over 350M records causing memory exhaustion
+> during startup. Running in a controlled environment with ~60G heap
+> startup succeeds and through JProfiler we observe that all message table
+> records are selected and appear to be collected in memory. After that
+> they are processed and discarded dropping memory usage down to a
+> fraction of its peak. Using the JBoss CLI to inspect the queues then
+> shows we have indeed 60K messages in 2 queues.
+>
+> Inspecting the contents of the message table we see limited counts of
+> record types 13 (ADD_RECORD_TX) and 14 (UPDATE_RECORD_TX) roughly
+> equivalent to the 60K message count. All remaining records are type 11
+> (ADD_RECORD).
+>
+> When we removed all type 11 records restart was fast with limited memory
+> load and we still see 60K messages in the 2 queues.
+>
+> In the past we have observed similar numbers and startup problems in
+> other environments which lead us to truncate the AMQ persistence tables
+> to be able to restart the server without an OutOfMemoryException. But we
+> are looking for a way to prevent this situation from happening.
+>
+> So my questions are:
+>
+> - Is the large record count in the message table expected behavior?
+>
+> - Is there anything we can/should do to limit the number of records in
+> the message table?
+>
+> - Is removing all type 11 records a valid workaround? If no, what would
+> be the side-effect?
+>
+> Thanks for your help!
+>
+> Silvio
+>
+
+--000000000000e3cff706252ab9f7--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57589-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 1CD2E3E680
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 28 Oct 2024 07:54:11 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 4D7FF42E3F
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 28 Oct 2024 07:53:59 +0000 (UTC)
+Received: (qmail 576863 invoked by uid 998); 28 Oct 2024 07:53:57 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 576832 invoked by uid 116); 28 Oct 2024 07:53:56 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 28 Oct 2024 07:53:56 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id 5445BC2344
+	for <users@activemq.apache.org>; Mon, 28 Oct 2024 07:53:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.201
+X-Spam-Level: 
+X-Spam-Status: No, score=0.201 tagged_above=-999 required=6.31
+	tests=[HTML_MESSAGE=0.2, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]
+	autolearn=disabled
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id W1cGwwZCKJOf for <users@activemq.apache.org>;
+	Mon, 28 Oct 2024 07:53:55 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=136.144.238.65; helo=jambo4.jambo-mobile.com; envelope-from=bisil@idfix.nl; receiver=<UNKNOWN> 
+Received: from jambo4.jambo-mobile.com (jambo4.jambo-mobile.com [136.144.238.65])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id B16F9BFDF3
+	for <users@activemq.apache.org>; Mon, 28 Oct 2024 07:53:53 +0000 (UTC)
+Received: from [192.168.1.106] (86-95-102-82.fixed.kpn.net [86.95.102.82])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by jambo4.jambo-mobile.com (Postfix) with ESMTPSA id 2BA456C0AFC
+	for <users@activemq.apache.org>; Mon, 28 Oct 2024 08:53:47 +0100 (CET)
+Content-Type: multipart/alternative;
+ boundary="------------WR5bcGL0i2NJJkSkJtTZRt63"
+Message-ID: <08acc429-acaf-4e0d-943e-aed1e7effc01@idfix.nl>
+Date: Mon, 28 Oct 2024 08:53:46 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Question regarding problems with JDBC persistence
+To: users@activemq.apache.org
+References: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>
+ <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>
+Content-Language: en-US
+From: Bisil <bisil@idfix.nl>
+In-Reply-To: <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>
+
+--------------WR5bcGL0i2NJJkSkJtTZRt63
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Thanks for the reply Justin.
+
+After restoring the database in its original state I ran counts on 
+recordType/userRecordType and got this:
+
+recordType userRecordType           count(*)
+
+11         36 376143458
+
+11         34 290102
+
+13        45 63893
+
+14        32 63893
+
+18        255 22941
+
+17        255       228
+
+14        33        2
+
+
+
+The messages are posted through JMS from inside the same Wildfly 
+instance that runs ActiveMQ. Message handling is done by MDBs that run 
+inside the same JVM. We do have some clustered Wildfly setups although 
+most are standalone.
+
+We know we are running an old version. Upgrading Wildfly is on our 
+roadmap but that may take quite some time. We investigated upgrading 
+ActiveMQ separately but ran into too many issues and gave up on that idea.
+
+Silvio
+
+
+On 23-10-2024 22:27, Justin Bertram wrote:
+> This sounds similar to an issue involving duplicate IDs proliferating in
+> the journal. I can't find the specific Jira at the moment, but the issue
+> was something like a huge build-up of duplicate ID records. Can you inspect
+> the "userRecordType" for the offending rows?
+>
+> Also, how are you sending your message exactly? Do you need duplicate
+> detection?
+>
+> Lastly, 2.16.0 is quite old at this point. There's been improvements to
+> JDBC since then which you'd almost certainly benefit from (not to mention
+> all the other bug-fixes and features). Are you open to upgrading?
+>
+>
+> Justin
+>
+> On Wed, Oct 23, 2024 at 4:32 AM Bisil<bisil@idfix.nl> wrote:
+>
+>> Hello,
+>>
+>> Inside Wildfly 23.0.0 we are running ActiveMQ Artemis Message Broker
+>> 2.16.0 with JDBC persistence on SQLServer for ~25 message queues. In
+>> some production environments we have moderate-to-high message volumes
+>> and since processing can be relatively slow temporary message pileup is
+>> not uncommon.
+>>
+>> In one particular environment we are experiencing OutOfMemory issues
+>> during startup. There are about 60K messages in 2 of the queues while
+>> the message table contains over 350M records causing memory exhaustion
+>> during startup. Running in a controlled environment with ~60G heap
+>> startup succeeds and through JProfiler we observe that all message table
+>> records are selected and appear to be collected in memory. After that
+>> they are processed and discarded dropping memory usage down to a
+>> fraction of its peak. Using the JBoss CLI to inspect the queues then
+>> shows we have indeed 60K messages in 2 queues.
+>>
+>> Inspecting the contents of the message table we see limited counts of
+>> record types 13 (ADD_RECORD_TX) and 14 (UPDATE_RECORD_TX) roughly
+>> equivalent to the 60K message count. All remaining records are type 11
+>> (ADD_RECORD).
+>>
+>> When we removed all type 11 records restart was fast with limited memory
+>> load and we still see 60K messages in the 2 queues.
+>>
+>> In the past we have observed similar numbers and startup problems in
+>> other environments which lead us to truncate the AMQ persistence tables
+>> to be able to restart the server without an OutOfMemoryException. But we
+>> are looking for a way to prevent this situation from happening.
+>>
+>> So my questions are:
+>>
+>> - Is the large record count in the message table expected behavior?
+>>
+>> - Is there anything we can/should do to limit the number of records in
+>> the message table?
+>>
+>> - Is removing all type 11 records a valid workaround? If no, what would
+>> be the side-effect?
+>>
+>> Thanks for your help!
+>>
+>> Silvio
+>>
+
+--------------WR5bcGL0i2NJJkSkJtTZRt63--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57591-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id B46DC3E6E9
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 28 Oct 2024 14:05:47 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 6187843261
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 28 Oct 2024 14:05:25 +0000 (UTC)
+Received: (qmail 1493724 invoked by uid 998); 28 Oct 2024 14:05:23 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1493702 invoked by uid 116); 28 Oct 2024 14:05:23 -0000
+Received: from ec2-52-204-25-47.compute-1.amazonaws.com (HELO mailrelay1-ec2-va.apache.org) (52.204.25.47)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 28 Oct 2024 14:05:23 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	by mailrelay1-ec2-va.apache.org (ASF Mail Server at mailrelay1-ec2-va.apache.org) with ESMTPSA id BE3C03F1C0
+	for <users@activemq.apache.org>; Mon, 28 Oct 2024 14:05:22 +0000 (UTC)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9932aa108cso650891566b.2
+        for <users@activemq.apache.org>; Mon, 28 Oct 2024 07:05:22 -0700 (PDT)
+X-Gm-Message-State: AOJu0YxStzIIme3L15mgZbuHc+oA5mD5CZxBfJ04ZUPJ2SncZaGB0LMi
+	Fand6ZqJ23z6KL6CBEn8KUFOXfeEP3t3NYOxMpXpqL5RsF4UmniaSnpg7rBksTi/YiM5lkakqiz
+	MnEQW77JsjF7LnER+NKfGSlbdwm9frVWr7WPH5A==
+X-Google-Smtp-Source: AGHT+IF+NiSI4zvi9lj6svV/wUvyIkmaVqAK6Z/oRbW8MacV2jyUadfyR8mSgfsllSPw9cOJk0wI2yd5qH08p4C7mAs=
+X-Received: by 2002:a17:907:1c12:b0:a99:7177:3f6a with SMTP id
+ a640c23a62f3a-a9de62f4b79mr831783766b.63.1730124321813; Mon, 28 Oct 2024
+ 07:05:21 -0700 (PDT)
+MIME-Version: 1.0
+References: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>
+ <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com> <08acc429-acaf-4e0d-943e-aed1e7effc01@idfix.nl>
+In-Reply-To: <08acc429-acaf-4e0d-943e-aed1e7effc01@idfix.nl>
+From: Justin Bertram <jbertram@apache.org>
+Date: Mon, 28 Oct 2024 09:04:55 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=QM5u=icW7+diJOK9=8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com>
+Message-ID: <CAF+kE=QM5u=icW7+diJOK9=8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com>
+Subject: Re: Question regarding problems with JDBC persistence
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="0000000000009eaa8e062589f563"
+
+--0000000000009eaa8e062589f563
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Based on the information you provided I can say that the problem isn't what
+I originally expected. Here's how the data breaks down per record type:
+
+- Add (11)
+  - Set scheduled delivery time (36): 376,143,458
+  - Update delivery count(34): 290,102
+- Add Transactional (13)
+  - Add message (45):  63,893
+- Update Transactional (14)
+  - Add reference (32) 63,893
+  - Acknowledge reference (33) 2
+- Prepare (17): 228
+- Commit (18): 22,941
+
+So it looks like you're using a lot of scheduled messages, either directly
+or indirectly (e.g. via redelivery delay), and the records related to the
+delivery schedule are accumulating. If you stop the broker and run the
+"journal compact" command does the number of records in the database drop?
+
+Out of curiosity, is there a specific reason you're using JDBC vs. the
+traditional file-based journal on local disk?
+
+
+Justin
+
+On Mon, Oct 28, 2024 at 2:56=E2=80=AFAM Bisil <bisil@idfix.nl> wrote:
+
+> Thanks for the reply Justin.
+>
+> After restoring the database in its original state I ran counts on
+> recordType/userRecordType and got this:
+>
+> recordType userRecordType           count(*)
+>
+> 11         36 376143458
+>
+> 11         34 290102
+>
+> 13        45 63893
+>
+> 14        32 63893
+>
+> 18        255 22941
+>
+> 17        255       228
+>
+> 14        33        2
+>
+>
+>
+> The messages are posted through JMS from inside the same Wildfly
+> instance that runs ActiveMQ. Message handling is done by MDBs that run
+> inside the same JVM. We do have some clustered Wildfly setups although
+> most are standalone.
+>
+> We know we are running an old version. Upgrading Wildfly is on our
+> roadmap but that may take quite some time. We investigated upgrading
+> ActiveMQ separately but ran into too many issues and gave up on that idea=
+.
+>
+> Silvio
+>
+>
+> On 23-10-2024 22:27, Justin Bertram wrote:
+> > This sounds similar to an issue involving duplicate IDs proliferating i=
+n
+> > the journal. I can't find the specific Jira at the moment, but the issu=
+e
+> > was something like a huge build-up of duplicate ID records. Can you
+> inspect
+> > the "userRecordType" for the offending rows?
+> >
+> > Also, how are you sending your message exactly? Do you need duplicate
+> > detection?
+> >
+> > Lastly, 2.16.0 is quite old at this point. There's been improvements to
+> > JDBC since then which you'd almost certainly benefit from (not to menti=
+on
+> > all the other bug-fixes and features). Are you open to upgrading?
+> >
+> >
+> > Justin
+> >
+> > On Wed, Oct 23, 2024 at 4:32=E2=80=AFAM Bisil<bisil@idfix.nl> wrote:
+> >
+> >> Hello,
+> >>
+> >> Inside Wildfly 23.0.0 we are running ActiveMQ Artemis Message Broker
+> >> 2.16.0 with JDBC persistence on SQLServer for ~25 message queues. In
+> >> some production environments we have moderate-to-high message volumes
+> >> and since processing can be relatively slow temporary message pileup i=
+s
+> >> not uncommon.
+> >>
+> >> In one particular environment we are experiencing OutOfMemory issues
+> >> during startup. There are about 60K messages in 2 of the queues while
+> >> the message table contains over 350M records causing memory exhaustion
+> >> during startup. Running in a controlled environment with ~60G heap
+> >> startup succeeds and through JProfiler we observe that all message tab=
+le
+> >> records are selected and appear to be collected in memory. After that
+> >> they are processed and discarded dropping memory usage down to a
+> >> fraction of its peak. Using the JBoss CLI to inspect the queues then
+> >> shows we have indeed 60K messages in 2 queues.
+> >>
+> >> Inspecting the contents of the message table we see limited counts of
+> >> record types 13 (ADD_RECORD_TX) and 14 (UPDATE_RECORD_TX) roughly
+> >> equivalent to the 60K message count. All remaining records are type 11
+> >> (ADD_RECORD).
+> >>
+> >> When we removed all type 11 records restart was fast with limited memo=
+ry
+> >> load and we still see 60K messages in the 2 queues.
+> >>
+> >> In the past we have observed similar numbers and startup problems in
+> >> other environments which lead us to truncate the AMQ persistence table=
+s
+> >> to be able to restart the server without an OutOfMemoryException. But =
+we
+> >> are looking for a way to prevent this situation from happening.
+> >>
+> >> So my questions are:
+> >>
+> >> - Is the large record count in the message table expected behavior?
+> >>
+> >> - Is there anything we can/should do to limit the number of records in
+> >> the message table?
+> >>
+> >> - Is removing all type 11 records a valid workaround? If no, what woul=
+d
+> >> be the side-effect?
+> >>
+> >> Thanks for your help!
+> >>
+> >> Silvio
+> >>
+>
+
+--0000000000009eaa8e062589f563--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57593-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 704AA3E6B5
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 29 Oct 2024 13:06:02 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id A44A365000
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 29 Oct 2024 13:04:42 +0000 (UTC)
+Received: (qmail 4188348 invoked by uid 998); 29 Oct 2024 13:04:41 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 4188316 invoked by uid 116); 29 Oct 2024 13:04:39 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Tue, 29 Oct 2024 13:04:39 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 8597E20022A
+	for <users@activemq.apache.org>; Tue, 29 Oct 2024 13:04:39 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.202
+X-Spam-Level: 
+X-Spam-Status: No, score=0.202 tagged_above=-999 required=6.31
+	tests=[HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]
+	autolearn=disabled
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id PIud_9ASpw8f for <users@activemq.apache.org>;
+	Tue, 29 Oct 2024 13:04:38 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=136.144.238.65; helo=jambo4.jambo-mobile.com; envelope-from=bisil@idfix.nl; receiver=<UNKNOWN> 
+Received: from jambo4.jambo-mobile.com (jambo4.jambo-mobile.com [136.144.238.65])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id 87F98BFB46
+	for <users@activemq.apache.org>; Tue, 29 Oct 2024 13:04:37 +0000 (UTC)
+Received: from [192.168.1.106] (86-95-102-82.fixed.kpn.net [86.95.102.82])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by jambo4.jambo-mobile.com (Postfix) with ESMTPSA id D0BA36C0685
+	for <users@activemq.apache.org>; Tue, 29 Oct 2024 14:04:30 +0100 (CET)
+Content-Type: multipart/alternative;
+ boundary="------------CBmZ30XvHIWNb9KIPKUJkrXO"
+Message-ID: <9565d5b5-5d75-4d30-a0f1-908fef0fd026@idfix.nl>
+Date: Tue, 29 Oct 2024 14:04:30 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Question regarding problems with JDBC persistence
+To: users@activemq.apache.org
+References: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>
+ <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>
+ <08acc429-acaf-4e0d-943e-aed1e7effc01@idfix.nl>
+ <CAF+kE=QM5u=icW7+diJOK9=8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com>
+Content-Language: en-US
+From: Bisil <bisil@idfix.nl>
+In-Reply-To: <CAF+kE=QM5u=icW7+diJOK9=8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com>
+
+--------------CBmZ30XvHIWNb9KIPKUJkrXO
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi Justin,
+
+Thanks again for your valuable insights.
+
+We do use indirect scheduled messages intensively since we have 
+redelivery-delay=1000, redelivery-multiplier=2, redelivery-attempts=9 
+settings for the majority of queues. We also use 
+message-counter-history-day-limit=10 for all queues if that is at all 
+significant.
+
+We have not tried explicit compacting the journal yet and since the 
+AMQ-related tables on production environments that ran into this 
+situation were truncated to get things back up we can not do this right now.
+I was under the impression that Artemis also compacts the journal during 
+startup. If that is true could we not simply try restarting the Wildfly 
+server if we see large journal volumes to check if that makes a 
+difference, or is that not the same? If so, could you elaborate a bit 
+since I know how to stop/start the broker from the JBoss CLI but have no 
+knowledge about an explicit journal compaction command.
+
+We use JDBC persistence for a couple of reasons. Having the journal 
+inside the database makes it easier for us to keep things in sync with 
+backups/restores which we also use heavily for trouble shooting. In 
+addition to that using file based persistence comes with additional 
+costs in our cloud environments.
+
+Silvio
+
+
+On 28-10-2024 15:04, Justin Bertram wrote:
+> Based on the information you provided I can say that the problem isn't what
+> I originally expected. Here's how the data breaks down per record type:
+>
+> - Add (11)
+>    - Set scheduled delivery time (36): 376,143,458
+>    - Update delivery count(34): 290,102
+> - Add Transactional (13)
+>    - Add message (45):  63,893
+> - Update Transactional (14)
+>    - Add reference (32) 63,893
+>    - Acknowledge reference (33) 2
+> - Prepare (17): 228
+> - Commit (18): 22,941
+>
+> So it looks like you're using a lot of scheduled messages, either directly
+> or indirectly (e.g. via redelivery delay), and the records related to the
+> delivery schedule are accumulating. If you stop the broker and run the
+> "journal compact" command does the number of records in the database drop?
+>
+> Out of curiosity, is there a specific reason you're using JDBC vs. the
+> traditional file-based journal on local disk?
+>
+>
+> Justin
+>
+>
+--------------CBmZ30XvHIWNb9KIPKUJkrXO--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57594-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id F0E063E6A3
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 29 Oct 2024 15:55:35 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id B599545FDF
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 29 Oct 2024 15:54:26 +0000 (UTC)
+Received: (qmail 538013 invoked by uid 998); 29 Oct 2024 15:54:24 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 537996 invoked by uid 116); 29 Oct 2024 15:54:24 -0000
+Received: from ec2-52-204-25-47.compute-1.amazonaws.com (HELO mailrelay1-ec2-va.apache.org) (52.204.25.47)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Tue, 29 Oct 2024 15:54:24 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	by mailrelay1-ec2-va.apache.org (ASF Mail Server at mailrelay1-ec2-va.apache.org) with ESMTPSA id 39246402DA
+	for <users@activemq.apache.org>; Tue, 29 Oct 2024 15:54:24 +0000 (UTC)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c984352742so6289663a12.1
+        for <users@activemq.apache.org>; Tue, 29 Oct 2024 08:54:24 -0700 (PDT)
+X-Gm-Message-State: AOJu0YwzHFxfeXxO6HxuZNmR2FRbbwRXMwvF638VddJpi0HbblAqUTXh
+	piJnzKk6kkErjHpMKXKJHfAnHixeGe4Jre6Rt2/431rkyQ9UWFEHJbSqtV+WqlF+AHkU/OZLGrT
+	kg8xCZpkZNfThGF/S1D386NvIYRTaI1CLf2ECFA==
+X-Google-Smtp-Source: AGHT+IH5YqnmJaRqnPr1y8DQ/c4AsDaZTsGx1taeEXXFviVrORiPSgN1S3cLIGeXSHScArt3isuQt4DrZxZHXS64oTk=
+X-Received: by 2002:a05:6402:42c4:b0:5c5:cd4b:5c4d with SMTP id
+ 4fb4d7f45d1cf-5cbbf891a4emr11622241a12.8.1730217263280; Tue, 29 Oct 2024
+ 08:54:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>
+ <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>
+ <08acc429-acaf-4e0d-943e-aed1e7effc01@idfix.nl> <CAF+kE=QM5u=icW7+diJOK9=8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com>
+ <9565d5b5-5d75-4d30-a0f1-908fef0fd026@idfix.nl>
+In-Reply-To: <9565d5b5-5d75-4d30-a0f1-908fef0fd026@idfix.nl>
+From: Justin Bertram <jbertram@apache.org>
+Date: Tue, 29 Oct 2024 10:53:56 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=TqKdq_qk5f=Ltww6VOiK71JOA26Nsu3CMhgb_z7jYdgw@mail.gmail.com>
+Message-ID: <CAF+kE=TqKdq_qk5f=Ltww6VOiK71JOA26Nsu3CMhgb_z7jYdgw@mail.gmail.com>
+Subject: Re: Question regarding problems with JDBC persistence
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="0000000000005cdac706259f9917"
+
+--0000000000005cdac706259f9917
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+> We do use indirect scheduled messages intensively since we have
+redelivery-delay=3D1000, redelivery-multiplier=3D2, redelivery-attempts=3D9
+settings for the majority of queues.
+
+I assume you're referring to redelivery-delay-multiplier and
+max-delivery-attempts here.
+
+> We also use message-counter-history-day-limit=3D10 for all queues if that
+is at all significant.
+
+I don't think that is relevant here.
+
+> We have not tried explicit compacting the journal yet...
+
+I had a look through the JDBC code and I see now that compaction is a red
+herring. The normal file-based journal is append-only which is why it
+requires occasional compaction. However, JDBC is not append-only. Records
+are removed during normal processing, including the
+set-scheduled-delivery-time records that are accumulating in your database.
+I tested this with both 2.16.0 and 2.38.0 (i.e. the latest) and I didn't
+see any accumulation. As soon as the message associated with the
+set-scheduled-delivery-time records was acknowledged all those records were
+cleaned up.
+
+In any case, I don't believe that WildFly even supports the "data compact"
+command so it would almost certainly be a head-ache to execute it.
+
+To be clear, I typically only recommend folks use the embedded broker in
+WildFly for the most trivial use-cases. As soon as complexity increases
+it's usually good to have a standalone broker which can be managed (e.g.
+upgraded, restarted, etc.) separately.
+
+> I was under the impression that Artemis also compacts the journal during
+startup.
+
+Despite the fact that compaction doesn't appear to be related here I just
+wanted to say that I don't believe the broker always compacts the journal
+at startup. What gave you that impression?
+
+
+Ultimately I'm not sure what's going on here. I'd need to be able to
+reproduce the problem myself for further investigation. Do you have a way
+to reproduce this problem?
+
+
+Justin
+
+On Tue, Oct 29, 2024 at 8:05=E2=80=AFAM Bisil <bisil@idfix.nl> wrote:
+
+> Hi Justin,
+>
+> Thanks again for your valuable insights.
+>
+> We do use indirect scheduled messages intensively since we have
+> redelivery-delay=3D1000, redelivery-multiplier=3D2, redelivery-attempts=
+=3D9
+> settings for the majority of queues. We also use
+> message-counter-history-day-limit=3D10 for all queues if that is at all
+> significant.
+>
+> We have not tried explicit compacting the journal yet and since the
+> AMQ-related tables on production environments that ran into this
+> situation were truncated to get things back up we can not do this right
+> now.
+> I was under the impression that Artemis also compacts the journal during
+> startup. If that is true could we not simply try restarting the Wildfly
+> server if we see large journal volumes to check if that makes a
+> difference, or is that not the same? If so, could you elaborate a bit
+> since I know how to stop/start the broker from the JBoss CLI but have no
+> knowledge about an explicit journal compaction command.
+>
+> We use JDBC persistence for a couple of reasons. Having the journal
+> inside the database makes it easier for us to keep things in sync with
+> backups/restores which we also use heavily for trouble shooting. In
+> addition to that using file based persistence comes with additional
+> costs in our cloud environments.
+>
+> Silvio
+>
+>
+> On 28-10-2024 15:04, Justin Bertram wrote:
+> > Based on the information you provided I can say that the problem isn't
+> what
+> > I originally expected. Here's how the data breaks down per record type:
+> >
+> > - Add (11)
+> >    - Set scheduled delivery time (36): 376,143,458
+> >    - Update delivery count(34): 290,102
+> > - Add Transactional (13)
+> >    - Add message (45):  63,893
+> > - Update Transactional (14)
+> >    - Add reference (32) 63,893
+> >    - Acknowledge reference (33) 2
+> > - Prepare (17): 228
+> > - Commit (18): 22,941
+> >
+> > So it looks like you're using a lot of scheduled messages, either
+> directly
+> > or indirectly (e.g. via redelivery delay), and the records related to t=
+he
+> > delivery schedule are accumulating. If you stop the broker and run the
+> > "journal compact" command does the number of records in the database
+> drop?
+> >
+> > Out of curiosity, is there a specific reason you're using JDBC vs. the
+> > traditional file-based journal on local disk?
+> >
+> >
+> > Justin
+> >
+> >
+
+--0000000000005cdac706259f9917--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57595-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 93D5D3F486
+	for <archive-asf-public@cust-asf.ponee.io>; Thu, 31 Oct 2024 10:00:59 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 5B075665E3
+	for <archive-asf-public@cust-asf.ponee.io>; Thu, 31 Oct 2024 09:59:53 +0000 (UTC)
+Received: (qmail 1168215 invoked by uid 998); 31 Oct 2024 09:59:52 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1168190 invoked by uid 116); 31 Oct 2024 09:59:51 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 31 Oct 2024 09:59:51 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id 3F155C2389
+	for <users@activemq.apache.org>; Thu, 31 Oct 2024 09:59:51 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -0.905
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.905 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_MSPIKE_H2=-0.906,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]
+	autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id jRgJlYpQupso for <users@activemq.apache.org>;
+	Thu, 31 Oct 2024 09:59:50 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=209.85.208.52; helo=mail-ed1-f52.google.com; envelope-from=clebert.suconic@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id C1A6EBFE03
+	for <users@activemq.apache.org>; Thu, 31 Oct 2024 09:59:49 +0000 (UTC)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c937b5169cso1208268a12.1
+        for <users@activemq.apache.org>; Thu, 31 Oct 2024 02:59:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730368783; x=1730973583; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KcSwPGN7xS+KSkhlc12KUokQg9pqxwKtZgOU+3nE0XU=;
+        b=a/ilLXMkhvMSNygn9E2Ma4ew0Mk4bwhoFcS1KNSIOMEkJJru+QdJiUxv7zMj6nFqmj
+         d/zfq4LgA+0ZHV56dS5AR3IVc/jbfhGhBGYi08JFaR1KfliNAPdDbNYiq7mC/XfCKBTv
+         SM8ldGLL70+e4VN6Ss2MhYt5q2zKA4Cjv6vEg0LNjWffm3QX4J4VZpTF5xXUiblPdmdS
+         M08E4bV3LJZoVuUor5LjjzrCjzOBJrVSBebX+RhnGBcxQYSprcRy0cZUTfuzsRPa5Y7s
+         c7AYQ3mLGMsH6DdjstgaOjXHCEeW1WjwIolaioFCFT1KlMPfOjYpoZTpXBiHmlGUcBOG
+         lQlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730368783; x=1730973583;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KcSwPGN7xS+KSkhlc12KUokQg9pqxwKtZgOU+3nE0XU=;
+        b=rC8Hydc3ennyqIiGntrua38Il8GGSnBaCVkBYO/TUh0B2NsAI17tzhvGQ1g6t2pR/2
+         3GtLXa69pmwEJzjaHVMYl+vIHDBHvMHjBS1oGNqJpZWpno8njlitsHdaoz5td3Mn9yR3
+         gfq8O7++zoYpXItyfZmiolD1BGEYw12pl/HCPWKxGrwmcfCcPQTSbjIaG07iQtqxZ/y+
+         nDn6bvolmsHmb7XRSSAK2rpSlWZUkE4v35PycFFL217svcKOp0uUmllLLZ2LyW7Oz/8Z
+         kheheeCzKDjOyt0eIFjT6l++x+hwlGC0JuavlvM+onZ7D8D7s9uMKa516reGFPAREdRf
+         DLcw==
+X-Gm-Message-State: AOJu0YwrXpnMHCB08OeUmDVck+uRPOs/ak2H/+ylTYZBcyS815g/0Zy5
+	ga6Kh14ZmBdYWel/qdey965UD0kTD4pvjEMCCew+DPzTHRO+1B1iEQWcdGzd+dLMpqRj/9kOxMk
+	QUDbfRkSIkS13qTezAN231kx468sgxg==
+X-Google-Smtp-Source: AGHT+IHHWehbxWGwGaYfFH/EDCZ0TU4Fm3dDjAHTBrUIxnYiB4h7JdwPWrrKtQdC5J2FU0mdSNqxW8IG2LvMgYJpgSA=
+X-Received: by 2002:a05:6402:440e:b0:5cb:6715:3498 with SMTP id
+ 4fb4d7f45d1cf-5ceabee80f2mr2243298a12.3.1730368781517; Thu, 31 Oct 2024
+ 02:59:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl> <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>
+In-Reply-To: <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>
+From: Clebert Suconic <clebert.suconic@gmail.com>
+Date: Thu, 31 Oct 2024 05:59:29 -0400
+Message-ID: <CAKF+bspaGfFwx6bYGBdjZPu_2hZV9ejSVxneK2_nmfXcJ0CTKA@mail.gmail.com>
+Subject: Re: Question regarding problems with JDBC persistence
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="0000000000008d944f0625c2e0cb"
+
+--0000000000008d944f0625c2e0cb
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+I remember an old issue where rescheduling deliveries were updated over and
+over.
+
+As of the latest version as far as I remember I only update it once.
+
+If you have an infinite redelivery without DLQ you might get into that
+situation.
+
+It would be difficult for me to find the exact JIRA now.  But I will try to
+look for it and will post it here if I find it.
+
+Clebert Suconic
+
+
+On Wed, Oct 23, 2024 at 4:28=E2=80=AFPM Justin Bertram <jbertram@apache.org=
+> wrote:
+
+> This sounds similar to an issue involving duplicate IDs proliferating in
+> the journal. I can't find the specific Jira at the moment, but the issue
+> was something like a huge build-up of duplicate ID records. Can you inspe=
+ct
+> the "userRecordType" for the offending rows?
+>
+> Also, how are you sending your message exactly? Do you need duplicate
+> detection?
+>
+> Lastly, 2.16.0 is quite old at this point. There's been improvements to
+> JDBC since then which you'd almost certainly benefit from (not to mention
+> all the other bug-fixes and features). Are you open to upgrading?
+>
+>
+> Justin
+>
+> On Wed, Oct 23, 2024 at 4:32=E2=80=AFAM Bisil <bisil@idfix.nl> wrote:
+>
+> > Hello,
+> >
+> > Inside Wildfly 23.0.0 we are running ActiveMQ Artemis Message Broker
+> > 2.16.0 with JDBC persistence on SQLServer for ~25 message queues. In
+> > some production environments we have moderate-to-high message volumes
+> > and since processing can be relatively slow temporary message pileup is
+> > not uncommon.
+> >
+> > In one particular environment we are experiencing OutOfMemory issues
+> > during startup. There are about 60K messages in 2 of the queues while
+> > the message table contains over 350M records causing memory exhaustion
+> > during startup. Running in a controlled environment with ~60G heap
+> > startup succeeds and through JProfiler we observe that all message tabl=
+e
+> > records are selected and appear to be collected in memory. After that
+> > they are processed and discarded dropping memory usage down to a
+> > fraction of its peak. Using the JBoss CLI to inspect the queues then
+> > shows we have indeed 60K messages in 2 queues.
+> >
+> > Inspecting the contents of the message table we see limited counts of
+> > record types 13 (ADD_RECORD_TX) and 14 (UPDATE_RECORD_TX) roughly
+> > equivalent to the 60K message count. All remaining records are type 11
+> > (ADD_RECORD).
+> >
+> > When we removed all type 11 records restart was fast with limited memor=
+y
+> > load and we still see 60K messages in the 2 queues.
+> >
+> > In the past we have observed similar numbers and startup problems in
+> > other environments which lead us to truncate the AMQ persistence tables
+> > to be able to restart the server without an OutOfMemoryException. But w=
+e
+> > are looking for a way to prevent this situation from happening.
+> >
+> > So my questions are:
+> >
+> > - Is the large record count in the message table expected behavior?
+> >
+> > - Is there anything we can/should do to limit the number of records in
+> > the message table?
+> >
+> > - Is removing all type 11 records a valid workaround? If no, what would
+> > be the side-effect?
+> >
+> > Thanks for your help!
+> >
+> > Silvio
+> >
+>
+
+--0000000000008d944f0625c2e0cb--

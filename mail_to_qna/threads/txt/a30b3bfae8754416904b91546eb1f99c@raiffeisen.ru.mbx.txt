@@ -1,0 +1,126 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57499-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id D9CD23E680
+	for <archive-asf-public@cust-asf.ponee.io>; Tue,  1 Oct 2024 08:05:24 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id D697C6575C
+	for <archive-asf-public@cust-asf.ponee.io>; Tue,  1 Oct 2024 08:04:19 +0000 (UTC)
+Received: (qmail 4178660 invoked by uid 998); 1 Oct 2024 08:04:18 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 4178622 invoked by uid 116); 1 Oct 2024 08:04:17 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Tue, 01 Oct 2024 08:04:17 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 60F6F200187
+	for <users@activemq.apache.org>; Tue,  1 Oct 2024 08:04:17 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -0.198
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.198 tagged_above=-999 required=6.31
+	tests=[DKIMWL_WL_HIGH=-0.001, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+	DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, RCVD_IN_DNSWL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=raiffeisen.ru
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id tn7_pXcGhEgS for <users@activemq.apache.org>;
+	Tue,  1 Oct 2024 08:04:16 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=193.28.44.48; helo=mx1.raiffeisen.ru; envelope-from=aleksandr.milovidov@raiffeisen.ru; receiver=<UNKNOWN> 
+Received: from mx1.raiffeisen.ru (mx1.raiffeisen.ru [193.28.44.48])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id 63879C0C4B
+	for <users@activemq.apache.org>; Tue,  1 Oct 2024 08:04:14 +0000 (UTC)
+From: MILOVIDOV Aleksandr <Aleksandr.MILOVIDOV@raiffeisen.ru.INVALID>
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.raiffeisen.ru 38B4C80093
+X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raiffeisen.ru;
+	s=raiffeisenru.03; t=1727769846;
+	bh=2VKVtU7t13RUZ2nnKncI9Fd8BjPKLEYp2DkqBFC260w=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version:From;
+	b=gdo+N16ewBTnAQEkCzTgXvCc93nnkmiu5XDtRLV6vcWK6LTxXxArBo+ptwrFH9HAE
+	 hFR3Xkge58r3iWnaz1+Lfwu3AdivKbdFosA3nqb+kfXUFjrWN7zYud2Xt385AWTDzX
+	 RUm5lom5ZT39B4U5GgSzY8BTZGqpcumdcypM4zoWonnCSf2pmC98la5bW8h/a4r/Nt
+	 iTA3Ujom10ZPO4Lg1brfbdW1L4IE18HGzIZxiRKFqzvatMkfIW++hyUv4BOPvp0Nzn
+	 bO61nwc+PCMwunDc3YvWRrpM38J5YTIJpDnhE2x20wBJk+tVrGy8hNfdZcLKE4ZxgD
+	 /MIhZuUS4xifA==
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: Messages are stuck in the paging
+Thread-Topic: Messages are stuck in the paging
+Thread-Index: AdsTzqXR8pWhU/LGRbWbynBaGWxprA==
+Date: Tue, 1 Oct 2024 08:04:05 +0000
+Message-ID: <a30b3bfae8754416904b91546eb1f99c@raiffeisen.ru>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, not scanned, disabled by settings
+X-KSMG-AntiVirus-Status: NotScanned, disabled by settings, skipped
+X-KSMG-LinksScanning: not scanned, disabled by settings
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 8
+
+SGkgQWxsLA0KDQpTb21ldGltZXMgbWVzc2FnZXMgYXJlIHN0dWNrIGluIHRoZSBBcnRlbWlzIHF1
+ZXVlLiBUaGVyZSBtYXkgYmUgYSBtZXNzYWdlIGluIHRoZSBsb2dzIChidXQgc29tZXRpbWVzIGl0
+IGlzbid0KToNCg0KQU1RMjI0MTI3DQpNZXNzYWdlIGRpc3BhdGNoIGZyb20gcGFnaW5nIGlzIGJs
+b2NrZWQuIEFkZHJlc3MgUVVFVUUvUXVldWUgUVVFVUUgd2lsbCBub3QgcmVhZCBhbnkgbW9yZSBt
+ZXNzYWdlcyBmcm9tIHBhZ2luZyB1bnRpbCBwZW5kaW5nIG1lc3NhZ2VzIGFyZSBhY2tub3dsZWRn
+ZWQuIFRoZXJlIGFyZSBjdXJyZW50bHkgMzI2MCBtZXNzYWdlcyBwZW5kaW5nICgyMDk3NTM3OCBi
+eXRlcykgd2l0aCBtYXggcmVhZHMgYXQgbWF4UGFnZVJlYWRNZXNzYWdlcygtMSkgYW5kIG1heFBh
+Z2VSZWFkQnl0ZXMoMjA5NzE1MjApLiBFaXRoZXIgaW5jcmVhc2UgcmVhZGluZyBhdHRyaWJ1dGVz
+IGF0IHRoZSBhZGRyZXNzLXNldHRpbmdzIG9yIGNoYW5nZSB5b3VyIGNvbnN1bWVycyB0byBhY2tu
+b3dsZWRnZSBtb3JlIG9mdGVuLg0KDQpSZWNlbnRseSBJIGV4cGVyaW1lbnRlZCB3aXRoIHBhZ2lu
+ZyBzZXR0aW5ncyBhbmQgc2V0IHRoZXNlIHNldHRpbmdzOg0KbWF4LXNpemUtYnl0ZXM6IDEwNDg1
+NzYwMA0KcGFnZS1zaXplLWJ5dGVzOiAxMDQ4NTc2MA0KDQpEZWZhdWx0IG1heFBhZ2VSZWFkQnl0
+ZXMgaXMgMipwYWdlU2l6ZUJ5dGVzLg0KVGhpcyBzZXJ2ZXIgaGFzIDYgR2Igb2YgYWRkcmVzcyBt
+ZW1vcnkgKGRlZmF1bHQgNTAlIG9mIDEyR2IgaGVhcCksIHNvIEkgaGF2ZSBpbmNyZWFzZWQgbWF4
+LXNpemUtYnl0ZXMgdG8gNTI0Mjg4MDAwIGFuZCBhZGRlZCBtYXgtcmVhZC1wYWdlLWJ5dGVzIHNl
+dCBlcXVhbCB0byBtYXgtc2l6ZS1ieXRlcyAoNTI0Mjg4MDAwKSwgYnV0IGl0IHNlZW1zIHRoYXQg
+dGhlc2Ugc2V0dGluZ3MgYXJlIG5vdCBhcHBsaWVkIHRvIHRoZSBjdXJyZW50IGFkZHJlc3Mgd2hp
+Y2ggaXMgaW4gdGhlIHBhZ2luZyBtb2RlLg0KV2hlbiBJIGNoZWNrIGFkZHJlc3MvcXVldWUgbWV0
+cmljcywgZm9yIHNvbWUgYWRkcmVzc2VzIHRoZXJlIGlzIG5vIHJlYXNvbiBmb3IgYmxvY2tpbmcg
+dGhlIGFkZHJlc3MuIFRoZXJlIGFyZSBubyBkZWxpdmVyaW5nIG1lc3NhZ2VzIChwZW5kaW5nIGFj
+a25vd2xlZGdlbWVudCkuDQpBbHNvIHRoZXJlIGlzIG5vIHdheSB0byBkZWxldGUgbWVzc2FnZXMg
+ZnJvbSBxdWV1ZSwgcmVtb3ZlQWxsTWVzc2FnZXMoKSByZXR1cm5zIHplcm8sIHB1cmdlKCkgbWV0
+aG9kIG9uIHRoZSBhZGRyZXNzIGFsc28gZG9lcyBub3Qgd29yay4NCg0KSXMgdGhlcmUgYW55IHdh
+eSB0byB1bmJsb2NrIHRoZSBhZGRyZXNzIGZyb20gcGFnaW5nIHdpdGhvdXQgcmVzdGFydCBvZiBB
+cnRlbWlzPyBPciByZS1hcHBseSBuZXcgcGFnaW5nIHNldHRpbmdzPw0KDQotLQ0KQmVzdCByZWdh
+cmRzLA0KQWxla3NhbmRyDQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQoN
+ClRoaXMgbWVzc2FnZSBhbmQgYW55IGF0dGFjaG1lbnQgYXJlIGNvbmZpZGVudGlhbCBhbmQgbWF5
+IGJlIHByaXZpbGVnZWQgb3Igb3RoZXJ3aXNlIHByb3RlY3RlZCBmcm9tIGRpc2Nsb3N1cmUuIElm
+IHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQgYW55IHVzZSwgZGlzdHJpYnV0aW9u
+LCBjb3B5aW5nIG9yIGRpc2Nsb3N1cmUgaXMgc3RyaWN0bHkgcHJvaGliaXRlZC4gSWYgeW91IGhh
+dmUgcmVjZWl2ZWQgdGhpcyBtZXNzYWdlIGluIGVycm9yLCBwbGVhc2Ugbm90aWZ5IHRoZSBzZW5k
+ZXIgaW1tZWRpYXRlbHkgZWl0aGVyIGJ5IHRlbGVwaG9uZSBvciBieSBlLW1haWwgYW5kIGRlbGV0
+ZSB0aGlzIG1lc3NhZ2UgYW5kIGFueSBhdHRhY2htZW50IGZyb20geW91ciBzeXN0ZW0uIENvcnJl
+c3BvbmRlbmNlIHZpYSBlLW1haWwgaXMgZm9yIGluZm9ybWF0aW9uIHB1cnBvc2VzIG9ubHkuIEFP
+IFJhaWZmZWlzZW5iYW5rIG5laXRoZXIgbWFrZXMgbm9yIGFjY2VwdHMgbGVnYWxseSBiaW5kaW5n
+IHN0YXRlbWVudHMgYnkgZS1tYWlsIHVubGVzcyBvdGhlcndpc2UgYWdyZWVkLg0KDQotLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
+DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0NClRvIHVuc3Vic2NyaWJlLCBlLW1haWw6IHVzZXJzLXVuc3Vi
+c2NyaWJlQGFjdGl2ZW1xLmFwYWNoZS5vcmcNCkZvciBhZGRpdGlvbmFsIGNvbW1hbmRzLCBl
+LW1haWw6IHVzZXJzLWhlbHBAYWN0aXZlbXEuYXBhY2hlLm9yZw0KRm9yIGZ1cnRoZXIgaW5m
+b3JtYXRpb24sIHZpc2l0OiBodHRwczovL2FjdGl2ZW1xLmFwYWNoZS5vcmcvY29udGFjdA0K
+DQoN

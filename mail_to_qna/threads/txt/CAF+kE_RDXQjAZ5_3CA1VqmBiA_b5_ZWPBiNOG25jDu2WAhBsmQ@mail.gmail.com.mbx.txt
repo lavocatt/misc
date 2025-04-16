@@ -1,0 +1,1221 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57511-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 74C613E6D6
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:33:37 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 48DE262803
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:33:37 +0000 (UTC)
+Received: (qmail 1025209 invoked by uid 998); 3 Oct 2024 15:33:36 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1025188 invoked by uid 116); 3 Oct 2024 15:33:36 -0000
+Received: from ec2-52-204-25-47.compute-1.amazonaws.com (HELO mailrelay1-ec2-va.apache.org) (52.204.25.47)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 03 Oct 2024 15:33:36 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	by mailrelay1-ec2-va.apache.org (ASF Mail Server at mailrelay1-ec2-va.apache.org) with ESMTPSA id 577293E915
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:33:35 +0000 (UTC)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso13310151fa.3
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 08:33:35 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzJaGJdUDXy4poZZAGko5fHnX2RTTtFJmxaFyzMEX6Fe4f7hcaG
+	swny0PXSBy0qs4n6KVjxUx6Krp8X7kOnLMutZMhQA3EPkyDbLDi52BmBCya/P51OVTkSJBZ1ow/
+	in0T6u+ATOLEP3dCpewE7XVSD8zrKY16cwaR7zA==
+X-Google-Smtp-Source: AGHT+IHqduMHIRMJ7JbjbMxTPeRCsD26E8U7fyuz2Fn+b6UKCPhjOWn4SAbZ2QGsBFFlvosSsNhQlMTZNCPwkF/VUYo=
+X-Received: by 2002:a2e:4619:0:b0:2fa:c014:4b6b with SMTP id
+ 38308e7fff4ca-2fae10a90c5mr35863641fa.41.1727969614277; Thu, 03 Oct 2024
+ 08:33:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>
+ <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com> <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>
+In-Reply-To: <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>
+From: Justin Bertram <jbertram@apache.org>
+Date: Thu, 3 Oct 2024 10:33:07 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=RDXQjAZ5_3CA1VqmBiA_b5_ZWPBiNOG25jDu2WAhBsmQ@mail.gmail.com>
+Message-ID: <CAF+kE=RDXQjAZ5_3CA1VqmBiA_b5_ZWPBiNOG25jDu2WAhBsmQ@mail.gmail.com>
+Subject: Re: [Artemis] Passing message userID into STOMP
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="0000000000000ae537062394471a"
+
+--0000000000000ae537062394471a
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+If the sender is invoking Message.setJMSCorrelationID(String) [1] that
+should be mapped onto the STOMP message using "correlation-id" (and vice
+versa). Again, using message ID is not recommended. You should be using
+correlation ID as that is what it was designed for.
+
+
+Justin
+
+[1]
+https://docs.oracle.com/javaee/7/api/javax/jms/Message.html#setJMSCorrelati=
+onID-java.lang.String-
+
+On Thu, Oct 3, 2024 at 10:06=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =D0=
+=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@gmai=
+l.com>
+wrote:
+
+> Hi, Justin!
+> Sender sends message into request queue and expects response message in
+> response queue, with response's JMSCorellationId header being set to
+> message ID that was sent (and could not be read by responder app).
+> Sender (java app) originally was not explicitly specifying message ID, no=
+t
+> really sure if it was set by library used or by the broker
+>
+> Calling msg.setJMSMessageId(msgId) with some manually generated value did
+> reflect on userID property of the message, however it still could not be
+> read by responder app via STOMP, unless
+> msg.putStringProperty('some-header-name', msgId) was called
+>
+> As a solution for now we settled on manually putting message ID into stri=
+ng
+> properties
+>
+> =D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 17:13, Ju=
+stin Bertram <jbertram@apache.org>:
+>
+> > Can you clarify your use-case and how the message ID is being set on th=
+e
+> > client sending the message?
+> >
+> > Typically the message ID is set by the client implementation or by the
+> > broker and it can also change in some circumstances so it's not
+> > particularly meaningful to the messaging application. Generally speakin=
+g
+> we
+> > recommend folks set their own unique ID if they're wanting to track
+> > messages.
+> >
+> >
+> > Justin
+> >
+> > On Thu, Oct 3, 2024 at 2:17=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =
+=D0=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@g=
+mail.com>
+> > wrote:
+> >
+> > > Hi, we ran into an issue when receiving messages via STOMP protocol.
+> > > Message was sent by java application using JMSSerializer via AMQP
+> > protocol,
+> > > resulting in message id being stored in userID message property. When
+> > > receiving this message via STOMP, the value of userID was not present
+> in
+> > > any header, unless the sender app manually generates an id for the
+> > message
+> > > and passes it into some custom-named header.
+> > > Could not find any related info on this property in the archive.
+> > > Maybe it is possible to add a STOMP configuration flag, similar to
+> > > stompEnableMessageId (stompEnableUserId e.g.), that would control if =
+a
+> > > message's userID value is being passed into STOMP headers?
+> > >
+> > > artemis version 2.37.0
+> > >
+> >
+>
+
+--0000000000000ae537062394471a--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57512-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id D34123E6D6
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:47:53 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 6B249634D2
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:47:53 +0000 (UTC)
+Received: (qmail 1058074 invoked by uid 998); 3 Oct 2024 15:47:52 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1058030 invoked by uid 116); 3 Oct 2024 15:47:51 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 03 Oct 2024 15:47:51 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id D7F85C2202
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:47:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -0.197
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.197 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, RCVD_IN_MSPIKE_H3=0.001, RCVD_IN_MSPIKE_WL=0.001,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]
+	autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id Qb2i8lDEVrQw for <users@activemq.apache.org>;
+	Thu,  3 Oct 2024 15:47:50 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=209.85.214.170; helo=mail-pl1-f170.google.com; envelope-from=robbie.gemmell@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id BFE88C0C4B
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:47:49 +0000 (UTC)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20bb610be6aso12158835ad.1
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 08:47:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727970462; x=1728575262; darn=activemq.apache.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=73EPQCiSEFvSUFRUZSi7ppt5Vq8xfOKvczxMNXiKSNQ=;
+        b=NW6WCLnrD/ZS48FTgj+HCOyJAykCwgaKaLbDLr5xUMoIc0QF+tYd0NItwwJbhcC/q+
+         u3wcVYcJoK3oDFr60t/PRWLCIL0QgfYf54ER17xEB/Dl/1pFUni25hhI7IYDmS12Zn1X
+         BVruoyMSCKgWz9KPc5niSZeFeDGg6RsarqZ9J4JcMQJnf2uHKskqhR6l6Y5KGVNFRs1m
+         graZuSlRIQ3Ib6ff26vFIaYZyhQBr4o8nEpHkk2a51Y7ioS8nMOU1ztrwADfeb0e6OOF
+         NvBhwnHOnjSdvMBe79oA92Rh42ZlJie77zo4Rqi95gvfgCGU70QwTrawtdJZKXGhqnAY
+         dckg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727970462; x=1728575262;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=73EPQCiSEFvSUFRUZSi7ppt5Vq8xfOKvczxMNXiKSNQ=;
+        b=qK0vS56Zktmn8oGvodMv0QX8IQMFGC8R3A1Lruj3Y7lijc5bpTIpVKHK/ZiOUxTbtw
+         88iRAsOTQF7Myo2eJW6/nXPS2TYT1aNrSzR/SA4BYUl+uWxHepZ4eMzOVcRZ+AySx6+x
+         aMh8eFfjuLxHjpXaas7KJUC3eh3YFyi3BILSexOMYcmiCxzBd0HNZK6x/Wh5ToqyWVnA
+         BHJvMhDJbntXfFrgEX8mBBIO0VjLqg4Zh97tV83LQo2Hyayyj0j3jOrTGcSIvYWRjaG5
+         HTkUlEWUhkQHNPiGgk871IWAjxc3jtkhsOLNUxRDT7Kp0ADtYqptpWFSpLZ0R1nZKnMq
+         4fDw==
+X-Gm-Message-State: AOJu0Yze+daubYrOVLOiXxb/JDrPYrWvXH/TtgOmxC/9R246Re2Jn8qy
+	ySL9ng69n/9YyE4H2qDvhxNOQQBP6ALyN0TRMpoYSbNvhyaCYHeLmi5DAXLclWqTJhGsgyvvCId
+	nrNiSJw+p+QfR7b7kKefdHmiTWWzi+w==
+X-Google-Smtp-Source: AGHT+IHPKx76Nlca+ZAVfqdnUdxt34zw7nrdeqNy2yLK53zazwb4zjh7hV05utJ/Oe9LemfTsFVqYYllTCuN6aufDrw=
+X-Received: by 2002:a17:902:c951:b0:20b:49f5:9999 with SMTP id
+ d9443c01a7336-20bc5a3da1amr94115185ad.30.1727970462199; Thu, 03 Oct 2024
+ 08:47:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>
+ <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com> <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>
+In-Reply-To: <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>
+From: Robbie Gemmell <robbie.gemmell@gmail.com>
+Date: Thu, 3 Oct 2024 16:47:29 +0100
+Message-ID: <CAFitrpS0BfUM-ySf8Uw4Pmw3yZ9PRpPv7HCtpHvir-dx3qxLfw@mail.gmail.com>
+Subject: Re: [Artemis] Passing message userID into STOMP
+To: users@activemq.apache.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Given the mentions of JMS and AMQP I would presume that
+qpid-jms-client is being used. It will populate the JMSMessageID
+header itself during send (unless configured not to) as per the JMS
+requirements the field is set by provider-on-send.
+Message.setJMSMessageID() (and most other header setters like it) is
+exclusively for the use of JMS implementations for handling other
+vendors message objects, it is not for applications to use to set a
+MessageID on a sent message (if you try, the value will be overwritten
+on send with the provider-populated value).
+
+Artemis handles STOMP messages internally using its Core protocol
+message objects, so it is presumably converting the AMQP message into
+a Core message on the way to the STOMP client. Qpid JMS uses a
+string-based message-id field in the underlying AMQP message by
+default. Core messages require a UUID message id, and so I expect it
+is generating a new one at that conversion point. Qpid JMS can be
+configured to use a pure UUID as the underlying AMQP message-id field,
+setting URI option jms.messageIDPolicy.messageIDType=3DUUID . Though
+JMSMessageID values must be prefixed with "ID:" so the client will
+synthesize that locally for JMSMessageID, meaning you could still then
+find that the JMSCorrelationID string you get back on the response
+lacks that "ID:" prefix (since the Core JMS client would normally add
+that to getJMSMessageID...but you are using a STOMP client).
+
+In fact, ignore all that, as I see the broker is generating a specific
+formatted message-id for the STOMP messages. So you simply can't get
+the original AMQP message-id on the STOMP receiver.
+
+Your most compatible route in JMS terms would be using the
+JMSCorrelationID field to correlate your messages, setting the
+JMSCorrelationID value on the request message before sending, getting
+that value as the correlation-id on the reciever and setting that
+value on the response message before replying, which the requester can
+retrieve from JMSCorrelationID again on the response.
+
+As I see others have said already whilst I got interrupted during
+typing this reply :)
+
+
+Robbie
+
+On Thu, 3 Oct 2024 at 16:06, =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =D0=91=D0=B0=D0=
+=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@gmail.com> wrote=
+:
+>
+> Hi, Justin!
+> Sender sends message into request queue and expects response message in
+> response queue, with response's JMSCorellationId header being set to
+> message ID that was sent (and could not be read by responder app).
+> Sender (java app) originally was not explicitly specifying message ID, no=
+t
+> really sure if it was set by library used or by the broker
+>
+> Calling msg.setJMSMessageId(msgId) with some manually generated value did
+> reflect on userID property of the message, however it still could not be
+> read by responder app via STOMP, unless
+> msg.putStringProperty('some-header-name', msgId) was called
+>
+> As a solution for now we settled on manually putting message ID into stri=
+ng
+> properties
+>
+> =D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 17:13, Ju=
+stin Bertram <jbertram@apache.org>:
+>
+> > Can you clarify your use-case and how the message ID is being set on th=
+e
+> > client sending the message?
+> >
+> > Typically the message ID is set by the client implementation or by the
+> > broker and it can also change in some circumstances so it's not
+> > particularly meaningful to the messaging application. Generally speakin=
+g we
+> > recommend folks set their own unique ID if they're wanting to track
+> > messages.
+> >
+> >
+> > Justin
+> >
+> > On Thu, Oct 3, 2024 at 2:17=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =
+=D0=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@g=
+mail.com>
+> > wrote:
+> >
+> > > Hi, we ran into an issue when receiving messages via STOMP protocol.
+> > > Message was sent by java application using JMSSerializer via AMQP
+> > protocol,
+> > > resulting in message id being stored in userID message property. When
+> > > receiving this message via STOMP, the value of userID was not present=
+ in
+> > > any header, unless the sender app manually generates an id for the
+> > message
+> > > and passes it into some custom-named header.
+> > > Could not find any related info on this property in the archive.
+> > > Maybe it is possible to add a STOMP configuration flag, similar to
+> > > stompEnableMessageId (stompEnableUserId e.g.), that would control if =
+a
+> > > message's userID value is being passed into STOMP headers?
+> > >
+> > > artemis version 2.37.0
+> > >
+> >
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57514-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 2ECC23E6D6
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 16:22:32 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 15042490A5
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 16:22:30 +0000 (UTC)
+Received: (qmail 1148272 invoked by uid 998); 3 Oct 2024 16:22:29 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1148253 invoked by uid 116); 3 Oct 2024 16:22:28 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 03 Oct 2024 16:22:28 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 045DE2001C4
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 16:22:28 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.25
+X-Spam-Level: 
+X-Spam-Status: No, score=0.25 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,
+	RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id zehpRCM0vMvs for <users@activemq.apache.org>;
+	Thu,  3 Oct 2024 16:22:27 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2a00:1450:4864:20::235; helo=mail-lj1-x235.google.com; envelope-from=baigildin97@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 4575981FBE
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 16:22:27 +0000 (UTC)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2fabc9bc5dfso16477311fa.0
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 09:22:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727972546; x=1728577346; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r8GLfvkQhajuUcOVD9G+iiP68hzEwElO/zYrEAq7ZxM=;
+        b=d6xxRpot6PVdG/e3SXvCRS7m3ciBS85D9gY0KRxBkULenO0I9kPLA7tdgNEhYhCvkU
+         P9qXN98d75MTCqUszFDJRM+sA99PJnfHSf31HX2ZdzPsvWoiTPMRNoJtZ8sS1JuiTGyI
+         F2v3TZ4oNV10U9WNbhKfzCkFV7TOOc1FsDGVr993huONlqKBU3IhO7paVdcCf2wzyCR0
+         we7SaUuAVi8h8e+Zm8WCmrqLeqibijCfDNKkIXI7zKUp/xerWavnl3RhXrStTT+pDprn
+         anxyW5wFy+SWddMPhD+CFKgl8vvwM9P/pUmCMHaCF2FxZqfIU5smfbOIRxSDzBIR0YnW
+         yG5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727972546; x=1728577346;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r8GLfvkQhajuUcOVD9G+iiP68hzEwElO/zYrEAq7ZxM=;
+        b=AXf5IwW+0qEI0b9zoOo2ZEbb3Ee4dGxIn/+y4N5HDZ+1x6VMujEgAXTSRcMOhwpKAv
+         lfBkEyttl4BBtAxQv356kG+L2rtX9yo0IJNWIG7FTwrrZT/D4Gv7EQc5+6NZDkL+IDE6
+         RJ/lcoUUsVK8uT0Q6foZB8+uwvVUAHMAu4JIprgrUmq6LSJaa3zNDHjDEyulq6QfaQag
+         DoyvaMCfjD4ZmJ5VdYPnLFFEgycSfrws5O6HzzHx8B9NsuHrxX6Ar935V3PyXGPL1Wst
+         aaDzQuCA6YGGuv24FkwQGn5fdezmXnFfP2v99lyCBih6FZBk1Xylv507gZr336da535d
+         9/Qw==
+X-Gm-Message-State: AOJu0YzWw57NA+Z93BbRXCZp/orca4t/14vgWrL0ZJTddg1hm9/a2eG9
+	aUCuwPtVWS+T+rJSJE0DjzJ4AHNQTOrlonl2ch3/Tk+SL2lNfqdcjpigwWWP7MDcU8cvMzVt1ug
+	hM4Zqi5XyaP8B3qYIUgvxAJssaN1OCjeHaSI=
+X-Google-Smtp-Source: AGHT+IGZoGBh1IJ71aCreRWZ1GWglflDyuodugh+W4zWdG/BQAaJ7XJ7GU2d38HHE3u1SjwucDsbBEuJ5j0zG2kwKFg=
+X-Received: by 2002:a05:6512:23a0:b0:536:5646:251e with SMTP id
+ 2adb3069b0e04-539a065853dmr4514934e87.10.1727972545820; Thu, 03 Oct 2024
+ 09:22:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>
+ <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com>
+ <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com> <CAFitrpS0BfUM-ySf8Uw4Pmw3yZ9PRpPv7HCtpHvir-dx3qxLfw@mail.gmail.com>
+In-Reply-To: <CAFitrpS0BfUM-ySf8Uw4Pmw3yZ9PRpPv7HCtpHvir-dx3qxLfw@mail.gmail.com>
+From: =?UTF-8?B?0JzRg9GA0LDQtCDQkdCw0LnQs9C40LvRjNC00LjQvQ==?= <baigildin97@gmail.com>
+Date: Thu, 3 Oct 2024 19:22:13 +0300
+Message-ID: <CAOrKGWyVYnmw7HLshSLXGRTFAtRY0yP-pQjk7j+ap_YPp4Yt8g@mail.gmail.com>
+Subject: Re: [Artemis] Passing message userID into STOMP
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="000000000000c68652062394f53a"
+
+--000000000000c68652062394f53a
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+I see, so message ID is not really meant to be used as identifier by client
+apps.
+We will try setting JMSCorellationId on sender, if thats not gonna work
+will probably redefine request-response mapper
+Thank you all for clarification!
+
+=D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 18:47, Robb=
+ie Gemmell <robbie.gemmell@gmail.com>:
+
+> Given the mentions of JMS and AMQP I would presume that
+> qpid-jms-client is being used. It will populate the JMSMessageID
+> header itself during send (unless configured not to) as per the JMS
+> requirements the field is set by provider-on-send.
+> Message.setJMSMessageID() (and most other header setters like it) is
+> exclusively for the use of JMS implementations for handling other
+> vendors message objects, it is not for applications to use to set a
+> MessageID on a sent message (if you try, the value will be overwritten
+> on send with the provider-populated value).
+>
+> Artemis handles STOMP messages internally using its Core protocol
+> message objects, so it is presumably converting the AMQP message into
+> a Core message on the way to the STOMP client. Qpid JMS uses a
+> string-based message-id field in the underlying AMQP message by
+> default. Core messages require a UUID message id, and so I expect it
+> is generating a new one at that conversion point. Qpid JMS can be
+> configured to use a pure UUID as the underlying AMQP message-id field,
+> setting URI option jms.messageIDPolicy.messageIDType=3DUUID . Though
+> JMSMessageID values must be prefixed with "ID:" so the client will
+> synthesize that locally for JMSMessageID, meaning you could still then
+> find that the JMSCorrelationID string you get back on the response
+> lacks that "ID:" prefix (since the Core JMS client would normally add
+> that to getJMSMessageID...but you are using a STOMP client).
+>
+> In fact, ignore all that, as I see the broker is generating a specific
+> formatted message-id for the STOMP messages. So you simply can't get
+> the original AMQP message-id on the STOMP receiver.
+>
+> Your most compatible route in JMS terms would be using the
+> JMSCorrelationID field to correlate your messages, setting the
+> JMSCorrelationID value on the request message before sending, getting
+> that value as the correlation-id on the reciever and setting that
+> value on the response message before replying, which the requester can
+> retrieve from JMSCorrelationID again on the response.
+>
+> As I see others have said already whilst I got interrupted during
+> typing this reply :)
+>
+>
+> Robbie
+>
+> On Thu, 3 Oct 2024 at 16:06, =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =D0=91=D0=B0=
+=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@gmail.com>
+> wrote:
+> >
+> > Hi, Justin!
+> > Sender sends message into request queue and expects response message in
+> > response queue, with response's JMSCorellationId header being set to
+> > message ID that was sent (and could not be read by responder app).
+> > Sender (java app) originally was not explicitly specifying message ID,
+> not
+> > really sure if it was set by library used or by the broker
+> >
+> > Calling msg.setJMSMessageId(msgId) with some manually generated value d=
+id
+> > reflect on userID property of the message, however it still could not b=
+e
+> > read by responder app via STOMP, unless
+> > msg.putStringProperty('some-header-name', msgId) was called
+> >
+> > As a solution for now we settled on manually putting message ID into
+> string
+> > properties
+> >
+> > =D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 17:13, =
+Justin Bertram <jbertram@apache.org>:
+> >
+> > > Can you clarify your use-case and how the message ID is being set on
+> the
+> > > client sending the message?
+> > >
+> > > Typically the message ID is set by the client implementation or by th=
+e
+> > > broker and it can also change in some circumstances so it's not
+> > > particularly meaningful to the messaging application. Generally
+> speaking we
+> > > recommend folks set their own unique ID if they're wanting to track
+> > > messages.
+> > >
+> > >
+> > > Justin
+> > >
+> > > On Thu, Oct 3, 2024 at 2:17=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4=
+ =D0=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@=
+gmail.com
+> >
+> > > wrote:
+> > >
+> > > > Hi, we ran into an issue when receiving messages via STOMP protocol=
+.
+> > > > Message was sent by java application using JMSSerializer via AMQP
+> > > protocol,
+> > > > resulting in message id being stored in userID message property. Wh=
+en
+> > > > receiving this message via STOMP, the value of userID was not
+> present in
+> > > > any header, unless the sender app manually generates an id for the
+> > > message
+> > > > and passes it into some custom-named header.
+> > > > Could not find any related info on this property in the archive.
+> > > > Maybe it is possible to add a STOMP configuration flag, similar to
+> > > > stompEnableMessageId (stompEnableUserId e.g.), that would control i=
+f
+> a
+> > > > message's userID value is being passed into STOMP headers?
+> > > >
+> > > > artemis version 2.37.0
+> > > >
+> > >
+>
+> ---------------------------------------------------------------------
+> To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+> For additional commands, e-mail: users-help@activemq.apache.org
+> For further information, visit: https://activemq.apache.org/contact
+>
+>
+>
+
+--000000000000c68652062394f53a--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57508-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 92D653E6D6
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:06:02 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 088AA45C64
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:05:22 +0000 (UTC)
+Received: (qmail 967521 invoked by uid 998); 3 Oct 2024 15:05:21 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 967482 invoked by uid 116); 3 Oct 2024 15:05:20 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 03 Oct 2024 15:05:20 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id 04A5EC2201
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:05:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.249
+X-Spam-Level: 
+X-Spam-Status: No, score=0.249 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,
+	SPF_PASS=-0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id conHQgPC_BM5 for <users@activemq.apache.org>;
+	Thu,  3 Oct 2024 15:05:19 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2a00:1450:4864:20::135; helo=mail-lf1-x135.google.com; envelope-from=baigildin97@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 5E57581FC4
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:04:49 +0000 (UTC)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-5389e24a4d1so1269688e87.3
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 08:04:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727967888; x=1728572688; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CxgSMSKaDns/TQMxvMrZmuZSMPYK0eDmRdVr6AoEHL0=;
+        b=ZaTM7f3KQY96FVS+xCYpljSjh/86GRXmfvpY2d4O6SDBcHOhA5YKh4OKbZ0ktPXf4R
+         dpmmczbfGxIGCgMOB1X4edt57yt9hLBKj13GPwR8QVP43rI8x6vKOPknf7RRfZOZJcub
+         +uMWzyclOmoXX0KyuwVhy11ha1LPXWxOniEMbcnxW7Uh6pYuZIj2UM1DkIAnrtJbC3lK
+         Sk1VMNkHBpasBSnX9E5cuHU6mnjx2t5hCpmFJ0VgwcWORiO+35hBClDo72a09bkZlW6j
+         ShB/wLLHCOBpBqU5jqGnDZlfAC5kr18t19ZrzK4iILyyHDp0qfQo82mHo0JTLF+d7FXj
+         hszw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727967888; x=1728572688;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CxgSMSKaDns/TQMxvMrZmuZSMPYK0eDmRdVr6AoEHL0=;
+        b=LgbWwyaL7Hd8wYcP07BkrNfvWYI6V7C9g4nrX+LCDgeivraZiGqXwQEvv7yfjCA2Ec
+         tJXwCf/Q74gIbK08CRN4rV2oBX2FQnPNEky5qUF0GmCjyNK+6bq/sgS6YicgWqHWmQtq
+         xTF2oNA9Kt6qU6akl0heAq6Kr/TYw5QvIU8K5U8fzAemA4CAk6Me6E9mv4lfvISpWKml
+         gVCljcSVwYXFVpYfPgwfwW7o/qdZFXMd1IuPAFXU55Dyfz2exGvlupKZDdiLz0RVXBxn
+         f6MBY2hZ50bipqqd1Y4YlJZxEblD9k+odzVkbLM7s1ZbwXkzQquhigZwq3KABySwfeOJ
+         wQ/w==
+X-Gm-Message-State: AOJu0Yx2YzR+lBRX4THIuvG4IDsDlZsQDRssoOwH8XxpAb5d0v1zLv/f
+	1sG/ensHqdCvT9qJ1Q1ZbLa6XmONesF1sDp/oHsxn1RmBInQIoJ9t/jvbZpda+vcrrzOIFU9CdW
+	ZB+9O24tQungXp4qrkBR441V611uPioeZBPuMlQ==
+X-Google-Smtp-Source: AGHT+IFtQWoEmbmben1c+IucTs7SAmB3xB6546iYnaGhFLgrRfts5mWvHuqVjIcx+4M6cbifDMGiMLaGNRZE4kENDew=
+X-Received: by 2002:a05:651c:a0b:b0:2fa:cb44:7bd4 with SMTP id
+ 38308e7fff4ca-2fae10235fdmr47047151fa.5.1727967887890; Thu, 03 Oct 2024
+ 08:04:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>
+ <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com>
+In-Reply-To: <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com>
+From: =?UTF-8?B?0JzRg9GA0LDQtCDQkdCw0LnQs9C40LvRjNC00LjQvQ==?= <baigildin97@gmail.com>
+Date: Thu, 3 Oct 2024 18:04:35 +0300
+Message-ID: <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>
+Subject: Re: [Artemis] Passing message userID into STOMP
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="0000000000002421c7062393e048"
+
+--0000000000002421c7062393e048
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi, Justin!
+Sender sends message into request queue and expects response message in
+response queue, with response's JMSCorellationId header being set to
+message ID that was sent (and could not be read by responder app).
+Sender (java app) originally was not explicitly specifying message ID, not
+really sure if it was set by library used or by the broker
+
+Calling msg.setJMSMessageId(msgId) with some manually generated value did
+reflect on userID property of the message, however it still could not be
+read by responder app via STOMP, unless
+msg.putStringProperty('some-header-name', msgId) was called
+
+As a solution for now we settled on manually putting message ID into string
+properties
+
+=D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 17:13, Just=
+in Bertram <jbertram@apache.org>:
+
+> Can you clarify your use-case and how the message ID is being set on the
+> client sending the message?
+>
+> Typically the message ID is set by the client implementation or by the
+> broker and it can also change in some circumstances so it's not
+> particularly meaningful to the messaging application. Generally speaking =
+we
+> recommend folks set their own unique ID if they're wanting to track
+> messages.
+>
+>
+> Justin
+>
+> On Thu, Oct 3, 2024 at 2:17=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =D0=
+=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@gmai=
+l.com>
+> wrote:
+>
+> > Hi, we ran into an issue when receiving messages via STOMP protocol.
+> > Message was sent by java application using JMSSerializer via AMQP
+> protocol,
+> > resulting in message id being stored in userID message property. When
+> > receiving this message via STOMP, the value of userID was not present i=
+n
+> > any header, unless the sender app manually generates an id for the
+> message
+> > and passes it into some custom-named header.
+> > Could not find any related info on this property in the archive.
+> > Maybe it is possible to add a STOMP configuration flag, similar to
+> > stompEnableMessageId (stompEnableUserId e.g.), that would control if a
+> > message's userID value is being passed into STOMP headers?
+> >
+> > artemis version 2.37.0
+> >
+>
+
+--0000000000002421c7062393e048--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57509-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 876533E6D6
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:14:11 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 7B10649539
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:14:10 +0000 (UTC)
+Received: (qmail 979311 invoked by uid 998); 3 Oct 2024 15:14:08 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 979291 invoked by uid 116); 3 Oct 2024 15:14:07 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 03 Oct 2024 15:14:07 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id B40162001AE
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:14:07 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.05
+X-Spam-Level: 
+X-Spam-Status: No, score=0.05 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25,
+	RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id FYXwVksdsXws for <users@activemq.apache.org>;
+	Thu,  3 Oct 2024 15:14:07 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2607:f8b0:4864:20::734; helo=mail-qk1-x734.google.com; envelope-from=tabish121@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 3FC0881FBC
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:14:07 +0000 (UTC)
+Received: by mail-qk1-x734.google.com with SMTP id af79cd13be357-7a99fd0535bso85005285a.3
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 08:14:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727968440; x=1728573240; darn=activemq.apache.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=LNETEUe49yCTlFX1BTvCXLKNr7tkdvZdbW28fUeWuYU=;
+        b=AHqyDtZd3O6LH/xXO6yQ9V3zo9wMWz8UzRRyPf9sIgaeaGucMv6jY5XjP4mP5d/xL6
+         ICOYu/gz3u+dLH+xGgkd7hnE76s+7InsSgfqc1nCVtYMmGr+/ufmzxUjc+FpmJ9PH6HG
+         lHrwksmurd26oN0nPJS9azTiqI29Ja0RsL+NdtWxs5dkjVK2978eZIaUEZW4J9WFgA+K
+         S/bt5jZPeX9x+hkrc3hxvpo02VJxCsjS4+FsQ9DWx5pXjagoFulPDalZ5wagiZWfSJyR
+         2bzOSX7PAWP9m52rqKSRmwdh5G9TOnCkJLE1WSUNdoEp/r2DUOfYr1Dn0hfG5AS2yRQU
+         fzdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727968440; x=1728573240;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LNETEUe49yCTlFX1BTvCXLKNr7tkdvZdbW28fUeWuYU=;
+        b=WD+wPQK6kBYBf0c2gqhP4U4P3LbhOBEx0rGu2M/9CZNa2Fplq3xgi3HljDJFFBmDsY
+         0tqLRa7J+uBZD7qLnt4+XVfoZZwP+0xop5kWu06NiTSFiVevs2BQnO/XsHBbgbGgadFx
+         +FBdPltwyJje1Oyp9sMWQsJPjFNk0Fvr1xg8HKT9o8jk2LWKUKn8A7y5qLH3M1khHg9o
+         WZ6F/04+thWvo6ffGwL2qe0LVjRNb8sDim9DtuqYt9OPv0u58ukJLnB8J/Mgzi3eU4tC
+         N+DvEH9OARsNHWOkVeAhcUFlbLvKmIoLj8axW767wjFKp/Fh5rJWfSnD/htTBiB5L+y0
+         YXrw==
+X-Gm-Message-State: AOJu0Yx9LjV6+jie4WE1eHOLE9UWybHtF3697T0vIO0O57L6dIMIOtm1
+	7rbEN81tm6LB68vH/3osnnEuNT0BcBCHkwXXKKo+2I0MX91np9JAJV77ng==
+X-Google-Smtp-Source: AGHT+IGg4NzrDhjiLFvWIylGjgXhQaami3DN/5zOlwpiRRf5sLYiZlQ1W+8JHdSZ3Efce/ws50JOOw==
+X-Received: by 2002:a05:620a:19a4:b0:7ac:a0a5:9be6 with SMTP id af79cd13be357-7ae626bd88amr1244480185a.19.1727968439603;
+        Thu, 03 Oct 2024 08:13:59 -0700 (PDT)
+Received: from ?IPV6:2601:140:9300:8e4:5d8:13d9:bedb:3bd0? ([2601:140:9300:8e4:5d8:13d9:bedb:3bd0])
+        by smtp.googlemail.com with ESMTPSA id af79cd13be357-7ae6b3e9028sm56815385a.136.2024.10.03.08.13.58
+        for <users@activemq.apache.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 08:13:59 -0700 (PDT)
+Message-ID: <d4ac8b90-7b91-4edc-bd82-d1a4f8b549f3@gmail.com>
+Date: Thu, 3 Oct 2024 11:13:58 -0400
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Artemis] Passing message userID into STOMP
+To: users@activemq.apache.org
+References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>
+ <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com>
+ <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>
+Content-Language: en-US
+From: Timothy Bish <tabish121@gmail.com>
+In-Reply-To: <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 10/3/24 11:04, Мурад Байгильдин wrote:
+> Hi, Justin!
+> Sender sends message into request queue and expects response message in
+> response queue, with response's JMSCorellationId header being set to
+> message ID that was sent (and could not be read by responder app).
+> Sender (java app) originally was not explicitly specifying message ID, not
+> really sure if it was set by library used or by the broker
+>
+> Calling msg.setJMSMessageId(msgId) with some manually generated value did
+> reflect on userID property of the message, however it still could not be
+> read by responder app via STOMP, unless
+> msg.putStringProperty('some-header-name', msgId) was called
+
+The JMS specification prohibits you from using the setJMSMessageID 
+value; From the API docs
+
+"This method is for use by JMS providers only to set this field when a 
+message is sent. This message cannot be used by clients to configure the 
+message ID. This method is public to allow a JMS provider to set this 
+field when sending a message whose implementation is not its own."
+
+The most reliable way to ensure you have a stable message header to act 
+on is to set you own value as cross protocol conversions that occur do 
+not guarantee that the JMS message ID will be converted and reflected 
+they way you want it to be.
+
+
+>
+> As a solution for now we settled on manually putting message ID into string
+> properties
+>
+> чт, 3 окт. 2024 г. в 17:13, Justin Bertram <jbertram@apache.org>:
+>
+>> Can you clarify your use-case and how the message ID is being set on the
+>> client sending the message?
+>>
+>> Typically the message ID is set by the client implementation or by the
+>> broker and it can also change in some circumstances so it's not
+>> particularly meaningful to the messaging application. Generally speaking we
+>> recommend folks set their own unique ID if they're wanting to track
+>> messages.
+>>
+>>
+>> Justin
+>>
+>> On Thu, Oct 3, 2024 at 2:17 AM Мурад Байгильдин <baigildin97@gmail.com>
+>> wrote:
+>>
+>>> Hi, we ran into an issue when receiving messages via STOMP protocol.
+>>> Message was sent by java application using JMSSerializer via AMQP
+>> protocol,
+>>> resulting in message id being stored in userID message property. When
+>>> receiving this message via STOMP, the value of userID was not present in
+>>> any header, unless the sender app manually generates an id for the
+>> message
+>>> and passes it into some custom-named header.
+>>> Could not find any related info on this property in the archive.
+>>> Maybe it is possible to add a STOMP configuration flag, similar to
+>>> stompEnableMessageId (stompEnableUserId e.g.), that would control if a
+>>> message's userID value is being passed into STOMP headers?
+>>>
+>>> artemis version 2.37.0
+>>>
+
+-- 
+Tim Bish
+
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57510-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 2CD893E6DB
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:21:18 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id B71C668873
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:20:35 +0000 (UTC)
+Received: (qmail 1000072 invoked by uid 998); 3 Oct 2024 15:20:34 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1000053 invoked by uid 116); 3 Oct 2024 15:20:33 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 03 Oct 2024 15:20:33 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id 68768C21FF
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:20:33 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.249
+X-Spam-Level: 
+X-Spam-Status: No, score=0.249 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,
+	SPF_PASS=-0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id Eojj2RriJKcf for <users@activemq.apache.org>;
+	Thu,  3 Oct 2024 15:20:32 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2a00:1450:4864:20::230; helo=mail-lj1-x230.google.com; envelope-from=baigildin97@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id D0B0081FC1
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:20:32 +0000 (UTC)
+Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso13099581fa.3
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 08:20:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727968826; x=1728573626; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hvzYqF1RZl5xCzoBBzw5eQtBZtgA+1pwZ46oMbSBmQA=;
+        b=YWMs9RLG+YEc0MejlSaxUhJnTWxJPGi1G34MA3etFlHf9UB+FaTZivC8DzXQHlAYZG
+         c6d0NxeApNUQE5mY5emzrA7veCbm6DCNku4DQt+xCK72dSI/IFc7betq9szksMZnSeUc
+         Ys2N8vmrO6xAXYiMrI0O6esuWiNQVNfewICX+RMsWUy80w8N8t1vA2Zl1qWA3kIH1Q0B
+         g0mWR4+AvHTNOKBJqEZWZ8dyh8gFAKu/Gu5COd+7I3xBQ4lu/uWkUC+IUmnaMuf9p1Y7
+         XyfHAb3IZexrqRy48rfGCISre19+xW9UtUbGKU6KmaVwwyzbGn6KIvtAyt6CpTkL7f/a
+         03yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727968826; x=1728573626;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hvzYqF1RZl5xCzoBBzw5eQtBZtgA+1pwZ46oMbSBmQA=;
+        b=LXHyvmDk85a9/qFqvzSj8iGWpUdh08wd/4QrPy/auPzM2IdVQy54UdeL70zjPU6EXN
+         pm0NVWoIrRhHh8kzKutFfgy8EWqORUGeDj1Zv+HDIQL9+nhVzVY+LeRXi2qYgCMX/jUu
+         +sxHxbLwu4cw/OttB5yvw7h2aPMU7sOfnbDK9fhChOEgIN+ceKzauHc5Je702XoSeAoG
+         +Ka8/xN9LZ/6IAtVK6CrbvvlZWe65Pgk/Tom+9s83DbGKuu4fuJu2Vt5ar3g3dm9E4gX
+         vbeWktKzFE9U0TEAatVGqxdNAbRwz4Xkvy7MrtoPJiI46FiBLkJboy4kOejOxE3bCexE
+         595Q==
+X-Gm-Message-State: AOJu0Yzc6zVt2+9iJVE+rnuUg8S/gxPR+H+J5HsggnRMJE5E+2o7SwRS
+	CzfTElHHAQlrkjV49+uZuHP5OGUDQ5eCLR0tuZhGUfxq4lLUNkoJcUE53agvWF6+JUJzt2tfJQy
+	9wjFxHNQ3DrRzYxMNgYXr+K9DGJPTi0dkGjLj4Q==
+X-Google-Smtp-Source: AGHT+IHrlWIHRyYLbf084FCZtgCDd3LPztoTuIn2DxxF0YPCnp06ZYuUrY/FRtYMpm1iLsWeXwpre9wF4ML1bdMQueA=
+X-Received: by 2002:a2e:b889:0:b0:2fa:d2eb:c3d0 with SMTP id
+ 38308e7fff4ca-2fae1029823mr45719171fa.23.1727968825491; Thu, 03 Oct 2024
+ 08:20:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>
+ <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com> <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>
+In-Reply-To: <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>
+From: =?UTF-8?B?0JzRg9GA0LDQtCDQkdCw0LnQs9C40LvRjNC00LjQvQ==?= <baigildin97@gmail.com>
+Date: Thu, 3 Oct 2024 18:20:13 +0300
+Message-ID: <CAOrKGWxo-Xf3nG135kBNDftYb+wcP2KjpNKWPikJvEqwu7PZ2w@mail.gmail.com>
+Subject: Re: [Artemis] Passing message userID into STOMP
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="00000000000006d7690623941870"
+
+--00000000000006d7690623941870
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+As far as i know library that sender team uses automatically maps request
+with response, they just need to set up response handler class.
+Setting own unique id and mapping request with response would require
+reimplementing library classes, not really sure if that's an ideal approach
+
+=D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 18:04, =D0=
+=9C=D1=83=D1=80=D0=B0=D0=B4 =D0=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=
+=B4=D0=B8=D0=BD <baigildin97@gmail.com>:
+
+> Hi, Justin!
+> Sender sends message into request queue and expects response message in
+> response queue, with response's JMSCorellationId header being set to
+> message ID that was sent (and could not be read by responder app).
+> Sender (java app) originally was not explicitly specifying message ID, no=
+t
+> really sure if it was set by library used or by the broker
+>
+> Calling msg.setJMSMessageId(msgId) with some manually generated value did
+> reflect on userID property of the message, however it still could not be
+> read by responder app via STOMP, unless
+> msg.putStringProperty('some-header-name', msgId) was called
+>
+> As a solution for now we settled on manually putting message ID into
+> string properties
+>
+> =D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 17:13, Ju=
+stin Bertram <jbertram@apache.org>:
+>
+>> Can you clarify your use-case and how the message ID is being set on the
+>> client sending the message?
+>>
+>> Typically the message ID is set by the client implementation or by the
+>> broker and it can also change in some circumstances so it's not
+>> particularly meaningful to the messaging application. Generally speaking
+>> we
+>> recommend folks set their own unique ID if they're wanting to track
+>> messages.
+>>
+>>
+>> Justin
+>>
+>> On Thu, Oct 3, 2024 at 2:17=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =
+=D0=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@g=
+mail.com>
+>> wrote:
+>>
+>> > Hi, we ran into an issue when receiving messages via STOMP protocol.
+>> > Message was sent by java application using JMSSerializer via AMQP
+>> protocol,
+>> > resulting in message id being stored in userID message property. When
+>> > receiving this message via STOMP, the value of userID was not present =
+in
+>> > any header, unless the sender app manually generates an id for the
+>> message
+>> > and passes it into some custom-named header.
+>> > Could not find any related info on this property in the archive.
+>> > Maybe it is possible to add a STOMP configuration flag, similar to
+>> > stompEnableMessageId (stompEnableUserId e.g.), that would control if a
+>> > message's userID value is being passed into STOMP headers?
+>> >
+>> > artemis version 2.37.0
+>> >
+>>
+>
+
+--00000000000006d7690623941870--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57506-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 87FF83E6D6
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 14:13:28 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 9038D4A9A3
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 14:13:27 +0000 (UTC)
+Received: (qmail 859264 invoked by uid 998); 3 Oct 2024 14:13:25 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 859247 invoked by uid 116); 3 Oct 2024 14:13:25 -0000
+Received: from mailrelay1-he-de.apache.org (HELO mailrelay1-he-de.apache.org) (116.203.21.61)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 03 Oct 2024 14:13:25 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	by mailrelay1-he-de.apache.org (ASF Mail Server at mailrelay1-he-de.apache.org) with ESMTPSA id 419A73EBFE
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 14:13:25 +0000 (UTC)
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cb2f271043so10264176d6.0
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 07:13:25 -0700 (PDT)
+X-Gm-Message-State: AOJu0YyFa881cLPoSbRhHCuNxBn2N6/prYf5woUekg6QUWkHez0PnsNn
+	VqCn4kwoURzcXzJbSjcw1HbTdMkh4LxOvfMYXV72j0Q5M7KOjWMDsm4/IE5WVYnAT3URKbBoVLU
+	Gl0mmgRWvURACnldRHQ51HS5bcyYJOeHhL7I23w==
+X-Google-Smtp-Source: AGHT+IFvDHXg/5QIT+eey0ZNukan90CjUXRmkw+Jfyahx9Doa2wu23ho5K2Qvdcn2OYFhTvESgneRweE3mbnYuiTpiI=
+X-Received: by 2002:a05:6214:3a05:b0:6cb:3baa:7ac with SMTP id
+ 6a1803df08f44-6cb819f6cefmr86789046d6.12.1727964804258; Thu, 03 Oct 2024
+ 07:13:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>
+In-Reply-To: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>
+From: Justin Bertram <jbertram@apache.org>
+Date: Thu, 3 Oct 2024 09:12:57 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com>
+Message-ID: <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com>
+Subject: Re: [Artemis] Passing message userID into STOMP
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="00000000000057c83306239328c6"
+
+--00000000000057c83306239328c6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Can you clarify your use-case and how the message ID is being set on the
+client sending the message?
+
+Typically the message ID is set by the client implementation or by the
+broker and it can also change in some circumstances so it's not
+particularly meaningful to the messaging application. Generally speaking we
+recommend folks set their own unique ID if they're wanting to track
+messages.
+
+
+Justin
+
+On Thu, Oct 3, 2024 at 2:17=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =D0=
+=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@gmai=
+l.com>
+wrote:
+
+> Hi, we ran into an issue when receiving messages via STOMP protocol.
+> Message was sent by java application using JMSSerializer via AMQP protoco=
+l,
+> resulting in message id being stored in userID message property. When
+> receiving this message via STOMP, the value of userID was not present in
+> any header, unless the sender app manually generates an id for the messag=
+e
+> and passes it into some custom-named header.
+> Could not find any related info on this property in the archive.
+> Maybe it is possible to add a STOMP configuration flag, similar to
+> stompEnableMessageId (stompEnableUserId e.g.), that would control if a
+> message's userID value is being passed into STOMP headers?
+>
+> artemis version 2.37.0
+>
+
+--00000000000057c83306239328c6--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57503-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 131773E6D6
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 07:17:02 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 1A35844B2E
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 07:17:01 +0000 (UTC)
+Received: (qmail 134625 invoked by uid 998); 3 Oct 2024 07:16:59 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 134600 invoked by uid 116); 3 Oct 2024 07:16:58 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 03 Oct 2024 07:16:58 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id 0D011C21F7
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 07:16:58 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.249
+X-Spam-Level: 
+X-Spam-Status: No, score=0.249 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,
+	SPF_PASS=-0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id gO70MX7T4fOm for <users@activemq.apache.org>;
+	Thu,  3 Oct 2024 07:16:57 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2a00:1450:4864:20::12d; helo=mail-lf1-x12d.google.com; envelope-from=baigildin97@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 785E381FC4
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 07:16:57 +0000 (UTC)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-53993564cb1so657960e87.2
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 00:16:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727939816; x=1728544616; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zH1LTXmhGgTZg3kquxwRZNoUk5SxBjGLzpM+b8B6UWc=;
+        b=ASe5ZviftyEUT0tBzwGu77ELZAuaPy5FWToq9oudmrk/rnMUkJCVhgVnJlVpbXHp/h
+         RTDxrXbeUU3HhuT5dgKuyrDemoD94itkqr5V48XtkNg6t14fIgncF+nhdzIq8hlrE645
+         rHS0pPjeLV8XCyQYvPn4fIYffJg/4FAqzKnrbQjLjP7asDSiiL1RVFRWFaRYN2Tx+pmv
+         A0zFKQTFgQ4LU+VBl5v3RwIfWfKwRSZg3oqxJZ/v+bFN1ztIqGU4zRVRtwqEwyC22dB6
+         MnLMULNiXSg1Si2xGGKVqOqrLNkFG3ZRXa1N2ZJ4CHEbugF4n5eh9u0EPhV9GMw8Cay2
+         R2iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727939816; x=1728544616;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zH1LTXmhGgTZg3kquxwRZNoUk5SxBjGLzpM+b8B6UWc=;
+        b=o/u2+oIDZhZer8QRcH3ddCWqy/S0Pq083RNPnQ0c+dfqvyWQ2UggnrBLLNM3haQZnF
+         gFvn6V4ZboSHM1InJ+O9RQNZUE/pHGaIBDJEBi1TJaPNEiweACjyrHFmmVRZm+3yIfsm
+         Fch7MpIPfQXzpilCdC7zB/vNFGIRDeFK55sJ/rQsRuZz2Wmi0URS/d+l0yKHaJZ/Wnjp
+         y9F5/oREDDzXR1BnekQsW0oci0i4dmRQY0BOc/LHKGg0vI7NhTdK8XaeQ+5ZY175+dxu
+         wisrOrAWC/5If7rxDDh1Os5QX8cj7JXNJAZSP1IEFnNBJMVh/7WLXhpfnuYJzm47yfuF
+         Vlgw==
+X-Gm-Message-State: AOJu0YyVPNbtGbMxdQjkGsi7OJ52lz5qzGKr2exiSTCZXNCkYiYtzw9Y
+	zdWEfv2LNxKAiE9MQUtZ9qjIw5MGfp6jt2POJ4HBud4JPADEbFnffO/c9rvr1cvxw/Z4TKQgt8p
+	1bnUthfZib76vhQ3BUXoF+RM4vvflpyMUG5OykQ==
+X-Google-Smtp-Source: AGHT+IG+6BqpIQ26e2tyfOMRMHyVW7WQ62nzXrpfFs9JrBfUuEVRuhXejvU3gXfG3TxkyaTm+mfXwUfd5KPoSxdnvDI=
+X-Received: by 2002:a05:6512:3f11:b0:52c:d626:77aa with SMTP id
+ 2adb3069b0e04-539a07a66e6mr3061015e87.58.1727939815967; Thu, 03 Oct 2024
+ 00:16:55 -0700 (PDT)
+MIME-Version: 1.0
+From: =?UTF-8?B?0JzRg9GA0LDQtCDQkdCw0LnQs9C40LvRjNC00LjQvQ==?= <baigildin97@gmail.com>
+Date: Thu, 3 Oct 2024 10:16:44 +0300
+Message-ID: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>
+Subject: [Artemis] Passing message userID into STOMP
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="000000000000ec978006238d56b6"
+
+--000000000000ec978006238d56b6
+Content-Type: text/plain; charset="UTF-8"
+
+Hi, we ran into an issue when receiving messages via STOMP protocol.
+Message was sent by java application using JMSSerializer via AMQP protocol,
+resulting in message id being stored in userID message property. When
+receiving this message via STOMP, the value of userID was not present in
+any header, unless the sender app manually generates an id for the message
+and passes it into some custom-named header.
+Could not find any related info on this property in the archive.
+Maybe it is possible to add a STOMP configuration flag, similar to
+stompEnableMessageId (stompEnableUserId e.g.), that would control if a
+message's userID value is being passed into STOMP headers?
+
+artemis version 2.37.0
+
+--000000000000ec978006238d56b6--

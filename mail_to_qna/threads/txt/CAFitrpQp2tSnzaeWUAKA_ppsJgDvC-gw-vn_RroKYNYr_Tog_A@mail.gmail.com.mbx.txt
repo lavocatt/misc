@@ -1,0 +1,1479 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57530-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 1423B3E80C
+	for <archive-asf-public@cust-asf.ponee.io>; Thu, 10 Oct 2024 16:29:47 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 46C4E61C51
+	for <archive-asf-public@cust-asf.ponee.io>; Thu, 10 Oct 2024 16:28:47 +0000 (UTC)
+Received: (qmail 1149871 invoked by uid 998); 10 Oct 2024 16:28:45 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1149815 invoked by uid 116); 10 Oct 2024 16:28:44 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 10 Oct 2024 16:28:44 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id D179D200162
+	for <users@activemq.apache.org>; Thu, 10 Oct 2024 16:28:44 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.805
+X-Spam-Level: 
+X-Spam-Status: No, score=0.805 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, FREEMAIL_REPLY=1, RCVD_IN_DNSWL_BLOCKED=0.001,
+	RCVD_IN_MSPIKE_H3=0.001, RCVD_IN_MSPIKE_WL=0.001,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id 85GVudgc83tC for <users@activemq.apache.org>;
+	Thu, 10 Oct 2024 16:28:43 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=209.85.210.173; helo=mail-pf1-f173.google.com; envelope-from=robbie.gemmell@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id 64363C0C75
+	for <users@activemq.apache.org>; Thu, 10 Oct 2024 16:28:43 +0000 (UTC)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71df2b0a2f7so1022736b3a.3
+        for <users@activemq.apache.org>; Thu, 10 Oct 2024 09:28:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728577721; x=1729182521; darn=activemq.apache.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zYmpxy/6sjx2M/ioWtdrR2QDOGy4oX7ktDesc9enhVE=;
+        b=HbdQam88PHu+A2BMFsjvvwvpcLvf1qaziXkPyZiNtRzW5z6G+8yHEbCKVvElemZdcV
+         J0M8y9poHggrpDpZNFVyt/yUazAMzTrWH75ZhLxQemc6PMNCpNa1xIrKYpNjUl3Hq8ZG
+         0id79QvKXloWsX659DqR9HMHrVD4TTvSMWkrtst4qXwAxUt+nEJN5EJhsfL0XAXSyzDA
+         D1bk6pNLFmgiusyWcLocDiADi/HtIsn8h3eJFyIg9w4lQ7mdUrjwydlEa4FGarLx+PIk
+         pBEoEVqQh0d+ZBLuB1L6Hh6VILiIox7HQhuWGUZQjbot28YZsxb3o1Lc0Plq8OtGfb5Z
+         tG1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728577721; x=1729182521;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zYmpxy/6sjx2M/ioWtdrR2QDOGy4oX7ktDesc9enhVE=;
+        b=O4gslDTYTyvwjtp1qwr+vkYqwVpdOgojXqqVMWA4ha35+S8T+MqdjdhZKlwmC8FVSK
+         nodSQK4YrxEjeuvUisFo95/isvJAI1roX1yxRIX0NfjiIrzcePgmxxSuc1ZFGiEYxscI
+         aqGmRVMnsdtMIfhZu6vHLd+zEYPezMSbCBXt+EDRroXIFuVLi5TgSmTJTan0LyWeYqXt
+         bC1PQ5G6FZl7R++LhzD+KD1ND3gY+q+eDw9h6bhrHSFF0RAdOkxdAUoBsmFVhXGVsEB+
+         IpZRfojIaNi8MY5cjRl4iMDGriaK65OrH/rTztZivIfNju5gmITL5121Vc+yt8i6AyDH
+         i3IQ==
+X-Gm-Message-State: AOJu0Yzl7EfjrVyb+WtIpOGT/B2sQ86o40HgJAjJzGtIIR3K0udoxoHR
+	YQdEAic8C10UoB8j9hylUF1MI4rQKPb3W8Lv50u9U9OthRoCoGXZEh4ENxE706EI36F8ww+IufG
+	lmD3xEa/Rjhbpg9vxd1Iejs+wsFz8is0m
+X-Google-Smtp-Source: AGHT+IGYhv9MrPLVQwhwl7XYPyS2Cd6c2cVkjRjGtgkHWCNVP0NDlPse/2rB8gmVQeLPg1M9h0NW/jt41ZFCIvyD7vM=
+X-Received: by 2002:a05:6a21:3318:b0:1d7:109a:720f with SMTP id
+ adf61e73a8af0-1d8bba690bamr39551637.2.1728577721323; Thu, 10 Oct 2024
+ 09:28:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAA9ykMJPTfGh8Cs4mDWrNme9skouoS3nYu+H7HzxgBcFm+GG7A@mail.gmail.com>
+ <AS8PR05MB10601619C36F6672D8D2F543D82782@AS8PR05MB10601.eurprd05.prod.outlook.com>
+ <AS8PR05MB10601D334A4698FEBE9B56FE982782@AS8PR05MB10601.eurprd05.prod.outlook.com>
+In-Reply-To: <AS8PR05MB10601D334A4698FEBE9B56FE982782@AS8PR05MB10601.eurprd05.prod.outlook.com>
+From: Robbie Gemmell <robbie.gemmell@gmail.com>
+Date: Thu, 10 Oct 2024 17:28:27 +0100
+Message-ID: <CAFitrpQp2tSnzaeWUAKA_ppsJgDvC-gw-vn=RroKYNYr=Tog=A@mail.gmail.com>
+Subject: Re: [ANNOUNCE] ActiveMQ Artemis Console 1.0.0 released
+To: users@activemq.apache.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+In future please start a new specific thread rather than reusing
+release announcement threads.
+
+In terms of Artemis releases I believe the new console has mainly only
+been tried later in its development against 2.36.0 and 2.37.0. I do
+now vaguely recall a code change being made on the broker side though
+to support the new console specifically, so now that you mention it I
+wouldn't be surprised if newer releases such as those are actually
+needed, though I dont know that for sure.
+
+On Thu, 10 Oct 2024 at 14:31, Arno Schuerhoff <Arno.Schuerhoff@havi.com> wr=
+ote:
+>
+> Hello Andy,
+>
+> adding remote brokers server name to =E2=80=9CproxyAllowlist=E2=80=9D val=
+ues in web.xml advanced me a step further: Test connection is successful no=
+w.
+>
+> Unfortunately attempting to connect o broker with username and password a=
+lways results in =E2=80=9CIncorrect username or password=E2=80=9D response =
+in new Artemis Console.
+> If username or password really don=E2=80=99t fit, the broker log contains=
+ a line like these: (first line is for admin with wrong password, second li=
+ne for non-existing user)
+>
+> 2024-10-10 14:52:56,002 WARN  [io.hawt.system.Authenticator] Login failed=
+ due to: Password does not match for user: admin
+> 2024-10-10 14:53:56,788 WARN  [io.hawt.system.Authenticator] Login failed=
+ due to: User does not exist: hautarzt
+>
+> If username and password are correct, nothing is added to brokers log, bu=
+t I still get the =E2=80=9CIncorrect username or password=E2=80=9D response=
+ in new Artemis Console.
+> Broker version is 2.31.2, what=E2=80=99s maybe to old. But I didn=E2=80=
+=99t find a hint about supported Artemis broker versions in https://activem=
+q.apache.org/components/artemis-console/
+>
+> Kind regards,
+> Arno
+>
+>
+> Von: Arno Schuerhoff <Arno.Schuerhoff@havi.com>
+> Gesendet: Donnerstag, 10. Oktober 2024 10:52
+> An: users@activemq.apache.org
+> Betreff: AW: [ANNOUNCE] ActiveMQ Artemis Console 1.0.0 released
+>
+> Hello Andy, thanks for providing the new console. I=E2=80=99m looking for=
+ward to play around with it. Is there an option to run the console on anoth=
+er server than the broker=E2=80=99s server? I have started console with Jet=
+ty on my workstation. If I try to
+>
+>
+> Hello Andy,
+>
+>
+>
+> thanks for providing the new console. I=E2=80=99m looking forward to play=
+ around with it.
+>
+>
+>
+> Is there an option to run the console on another server than the broker=
+=E2=80=99s server?
+>
+> I have started console with Jetty on my workstation. If I try to connect =
+to a remote Artemis I get =E2=80=9CHost not allowlisted=E2=80=9D if pressin=
+g =E2=80=9CTest connection=E2=80=9D button in =E2=80=9CEdit Connection=E2=
+=80=9D.
+>
+>
+>
+> Kind regards,
+>
+> Arno
+>
+>
+>
+> Von: Andy Taylor <andy.tayls67@gmail.com<mailto:andy.tayls67@gmail.com>>
+>
+> Gesendet: Mittwoch, 9. Oktober 2024 14:15
+>
+> An: dev@activemq.apache.org<mailto:dev@activemq.apache.org>; users@active=
+mq.apache.org<mailto:users@activemq.apache.org>
+>
+> Betreff: [ANNOUNCE] ActiveMQ Artemis Console 1.0.0 released
+>
+>
+>
+> I am pleased to announce the release of Apache ActiveMQ Artemis Console 1=
+.=E2=80=8A0.=E2=80=8A0 Downloads are available at : https:=E2=80=8A//urldef=
+ense.=E2=80=8Acom/v3/__https:=E2=80=8A//activemq.=E2=80=8Aapache.=E2=80=8Ao=
+rg/components/artemis-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_=
+4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$
+>
+>
+>
+>
+>
+> I am pleased to announce the release of Apache ActiveMQ Artemis Console
+>
+>
+>
+> 1.0.0
+>
+>
+>
+>
+>
+>
+>
+> Downloads are available at :
+>
+>
+>
+>
+>
+>
+>
+> https://urldefense.com/v3/__https://activemq.apache.org/components/artemi=
+s-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37y=
+es-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$<https://urldefense.com/v3/_=
+_https:/activemq.apache.org/components/artemis-console/download/__;!!JQ9pMA=
+!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRw=
+sXpUXyqaCrt2BXJw$><https://urldefense.com/v3/__https:/activemq.apache.org/c=
+omponents/artemis-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4Ral=
+mYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$%3chttps:/ur=
+ldefense.com/v3/__https:/activemq.apache.org/components/artemis-console/dow=
+nload/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70=
+oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$%3eRelease>
+>
+>  <https://urldefense.com/v3/__https:/activemq.apache.org/components/artem=
+is-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37=
+yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$%3chttps:/urldefense.com/v3=
+/__https:/activemq.apache.org/components/artemis-console/download/__;!!JQ9p=
+MA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4P=
+RwsXpUXyqaCrt2BXJw$%3eRelease>
+>
+>  <https://urldefense.com/v3/__https:/activemq.apache.org/components/artem=
+is-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37=
+yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$%3chttps:/urldefense.com/v3=
+/__https:/activemq.apache.org/components/artemis-console/download/__;!!JQ9p=
+MA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4P=
+RwsXpUXyqaCrt2BXJw$%3eRelease>
+>
+>  <https://urldefense.com/v3/__https:/activemq.apache.org/components/artem=
+is-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37=
+yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$%3chttps:/urldefense.com/v3=
+/__https:/activemq.apache.org/components/artemis-console/download/__;!!JQ9p=
+MA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4P=
+RwsXpUXyqaCrt2BXJw$%3eRelease>
+>
+> Release<https://urldefense.com/v3/__https:/activemq.apache.org/components=
+/artemis-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWq=
+eU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$%3chttps:/urldefense.=
+com/v3/__https:/activemq.apache.org/components/artemis-console/download/__;=
+!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18X=
+sLJQ4PRwsXpUXyqaCrt2BXJw$%3eRelease>Notes can be found at:
+>
+>
+>
+>
+>
+>
+>
+>  https://urldefense.com/v3/__https://issues.apache.org/jira/projects/ARTE=
+MIS/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T3=
+7yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$<https://urldefense.com/v3=
+/__https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!JQ9=
+pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4=
+PRwsXpUXyqaALJryxDA$><https://urldefense.com/v3/__https:/issues.apache.org/=
+jira/projects/ARTEMIS/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_=
+4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps=
+:/urldefense.com/v3/__https:/issues.apache.org/jira/projects/ARTEMIS/versio=
+ns/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBq=
+lIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3eThis>
+>
+>  <https://urldefense.com/v3/__https:/issues.apache.org/jira/projects/ARTE=
+MIS/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T3=
+7yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps:/urldefense.com/v=
+3/__https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!JQ=
+9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ=
+4PRwsXpUXyqaALJryxDA$%3eThis>
+>
+>  <https://urldefense.com/v3/__https:/issues.apache.org/jira/projects/ARTE=
+MIS/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T3=
+7yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps:/urldefense.com/v=
+3/__https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!JQ=
+9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ=
+4PRwsXpUXyqaALJryxDA$%3eThis>
+>
+>  <https://urldefense.com/v3/__https:/issues.apache.org/jira/projects/ARTE=
+MIS/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T3=
+7yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps:/urldefense.com/v=
+3/__https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!JQ=
+9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ=
+4PRwsXpUXyqaALJryxDA$%3eThis>
+>
+>  <https://urldefense.com/v3/__https:/issues.apache.org/jira/projects/ARTE=
+MIS/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T3=
+7yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps:/urldefense.com/v=
+3/__https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!JQ=
+9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ=
+4PRwsXpUXyqaALJryxDA$%3eThis>
+>
+>  <https://urldefense.com/v3/__https:/issues.apache.org/jira/projects/ARTE=
+MIS/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T3=
+7yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps:/urldefense.com/v=
+3/__https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!JQ=
+9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ=
+4PRwsXpUXyqaALJryxDA$%3eThis>
+>
+> This<https://urldefense.com/v3/__https:/issues.apache.org/jira/projects/A=
+RTEMIS/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU=
+1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps:/urldefense.co=
+m/v3/__https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!=
+!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18Xs=
+LJQ4PRwsXpUXyqaALJryxDA$%3eThis>is the first release of the new console whi=
+ch is a replacement for the
+>
+>
+>
+> current console shipped with Artemis. It is written using React and
+>
+>
+>
+> Patternfly and is based on the HawtIO project.
+>
+>
+>
+>
+>
+>
+>
+> The console is available to run standalone and will be embedded in a futu=
+re
+>
+>
+>
+> release of Artemis.
+>
+>
+>
+>
+>
+>
+>
+> For a list of features and the documentation see:
+>
+>
+>
+>
+>
+>
+>
+> https://urldefense.com/v3/__https://activemq.apache.org/components/artemi=
+s-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBql=
+IT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$<https://urldefense.com/v3/__https:/a=
+ctivemq.apache.org/components/artemis-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfp=
+vu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$>=
+<https://urldefense.com/v3/__https:/activemq.apache.org/components/artemis-=
+console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT=
+70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%3chttps:/urldefense.com/v3/__https:/ac=
+tivemq.apache.org/components/artemis-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpv=
+u8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%3=
+eMany>
+>
+>  <https://urldefense.com/v3/__https:/activemq.apache.org/components/artem=
+is-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBq=
+lIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%3chttps:/urldefense.com/v3/__https:=
+/activemq.apache.org/components/artemis-console/__;!!JQ9pMA!0sOwW-txPAEK7EM=
+fpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg=
+$%3eMany>
+>
+>  <https://urldefense.com/v3/__https:/activemq.apache.org/components/artem=
+is-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBq=
+lIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%3chttps:/urldefense.com/v3/__https:=
+/activemq.apache.org/components/artemis-console/__;!!JQ9pMA!0sOwW-txPAEK7EM=
+fpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg=
+$%3eMany>
+>
+>  <https://urldefense.com/v3/__https:/activemq.apache.org/components/artem=
+is-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBq=
+lIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%3chttps:/urldefense.com/v3/__https:=
+/activemq.apache.org/components/artemis-console/__;!!JQ9pMA!0sOwW-txPAEK7EM=
+fpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg=
+$%3eMany>
+>
+> Many<https://urldefense.com/v3/__https:/activemq.apache.org/components/ar=
+temis-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-PO=
+cBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%3chttps:/urldefense.com/v3/__htt=
+ps:/activemq.apache.org/components/artemis-console/__;!!JQ9pMA!0sOwW-txPAEK=
+7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQ=
+ugg$%3eMany>thanks to all who contributed to the new console.
+>
+>
+>
+>
+>
+>
+>
+> Andy Taylor
+>
+>
+>
+>
+>
+>
+>
+> ______________________________________________________________________
+>
+>
+>
+> This e-mail and any accompanying documents or files contain information t=
+hat is the
+>
+> property of HAVI, that is intended solely for those to whom this e-mail i=
+s addressed
+>
+> (i.e., those identified in the "To" and "Cc" boxes), and that is confiden=
+tial, proprietary,
+>
+> and/or privileged. If you are not an intended recipient of this e-mail, y=
+ou are hereby
+>
+> notified that any viewing, use, disclosure, forwarding, copying, or distr=
+ibution of any of
+>
+> this information is strictly prohibited and may be subject to legal sanct=
+ions. If you have
+>
+> received this e-mail in error, please notify the sender immediately of an=
+y unintended
+>
+> recipients, and delete the e-mail, all attachments, and all copies of bot=
+h from your system.
+>
+>
+>
+> While we have taken reasonable precautions to ensure that any attachments=
+ to this e-mail
+>
+> have been swept for viruses, we cannot accept liability for any damage su=
+stained as a
+>
+> result of software viruses.
+>
+>
+>
+> ______________________________________________________________________
+>
+>
+>
+>
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57529-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id AD5D23E80C
+	for <archive-asf-public@cust-asf.ponee.io>; Thu, 10 Oct 2024 13:31:41 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 9D5754CE4C
+	for <archive-asf-public@cust-asf.ponee.io>; Thu, 10 Oct 2024 13:31:40 +0000 (UTC)
+Received: (qmail 650329 invoked by uid 998); 10 Oct 2024 13:31:38 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 650292 invoked by uid 116); 10 Oct 2024 13:31:37 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 10 Oct 2024 13:31:37 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id D41C6200162
+	for <users@activemq.apache.org>; Thu, 10 Oct 2024 13:31:37 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.379
+X-Spam-Level: 
+X-Spam-Status: No, score=0.379 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_FONT_LOW_CONTRAST=0.001, HTML_MESSAGE=0.2,
+	RCVD_IN_DNSWL_BLOCKED=0.001, RCVD_IN_MSPIKE_H4=0.001,
+	RCVD_IN_MSPIKE_WL=0.001, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, RDNS_DYNAMIC=0.363,
+	SPF_PASS=-0.001, T_KAM_HTML_FONT_INVALID=0.01, URIBL_BLOCKED=0.001]
+	autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=havi.com header.b=nWMIf1nu;
+	dkim=fail (1024-bit key) reason="fail (body has been altered)"
+	header.d=myhavi.onmicrosoft.com header.b=s//KlbKE
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id qNGUD26Jx8LV for <users@activemq.apache.org>;
+	Thu, 10 Oct 2024 13:31:36 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=143.55.148.229; helo=mx08-004a1c01.pphosted.com; envelope-from=arno.schuerhoff@havi.com; receiver=<UNKNOWN> 
+Received: from mx08-004a1c01.pphosted.com (mx08-004a1c01.pphosted.com [143.55.148.229])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id BE6CAC0C5E
+	for <users@activemq.apache.org>; Thu, 10 Oct 2024 13:31:35 +0000 (UTC)
+Received: from pps.filterd (m0314926.ppops.net [127.0.0.1])
+	by mx08-004a1c01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ABlxuT016774
+	for <users@activemq.apache.org>; Thu, 10 Oct 2024 13:31:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=havi.com; h=
+	content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pps-12012022; bh=5i99WTFDEGLc3Gmg7caJB
+	n9xrSIdPvFWVuzxqdsCVng=; b=nWMIf1nufsfMcbzMCerl+ivNr/13jSw2E78R+
+	AhyPg4oXL/fnd4aKy2QNYAkOzurxebkEfBc+2sw4cLEXEeH+ganFZ3svh2ROxxYT
+	4O/5Y2/zPZnY/RW0Ym94w9UDmwEsBgOpStx3ouv09rIpn8jMZ0LIPgxLOa/7FUWF
+	T30VM6Pu4gesD4LilMVQte4rYNzuTdfQIjN+GQXX0zk/zkkuKXX0WKLWml5zjUGm
+	gwkqQuggYQ6oC0IAnWqLevzICsFMLXb86y0zGzElx9yBxIr7M2oHhEk0BcLvu6tk
+	nXEuKD3v9Vnz67wT13ERST3yDomEK3z3/UgQ2Z6F9UGat3IMg==
+Received: from eur05-db8-obe.outbound.protection.outlook.com (mail-db8eur05lp2106.outbound.protection.outlook.com [104.47.17.106])
+	by mx08-004a1c01.pphosted.com (PPS) with ESMTPS id 4269utsxf9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <users@activemq.apache.org>; Thu, 10 Oct 2024 13:31:26 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oUClXmyx2DgiMXM7+SEyKkuWpEwqVq/qEyJ2LE0zLVxMMWrOncbJws/4dd5wZeNKwA72t8OfbhG27JVmGCfNbVJSrOfPGsx3Q01YrEi8ecNuUO7cRCF/xkw8BGcaByIo8gnJz4eo2F8O17fvQjcGPZVsRr0J8A/3HEL0u2fCzgYA6eSONAlikzGZlm7JM0e/Y89PufwRxEi8nwLhtqTkYzRFmHLDbKWO0XBINpzO1gtmzi5T3eMx99ubzbO4/JPLv14H30/g4nuxgb+MiwHCkTJMBc20tv5JCBLNozWQoEuF+YwCjCuM5wziHqE4dndDvSST7E85IN/bSKGO7jq2Ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CfgD/ZQYPJo82u603QkrkYofIjP1fFKH8gLUyyyScQk=;
+ b=vSlmzEKtipGfoFEudM4NK4mgJcr74SPSP3F8QnotQgtGyzJH7Uisxo7hjt/ukQ/ed8BuR1jEJZLkxtUcSs4KDYL9byPeJeLFdtAzFvcJoouZzFXCbtZy3jtchY54ixy+48kwBSHDD9HCC6Ob0zR0FfbkL05Ru/VbycahNlO7H3yvZjVy6tg/oJ1PDiQtaQ/1n+fLEVlnWNOBpUeDS+mGYdn10/MZ8JZSluRIXye32KuU0g0vsQKA3Xw2XqynbC6VpEaBaI2uMjw1KDsdaBd0BV4zr6Tkj97BcKcW1+FP9fjo+M6tBnIlgSfWK2zH4ZMmrgFqeiUKjGwUpEdI0XFPYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=havi.com; dmarc=pass action=none header.from=havi.com;
+ dkim=pass header.d=havi.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=MyHAVI.onmicrosoft.com; s=selector2-MyHAVI-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CfgD/ZQYPJo82u603QkrkYofIjP1fFKH8gLUyyyScQk=;
+ b=s//KlbKEVV1Ey23ruiiOfGbRLstwyyGMh8HkU55jGlmzt1snXXF3o9GO2FtGGgkBDVDKsMsJ2fqiSJEw94HykglMBPF8jFGDsGTwFJARP7CAkwcvWMzLnyiwcejFWQ5gsBoQk1YuFipwkTfBK+JYlxDKdhvzCAA0urpv4TFkD5I=
+Received: from AS8PR05MB10601.eurprd05.prod.outlook.com
+ (2603:10a6:20b:635::13) by DB3PR0502MB9969.eurprd05.prod.outlook.com
+ (2603:10a6:10:43a::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.34; Thu, 10 Oct
+ 2024 13:31:15 +0000
+Received: from AS8PR05MB10601.eurprd05.prod.outlook.com
+ ([fe80::5fd8:b042:d32e:4c6b]) by AS8PR05MB10601.eurprd05.prod.outlook.com
+ ([fe80::5fd8:b042:d32e:4c6b%6]) with mapi id 15.20.7982.033; Thu, 10 Oct 2024
+ 13:31:14 +0000
+From: Arno Schuerhoff <Arno.Schuerhoff@havi.com>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: AW: [ANNOUNCE] ActiveMQ Artemis Console 1.0.0 released
+Thread-Topic: [ANNOUNCE] ActiveMQ Artemis Console 1.0.0 released
+Thread-Index: AQHbGkTwp5aL8HOBdESBgpJXD183VLJ/rT3wgABPk7A=
+Date: Thu, 10 Oct 2024 13:31:14 +0000
+Message-ID: 
+ <AS8PR05MB10601D334A4698FEBE9B56FE982782@AS8PR05MB10601.eurprd05.prod.outlook.com>
+References: 
+ <CAA9ykMJPTfGh8Cs4mDWrNme9skouoS3nYu+H7HzxgBcFm+GG7A@mail.gmail.com>
+ <AS8PR05MB10601619C36F6672D8D2F543D82782@AS8PR05MB10601.eurprd05.prod.outlook.com>
+In-Reply-To: 
+ <AS8PR05MB10601619C36F6672D8D2F543D82782@AS8PR05MB10601.eurprd05.prod.outlook.com>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR05MB10601:EE_|DB3PR0502MB9969:EE_
+x-ms-office365-filtering-correlation-id: a8c69428-4901-454e-f05d-08dce92fd067
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: 
+ =?utf-8?B?R1lFS3JEcXFvRWxkWnMwYXdWVGFLa2QwT2FMbGpBai9UUzg1Y0t4UHZWNXJB?=
+ =?utf-8?B?dnprcGxXRDBBLzdLSVF3SHBTS3hGZnRNL3ErckJJUmk5elVSR1cyR2VDVTBa?=
+ =?utf-8?B?WVNFb1B5MmdjSXliN2IzajJ3Q2w2aGFBUUZsZmltRU4zZDlXblB5MWpqMGZV?=
+ =?utf-8?B?RUlGZW5iQWp4dUdPYW16Q0xMUHh3WW42d3ptSGZXYlovUVJ5Y2xCVlhYWVdX?=
+ =?utf-8?B?OWxnWlQ5aW9OS2pKRCtITXZoaWpqNHg3TU5SR0VtU2VIV09EdE02b2hFSkN0?=
+ =?utf-8?B?RXNTV2pra0xid21tV0dJS3B3TjNwU1VORmMvTDFSY2psL2xuQU54VndxOVRC?=
+ =?utf-8?B?TEZCNVprdHpEaUhuUmFQd3NmcVc4QmtnNUhQSHF5K3ZmVmtYeTBFbDFGQlh1?=
+ =?utf-8?B?MEpRRHArS2I0S2pEbDVlQjFQQnFGV2x6VWoyTmtBSC9TaE1sYXdpOU44a1d3?=
+ =?utf-8?B?ZnlUazd6bFNMcGNESkh4ZVRmS3N1WnFSUk5oWTRIdGxSLzJsV1gwQTUzM04w?=
+ =?utf-8?B?VDduRlM3dytkRnlFTG1wL2lmOVI3dEp4TDRmMXRGaTNWOStRcjJaRG9HOTVJ?=
+ =?utf-8?B?MmMvN3FMaERFMkRUd0JMenlheDUvN09rWUpYRUsraVhTaDVYQzh4SWlWVnRy?=
+ =?utf-8?B?WVpDamsycXV4MTl5Q0UrcVZaUUdNNS9iaUx4ZG13KzRvQkpwNWdPY3gwdFpR?=
+ =?utf-8?B?OTFwKzdPZlhvdHRMdnhtd0oweVljcFUvcGMvRVFBUDJLanVLUlFYUUpDTDBI?=
+ =?utf-8?B?N2tjb3VvNDRCN1BiUEtFd1huUTFPemZZd2JBbTVEYzVjZDBrdDRCbTk3ckd3?=
+ =?utf-8?B?MWFZckM0TUVvNDdzK2pDcVRpaEVOQ1NUWHpqalFnVUpXcDMyaWc0d2FwaUJN?=
+ =?utf-8?B?OXplRmdJYXNHdU5Cbzh6TmlGZ3B5YUZCTlY3bjJESTRtSDBpR1gxdXYwdXJh?=
+ =?utf-8?B?VG8zT0lWVHZQN1dzemNKWS9XOCt2QU0xN0NQWTN4QUt5QnlJWndJaEppN01u?=
+ =?utf-8?B?THhGZDVlbmtydUZTcTdzS005RGsrUDRGNWp1NXpnd0tmWG9pVEEwdWpaNFNE?=
+ =?utf-8?B?WWJvY1hTb0w3NEpqcitVWmpaeDJwM3grbjZzTEZOQ0dybHkwekxITGtrbTMw?=
+ =?utf-8?B?bFBnRzFmKzBjZU9Yb1dnck5OeU5sQVVuMFRXbzNZcmc1RW5TTE4zZVgxOUFU?=
+ =?utf-8?B?K1B4N0J2Myt6N0NpaVh0OW55UjYwTTJxNEpSSzlMQTlsQkNuUHY3YmRDSUlz?=
+ =?utf-8?B?VlBIVm9QVWVkRHd2Vzk0QjVRVm45M08xQ0tjSkdFODZmZ25PRDZPVkJzREJL?=
+ =?utf-8?B?WjlSK2IxU1lpZVdjc1REc0ZtTzBFcThyRGRkdWZMRWh4UWJzNGxRNkd6Znpx?=
+ =?utf-8?B?R3J2UlErWDRRSkh2czg4alN4dU1SaWNNTjY3SXZaZDBPTGZwck9IbDJOaXNr?=
+ =?utf-8?B?SWlzSUFBalk5NGhnRTZkNVk4VXo5TElPUWVoUjFjOUswL28yWTVIY1lPemVm?=
+ =?utf-8?B?TTkwUSs5S1JMRzBadWVqSHJmY3BoQTNvWHlTRnFhd0ZYNHZzejh3cHRwTG16?=
+ =?utf-8?B?SjJvQkFMeGoyWU5BNFZVTzhyckR2R3A3S3FFSVlxMjJPTVFreGdFVEIwN1JV?=
+ =?utf-8?B?T3ZxQ21pTys5d1pGRC9uVGFaMnFuUVFGMlRUeGlpYjg1L2tRelNzcU5qYW8z?=
+ =?utf-8?B?OXg5RXdBS090SmpSZHhOZUlvdTN5aEdSd0tRdU5TY09TSUgwZVRVV21DT0Va?=
+ =?utf-8?B?SXh3SFpmcWJhSHkwSUIzRU83ZzZ6U21EMDE5ZVZBR29LbVJ5cncxOVY5VitX?=
+ =?utf-8?B?dFZFQXJnQ1hDNytqeXoxdz09?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR05MB10601.eurprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?czk2dzRVZXZEWDdZc3BZaGJYSlZqd29MQ2FDdTVnLzVDUlowd2hZK2lEeXY4?=
+ =?utf-8?B?ZHRYbDF1c2Q1UDU0MmVoZjR1Vkl6SFJza0prVjhWVlAwUUlVSTJ2S0dJQ04x?=
+ =?utf-8?B?TWY4MXVGRGxweW9GZDhxTko0RERDUXEzaWcxa2hhdlZiTTQxOEplZy9DWEpj?=
+ =?utf-8?B?d2RFVkZhWnQ2THdpZ2hOQ2xOeFhvS2oya1FaQjFBMDNFTTBaUGNhNVpFR1JP?=
+ =?utf-8?B?bkswSDhKbVNVdC9hdEdnT3pYWDRma1ZuRDZVcHArWVg0d1k2eUtDVTdqTU90?=
+ =?utf-8?B?TE9YZ1k4YVVUNi8xc3JraXhoYUFIWitteVZZNXJiU2lYMU1ycEFGakV2SnlW?=
+ =?utf-8?B?eENWYS9ZWFYwSCtKN094b0JHaWRtUDBkVnVhTGlha1JkZHNma1Y1VkJiQnF5?=
+ =?utf-8?B?ZmgvdWhRUjZ6UjZZWDNveTY2RTIzQms3eUZNYXIxQVBVV0xZTUxSZ1FvZm1p?=
+ =?utf-8?B?VEZMR3BsOC9KZGlnZzJ0b2grT3IvWEFRVVAxK05hMFp5Q0RSRHZSaXZaNWQ1?=
+ =?utf-8?B?T1hyZUo4cmhieE1jWHh1cDQ3RW5kSnA5em1aOTEwWlZ1Q0FjMWdwbmtHY0Js?=
+ =?utf-8?B?Nm4wMDV0VTRSUGJPMVVTMys3Nzg5QjR5WVdFdUh4bVlYWkFoSWdaOGFwcS81?=
+ =?utf-8?B?aTdFeldLRmNmdTNnTmZVWWFiUnZua2U5eXZxSkhpYnAzaDdPR21vM3RWbjNB?=
+ =?utf-8?B?WXBhZnlLWHU3VXhhNEI5OXY0UG1aSzAwQzFEUEhNK3g0MlBpa1NpeHN2bVMx?=
+ =?utf-8?B?cXFMOVgwZnN5NW5zdFBUSXJiV2RwZWNrclV3bXF3MmM4azBOT3ZjanRvbi9m?=
+ =?utf-8?B?YjR2clJRR0VUYi9HVjBQRmRtTGFaQ3VzVk9QUzJ6MDNxZ1RjaG9reGlUejVx?=
+ =?utf-8?B?bXJOenFmTjZFMnc0NVo5UTdzK2JFK3A0eXZXajVxOGI0YmdLamN0K0VjNzZF?=
+ =?utf-8?B?akF6di9ueTFMajltdXlkV1g4dFlDUzdDQlkweTEzT04wY1puZ1VDMUNQRDcr?=
+ =?utf-8?B?NERrSzhRM0lQYlZKQ2NYcE5EQkd2VGs4UmwxVUc5NWFrVUNtbkg2NjdNNTc3?=
+ =?utf-8?B?T2cydlVTbktWb1RjOTlGRFBURnZUMkJIR3pqTmswbVBqUFEzMHhUZk45OUpX?=
+ =?utf-8?B?WXhvaUZrc081U1dOWHZwc294ZFp5dDhnVjNHZGFzVktoY3FwQ01uekFHYjQ5?=
+ =?utf-8?B?ZG5nZUxuQ3FBd2VlVmluOUNGTDYxVXFtNW1yS0ZOdkR4NFBNNmlKWGxqNmFy?=
+ =?utf-8?B?OWFGaHEwckpYSkQ3Z0NmNTVEUUk2SEhzakVJRUlZUkpBSk04c09RMUhYV2w4?=
+ =?utf-8?B?Wi9DYnZvTmtBMDNFanZKY01CZG5kTyswOCtKSEU2UTlhYThrWmpQM080N2RN?=
+ =?utf-8?B?cG1LVWUxemJjY0VxVlQ0V3RPeW1vbkZtRTNmNTlGaVladWh5UGdYalI2VHBs?=
+ =?utf-8?B?RGRldGtuTWp4N1hBNzlMSmJOemo1cWkrNnpnbzY0aUlSMzk0QWxuYmJNMXVE?=
+ =?utf-8?B?bmJNOU5XL3hhcURBRThtczh6SVY5L011ZS8xeXVhTEg5U3pFWFFBQ1VwNzd2?=
+ =?utf-8?B?elptUVhpNTFlMVJ5WTRaU205RStla0NMT2NrQzlvVEhwUld6UjZ3RXY0QmtN?=
+ =?utf-8?B?OTNNT2F5NkdodndiUEtSZ0s1NE1lVzhrMmorUWZyQlVlVTBFSUxFMFlpUjNm?=
+ =?utf-8?B?TzFMSzU5K1BkZlNoWXl4TFpGSUdaak5CMTdBTXA2amNlQ0lLZ3FKNmg3clpK?=
+ =?utf-8?B?WlhqTGNmeGFVZmxZQS9FYjRmSEYxWUVSbUpsK1VtNFpZNHpUTTNpVXpDK2VW?=
+ =?utf-8?B?TGtzalBabDczVThOOEYybUZld2lBME8xaGlJOHBWb1pBeUNtU0FZT1RtOXB3?=
+ =?utf-8?B?RDh0TCtLWGVlVFVHNzY0N0x4SUkzeDR6ODdFN0ViZlR2UHYyVjFDcFR4Tk9M?=
+ =?utf-8?B?OVVEM3FnRHBWMWhkUEdCbk50b2JTaURlU1lzdWpxNWNEeDlRa01mTnhRV21h?=
+ =?utf-8?B?Q3E4S2F5bEIyUWh6Z21MT1dybHNmUzF3VEpPRytVdUFreUUwRm43RnM3Wkdi?=
+ =?utf-8?B?VkVIUzYrdW5zaUhaYWVGVk5YU1BPK2pDOFhXKzBmTVhTZFE3QnBKdWllUG05?=
+ =?utf-8?Q?fVkAO1IMxMbuTo9xtkEyY2vvT?=
+Content-Type: multipart/alternative;
+	boundary="_000_AS8PR05MB10601D334A4698FEBE9B56FE982782AS8PR05MB10601eu_"
+MIME-Version: 1.0
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	6okZ3LMAVpIFWeCNrtI64uhAYyjGvw2ogg8t3shbtxkrnu3WBxkE0FNvSo1LPpq023ZNweBcPcB2wxJImMYz6Mo29q+7D+1ysqSIniKKIytF9lwxaR2/gq/zyidT9MyS7cMX510f4hzQHm+7fmCuzmMu9sTh2x/tWm6vA1JZ98ntQnzW4ch8f70G0Va+51mXNczGOF5dfV1HRP4TU78tvuxVQn41pDYKvCT4vZ16guk4fhMPgsbqDk1FKmb8HWDSOvDeReq7295mghlWbObKwG1/RSZ5a2zfDUKk0W+/Q0jxWGYf1/SCs0zghinDhmE26hu5fZYuWtWZb4+Msc7X0rATFWNyJhRu0jB+mz6lE7+DFKLcc/vko7SGiFu4XIwlyqZl18JILWhV/WIMrD4SUfPuTAl732r7hZtdkhQPfH+tF/LvRtkLBMyBJkIeYX0p64guqvsy/Esb6UVxHisfEUZiQ6Be6XVvPfHRazwOk3IG6B6bNzoWFx++b3SfptV5eAecbr3tsth3+cBBjgLr/wmcYmDV7Te4sL9sP//kat2zAz9e/zbiimpUifbgtW6IaUwNlRQ3JHUSP4EJlpdkyno8kPtMmpOnfa6uM/UIUMTGxtEFV8dhFsZb+xe6XBjj
+X-OriginatorOrg: havi.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR05MB10601.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8c69428-4901-454e-f05d-08dce92fd067
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2024 13:31:14.8588
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 585bda71-88ce-428b-9832-95eaa3dce989
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dtZf47NdxNRVJ4gzVJiJsJDuJ4vdBBF6po63wmTpfqs3i77d1s3jJNJrycCch259eUzxteZr9IQrwzy4NyMKQPxq4+Ae3BY9T4qaEP78ZWo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0502MB9969
+X-Proofpoint-ORIG-GUID: 1WIowUt3p6ogDsfnH0xjUNz2nH7CwSZU
+X-Proofpoint-GUID: 1WIowUt3p6ogDsfnH0xjUNz2nH7CwSZU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_16,2024-08-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 mlxscore=0 malwarescore=0 lowpriorityscore=0
+ phishscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0 clxscore=1015
+ adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410100090
+
+--_000_AS8PR05MB10601D334A4698FEBE9B56FE982782AS8PR05MB10601eu_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hello Andy,
+
+adding remote brokers server name to =E2=80=9CproxyAllowlist=E2=80=9D value=
+s in web.xml advanced me a step further: Test connection is successful now.
+
+Unfortunately attempting to connect o broker with username and password alw=
+ays results in =E2=80=9CIncorrect username or password=E2=80=9D response in=
+ new Artemis Console.
+If username or password really don=E2=80=99t fit, the broker log contains a=
+ line like these: (first line is for admin with wrong password, second line=
+ for non-existing user)
+
+2024-10-10 14:52:56,002 WARN  [io.hawt.system.Authenticator] Login failed d=
+ue to: Password does not match for user: admin
+2024-10-10 14:53:56,788 WARN  [io.hawt.system.Authenticator] Login failed d=
+ue to: User does not exist: hautarzt
+
+If username and password are correct, nothing is added to brokers log, but =
+I still get the =E2=80=9CIncorrect username or password=E2=80=9D response i=
+n new Artemis Console.
+Broker version is 2.31.2, what=E2=80=99s maybe to old. But I didn=E2=80=99t=
+ find a hint about supported Artemis broker versions in https://activemq.ap=
+ache.org/components/artemis-console/
+
+Kind regards,
+Arno
+
+
+Von: Arno Schuerhoff <Arno.Schuerhoff@havi.com>
+Gesendet: Donnerstag, 10. Oktober 2024 10:52
+An: users@activemq.apache.org
+Betreff: AW: [ANNOUNCE] ActiveMQ Artemis Console 1.0.0 released
+
+Hello Andy, thanks for providing the new console. I=E2=80=99m looking forwa=
+rd to play around with it. Is there an option to run the console on another=
+ server than the broker=E2=80=99s server? I have started console with Jetty=
+ on my workstation. If I try to
+
+
+Hello Andy,
+
+
+
+thanks for providing the new console. I=E2=80=99m looking forward to play a=
+round with it.
+
+
+
+Is there an option to run the console on another server than the broker=E2=
+=80=99s server?
+
+I have started console with Jetty on my workstation. If I try to connect to=
+ a remote Artemis I get =E2=80=9CHost not allowlisted=E2=80=9D if pressing =
+=E2=80=9CTest connection=E2=80=9D button in =E2=80=9CEdit Connection=E2=80=
+=9D.
+
+
+
+Kind regards,
+
+Arno
+
+
+
+Von: Andy Taylor <andy.tayls67@gmail.com<mailto:andy.tayls67@gmail.com>>
+
+Gesendet: Mittwoch, 9. Oktober 2024 14:15
+
+An: dev@activemq.apache.org<mailto:dev@activemq.apache.org>; users@activemq=
+.apache.org<mailto:users@activemq.apache.org>
+
+Betreff: [ANNOUNCE] ActiveMQ Artemis Console 1.0.0 released
+
+
+
+I am pleased to announce the release of Apache ActiveMQ Artemis Console 1.=
+=E2=80=8A0.=E2=80=8A0 Downloads are available at : https:=E2=80=8A//urldefe=
+nse.=E2=80=8Acom/v3/__https:=E2=80=8A//activemq.=E2=80=8Aapache.=E2=80=8Aor=
+g/components/artemis-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4=
+RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$
+
+
+
+
+
+I am pleased to announce the release of Apache ActiveMQ Artemis Console
+
+
+
+1.0.0
+
+
+
+
+
+
+
+Downloads are available at :
+
+
+
+
+
+
+
+https://urldefense.com/v3/__https://activemq.apache.org/components/artemis-=
+console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes=
+-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$<https://urldefense.com/v3/__h=
+ttps:/activemq.apache.org/components/artemis-console/download/__;!!JQ9pMA!0=
+sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsX=
+pUXyqaCrt2BXJw$><https://urldefense.com/v3/__https:/activemq.apache.org/com=
+ponents/artemis-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmY=
+UDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$%3chttps:/urld=
+efense.com/v3/__https:/activemq.apache.org/components/artemis-console/downl=
+oad/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO=
+2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$%3eRelease>
+
+ <https://urldefense.com/v3/__https:/activemq.apache.org/components/artemis=
+-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37ye=
+s-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$%3chttps:/urldefense.com/v3/_=
+_https:/activemq.apache.org/components/artemis-console/download/__;!!JQ9pMA=
+!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRw=
+sXpUXyqaCrt2BXJw$%3eRelease>
+
+ <https://urldefense.com/v3/__https:/activemq.apache.org/components/artemis=
+-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37ye=
+s-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$%3chttps:/urldefense.com/v3/_=
+_https:/activemq.apache.org/components/artemis-console/download/__;!!JQ9pMA=
+!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRw=
+sXpUXyqaCrt2BXJw$%3eRelease>
+
+ <https://urldefense.com/v3/__https:/activemq.apache.org/components/artemis=
+-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37ye=
+s-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$%3chttps:/urldefense.com/v3/_=
+_https:/activemq.apache.org/components/artemis-console/download/__;!!JQ9pMA=
+!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRw=
+sXpUXyqaCrt2BXJw$%3eRelease>
+
+Release<https://urldefense.com/v3/__https:/activemq.apache.org/components/a=
+rtemis-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU=
+1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$%3chttps:/urldefense.co=
+m/v3/__https:/activemq.apache.org/components/artemis-console/download/__;!!=
+JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsL=
+JQ4PRwsXpUXyqaCrt2BXJw$%3eRelease>Notes can be found at:
+
+
+
+
+
+
+
+ https://urldefense.com/v3/__https://issues.apache.org/jira/projects/ARTEMI=
+S/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37y=
+es-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$<https://urldefense.com/v3/_=
+_https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!JQ9pM=
+A!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PR=
+wsXpUXyqaALJryxDA$><https://urldefense.com/v3/__https:/issues.apache.org/ji=
+ra/projects/ARTEMIS/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4R=
+almYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps:/=
+urldefense.com/v3/__https:/issues.apache.org/jira/projects/ARTEMIS/versions=
+/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlI=
+T70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3eThis>
+
+ <https://urldefense.com/v3/__https:/issues.apache.org/jira/projects/ARTEMI=
+S/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37y=
+es-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps:/urldefense.com/v3/=
+__https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!JQ9p=
+MA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4P=
+RwsXpUXyqaALJryxDA$%3eThis>
+
+ <https://urldefense.com/v3/__https:/issues.apache.org/jira/projects/ARTEMI=
+S/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37y=
+es-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps:/urldefense.com/v3/=
+__https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!JQ9p=
+MA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4P=
+RwsXpUXyqaALJryxDA$%3eThis>
+
+ <https://urldefense.com/v3/__https:/issues.apache.org/jira/projects/ARTEMI=
+S/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37y=
+es-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps:/urldefense.com/v3/=
+__https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!JQ9p=
+MA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4P=
+RwsXpUXyqaALJryxDA$%3eThis>
+
+ <https://urldefense.com/v3/__https:/issues.apache.org/jira/projects/ARTEMI=
+S/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37y=
+es-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps:/urldefense.com/v3/=
+__https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!JQ9p=
+MA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4P=
+RwsXpUXyqaALJryxDA$%3eThis>
+
+ <https://urldefense.com/v3/__https:/issues.apache.org/jira/projects/ARTEMI=
+S/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37y=
+es-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps:/urldefense.com/v3/=
+__https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!JQ9p=
+MA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4P=
+RwsXpUXyqaALJryxDA$%3eThis>
+
+This<https://urldefense.com/v3/__https:/issues.apache.org/jira/projects/ART=
+EMIS/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T=
+37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$%3chttps:/urldefense.com/=
+v3/__https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!J=
+Q9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJ=
+Q4PRwsXpUXyqaALJryxDA$%3eThis>is the first release of the new console which=
+ is a replacement for the
+
+
+
+current console shipped with Artemis. It is written using React and
+
+
+
+Patternfly and is based on the HawtIO project.
+
+
+
+
+
+
+
+The console is available to run standalone and will be embedded in a future
+
+
+
+release of Artemis.
+
+
+
+
+
+
+
+For a list of features and the documentation see:
+
+
+
+
+
+
+
+https://urldefense.com/v3/__https://activemq.apache.org/components/artemis-=
+console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT=
+70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$<https://urldefense.com/v3/__https:/act=
+ivemq.apache.org/components/artemis-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu=
+8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$><h=
+ttps://urldefense.com/v3/__https:/activemq.apache.org/components/artemis-co=
+nsole/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70=
+oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%3chttps:/urldefense.com/v3/__https:/acti=
+vemq.apache.org/components/artemis-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8=
+hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%3eM=
+any>
+
+ <https://urldefense.com/v3/__https:/activemq.apache.org/components/artemis=
+-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlI=
+T70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%3chttps:/urldefense.com/v3/__https:/a=
+ctivemq.apache.org/components/artemis-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfp=
+vu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%=
+3eMany>
+
+ <https://urldefense.com/v3/__https:/activemq.apache.org/components/artemis=
+-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlI=
+T70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%3chttps:/urldefense.com/v3/__https:/a=
+ctivemq.apache.org/components/artemis-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfp=
+vu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%=
+3eMany>
+
+ <https://urldefense.com/v3/__https:/activemq.apache.org/components/artemis=
+-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlI=
+T70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%3chttps:/urldefense.com/v3/__https:/a=
+ctivemq.apache.org/components/artemis-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfp=
+vu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%=
+3eMany>
+
+Many<https://urldefense.com/v3/__https:/activemq.apache.org/components/arte=
+mis-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcB=
+qlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$%3chttps:/urldefense.com/v3/__https=
+:/activemq.apache.org/components/artemis-console/__;!!JQ9pMA!0sOwW-txPAEK7E=
+Mfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQug=
+g$%3eMany>thanks to all who contributed to the new console.
+
+
+
+
+
+
+
+Andy Taylor
+
+
+
+
+
+
+
+______________________________________________________________________
+
+
+
+This e-mail and any accompanying documents or files contain information tha=
+t is the
+
+property of HAVI, that is intended solely for those to whom this e-mail is =
+addressed
+
+(i.e., those identified in the "To" and "Cc" boxes), and that is confidenti=
+al, proprietary,
+
+and/or privileged. If you are not an intended recipient of this e-mail, you=
+ are hereby
+
+notified that any viewing, use, disclosure, forwarding, copying, or distrib=
+ution of any of
+
+this information is strictly prohibited and may be subject to legal sanctio=
+ns. If you have
+
+received this e-mail in error, please notify the sender immediately of any =
+unintended
+
+recipients, and delete the e-mail, all attachments, and all copies of both =
+from your system.
+
+
+
+While we have taken reasonable precautions to ensure that any attachments t=
+o this e-mail
+
+have been swept for viruses, we cannot accept liability for any damage sust=
+ained as a
+
+result of software viruses.
+
+
+
+______________________________________________________________________
+
+
+
+
+
+--_000_AS8PR05MB10601D334A4698FEBE9B56FE982782AS8PR05MB10601eu_--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57528-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id BA0543E80C
+	for <archive-asf-public@cust-asf.ponee.io>; Thu, 10 Oct 2024 08:52:20 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 965EF62B5D
+	for <archive-asf-public@cust-asf.ponee.io>; Thu, 10 Oct 2024 08:52:20 +0000 (UTC)
+Received: (qmail 4131589 invoked by uid 998); 10 Oct 2024 08:52:19 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 4131560 invoked by uid 116); 10 Oct 2024 08:52:18 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 10 Oct 2024 08:52:18 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 7FCC01FFFD8
+	for <users@activemq.apache.org>; Thu, 10 Oct 2024 08:52:18 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.369
+X-Spam-Level: 
+X-Spam-Status: No, score=0.369 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_FONT_LOW_CONTRAST=0.001, HTML_MESSAGE=0.2,
+	RCVD_IN_DNSWL_BLOCKED=0.001, RCVD_IN_MSPIKE_H4=0.001,
+	RCVD_IN_MSPIKE_WL=0.001, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, RDNS_DYNAMIC=0.363,
+	SPF_PASS=-0.001, URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=havi.com header.b=hpVVLQ+l;
+	dkim=fail (1024-bit key) reason="fail (body has been altered)"
+	header.d=myhavi.onmicrosoft.com header.b=VKs3efrH
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id FxoQiUbgZ_Hv for <users@activemq.apache.org>;
+	Thu, 10 Oct 2024 08:52:17 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=143.55.148.229; helo=mx08-004a1c01.pphosted.com; envelope-from=arno.schuerhoff@havi.com; receiver=<UNKNOWN> 
+Received: from mx08-004a1c01.pphosted.com (mx08-004a1c01.pphosted.com [143.55.148.229])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id 033A3C0C5E
+	for <users@activemq.apache.org>; Thu, 10 Oct 2024 08:52:16 +0000 (UTC)
+Received: from pps.filterd (m0314926.ppops.net [127.0.0.1])
+	by mx08-004a1c01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A6dmjB016774
+	for <users@activemq.apache.org>; Thu, 10 Oct 2024 08:52:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=havi.com; h=
+	content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pps-12012022; bh=QyzOF7liZDeYEl52wNRYG
+	ukYKf5pobo/ezP3pPsvxjk=; b=hpVVLQ+lKxrgf1cq+q1zd5vQO/KJj2hKQjwq3
+	woGg2xAv5ATERyu7fZmmh/uoBcPB+vFIGACFYN6qfuwXwiMo3oWlQ5eJjISDfTrU
+	x/84ZTU91V6zICEtHFFS1M/mxtIye42DCxgkqToVd6eKvXYUuotxiYCjZm1EHUIp
+	Xn6QjILeuHN1up4efeLTwqVF673y4o6sKGKPIurQYvaKSD0CASg+mdSu0nMCcmqn
+	sb3PGF0kALXSV2uoPPXL8ENG9PyIn3luyP0c4kKbwsigB36UES4p5pPICSY8EFsL
+	J8TfXR3uwcjQDAH2JREA8MLdLtl55jo5PwZaISHdWpNojStKg==
+Received: from eur05-vi1-obe.outbound.protection.outlook.com (mail-vi1eur05lp2168.outbound.protection.outlook.com [104.47.17.168])
+	by mx08-004a1c01.pphosted.com (PPS) with ESMTPS id 4269utrg1b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <users@activemq.apache.org>; Thu, 10 Oct 2024 08:52:09 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sjOV+6c3rRg6KpjlZZfHNLI3OzrNaHaG2DxFS8TDOaeNUx8algHBHibk92rwNihYz5Hj7YAtdolKKQeGzmZL/4swedkSBFsN8DjvPM2jxZcDK2Cv9Eh89k0NwgIG7inkSp5Vr8ZpIk28mshTTArvxNn5gig2hwDV4yrLLlqpZ7AkZb7F8rBjAN5d4efViL3HYFoa0DTDCqYdplMSi+amj//gF2DB1H56ShslzuHlPilN1u6LUCTtPz7LekqddOIfdcEZ9KLF/kEsFRv6xrNZ3JnXWa30RzITgZHeXqZFb7TkWxbvU5isWMrxTB6hMrvZOKDyiDtj43kFO6HrsaI1OQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/W2lC+T6JMZnz/7i01LJwW/0swi+pWVkMDpW30gFbFo=;
+ b=xgo+bs/5vIe2s5KKtGlmxRaYOucoWrnoaTypjljOMeArAqPloF2Fwg4sBk/s44pJxcZ/JyPb1z6uHxi/NZkZ7Pl89qz+hssfMchycSW0xsshNK7UvTPv+GWaF5q8nUbcyZ2j81CMbo+QJNz3kXfdg9IbMVOe1BhRtFRPDt7fQB2j5hHFi0zSq1Wp3SMALC5G7UyO4pMtOfhPkpcY/EMDjU02bb51d7pVH9Tj1RGSh6q1JAjXlZHf6oBZxJ2FNxA2CcCypR+VtwMMc/LIFYDpEnvKsCTI5339GaOwXqMpqBW3i/uX+nAr3A2jtZL0dgmDyvfR9LFT78o+jByoFG0dhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=havi.com; dmarc=pass action=none header.from=havi.com;
+ dkim=pass header.d=havi.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=MyHAVI.onmicrosoft.com; s=selector2-MyHAVI-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/W2lC+T6JMZnz/7i01LJwW/0swi+pWVkMDpW30gFbFo=;
+ b=VKs3efrHQh+audF4EfXWwzH36m2M7qk4QywtrMZZUtUcpY9bNysEFnvxGEk6zABSysIfZJ+9HqwoD4Lg+ue9cFzi9LADFj8P/1sBmx3sA2tRaXBBoQSAVKobnZmwz+JYKrWk7olZ5VRQLQ4Ty+m4dyNtPu4MZQqWyk/AL7iOAik=
+Received: from AS8PR05MB10601.eurprd05.prod.outlook.com
+ (2603:10a6:20b:635::13) by DB5PR05MB10624.eurprd05.prod.outlook.com
+ (2603:10a6:10:48b::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.34; Thu, 10 Oct
+ 2024 08:52:06 +0000
+Received: from AS8PR05MB10601.eurprd05.prod.outlook.com
+ ([fe80::5fd8:b042:d32e:4c6b]) by AS8PR05MB10601.eurprd05.prod.outlook.com
+ ([fe80::5fd8:b042:d32e:4c6b%6]) with mapi id 15.20.7982.033; Thu, 10 Oct 2024
+ 08:52:06 +0000
+From: Arno Schuerhoff <Arno.Schuerhoff@havi.com>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: AW: [ANNOUNCE] ActiveMQ Artemis Console 1.0.0 released
+Thread-Topic: [ANNOUNCE] ActiveMQ Artemis Console 1.0.0 released
+Thread-Index: AQHbGkTwp5aL8HOBdESBgpJXD183VLJ/rT3w
+Date: Thu, 10 Oct 2024 08:52:06 +0000
+Message-ID: 
+ <AS8PR05MB10601619C36F6672D8D2F543D82782@AS8PR05MB10601.eurprd05.prod.outlook.com>
+References: 
+ <CAA9ykMJPTfGh8Cs4mDWrNme9skouoS3nYu+H7HzxgBcFm+GG7A@mail.gmail.com>
+In-Reply-To: 
+ <CAA9ykMJPTfGh8Cs4mDWrNme9skouoS3nYu+H7HzxgBcFm+GG7A@mail.gmail.com>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR05MB10601:EE_|DB5PR05MB10624:EE_
+x-ms-office365-filtering-correlation-id: 3ba967d7-a66d-4b83-208b-08dce908d189
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: 
+ =?utf-8?B?eVFHMWFsazFDUW1YM1d2S1I5UnczcGh2cHlXdDU2MVJCemg2akhUTGVUYWkx?=
+ =?utf-8?B?OW92Y2xsNDRJTXJJVG1PS040bUJvS3I0ZTdKcFVNQTVBbWdVbDd3MjllK1Zy?=
+ =?utf-8?B?ekxvWEdMdERNOS9hUUVIV3B4M0JuTW1YaDAxWndMQUdMTjJYVmRXRGtaRUpX?=
+ =?utf-8?B?ZU1oZzNXenlKNFVualo5RzU5dUhsV09sY0NlU1ZHUEx4ajFpSjVSb3FnUDJ3?=
+ =?utf-8?B?Z1crNCswSmYxUEVnaXJhd1htaGFTVEgrNHFWVjVYcDBZTjlWMUhHRXd3MFh5?=
+ =?utf-8?B?ZThlaHBnSlpUc0V5N1pnSlFJdE9GZm9TRDdNOHJQTHpSaUpiT2ErMWxvbWsr?=
+ =?utf-8?B?VjhwQkpMZDU1RVFGdWNaTkFuc25OZXZJQy9tRVZ2Vkt6Z3pOdXlma2pLMk03?=
+ =?utf-8?B?U0JLYnBFSS9FZHdGZEw4amkzcEVvQ0hCOUNrZW9vdE95a2YvYzd4dnRkRzA1?=
+ =?utf-8?B?NHJ1WG9iWmFJenFJNm5QSmpYMlA0N0pVbTVnTnZaRGh5SjNxeTZ2SDN5bEtO?=
+ =?utf-8?B?VGhLY29vcVlBeDlUM0NGUlVuQUxYSDlRM0Rnb1hrMkwzR0d3QTZYWmdSTHFV?=
+ =?utf-8?B?Zlh2YXRZRHMydUdiNWExRWJEcnJTZnVmTzg3UDcrayt0LzZmM0N6S25LQUF2?=
+ =?utf-8?B?NEpZQmVBVjFlVFJhYVRJSmlEMm04eW1hZ2ZYQlpobjZ3ME1qYUI3eHFUbmk2?=
+ =?utf-8?B?bmFsVnJIR0hiYkZFcmc5ekhWeUtPTTRPQWpwS2ZlR044Q3lhOWh1aFQyb2dj?=
+ =?utf-8?B?anZUSXFFL1g5ejJuUDFyT0xXZkxONVZ4TUl5c3liR2wxMFdIeE9MV0xnVDhQ?=
+ =?utf-8?B?NE1JVUxWODVlQlpQVEJhbVdBYVVKQmkxa1dOSEdrVUMzaEVZa0hKUHhhSmVK?=
+ =?utf-8?B?MEFWU1hQdFpkVDhPL0QwWDlsYmI1Z0luKzlidnBiVHpyaEc2U2FMdEpqbUY4?=
+ =?utf-8?B?K0hhcE9MaTVsUmJMTFNSK1duVGVDblk2Z2YyM2RCWSt0RmRlbXZPUWFZR2E3?=
+ =?utf-8?B?ekVRSVdEZ1RhYVNkNXdOOHdpNHNZVXdWeGhURE9GVDUyUW5SS1F0azNKMlhT?=
+ =?utf-8?B?eTNoMVBwNEo5T2JQV2FSb1N1TnNyR2dvdXBVWnE2cmF2aDVHSUlxREVpVFJq?=
+ =?utf-8?B?N3NqMnlLV3dpaDN2ODV2WmNZRm1zVUlUZExUMktsckpBRHo1VW9Id3NaUXlQ?=
+ =?utf-8?B?MUdCOXI2SFFyNHVVMnY3RHNUSE5HMGdIaENSbzlhWTBDbXRvNHg2anpNVDZL?=
+ =?utf-8?B?MmZoU3FyOExTZFdaM2hZditKYkwvd215MXd6TFFOTFliUzZDUjJ0cDZRUE55?=
+ =?utf-8?B?MEt0UlhuVkFaYlZmb1NrK2NZZHZqb0wyY0p4NThVTXFFRXZQeWNtYmJocGdj?=
+ =?utf-8?B?UnRTVno4NC9hTmRwbHJCV3o1eW9lRDZwdVZrdUxIV2tFN2dLaEdhcVZtOHFk?=
+ =?utf-8?B?SlZPNXBKdEU2Sk9YZ0VQOUVmeHFuT1lWNzJ5MzUvbEJ2R2wwSWFKdHB5dEYv?=
+ =?utf-8?B?bFlvZzh3MTd6T1JTNFVIOGRMUEVZNUVFdG0yQzBtTW8zamdOMnVOcTdlaFg3?=
+ =?utf-8?B?WDdsd2ZlK2Z0b24waDdtdEZJSmcxYVJmS29ia3grbmR6VjI5Qlp0TWluUVJN?=
+ =?utf-8?B?ZEF1M3JDbm1NbVg5UEk1QUhLYmFFZ1VTNWp4YyswUzBUMVJra1BEaEx2Rkw0?=
+ =?utf-8?B?Q2NVVXUzZEdUOThpSk5rQSs2eFRyTlc1YWgxajZ2L0Q1MWJPUnhzY2pON3dQ?=
+ =?utf-8?B?ZXVjYmcyQTRBZTYvSEVRNnVESDcyVFNXQlpCRTgvMndyV3ExZ2J0SmpDeEZn?=
+ =?utf-8?B?dVN4Qnd4MXB5SUxhYjdxdz09?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR05MB10601.eurprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?TzlvdVFzZUZkdHUyb3FtL21sKzhqTXYyYTg5djFVSUlreUxZWUlTa0xnZC9s?=
+ =?utf-8?B?eDA5Q0tmYityYWExZXBGdDdJdmNLNlYyb2JORkhNdXd1STc5aWxORE1ZaTVF?=
+ =?utf-8?B?VGNEQjNKYjVHNW5DWjB6SkIrS0NRL0taQUxDUUlVc2NPcmdEVGlpdDI5YjdF?=
+ =?utf-8?B?cEd4YXBDSkR2bjViRVRhYkVUaWFYR2daZVVUbkJaalRJd0tqb2hXbi9pLy9l?=
+ =?utf-8?B?SXNtaVdGTGVSVmdLdkt3d2RrbHo3UEFZMy9uZHZxbWxnUHdTY2xsTnorb2ti?=
+ =?utf-8?B?YWpGemxESkIrNVo1SXVTb0ZtZ01yWnA1T3BDQ09hOFFLSTByRzZZbGpoYUdS?=
+ =?utf-8?B?OWRGMncxS0dkQjBpQk1mc2dCNzhHSkdKRDlZR1ZvMVpjMXZYRGRObW1WZVdQ?=
+ =?utf-8?B?SUNHYzhiYU1BcWtTdW5tVjhvdjFoRjVDS3U2M0VrSHJmOHhXTDRaRithU01D?=
+ =?utf-8?B?L1ZNb0dabFdZOFNLVGlkMytnV0RQdXhEK0EzQW5qZ0I2Z0lkOUlmUktidm15?=
+ =?utf-8?B?aU5qL1JMV1JqWnlDWS9PaCtWNkJyRUhYeVRzVWpaa3I5NkNLNTF1aWpkNzBW?=
+ =?utf-8?B?eGNsNWN1bGhXd3JpQ2tkTU9QNGRTSGJtcE56STRNb0Rjem5NSFlnUGRzNE1L?=
+ =?utf-8?B?QVlieHpxa0JtS2kyUno3UUJvdTdVRUZWT2VMVGlmRE0zTW9kNzU0NmYwREJT?=
+ =?utf-8?B?L0FjMzVIRFJYZlVjNlU5RHl6MmpxUXN3dHFYQUxqNktRUkgycTJaVW9DVWJT?=
+ =?utf-8?B?RFlxdVR1SFBTMG9VL1hOTHdaajYyMTZRcGQ1VllvRnFtTERncWdOSWJMK083?=
+ =?utf-8?B?ZXRYZkFhcXl6UUUvbTNkcDNsYzdUdVUwanh0UUJpUThtcWpqWWUrUmVQUkhG?=
+ =?utf-8?B?dFlLRWhZTnpaR29SY0EzcmYxY0dFcmlLYWNTQk53S1VTaGgxcmpFeXdkeDZy?=
+ =?utf-8?B?QVpjMWJNQ1pwRHZoMjgvNGFDZXJ1UkR6VWNBdjJuUmttWVVzMlpzTkltNEVW?=
+ =?utf-8?B?dXlUNFFtZG5NdHJmY2FwQkl0R0NCU3dYei9LUVMxUTZPTVk1Z1JvQlgwVVFX?=
+ =?utf-8?B?ZDlNSE9sOE56MTVhLzB6dWVsTkJWQWF0ZkNsMG8zUy9YQkhYWDQ0ak1TN3BY?=
+ =?utf-8?B?V2ZuSzFWYTljR0pEdnZPTjhYK0NvQys0MjRTL0c3dHFWbFd6ZnVzNjQ1V3FM?=
+ =?utf-8?B?OXI2MnJqamZLWlZPYjVsN1VhVDhUM3NBN0psUU5YeDhuTmU2OVJ2TVR1Q3ZV?=
+ =?utf-8?B?VjNsNU1kRGVVYmU3MThUVExxc3VGY2VnZjEycUVrTy8yeEFMenBMZm9YWWJk?=
+ =?utf-8?B?OFJPZUp1ZlB1cFhyRVE3WWFOcG91TTdwaU5IRU9KV1dIa3RUZjFzNk5yRkI4?=
+ =?utf-8?B?TWNjVVJpVzZXclBWWDhSKzVuWUFmcFdkNjRjYTBGSlJ6bnVYT0RWRnVaMmY1?=
+ =?utf-8?B?b1h0cFZ1UVgwb0JJTkZEOGREZ1pHSlVZdVYrUW0wbGx0THA1RVIvNERJWVEv?=
+ =?utf-8?B?UUFYZ0l6dVFhSmNEallmNEdPbVNoVHdpQ21Yd2xKb1FCcU9yNVllOFJ0L25Z?=
+ =?utf-8?B?Z0FMczB3WmJ0c2ZhUDRoMWE4aHRYZ0RGTTc0SWNnRTRteDd1VE5rNEhMRS9D?=
+ =?utf-8?B?L0hZNUxURUVPaFNHclJ1UC9Nbld2UzlXeUYrT2o2RkROVUo3ZFdFUFM4YS9R?=
+ =?utf-8?B?RDQ5cndpY254algySmxLaGJDSjBNOUxjS2VIVnZ3TjE4aGFXd3BXdjUzbmpz?=
+ =?utf-8?B?SnNkK3NiSDE0ZldJb255WmQwdmV6VkRxOFIvL1Z6N0hpeGVCVFk0R1llTVBh?=
+ =?utf-8?B?YW1raS82eHJKeWowNHd6SnhhSGxjTkh3NEJHdlNkU016VmJkZmlSb3FvNjJE?=
+ =?utf-8?B?cFErOWE4MXFvVllIQ1NKTUw5UFZldGRpZXhFcWMvRGFncE5LRThWVFNORm5y?=
+ =?utf-8?B?dWZsUEdZUmQ4SEcyMG4yUjl5MWJXOXUzV3hYc2l4VTFrMFBvdU9EMGRZRllF?=
+ =?utf-8?B?S0w0MkZxTXZXa0JkYWFtUEkwa2ZxSTRyakc1SnhNM3p3aXlMQS9HMzVuVjg4?=
+ =?utf-8?B?ZUJIT2pxd2RnckJTY25iSDJUc0k3UlZKdkorNWFGOFVJUXVySGJGU01HQkVG?=
+ =?utf-8?Q?vNJ4GPZwO28tsdz4/PUUnLHSA?=
+Content-Type: multipart/alternative;
+	boundary="_000_AS8PR05MB10601619C36F6672D8D2F543D82782AS8PR05MB10601eu_"
+MIME-Version: 1.0
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	HhWex4EpqSgyb90xP4rhFOlzcNZcs2gfOtzPbNhpzc+vmr0BOWpN9dNNimnWOSEp6ZlGacsyQUPDt4910+SEHWPfSVxxZIj2vTlFLwSMoW3NpXZGo0Voh58YKgkIEizrQFQQ0b2dEfIkTN+v3gNHpSOPIxxjODrP7uJI8bHnSxrQN3F3k7+9uS7mEWj6+O4I0pMZRhzN5BzanCv6C3tuIJbbFld04dJc6ag/Tw0Zeq1Qkjga1x69Vy4WLSWXTcwgoIyUtzskJfOO/qTBtqGagiiQc1k+xo1YMr+8jJHuqOocQj4LcJRJ/k15E2RHHkC1Ia+P20letAYKPFKGJT4BJTMkAOSyXv9l65PgGOq0jN96oCyiCbqD2UvCUdDtgvxlHdvbS2JBHus31D4KIX0kuKNwebPDf6+gDCNrKke+JLg523z0+Lex4XJdWgAN0CY5aEhfxtgmq+TfWGFXxHkhk7RapXK0X3wo7VFjyvqg4cErXONRCt9ElXBb3yvRq8Tn5uhg4F025TVwvNEazbZr4qRBIOA1KlG2yR/aruoqQl7qTA2c/LGrE5MXTFTMdkD9RtCU6/cr7lQeKgiubzxbFJTcxgcGoLtkAnyJuKxqrn51Bvk0YgYN+iMH4rY9n8sX
+X-OriginatorOrg: havi.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR05MB10601.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ba967d7-a66d-4b83-208b-08dce908d189
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2024 08:52:06.4150
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 585bda71-88ce-428b-9832-95eaa3dce989
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: euExUOrBEx3AdlLeBCnLLdX/KDBx2dZUjwShF3QvLrUqWAQvaYRhHL+1fRbIADGNv1UOImFqZ50xDAsH+Hkjkj6TCy+jV1UQcNbkX37abBc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR05MB10624
+X-Proofpoint-ORIG-GUID: uzUYYb2h3VGtcimY0wpAsqUhOtY2ZJkT
+X-Proofpoint-GUID: uzUYYb2h3VGtcimY0wpAsqUhOtY2ZJkT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_16,2024-08-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 mlxscore=0 malwarescore=0 lowpriorityscore=0
+ phishscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0 clxscore=1011
+ adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410100058
+
+--_000_AS8PR05MB10601619C36F6672D8D2F543D82782AS8PR05MB10601eu_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hello Andy,
+
+thanks for providing the new console. I=E2=80=99m looking forward to play a=
+round with it.
+
+Is there an option to run the console on another server than the broker=E2=
+=80=99s server?
+I have started console with Jetty on my workstation. If I try to connect to=
+ a remote Artemis I get =E2=80=9CHost not allowlisted=E2=80=9D if pressing =
+=E2=80=9CTest connection=E2=80=9D button in =E2=80=9CEdit Connection=E2=80=
+=9D.
+
+Kind regards,
+Arno
+
+Von: Andy Taylor <andy.tayls67@gmail.com>
+Gesendet: Mittwoch, 9. Oktober 2024 14:15
+An: dev@activemq.apache.org; users@activemq.apache.org
+Betreff: [ANNOUNCE] ActiveMQ Artemis Console 1.0.0 released
+
+I am pleased to announce the release of Apache ActiveMQ Artemis Console 1.=
+=E2=80=8A0.=E2=80=8A0 Downloads are available at : https:=E2=80=8A//urldefe=
+nse.=E2=80=8Acom/v3/__https:=E2=80=8A//activemq.=E2=80=8Aapache.=E2=80=8Aor=
+g/components/artemis-console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4=
+RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$
+
+
+I am pleased to announce the release of Apache ActiveMQ Artemis Console
+
+1.0.0
+
+
+
+Downloads are available at :
+
+
+
+https://urldefense.com/v3/__https://activemq.apache.org/components/artemis-=
+console/download/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes=
+-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaCrt2BXJw$<https://urldefense.com/v3/__h=
+ttps:/activemq.apache.org/components/artemis-console/download/__;!!JQ9pMA!0=
+sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsX=
+pUXyqaCrt2BXJw$>
+
+
+
+Release Notes can be found at:
+
+
+
+ https://urldefense.com/v3/__https://issues.apache.org/jira/projects/ARTEMI=
+S/versions/12354639__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37y=
+es-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaALJryxDA$<https://urldefense.com/v3/_=
+_https:/issues.apache.org/jira/projects/ARTEMIS/versions/12354639__;!!JQ9pM=
+A!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PR=
+wsXpUXyqaALJryxDA$>
+
+
+
+
+
+This is the first release of the new console which is a replacement for the
+
+current console shipped with Artemis. It is written using React and
+
+Patternfly and is based on the HawtIO project.
+
+
+
+The console is available to run standalone and will be embedded in a future
+
+release of Artemis.
+
+
+
+For a list of features and the documentation see:
+
+
+
+https://urldefense.com/v3/__https://activemq.apache.org/components/artemis-=
+console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT=
+70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$<https://urldefense.com/v3/__https:/act=
+ivemq.apache.org/components/artemis-console/__;!!JQ9pMA!0sOwW-txPAEK7EMfpvu=
+8hSx_4RalmYUDfUGWqeU1T37yes-POcBqlIT70oO2nCA18XsLJQ4PRwsXpUXyqaDOZEQugg$>
+
+
+
+Many thanks to all who contributed to the new console.
+
+
+
+Andy Taylor
+
+
+
+______________________________________________________________________
+
+This e-mail and any accompanying documents or files contain information tha=
+t is the
+property of HAVI, that is intended solely for those to whom this e-mail is =
+addressed
+(i.e., those identified in the "To" and "Cc" boxes), and that is confidenti=
+al, proprietary,
+and/or privileged. If you are not an intended recipient of this e-mail, you=
+ are hereby
+notified that any viewing, use, disclosure, forwarding, copying, or distrib=
+ution of any of
+this information is strictly prohibited and may be subject to legal sanctio=
+ns. If you have
+received this e-mail in error, please notify the sender immediately of any =
+unintended
+recipients, and delete the e-mail, all attachments, and all copies of both =
+from your system.
+
+While we have taken reasonable precautions to ensure that any attachments t=
+o this e-mail
+have been swept for viruses, we cannot accept liability for any damage sust=
+ained as a
+result of software viruses.
+
+______________________________________________________________________
+
+
+
+--_000_AS8PR05MB10601619C36F6672D8D2F543D82782AS8PR05MB10601eu_--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57525-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 9CE6A3E689
+	for <archive-asf-public@cust-asf.ponee.io>; Wed,  9 Oct 2024 12:17:09 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 45E6446F18
+	for <archive-asf-public@cust-asf.ponee.io>; Wed,  9 Oct 2024 12:15:20 +0000 (UTC)
+Received: (qmail 1475051 invoked by uid 998); 9 Oct 2024 12:15:15 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1475013 invoked by uid 116); 9 Oct 2024 12:15:14 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Wed, 09 Oct 2024 12:15:14 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 79BBB20011A;
+	Wed,  9 Oct 2024 12:15:14 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.254
+X-Spam-Level: 
+X-Spam-Status: No, score=0.254 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,
+	RCVD_IN_DNSWL_BLOCKED=0.001, RCVD_IN_MSPIKE_H3=0.001,
+	RCVD_IN_MSPIKE_WL=0.001, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]
+	autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id E6BOMvCn3CBs; Wed,  9 Oct 2024 12:15:14 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=209.85.161.50; helo=mail-oo1-f50.google.com; envelope-from=andy.tayls67@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id AB9BAC0C5D;
+	Wed,  9 Oct 2024 12:15:13 +0000 (UTC)
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5e7f551113dso1165597eaf.0;
+        Wed, 09 Oct 2024 05:15:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728476107; x=1729080907; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0ndu9OTh3N/Uipp2lUH6eT6wH/0N//OSF41VMB94sSQ=;
+        b=VQSP5xU8eY8jVmuiokDZxfaKj7FyZpwr3SwWcH2Qt+Zii3REjWxQ5CZMt3GkOQTCa3
+         oxcRXN9GS+dqEUroxJR46D2kSAiYoJrgsyr/LpKo6qigu+jGQkSfDaTiBLUeAd5nJJt+
+         quQmww6vvJm5FZvVPdX7MIstAaQT87QIlCkD9D+RPmY2/hQxGlB2knoccmieyO6Jk36+
+         N1NYgwYkk4UQ/I+giJXt6tKuh5AjJWX8aRCxfwu2i2S9LjeTjV3j54+N22ivmtstqyFM
+         vW5ut3ybQSFAHAcms3nzpEObArTR2I5eyFiRFNI3pXHFNzEi6QScw+rNbOhOvhQpb55Q
+         dm1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728476107; x=1729080907;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0ndu9OTh3N/Uipp2lUH6eT6wH/0N//OSF41VMB94sSQ=;
+        b=Nk9lkJm551xNv+79UjagmqxLdIF13D8hyx9bmrAkiCDpgqvPAFqkqJVuuxtq88A31k
+         RbE6XxEh0rxkiFDGKvPcjI4htocZxtvRlUgFVQ7WVH1XzdDfT3ErvlBHKSJshdBhUuda
+         l9ojN3UmGCVCmOAHHBu5s52Obk7edyGDANT5XY3o6Gt5V8Wncp8xnmYrpE12N3Ul4aIf
+         tXYHbmmlXTZlQp7fliJOP2hP30bw+6Tt7gznpyFLHwd6brS3QhLF8slohDVmrzzteDec
+         VMcedAsibGoSkrNhNNhQHeS5/j3squHOWYSpXrNX8LIVQWWkOKRFUG0F2MKUlGWhITuq
+         TUgA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0UhXNZTJ1tWLHaGxBMG/Rago0DcHFuHB6fTVI5GBSUWR+Mza5PyIBNERKCqkXNdiO2Z1Brw==@activemq.apache.org
+X-Gm-Message-State: AOJu0YzYaid7xhsPL/0rjddw+Fs2uJqsC0zHG+2oXjrwaFvzZ7+mje1O
+	mCexn5KdHtptT9sMt4w3YLxe93dJ4/6AMJIWdskhl+Kw3IEB/EM4dvnKzNZ/uC7rPDp4K2sNLB1
+	7JKyualGHzEkODyBj3kKydnRhxewExM0=
+X-Google-Smtp-Source: AGHT+IHNOGiCktxqTU1tySmFeN31rtqRlQN36G05Z4ixE0H+lAmxaTGDaIVxIa0/IOVe/EANjEfW7CTBJ2aSNaj3lEE=
+X-Received: by 2002:a05:6820:1c87:b0:5e7:cb2e:dfec with SMTP id
+ 006d021491bc7-5e987c41bdcmr1139518eaf.8.1728476107136; Wed, 09 Oct 2024
+ 05:15:07 -0700 (PDT)
+MIME-Version: 1.0
+From: Andy Taylor <andy.tayls67@gmail.com>
+Date: Wed, 9 Oct 2024 13:14:56 +0100
+Message-ID: <CAA9ykMJPTfGh8Cs4mDWrNme9skouoS3nYu+H7HzxgBcFm+GG7A@mail.gmail.com>
+Subject: [ANNOUNCE] ActiveMQ Artemis Console 1.0.0 released
+To: dev@activemq.apache.org, users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="0000000000005e653306240a34b8"
+
+--0000000000005e653306240a34b8
+Content-Type: text/plain; charset="UTF-8"
+
+I am pleased to announce the release of Apache ActiveMQ Artemis Console
+1.0.0
+
+Downloads are available at :
+
+https://activemq.apache.org/components/artemis-console/download/
+
+Release Notes can be found at:
+
+ https://issues.apache.org/jira/projects/ARTEMIS/versions/12354639
+
+
+This is the first release of the new console which is a replacement for the
+current console shipped with Artemis. It is written using React and
+Patternfly and is based on the HawtIO project.
+
+The console is available to run standalone and will be embedded in a future
+release of Artemis.
+
+For a list of features and the documentation see:
+
+https://activemq.apache.org/components/artemis-console/
+
+Many thanks to all who contributed to the new console.
+
+Andy Taylor
+
+--0000000000005e653306240a34b8--

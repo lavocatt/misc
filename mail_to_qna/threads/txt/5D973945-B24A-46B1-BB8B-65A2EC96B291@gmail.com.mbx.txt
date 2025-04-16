@@ -1,0 +1,500 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57546-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 280E33E680
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 18 Oct 2024 14:41:35 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 0EC3067D5B
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 18 Oct 2024 14:41:35 +0000 (UTC)
+Received: (qmail 363188 invoked by uid 998); 18 Oct 2024 14:41:34 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 363162 invoked by uid 116); 18 Oct 2024 14:41:33 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Fri, 18 Oct 2024 14:41:33 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id E4F73C22C4
+	for <users@activemq.apache.org>; Fri, 18 Oct 2024 14:41:32 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -1.105
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.105 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, RCVD_IN_MSPIKE_H2=-0.906,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]
+	autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id IFdkAB_fRG8L for <users@activemq.apache.org>;
+	Fri, 18 Oct 2024 14:41:32 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=209.85.167.176; helo=mail-oi1-f176.google.com; envelope-from=mattrpav@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id C446AC0C8B
+	for <users@activemq.apache.org>; Fri, 18 Oct 2024 14:41:31 +0000 (UTC)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e602a73ba1so461262b6e.2
+        for <users@activemq.apache.org>; Fri, 18 Oct 2024 07:41:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729262485; x=1729867285; darn=activemq.apache.org;
+        h=message-id:in-reply-to:to:references:date:subject:mime-version
+         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qN4UUDzJ/o3sV5+z6V8KZNZjZLFCk2djktxl2roASew=;
+        b=h+uPk70SaORvzTphPunLKhyyJ8mh5vv1acDaiy09BeTFrXWEl7qwspyLOXFlBcwvK5
+         KkkDtIAmoXU5ZoUfHpiuKZaoz/jk3AWKvLtTXyDz9jHERcXt8ZaWBdnAkChq26BwkhW0
+         B34QgP6SQgW0UtSC0ywcHGA7l+Yl9CPGwB/tR+zspxaRDXrHwFrid9S3DgRThKYCM9xV
+         hoA04K99wbCHnqtr6P2IUBH0uZho4vD+9s8Mmg2caNEHo9O2XDrYKVBTrHSlb2YLn1ip
+         LiZsKbEx088MgskdJvQNYS71Qaxb1ojU9aNR+1zF2ZCKtTcGpB2mL6IBexWEGqMxf7FA
+         aMCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729262485; x=1729867285;
+        h=message-id:in-reply-to:to:references:date:subject:mime-version
+         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qN4UUDzJ/o3sV5+z6V8KZNZjZLFCk2djktxl2roASew=;
+        b=JtmLrKQasgYrTwC1NF8mtPBkmxlacdxdgr2rBEs8puxERdpRifhIeTv4Nl4EwhCCVh
+         R8idHnP734Rk0vrjfF/+b51dfoxFYRWNhVgHR/S7RUiS2Fl0s7ntn5IgIOw0IX2eM249
+         fMKBwmmLQyP0SY08AsqKkSPIiDFIHP+pKZI7tCN0Wsg2Bn2PLu9O7cYZdZdIBxYAolkS
+         hEPOwmajna0ZVAE0p/6DITbuQAUdEc2PK0r0b/owTXGBcejf57KdI3a40t7jozTRpEZo
+         vsK4haJ8nFUkVI4jSPx3aWNdOmqoqoyVBZiiwfPymMwUpdKcAUsFt51XVTZWMhGTV/ib
+         4RNA==
+X-Gm-Message-State: AOJu0YwbErNCjPdaK7TokMp6nW9jT4Bnzl6H7aUd8eVvg1mlm+OnYFba
+	bLO0tEOs7LaEJjz28mKw9DXOnh63p9gJj3kpy/GuxUX8yT6oO/yddUczOA==
+X-Google-Smtp-Source: AGHT+IF0ZNufWJE6t943LAZTFnnztOMcIbMdZeV1vjbhfSvLZl9KA0RJWwh8Sj0mL88JSz3PNc9Qjw==
+X-Received: by 2002:a05:6808:178b:b0:3e5:f43a:5d77 with SMTP id 5614622812f47-3e602df23femr2415824b6e.42.1729262485039;
+        Fri, 18 Oct 2024 07:41:25 -0700 (PDT)
+Received: from smtpclient.apple (syn-068-203-012-010.res.spectrum.com. [68.203.12.10])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e6029c7554sm356836b6e.15.2024.10.18.07.41.24
+        for <users@activemq.apache.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Oct 2024 07:41:24 -0700 (PDT)
+From: Matt Pavlovich <mattrpav@gmail.com>
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: How to upgrade ActiveMQ classic 5.13.x to 5.17.x ?
+Date: Fri, 18 Oct 2024 09:41:13 -0500
+References: <MR2P264MB01479C7C64199C99F6D8E0B3FE402@MR2P264MB0147.FRAP264.PROD.OUTLOOK.COM>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+In-Reply-To: <MR2P264MB01479C7C64199C99F6D8E0B3FE402@MR2P264MB0147.FRAP264.PROD.OUTLOOK.COM>
+Message-Id: <5D973945-B24A-46B1-BB8B-65A2EC96B291@gmail.com>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+
+Hi Samuel-
+
+The ActiveMQ command line has a couple of tools to that can give you =
+those numbers..
+
+Table of queue (aka destination) stats:
+./bin/activemq dstat=20
+
+List of broker metrics:
+./bin/activemq bstat
+
+Thanks,
+Matt Pavlovich
+
+> On Oct 18, 2024, at 3:04=E2=80=AFAM, Samuel VISCAPI =
+<samuel.viscapi@xelians.fr> wrote:
+>=20
+> Dear Fran=C3=A7ois and Matt,
+>=20
+> Thanks for your input, really appreciated.
+>=20
+> I believe I=E2=80=99ll try option 2 (Naturally drain the 5.13.x broker =
+so it is empty, and simply start the 5.17.x broker to handle new =
+messages).
+>=20
+> How can I make sure the broker is empty via the command line ?
+>=20
+> =C2=AB ./activemq list =C2=BB does tell me about a broker at URL =
+service:jmx:rmi://127.0.0.1/[=E2=80=A6] but I can=E2=80=99t browse its =
+contents with =C2=AB ./activemq browse =C2=BB, looks like the =E2=80=93amq=
+url option is incompatible with that kind of URL.
+>=20
+> What am I doing wrong ?
+>=20
+> Best regards,
+>=20
+> Samuel
+>=20
+> On 2024/10/11 14:22:39 Francois Papon wrote:
+>> Hi,
+>>=20
+>> You also need to be careful of the activemq.xml configuration, some =
+config can need updates.
+>>=20
+>> Regards,
+>>=20
+>> Fran=C3=A7ois
+>> fpapon@apache.org
+>> francois.papon@openobject.fr
+>>=20
+>> Le 11/10/2024 =C3=A0 15:57, Matt Pavlovich a =C3=A9crit :
+>>> Hello Samuel-
+>>>=20
+>>> Upgrades are fairly straightforward. You can generally copy the same =
+configuration file from 5.13.x to 5.17.x without much headache to verify =
+the functionality is the same. If you have an advanced configuration or =
+use case, you may need to seek an expert for assistance.
+>>>=20
+>>> For the cutover, a couple of options:
+>>>=20
+>>> 1. Turn both on and forward all messages from the 5.13.x to the =
+5.17.x using a static network connector to do store-and-forward.
+>>>=20
+>>> 2. Naturally drain the 5.13.x broker so it is empty, and simply =
+start the 5.17.x broker to handle new messages
+>>>=20
+>>> 3. Copy kahadb data over from 5.13.x to 5.17.x
+>>>=20
+>>> #1 and #2 are generally the better options. #3 can get tricky if you =
+do advanced stuff like scheduling, etc.
+>>>=20
+>>> Thanks,
+>>> Matt Pavlovich
+>>>=20
+>>>> On Oct 11, 2024, at 3:46=E2=80=AFAM, SAMUEL =
+VISCAPI<sa...@atos.net.INVALID> wrote:
+>>>>=20
+>>>> Dear all,
+>>>>=20
+>>>> I have to upgrade ActiveMQ classic for one of our customers.
+>>>>=20
+>>>> The current version is 5.13.1 and I need to upgrade it to 5.17.6.
+>>>>=20
+>>>> I couldn=E2=80=99t find any documentation regarding the upgrade =
+process on the official website.
+>>>>=20
+>>>> Are there any steps I should be aware of before upgrading ActiveMQ =
+classic ?
+>>>>=20
+>>>> Best regards,
+>>>>=20
+>>>> Samuel
+>>>> Ce message et toutes les pi=C3=A8ces jointes (ci-apr=C3=A8s le =
+"message") sont =C3=A9tablis =C3=A0 l=E2=80=99intention exclusive des =
+destinataires d=C3=A9sign=C3=A9s. Il contient des informations =
+confidentielles et pouvant =C3=AAtre prot=C3=A9g=C3=A9 par le secret =
+professionnel. Si vous recevez ce message par erreur, merci d'en avertir =
+imm=C3=A9diatement l'exp=C3=A9diteur et de d=C3=A9truire le message. =
+Toute utilisation de ce message non conforme =C3=A0 sa destination, =
+toute diffusion ou toute publication, totale ou partielle, est =
+interdite, sauf autorisation expresse de l=E2=80=99=C3=A9metteur. =
+L'internet ne garantissant pas l'int=C3=A9grit=C3=A9 de ce message lors =
+de son acheminement, Atos (et ses filiales) d=C3=A9cline(nt) toute =
+responsabilit=C3=A9 au titre de son contenu. Bien que ce message ait =
+fait l=E2=80=99objet d=E2=80=99un traitement anti-virus lors de son =
+envoi, l=E2=80=99=C3=A9metteur ne peut garantir l=E2=80=99absence totale =
+de logiciels malveillants dans son contenu et ne pourrait =C3=AAtre tenu =
+pour responsable des dommages engendr=C3=A9s par la transmission de =
+l=E2=80=99un d=E2=80=99eux.
+>>>>=20
+>>>> This message and any attachments (the "message") are intended =
+solely for the addressee(s). It contains confidential information, that =
+may be privileged. If you receive this message in error, please notify =
+the sender immediately and delete the message. Any use of the message in =
+violation of its purpose, any dissemination or disclosure, either wholly =
+or partially is strictly prohibited, unless it has been explicitly =
+authorized by the sender. As its integrity cannot be secured on the =
+internet, Atos and its subsidiaries decline any liability for the =
+content of this message. Although the sender endeavors to maintain a =
+computer virus-free network, the sender does not warrant that this =
+transmission is virus-free and will not be liable for any damages =
+resulting from any virus transmitted.
+>>>=20
+>>> =
+---------------------------------------------------------------------
+>>> To unsubscribe, e-mail:users-unsubscribe@activemq.apache.org
+>>> For additional commands, e-mail:users-help@activemq.apache.org
+>>> For further information, visit:https://activemq.apache.org/contact
+>>>=20
+>>>=20
+>>=20
+
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57545-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id E7B873E816
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 18 Oct 2024 08:06:39 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 272DA4A5DD
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 18 Oct 2024 08:04:17 +0000 (UTC)
+Received: (qmail 3612683 invoked by uid 998); 18 Oct 2024 08:04:13 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 3612495 invoked by uid 116); 18 Oct 2024 08:04:12 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Fri, 18 Oct 2024 08:04:12 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id 63744C22BC
+	for <users@activemq.apache.org>; Fri, 18 Oct 2024 08:04:12 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -0.904
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.904 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_MSPIKE_H2=-0.906,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=xelians.fr
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id VxAKokWVttg5 for <users@activemq.apache.org>;
+	Fri, 18 Oct 2024 08:04:11 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=52.101.167.85; helo=pa5p264cu001.outbound.protection.outlook.com; envelope-from=samuel.viscapi@xelians.fr; receiver=<UNKNOWN> 
+Received: from PA5P264CU001.outbound.protection.outlook.com (mail-francecentralazon11020085.outbound.protection.outlook.com [52.101.167.85])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 9A735820B9
+	for <users@activemq.apache.org>; Fri, 18 Oct 2024 08:04:11 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p5ucnWUT4HhasX2Ps1JMI1BOcgDHFkyG15RIL3nO5QLNB02SmXTKJ1jzU20sBmOW4KNa/+RV5D+l9+aTX0dEbj4uifLRqothbnPY4ofqAPVd2UE8xVZHTJq3PauSNh+S/iRoG8Y9hKc6vqfow8tiyxoTJW3DYi4ngtablww4yQMTiBjHtMHUrbDxr6fvI/LhgS3EQwXS/EGkAmmrget2ZNdsVGgNr+CKqSAk0Jqrs/y5JD/NEf0YaNEs2poBTAfKUedKKqvQKRW6nHOSf94PzKUfpg9psmb6TcCpvHeohjyZHu7A9fXI2hCxV9siwP7EarVwZ3TVgdjGIy4K0Lao1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I+DPCk17ZMxPnRP4B3Qf3LwAuXZPB93EYsyK4NjoYLo=;
+ b=f8G/Wr0gcNf4Go7kzz+Xyt1HD6AdJnobu8yjkUFSqCxFbzOZ6ITimDWT8rxRUpMH/QcvkwhkYXVtUYwQjJ9lqj0ZYrZL7L8GYm3SyhBKfJ1NtezB3AG0DZ5QSvN+pKI0rISq0domEaLek9sHMZdCqOe8hEZtywag2hNGTCRLlYwJHoULXsQPIrJpaaz1jqu3fM7Pm3J+KA8rQ2wHvD3SXs92xnr8fOqe0NVkqzS/woJUOOtdOLk7R/pTDiFfWqpxUKU6ZmGDUySQqhPo7r1W+yz51IN+rO0H3qgMDG5yq2J4js5lg4AJ4q6S4GGxIgDXxIiaeZpAePfDluiSxySW1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xelians.fr; dmarc=pass action=none header.from=xelians.fr;
+ dkim=pass header.d=xelians.fr; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xelians.fr;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I+DPCk17ZMxPnRP4B3Qf3LwAuXZPB93EYsyK4NjoYLo=;
+ b=gwLl3qCzZE9MtnMlosgeN1QI7vQVmORB2M6x+ddz8pNUpaV1NKqo1FEbGnUJQH/kxuWPbRspKnVlAjkOlu4JMxg631mS3jms/f5nO5CrKS/DBRh0FhyYj9av3NdGLqbpyf15QbaQoeHFMYv1WzJX1cg+oukyL4xlAIJNr6xb+bkluqv1uXZQJ/adHcbH/oJU7DwCZr1a7jEDOxKzNxBlmlP3Ki4/vSOmuPADay7cMjZQRUAStaCW8qTB+eUe2294FylrfKrDtDi+SCHqT6/w5JKGg81OpNLVVTbWD9b1s4Wjfg39ItVK+MNyKrqUSQXhOGzxtalYKC4Ox8lh7Ocxbg==
+Received: from MR2P264MB0147.FRAP264.PROD.OUTLOOK.COM (2603:10a6:500:4::20) by
+ MR1P264MB2002.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:4::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8069.24; Fri, 18 Oct 2024 08:04:04 +0000
+Received: from MR2P264MB0147.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::f31c:a92e:dfaa:af4f]) by MR2P264MB0147.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::f31c:a92e:dfaa:af4f%6]) with mapi id 15.20.8069.024; Fri, 18 Oct 2024
+ 08:04:04 +0000
+From: Samuel VISCAPI <samuel.viscapi@xelians.fr>
+To: "'users@activemq.apache.org'" <users@activemq.apache.org>
+Subject: RE: Re: How to upgrade ActiveMQ classic 5.13.x to 5.17.x ?
+Thread-Topic: RE: Re: How to upgrade ActiveMQ classic 5.13.x to 5.17.x ?
+Thread-Index: AdshMoCqxgJerJaBS168sIMrSrxmIw==
+Date: Fri, 18 Oct 2024 08:04:04 +0000
+Message-ID: 
+ <MR2P264MB01479C7C64199C99F6D8E0B3FE402@MR2P264MB0147.FRAP264.PROD.OUTLOOK.COM>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=xelians.fr;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MR2P264MB0147:EE_|MR1P264MB2002:EE_
+x-ms-office365-filtering-correlation-id: 0d849eb0-4ca1-43ac-edd3-08dcef4b6efa
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|4022899009|366016|376014|1800799024|38070700018|8096899003;
+x-microsoft-antispam-message-info: 
+ =?utf-8?B?V3ZPTTF3NzIyVU41ZmFsRWowelM2WVZaWFJiZmxIMWdMN012a244RDJqOVdQ?=
+ =?utf-8?B?YzN4VXJIYUdzLzNENCs0NUtZKzNjcGV6cEg1Z0p2eUU2NWJZUy9QNEtML1RM?=
+ =?utf-8?B?UG9BM2paSldNdy9EMWZuaXAwOElsYks4KzJldHJJaUpjVEF4QjFvOU1iaHhU?=
+ =?utf-8?B?S2doSDdYd0c2bHZzcjJCUDcvdld6V0ZZRFBSVTlKZ1lCL3JDNlV1QmZVRWM0?=
+ =?utf-8?B?Z1NCMjcvbGE2ak1ud1pkRnhrZlRKbmQ1UDJzc0M2d1hYamV6OTNxMXMvZGRK?=
+ =?utf-8?B?R1hUWUxkYjJrZ0lVRmFKOVZQS2F1VGI4WGtZcFF5V3RPZHA1UmlOTG50S3Jw?=
+ =?utf-8?B?Z3JmK0tqcGlzSm5WWjQ3K1UwYmlkT3FObjF1NTVHNjA4U0FUUXEwQnlLL1pZ?=
+ =?utf-8?B?Zm5LWDRqRkdDbVR4ZHhBb21BMW9xdTVBRzBBeGprT3NwOEQyVU04Mis3djFB?=
+ =?utf-8?B?c2V1NlVoYzRPLzArTGZDMCtacnBaMnBRWGFGYko4RGZQNUhtcDVRY2dDTTJx?=
+ =?utf-8?B?bGFXeG1HREIrUGo1RzZSOWt6YzFoN210ZHh0MElYcFN6TUkzNzNsMkhXNVFN?=
+ =?utf-8?B?N2xFUlpFUC9xVmRhY2UwTlhCRTQwK2w0MUVQMEo3dW0rU0RxSDB0MDhienhJ?=
+ =?utf-8?B?bHBBL3lXMHBYWXVmMHpqQ0tydFRLVm44aG0vZWl4b0YyMmYzd2NqZFMxeUtL?=
+ =?utf-8?B?b3U4WXJEaVNDMFhneDM2cXhmZWtZTFdhTVV1VndFeTAwV3ljVzl2Z3EwV1E4?=
+ =?utf-8?B?VlM2Y1V4Wm9UWGVlNUJMOXFEMzZmVjdSL2xCMWZvT3JsdVJYMXdobkdvbDF3?=
+ =?utf-8?B?TjRXSDkyL3N1M21YcUc2ajllczYzRFZ5Nmx5NC9oQ2VpWmYrSEFJUnduRG8w?=
+ =?utf-8?B?V2FWb083bWwxREMrQWpXMWM1RGUrbnc4N0RwUVNFTmg2TVdxY053NUROQmVr?=
+ =?utf-8?B?amtzZldkOHJFQlFWOUlIMFUza2pEUWs1d1FxQmpRQzN2bjBYVTd4dG5HQjhR?=
+ =?utf-8?B?WGxJekNXSzMybnRwUGE1dnZiYlQzMmNOQ0Frcisxc1o3OTlEMyt4MFNKUEky?=
+ =?utf-8?B?dzhBU3FkVW5ualZ6YjlzWWlwMDIrdEtpdTFxTTROU2I2cXYvTWdodUkvVmF5?=
+ =?utf-8?B?UjNYVzJQUXdqL09raTdGSFE3aHRmNlE5SzRlbWZna3llKzRCVWdReU9mYWNs?=
+ =?utf-8?B?WS9ldXBEZVd0clE0MzZ1V0RLVFlnbmlzd3hWSjRnakRJYlBMZU04bXczRUw1?=
+ =?utf-8?B?SkpPKzlyT2ZWMXBacDc0VHU0Q3RQM0hpS0s1bWRWYTZLRkx1R2tSRmdZejZF?=
+ =?utf-8?B?WVB3S0JaOXZQQm9RZkpJMDUySnBCWTZJRTZpWjJZemtCWGJHbDhOaHQ4ZWF6?=
+ =?utf-8?B?c1hHUEVLT2xEUi9hT0g1dWdNSlhHcHZBc2lxSTMrL1ZVUFRaVTVTYUdtbWQz?=
+ =?utf-8?B?Y2VnMVpKc1JRREl2UGEyWnRJTVdSaXJ1U3FLRytGdHBQSitHS3dLTCtCYmVp?=
+ =?utf-8?B?RTZBblpxQk1LSzVneHR4VGpnTkFINEFPK3lNMVYzV3NJQzk3ME5vT3Nqc1g5?=
+ =?utf-8?B?Qis2ZitPT0tkRU0rOGpmakw3d05xdm9NYVZSb3ZjbS9VTktRNDM3VTQrM2Rl?=
+ =?utf-8?B?ZVdQbzBGM1J5N3lDNWdERUxRM2dHZ3MzRWhEc3dkTFk5dXRPMUdKaG1nc0pP?=
+ =?utf-8?B?RHk4dFJ3bnlBeEhYNWw0UGhBSTd4T0lZK2d1bUx1ZHdzQ3B2ODI1Mkwzb1ZZ?=
+ =?utf-8?B?WXZzU0wyQkQxdU9tdzVjMHB2ZDdOMlIybDU4dWVRbzZ6ZTVnWkcvYytuNm9O?=
+ =?utf-8?B?QStZVkg1aCtDcUhZdElNSCtDamZsMEliOHVmS1d5LzRYWnRyYWJlRk11dVh3?=
+ =?utf-8?Q?Qb+CaAcrYsgzS?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MR2P264MB0147.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(4022899009)(366016)(376014)(1800799024)(38070700018)(8096899003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?QTlHeEV4R05Bb3pGM25hR0E5R1ZFVGl4S0g4Q0ZMWXYxekw3OHlaOTNmWHJU?=
+ =?utf-8?B?MkVFTndmSnhUNVF6aWNMWDFGWFg3TnRYTjE1RzRad29VNnRsT3l2OEt5byt3?=
+ =?utf-8?B?UWVJZVlTd0haY0dicEJ4aTNGWUhJRG9taHJlUCs5RkxzbE1JMmx2dXppZkMx?=
+ =?utf-8?B?OVJFYnNkSklRUkRLSmN2V2dtMVZYTklWeGM0enRvUzZsQ2JJeTRSdjRlREdx?=
+ =?utf-8?B?MHpUU3hqWjIrLzdqV0QxRy9CYWZ6am0rRnpJYVJrZWN5THBaQTRFejE1RFFm?=
+ =?utf-8?B?ZEVZeGJDaUpWRzNyditqdSttdGQwU0JaK0JESytFcjN0ZGhOUUFaeFhzb1Er?=
+ =?utf-8?B?UzN1SEg4ZEpwVWdwK2ZWQXRpY05CL2NNN3pNbTBUUWNTZVZhdWV0NTFJT3o3?=
+ =?utf-8?B?SEFDTXhqSlJQeFc3cVJrV0xmV2NLTlZLSFphRjVhSmRMOVNsTDcvV2dXY1RM?=
+ =?utf-8?B?YXdCWHdOTlRwZXlqV0VvQWhMaUpucG5pQlh2WnlnNjdpc1BGT1RoTC82a2lu?=
+ =?utf-8?B?eUJ1bGtSVThnSzVzZzM3bkRiVkhicUwzczZqb2YvNkdwazk1TzFqM1QycmhL?=
+ =?utf-8?B?RFNMV0pjQWNZT3U4ODN0NlpmemdOMjRyS1pROXZmL1VnbHFyWXYvS041emI2?=
+ =?utf-8?B?bHQxMXJEc0hBRy8yNEF6ck1URzBwVndSb2Q3czcwa1NrNTdJSTYxQnRNZjVJ?=
+ =?utf-8?B?VjVna1ZxNzJDWm11NTFzMUdQMU5JZUttZ3l6UmtIdmRLOEwxcWFYMTc3R0do?=
+ =?utf-8?B?d29rdFVtOHhOTHIydWJYemkwZ1FORlhWRnVINWxXbFowNjl4eVdxMTZnVTB5?=
+ =?utf-8?B?TXdHZjlHZ2thQ0ZQUDVQejFxRmRSeDdIMklSV2ZGdCsvSm54OXdsaTNnYkNU?=
+ =?utf-8?B?Q2RUb2VuZlNpdTBXMXlOVlpyWU1KYS8xa2ZHVFM2SUNlM2VDSlR2LzdDSEJx?=
+ =?utf-8?B?cEV1R1FoWUZYNVI2YXJUbE9MNDZqVEhYZFJnaEtsRmZvVWp3ZThzR0k0RHhv?=
+ =?utf-8?B?ZTNOeGNGQm5CQUxrYXA2amtDbTl6Y0w2MU9tSmxKejNhR3R6ckM0VjZJYWN6?=
+ =?utf-8?B?NnYzamp4N1lxZWJlYmV2NVNDZTh5YTJVOU1SNkdQcDNoMXpIU3JNaUJ2NU5n?=
+ =?utf-8?B?M1YrdGhkMHdSMnRzNWt1S2tndmcwYTBBNGhmV3dMOVZpckZZd1VoWVZXaFpr?=
+ =?utf-8?B?ODhoY1o4VVJjeXAxQWljWFZsU1ZKNDRCS0ZHQ0RaWkUzSVhwbWhrMEVGMzUr?=
+ =?utf-8?B?Z0ZWOCtmcnFoWU5pMkhQWlMrTnY3bUlEL3dtNEVIekRVMkNSeWJuREUyMWFB?=
+ =?utf-8?B?UVpCVFNCVGVBWFFTSVZBRXdpbm05bkhManFjbjVwaDMybWYvNU05UEZqM3Nx?=
+ =?utf-8?B?QnhUT0NJNWl1SEt6VGhIWFJPSVVKNkNzZEQ2UFRuYU1VRi9pOVc5SFAxcUsv?=
+ =?utf-8?B?L2dFREZMYjBtejFwMXN0M00xeVh0WXFFNzNsYmFUVU4zVlh4SWdoc1A0UUVW?=
+ =?utf-8?B?K0RyR3BNMWtlNUV6eXlJVlJTdkNrUTJsK3FrTW50c0ZSZVhIcFdmYVI3NmYr?=
+ =?utf-8?B?OFByTVFrRzNjanA4Z2xGK0x3WVVwankzUk5rT2xRay9tb0tBcTY1a2FzQ2R0?=
+ =?utf-8?B?SU0zY0FZWWMxNmY2eFF2Mm5KWWJNTTVxRjlMMk1CdVFMT3BlQmhuejNvMHps?=
+ =?utf-8?B?ek5iSnZBK1pwcUg2MlRRQjFYWC9qdHcxTEZkYVZ6cVBCLzJtS2VHM0VOSDRU?=
+ =?utf-8?B?Y2pKaVVDaVdmRk1YMlR5WWFkM2h6bDNwdXpUbnoycEJGQWpBbHVsTGQvaldT?=
+ =?utf-8?B?QUVrc056RHlXTVJUWXAxZXpIYmtzdmZYc0NiUUNzTE1ZbDdqWmVBQmEyQnNU?=
+ =?utf-8?B?MHBmNC8reTF4N3Z2dVdCMTREMkg0SXhrWDRIWnlSeUd2OUZIK0phUTYyWThX?=
+ =?utf-8?B?UHFMSTJkVlJaMGFzZTNwRUJ6S01DQi9JK2RNRnR4Y3U5UldValNlc2RuYmxv?=
+ =?utf-8?B?SGhjK3FuSWljdXRKVWFBZGNBL0JBbnZrNDZTb2l3Ukl0NDREYmFsSTdacTdC?=
+ =?utf-8?B?VGtYQXFKVkFvR1RVVmxMWXJhVUxjZkwyRDl4TU1XRTUxRmhRU3dtUmRJdHRP?=
+ =?utf-8?B?ZTNyQnd4djBPSG96ZDA5YTRmdVJkNmRYMDJrWUQxVUkva1pDZkRMeEVkR3NJ?=
+ =?utf-8?B?dmc9PQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_MR2P264MB01479C7C64199C99F6D8E0B3FE402MR2P264MB0147FRAP_"
+MIME-Version: 1.0
+X-OriginatorOrg: xelians.fr
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MR2P264MB0147.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d849eb0-4ca1-43ac-edd3-08dcef4b6efa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2024 08:04:04.2995
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 6fc1c04c-4bce-498f-bdd2-4a407cbd7dcd
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dhljwn8ZImEvz0Llb/ytjrlJ6wuOwyLTU3EwEZjWwp2nbBt70UIg3t+2jeomPCRonVmPVbeRqHSs1oSnt/qQgFnf9ikj47TQBZd2pn0rcFU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MR1P264MB2002
+
+--_000_MR2P264MB01479C7C64199C99F6D8E0B3FE402MR2P264MB0147FRAP_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+
+RGVhciBGcmFuw6dvaXMgYW5kIE1hdHQsDQoNClRoYW5rcyBmb3IgeW91ciBpbnB1dCwgcmVhbGx5
+IGFwcHJlY2lhdGVkLg0KDQpJIGJlbGlldmUgSeKAmWxsIHRyeSBvcHRpb24gMiAoTmF0dXJhbGx5
+IGRyYWluIHRoZSA1LjEzLnggYnJva2VyIHNvIGl0IGlzIGVtcHR5LCBhbmQgc2ltcGx5IHN0YXJ0
+IHRoZSA1LjE3LnggYnJva2VyIHRvIGhhbmRsZSBuZXcgbWVzc2FnZXMpLg0KDQpIb3cgY2FuIEkg
+bWFrZSBzdXJlIHRoZSBicm9rZXIgaXMgZW1wdHkgdmlhIHRoZSBjb21tYW5kIGxpbmUgPw0KDQrC
+qyAuL2FjdGl2ZW1xIGxpc3QgwrsgZG9lcyB0ZWxsIG1lIGFib3V0IGEgYnJva2VyIGF0IFVSTCBz
+ZXJ2aWNlOmpteDpybWk6Ly8xMjcuMC4wLjEvW+KApl0gYnV0IEkgY2Fu4oCZdCBicm93c2UgaXRz
+IGNvbnRlbnRzIHdpdGggwqsgLi9hY3RpdmVtcSBicm93c2UgwrssIGxvb2tzIGxpa2UgdGhlIOKA
+k2FtcXVybCBvcHRpb24gaXMgaW5jb21wYXRpYmxlIHdpdGggdGhhdCBraW5kIG9mIFVSTC4NCg0K
+V2hhdCBhbSBJIGRvaW5nIHdyb25nID8NCg0KQmVzdCByZWdhcmRzLA0KDQpTYW11ZWwNCg0KT24g
+MjAyNC8xMC8xMSAxNDoyMjozOSBGcmFuY29pcyBQYXBvbiB3cm90ZToNCj4gSGksDQo+DQo+IFlv
+dSBhbHNvIG5lZWQgdG8gYmUgY2FyZWZ1bCBvZiB0aGUgYWN0aXZlbXEueG1sIGNvbmZpZ3VyYXRp
+b24sIHNvbWUgY29uZmlnIGNhbiBuZWVkIHVwZGF0ZXMuDQo+DQo+IFJlZ2FyZHMsDQo+DQo+IEZy
+YW7Dp29pcw0KPiBmcGFwb25AYXBhY2hlLm9yZw0KPiBmcmFuY29pcy5wYXBvbkBvcGVub2JqZWN0
+LmZyDQo+DQo+IExlIDExLzEwLzIwMjQgw6AgMTU6NTcsIE1hdHQgUGF2bG92aWNoIGEgw6ljcml0
+IDoNCj4gPiBIZWxsbyBTYW11ZWwtDQo+ID4NCj4gPiBVcGdyYWRlcyBhcmUgZmFpcmx5IHN0cmFp
+Z2h0Zm9yd2FyZC4gWW91IGNhbiBnZW5lcmFsbHkgY29weSB0aGUgc2FtZSBjb25maWd1cmF0aW9u
+IGZpbGUgZnJvbSA1LjEzLnggdG8gNS4xNy54IHdpdGhvdXQgbXVjaCBoZWFkYWNoZSB0byB2ZXJp
+ZnkgdGhlIGZ1bmN0aW9uYWxpdHkgaXMgdGhlIHNhbWUuIElmIHlvdSBoYXZlIGFuIGFkdmFuY2Vk
+IGNvbmZpZ3VyYXRpb24gb3IgdXNlIGNhc2UsIHlvdSBtYXkgbmVlZCB0byBzZWVrIGFuIGV4cGVy
+dCBmb3IgYXNzaXN0YW5jZS4NCj4gPg0KPiA+IEZvciB0aGUgY3V0b3ZlciwgYSBjb3VwbGUgb2Yg
+b3B0aW9uczoNCj4gPg0KPiA+IDEuIFR1cm4gYm90aCBvbiBhbmQgZm9yd2FyZCBhbGwgbWVzc2Fn
+ZXMgZnJvbSB0aGUgNS4xMy54IHRvIHRoZSA1LjE3LnggdXNpbmcgYSBzdGF0aWMgbmV0d29yayBj
+b25uZWN0b3IgdG8gZG8gc3RvcmUtYW5kLWZvcndhcmQuDQo+ID4NCj4gPiAyLiBOYXR1cmFsbHkg
+ZHJhaW4gdGhlIDUuMTMueCBicm9rZXIgc28gaXQgaXMgZW1wdHksIGFuZCBzaW1wbHkgc3RhcnQg
+dGhlIDUuMTcueCBicm9rZXIgdG8gaGFuZGxlIG5ldyBtZXNzYWdlcw0KPiA+DQo+ID4gMy4gQ29w
+eSBrYWhhZGIgZGF0YSBvdmVyIGZyb20gNS4xMy54IHRvIDUuMTcueA0KPiA+DQo+ID4gIzEgYW5k
+ICMyIGFyZSBnZW5lcmFsbHkgdGhlIGJldHRlciBvcHRpb25zLiAjMyBjYW4gZ2V0IHRyaWNreSBp
+ZiB5b3UgZG8gYWR2YW5jZWQgc3R1ZmYgbGlrZSBzY2hlZHVsaW5nLCBldGMuDQo+ID4NCj4gPiBU
+aGFua3MsDQo+ID4gTWF0dCBQYXZsb3ZpY2gNCj4gPg0KPiA+PiBPbiBPY3QgMTEsIDIwMjQsIGF0
+IDM6NDbigK9BTSwgU0FNVUVMIFZJU0NBUEk8c2EuLi5AYXRvcy5uZXQuSU5WQUxJRD4gd3JvdGU6
+DQo+ID4+DQo+ID4+IERlYXIgYWxsLA0KPiA+Pg0KPiA+PiBJIGhhdmUgdG8gdXBncmFkZSBBY3Rp
+dmVNUSBjbGFzc2ljIGZvciBvbmUgb2Ygb3VyIGN1c3RvbWVycy4NCj4gPj4NCj4gPj4gVGhlIGN1
+cnJlbnQgdmVyc2lvbiBpcyA1LjEzLjEgYW5kIEkgbmVlZCB0byB1cGdyYWRlIGl0IHRvIDUuMTcu
+Ni4NCj4gPj4NCj4gPj4gSSBjb3VsZG7igJl0IGZpbmQgYW55IGRvY3VtZW50YXRpb24gcmVnYXJk
+aW5nIHRoZSB1cGdyYWRlIHByb2Nlc3Mgb24gdGhlIG9mZmljaWFsIHdlYnNpdGUuDQo+ID4+DQo+
+ID4+IEFyZSB0aGVyZSBhbnkgc3RlcHMgSSBzaG91bGQgYmUgYXdhcmUgb2YgYmVmb3JlIHVwZ3Jh
+ZGluZyBBY3RpdmVNUSBjbGFzc2ljID8NCj4gPj4NCj4gPj4gQmVzdCByZWdhcmRzLA0KPiA+Pg0K
+PiA+PiBTYW11ZWwNCj4gPj4gQ2UgbWVzc2FnZSBldCB0b3V0ZXMgbGVzIHBpw6hjZXMgam9pbnRl
+cyAoY2ktYXByw6hzIGxlICJtZXNzYWdlIikgc29udCDDqXRhYmxpcyDDoCBs4oCZaW50ZW50aW9u
+IGV4Y2x1c2l2ZSBkZXMgZGVzdGluYXRhaXJlcyBkw6lzaWduw6lzLiBJbCBjb250aWVudCBkZXMg
+aW5mb3JtYXRpb25zIGNvbmZpZGVudGllbGxlcyBldCBwb3V2YW50IMOqdHJlIHByb3TDqWfDqSBw
+YXIgbGUgc2VjcmV0IHByb2Zlc3Npb25uZWwuIFNpIHZvdXMgcmVjZXZleiBjZSBtZXNzYWdlIHBh
+ciBlcnJldXIsIG1lcmNpIGQnZW4gYXZlcnRpciBpbW3DqWRpYXRlbWVudCBsJ2V4cMOpZGl0ZXVy
+IGV0IGRlIGTDqXRydWlyZSBsZSBtZXNzYWdlLiBUb3V0ZSB1dGlsaXNhdGlvbiBkZSBjZSBtZXNz
+YWdlIG5vbiBjb25mb3JtZSDDoCBzYSBkZXN0aW5hdGlvbiwgdG91dGUgZGlmZnVzaW9uIG91IHRv
+dXRlIHB1YmxpY2F0aW9uLCB0b3RhbGUgb3UgcGFydGllbGxlLCBlc3QgaW50ZXJkaXRlLCBzYXVm
+IGF1dG9yaXNhdGlvbiBleHByZXNzZSBkZSBs4oCZw6ltZXR0ZXVyLiBMJ2ludGVybmV0IG5lIGdh
+cmFudGlzc2FudCBwYXMgbCdpbnTDqWdyaXTDqSBkZSBjZSBtZXNzYWdlIGxvcnMgZGUgc29uIGFj
+aGVtaW5lbWVudCwgQXRvcyAoZXQgc2VzIGZpbGlhbGVzKSBkw6ljbGluZShudCkgdG91dGUgcmVz
+cG9uc2FiaWxpdMOpIGF1IHRpdHJlIGRlIHNvbiBjb250ZW51LiBCaWVuIHF1ZSBjZSBtZXNzYWdl
+IGFpdCBmYWl0IGzigJlvYmpldCBk4oCZdW4gdHJhaXRlbWVudCBhbnRpLXZpcnVzIGxvcnMgZGUg
+c29uIGVudm9pLCBs4oCZw6ltZXR0ZXVyIG5lIHBldXQgZ2FyYW50aXIgbOKAmWFic2VuY2UgdG90
+YWxlIGRlIGxvZ2ljaWVscyBtYWx2ZWlsbGFudHMgZGFucyBzb24gY29udGVudSBldCBuZSBwb3Vy
+cmFpdCDDqnRyZSB0ZW51IHBvdXIgcmVzcG9uc2FibGUgZGVzIGRvbW1hZ2VzIGVuZ2VuZHLDqXMg
+cGFyIGxhIHRyYW5zbWlzc2lvbiBkZSBs4oCZdW4gZOKAmWV1eC4NCj4gPj4NCj4gPj4gVGhpcyBt
+ZXNzYWdlIGFuZCBhbnkgYXR0YWNobWVudHMgKHRoZSAibWVzc2FnZSIpIGFyZSBpbnRlbmRlZCBz
+b2xlbHkgZm9yIHRoZSBhZGRyZXNzZWUocykuIEl0IGNvbnRhaW5zIGNvbmZpZGVudGlhbCBpbmZv
+cm1hdGlvbiwgdGhhdCBtYXkgYmUgcHJpdmlsZWdlZC4gSWYgeW91IHJlY2VpdmUgdGhpcyBtZXNz
+YWdlIGluIGVycm9yLCBwbGVhc2Ugbm90aWZ5IHRoZSBzZW5kZXIgaW1tZWRpYXRlbHkgYW5kIGRl
+bGV0ZSB0aGUgbWVzc2FnZS4gQW55IHVzZSBvZiB0aGUgbWVzc2FnZSBpbiB2aW9sYXRpb24gb2Yg
+aXRzIHB1cnBvc2UsIGFueSBkaXNzZW1pbmF0aW9uIG9yIGRpc2Nsb3N1cmUsIGVpdGhlciB3aG9s
+bHkgb3IgcGFydGlhbGx5IGlzIHN0cmljdGx5IHByb2hpYml0ZWQsIHVubGVzcyBpdCBoYXMgYmVl
+biBleHBsaWNpdGx5IGF1dGhvcml6ZWQgYnkgdGhlIHNlbmRlci4gQXMgaXRzIGludGVncml0eSBj
+YW5ub3QgYmUgc2VjdXJlZCBvbiB0aGUgaW50ZXJuZXQsIEF0b3MgYW5kIGl0cyBzdWJzaWRpYXJp
+ZXMgZGVjbGluZSBhbnkgbGlhYmlsaXR5IGZvciB0aGUgY29udGVudCBvZiB0aGlzIG1lc3NhZ2Uu
+IEFsdGhvdWdoIHRoZSBzZW5kZXIgZW5kZWF2b3JzIHRvIG1haW50YWluIGEgY29tcHV0ZXIgdmly
+dXMtZnJlZSBuZXR3b3JrLCB0aGUgc2VuZGVyIGRvZXMgbm90IHdhcnJhbnQgdGhhdCB0aGlzIHRy
+YW5zbWlzc2lvbiBpcyB2aXJ1cy1mcmVlIGFuZCB3aWxsIG5vdCBiZSBsaWFibGUgZm9yIGFueSBk
+YW1hZ2VzIHJlc3VsdGluZyBmcm9tIGFueSB2aXJ1cyB0cmFuc21pdHRlZC4NCj4gPg0KPiA+IC0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLQ0KPiA+IFRvIHVuc3Vic2NyaWJlLCBlLW1haWw6dXNlcnMtdW5zdWJzY3JpYmVA
+YWN0aXZlbXEuYXBhY2hlLm9yZw0KPiA+IEZvciBhZGRpdGlvbmFsIGNvbW1hbmRzLCBlLW1haWw6
+dXNlcnMtaGVscEBhY3RpdmVtcS5hcGFjaGUub3JnDQo+ID4gRm9yIGZ1cnRoZXIgaW5mb3JtYXRp
+b24sIHZpc2l0Omh0dHBzOi8vYWN0aXZlbXEuYXBhY2hlLm9yZy9jb250YWN0DQo+ID4NCj4gPg0K
+Pg0K
+
+--_000_MR2P264MB01479C7C64199C99F6D8E0B3FE402MR2P264MB0147FRAP_--

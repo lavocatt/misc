@@ -1,0 +1,95 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57567-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 4EC443E6A3
+	for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 13:38:36 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 2E97564BF2
+	for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 13:38:36 +0000 (UTC)
+Received: (qmail 3011181 invoked by uid 998); 23 Oct 2024 13:38:34 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Delivered-To: moderator for users@activemq.apache.org
+Received: (qmail 2393644 invoked by uid 116); 23 Oct 2024 08:51:07 -0000
+Authentication-Results: apache.org; auth=none
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.201
+X-Spam-Level: 
+X-Spam-Status: No, score=0.201 tagged_above=-999 required=6.31
+	tests=[HTML_MESSAGE=0.2, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]
+	autolearn=disabled
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=136.144.238.65; helo=jambo4.jambo-mobile.com; envelope-from=silvio@jambo.software; receiver=<UNKNOWN> 
+Content-Type: multipart/alternative;
+ boundary="------------OHYvJ0bHtiQ7O6Cm84Fg5ZEy"
+Message-ID: <34894322-546c-47f0-a30e-231f742ef467@jambo.software>
+Date: Wed, 23 Oct 2024 10:50:54 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Content-Language: en-US
+From: Silvio Bierman <silvio@jambo.software>
+Subject: Question regarding problems with JDBC persistence
+
+--------------OHYvJ0bHtiQ7O6Cm84Fg5ZEy
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hello,
+
+Inside Wildfly 23.0.0 we are running ActiveMQ Artemis Message Broker 
+2.16.0 with JDBC persistence on SQLServer for ~25 message queues. In 
+some production environments we have moderate-to-high message volumes 
+and since processing can be relatively slow temporary message pileup is 
+not uncommon.
+
+In one particular environment we are experiencing OutOfMemory issues 
+during startup. There are about 60K messages in 2 of the queues while 
+the message table contains over 350M records causing memory exhaustion 
+during startup. Running in a controlled environment with ~60G heap 
+startup succeeds and through JProfiler we observe that all message table 
+records are selected and appear to be collected in memory. After that 
+they are processed and discarded dropping memory usage down to a 
+fraction of its peak. Using the JBoss CLI to inspect the queues then 
+shows we have indeed 60K messages in 2 queues.
+
+Inspecting the contents of the message table we see limited counts of 
+record types 13 (ADD_RECORD_TX) and 14 (UPDATE_RECORD_TX) roughly 
+equivalent to the 60K message count. All remaining records are type 11 
+(ADD_RECORD).
+
+When we removed all type 11 records restart was fast with limited memory 
+load and we still see 60K messages in the 2 queues.
+
+In the past we have observed similar numbers and startup problems in 
+other environments which lead us to truncate the AMQ persistence tables 
+to be able to restart the server without an OutOfMemoryException. But we 
+are looking for a way to prevent this situation from happening.
+
+So my questions are:
+
+- Is the large record count in the message table expected behavior?
+
+- Is there anything we can/should do to limit the number of records in 
+the message table?
+
+- Is removing all type 11 records a valid workaround? If no, what would 
+be the side-effect?
+
+Thanks for your help!
+
+Silvio
+
+--------------OHYvJ0bHtiQ7O6Cm84Fg5ZEy--

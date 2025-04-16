@@ -1,0 +1,1373 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 38 24 574 768
+%%Title: Enscript Output
+%%For: Thomas Lavocat
+%%Creator: GNU Enscript 1.6.6
+%%CreationDate: Tue Apr  1 15:59:19 2025
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 6
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 6
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 6
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      fname length fmodstr length add pagenumstr length add 95 6 idiv add d_header_w 6 idiv le{
+        5 0 moveto fname show
+        45 0 rmoveto fmodstr show
+        45 0 rmoveto pagenumstr show
+      } {
+        5 0 moveto fmodstr show
+        45 0 rmoveto pagenumstr show
+        fname length d_header_w 6 idiv idiv 1 add 10 mul 5 exch moveto
+        1 1 fname length d_header_w 6 idiv idiv
+        {
+          dup fname exch 1 sub d_header_w 6 idiv mul d_header_w 6 idiv getinterval show
+          5 exch 10 mul fname length d_header_w 6 idiv idiv 1 add 10 mul exch sub moveto
+        } for
+        5 10 moveto
+        fname fname length d_header_w 6 idiv idiv d_header_w 6 idiv mul dup fname length exch sub getinterval show
+      }ifelse
+    }ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 536 def
+/d_page_h 744 def
+/d_header_x 0 def
+/d_header_y 700 def
+/d_header_w 536 def
+/d_header_h 44 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 536 def
+/d_footer_h 0 def
+/d_output_w 536 def
+/d_output_h 700 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (./CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:08 2024) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 676 M
+(Return-Path: <users-return-57565-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 665 M
+(rg>) s
+5 654 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 643 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 632 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 621 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id CA6143E817) s
+5 610 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 16:27:38 +0000 \(UT) s
+5 599 M
+(C\)) s
+5 588 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 577 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 566 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 555 M
+(        \(No client certificate requested\)) s
+5 544 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 533 M
+(MTPS id B7081633ED) s
+5 522 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 16:27:38 +0000 \(UT) s
+5 511 M
+(C\)) s
+5 500 M
+(Received: \(qmail 600277 invoked by uid 998\); 22 Oct 2024 16:27:37 -0000) s
+5 489 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 478 M
+(Precedence: bulk) s
+5 467 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 456 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 445 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 434 M
+(List-Id: <users.activemq.apache.org>) s
+5 423 M
+(Reply-To: users@activemq.apache.org) s
+5 412 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 401 M
+(Received: \(qmail 600214 invoked by uid 116\); 22 Oct 2024 16:27:36 -0000) s
+5 390 M
+(Received: from spamproc1-he-fi.apache.org \(HELO spamproc1-he-fi.apache.org\) \(95.217.134) s
+5 379 M
+(.168\)) s
+5 368 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Tue, 22 Oct 2024 16:27:36 +0000) s
+5 357 M
+(Authentication-Results: apache.org; auth=none) s
+5 346 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 335 M
+(        by spamproc1-he-fi.apache.org \(ASF Mail Server at spamproc1-he-fi.apache.org\) w) s
+5 324 M
+(ith ESMTP id A3ADDC22DC) s
+5 313 M
+(        for <users@activemq.apache.org>; Tue, 22 Oct 2024 16:27:36 +0000 \(UTC\)) s
+5 302 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org) s
+5 291 M
+(X-Spam-Flag: NO) s
+5 280 M
+(X-Spam-Score: 0.001) s
+5 269 M
+(X-Spam-Level: ) s
+5 258 M
+(X-Spam-Status: No, score=0.001 tagged_above=-999 required=6.31) s
+5 247 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 236 M
+(        DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, NUMERIC_HTTP_ADDR=0.001,) s
+5 225 M
+(        SPF_PASS=-0.001, WEIRD_PORT=0.001] autolearn=disabled) s
+5 214 M
+(Authentication-Results: spamproc1-he-fi.apache.org \(amavisd-new\);) s
+5 203 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 192 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 181 M
+(        by localhost \(spamproc1-he-fi.apache.org [95.217.134.168]\) \(amavisd-new, port 1) s
+5 170 M
+(0024\)) s
+5 159 M
+(        with ESMTP id HgtGHtkql6VA for <users@activemq.apache.org>;) s
+5 148 M
+(        Tue, 22 Oct 2024 16:27:35 +0000 \(UTC\)) s
+5 137 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2607:f8b0:4864:20::534; helo) s
+5 126 M
+(=mail-pg1-x534.google.com; envelope-from=milovidoff@gmail.com; receiver=<UNKNOWN> ) s
+5 115 M
+(Received: from mail-pg1-x534.google.com \(mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:) s
+5 104 M
+(20::534]\)) s
+5 93 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 82 M
+(d 836C1816B6) s
+5 71 M
+(        for <users@activemq.apache.org>; Tue, 22 Oct 2024 16:27:35 +0000 \(UTC\)) s
+5 60 M
+(Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-7ea7e250c54so4006721a1) s
+5 49 M
+(2.0) s
+5 38 M
+(        for <users@activemq.apache.org>; Tue, 22 Oct 2024 09:27:35 -0700 \(PDT\)) s
+5 27 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 16 M
+(        d=gmail.com; s=20230601; t=1729614447; x=1730219247; darn=activemq.apache.org;) s
+5 5 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (./CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:08 2024) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(         :from:to:cc:subject:date:message-id:reply-to;) s
+5 676 M
+(        bh=+AVfgOibbZp5Ig4p5HGamMJxpMKnRZslKj9JLlB29lU=;) s
+5 665 M
+(        b=K9OCKRCUU7Qsi8nxIrbpSzx7zJP44d88NT95lkbJlaSDY6I5LM0UDP0SgALfmzKmyb) s
+5 654 M
+(         EiiRBSc+TNYcyXI8NrDqZ9dG2AqOYpN2FX9WS9+SoDJhmFd5y0abW8k0nOUsx4omuLbf) s
+5 643 M
+(         FIQK9SgGVuevgmESIS0+axhYGl5ysRn42NvtEJkkyzvZroNsueCqhP7gr2BoIn/X8nfk) s
+5 632 M
+(         1vpjBkvngrUY2gpIcThyvOpsm0kWUjNNMbtsZTfu1gWkC29MZHtdpiiBMS+YwsnUcCVU) s
+5 621 M
+(         i8i6wfMIjIzwAwReagDZoc9LS2b1QuNjiHXaHqlc2tmJNQ8lmYeZpKDtAZB980CSz3LI) s
+5 610 M
+(         DKlw==) s
+5 599 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 588 M
+(        d=1e100.net; s=20230601; t=1729614447; x=1730219247;) s
+5 577 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 566 M
+(         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;) s
+5 555 M
+(        bh=+AVfgOibbZp5Ig4p5HGamMJxpMKnRZslKj9JLlB29lU=;) s
+5 544 M
+(        b=JjdmyE0fJWIkytZ7xrd9e5g9K3///EwXomLmY9nCngHcN425hSd22YedkpRSYUUHJe) s
+5 533 M
+(         t6KRV37VFH3k6+fojTIfJFXq6QG7woPDvCO5zdoB9+wJDtuS60bYew8iTEH+b7Hhxu1F) s
+5 522 M
+(         y5/c7Zkr3cod0zd/PDs06NTVuxGxIaBa4bqKmZYOCoa5+ogErZc7d/Uy7mdqUPVUz1Gh) s
+5 511 M
+(         S4qNMuE8CB0Ov2ZE9zvSlaIr6ejR0IMmWWks7/W5Z8n6ZugfM2LV4NicLnKmgw60eceu) s
+5 500 M
+(         5kUjAP1QETQYypyWWSrZc4FhYR72UZHJaQN9QE66S7k4P9ZW6re9sbW9thzg2uohqvPG) s
+5 489 M
+(         y9+g==) s
+5 478 M
+(X-Gm-Message-State: AOJu0Yxxx4mgqZJZdbmtG2OEpZBN5vAJTLaOngZoPF8vkWySQKA3xnFH) s
+5 467 M
+(        U9ZazUUxEtOSH1tlS+pLGbF5aN7EN7DEkO+8UgGCcsLzHFg0dgWvyfSaWE43fhOwkuoB2Ep9UnJ) s
+5 456 M
+(        pKL6dfm6vkEQW+6kY/CJqP8m33p093I8r) s
+5 445 M
+(X-Google-Smtp-Source: AGHT+IG4yKgD5SnrtFNV/iOPV/LIEWyNJkqTackZmVkqAINghIqrjxr88K4/LY4RZ) s
+5 434 M
+(VNjC30SRCPz3xxLPIpoR7J4L7M=) s
+5 423 M
+(X-Received: by 2002:a05:6a20:d527:b0:1d5:10c1:49c1 with SMTP id) s
+5 412 M
+( adf61e73a8af0-1d9775af67emr165317637.9.1729614447280; Tue, 22 Oct 2024) s
+5 401 M
+( 09:27:27 -0700 \(PDT\)) s
+5 390 M
+(MIME-Version: 1.0) s
+5 379 M
+(References: <CAFQnLh2M7RNsArgARrFtHNtfufG5JMpZ8rNSmG-B0qE7KNAA6A@mail.gmail.com>) s
+5 368 M
+( <CAF+kE=TcxVKY5Hw+POw6j2jxzYyt3K_z92PPmQDGOSsi6QOzag@mail.gmail.com>) s
+5 357 M
+(In-Reply-To: <CAF+kE=TcxVKY5Hw+POw6j2jxzYyt3K_z92PPmQDGOSsi6QOzag@mail.gmail.com>) s
+5 346 M
+(From: Alexander Milovidov <milovidoff@gmail.com>) s
+5 335 M
+(Date: Tue, 22 Oct 2024 19:27:15 +0300) s
+5 324 M
+(Message-ID: <CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com>) s
+5 313 M
+(Subject: Re: Artemis message audit logs) s
+5 302 M
+(To: users@activemq.apache.org) s
+5 291 M
+(Content-Type: multipart/alternative; boundary="000000000000ba87c30625133e18") s
+5 269 M
+(--000000000000ba87c30625133e18) s
+5 258 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 247 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 225 M
+(Audit logging of message send and consume events. For example, I'm) s
+5 214 M
+(inspecting headers and properties which are included in the square braces) s
+5 203 M
+(after CoreMessage.) s
+5 192 M
+(\(there also can be LargeServerMessage, Reference and PagedReferenceImpl) s
+5 181 M
+(with some additional details and variations\)) s
+5 159 M
+(AMQ601500: User admin\(amq\)@127.0.0.1:54659 sent a message) s
+5 148 M
+(CoreMessage[messageID=3D1028, durable=3Dtrue,) s
+5 137 M
+(userID=3D7a8579ef-9091-11ef-a78b-207bd234bec6, priority=3D4, timestamp=3DTu=) s
+5 126 M
+(e Oct) s
+5 115 M
+(22 16:19:57 UTC 2024, expiration=3D0, durable=3Dtrue, address=3DTEST, size=) s
+5 104 M
+(=3D372,) s
+5 93 M
+(properties=3DTypedProperties[__AMQ_CID=3D791483e5-9091-11ef-a78b-207bd234be=) s
+5 82 M
+(c6,) s
+5 71 M
+(count=3D999, ThreadSent=3DProducer ActiveMQQueue[TEST], thread=3D0,) s
+5 60 M
+(_AMQ_ROUTING_TYPE=3D1]]@394224803, context: RoutingContextImpl\(Address=3DTE=) s
+5 49 M
+(ST,) s
+5 38 M
+(routingType=3DANYCAST, PreviousAddress=3DTEST previousRoute:ANYCAST,) s
+5 27 M
+(reusable=3Dtrue, version=3D-2147483644\)) s
+5 16 M
+(..................................................) s
+5 5 M
+(***** durable queues TEST:) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 3 def
+/fname (./CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:08 2024) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(- queueID=3D26 address:TEST name:TEST filter:null) s
+5 676 M
+(***** non durable for TEST:) s
+5 665 M
+(..................................................) s
+5 654 M
+(, transaction: null) s
+5 632 M
+(I've found that this part of the event is generated by the toString\(\)) s
+5 621 M
+(method of the Message object, but did not find its definition.) s
+5 588 M
+(=D0=B2=D1=82, 22 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 18:58, Jus=) s
+5 577 M
+(tin Bertram <jbertram@apache.org>:) s
+5 555 M
+(> What specific logging code is in the audit message you're inspecting?) s
+5 544 M
+(>) s
+5 533 M
+(>) s
+5 522 M
+(> Justin) s
+5 511 M
+(>) s
+5 500 M
+(> On Tue, Oct 22, 2024 at 10:25=E2=80=AFAM Alexander Milovidov <milovidoff@=) s
+5 489 M
+(gmail.com) s
+5 478 M
+(> >) s
+5 467 M
+(> wrote:) s
+5 456 M
+(>) s
+5 445 M
+(> > Hi All,) s
+5 434 M
+(> >) s
+5 423 M
+(> > Recently I tried to parse Artemis audit logs to get information about) s
+5 412 M
+(> > message size. It is needed to gather information about client) s
+5 401 M
+(> applications) s
+5 390 M
+(> > that cause the most of the message broker load.) s
+5 379 M
+(> > I mentioned that message headers in the audit log usually include) s
+5 368 M
+(> duplicate) s
+5 357 M
+(> > "durable" property. Is it the same property of the message, or properti=) s
+5 346 M
+(es) s
+5 335 M
+(> > of two different objects?) s
+5 324 M
+(> >) s
+5 313 M
+(> > For example:) s
+5 302 M
+(> > messageID=3D123, durable=3Dtrue, userID=3Dsome_uuid, priority=3D4, time=) s
+5 291 M
+(stamp=3Dsome) s
+5 280 M
+(> > timestamp, expiration=3Dsome expiration date, durable=3Dtrue, address=) s
+5 269 M
+(=3DTEST,) s
+5 258 M
+(> > size=3D309, properties=3DTypedProperties[...]) s
+5 247 M
+(> >) s
+5 236 M
+(> > I also mentioned that message size is not logged in the large message) s
+5 225 M
+(> > header, but it can be extracted from _AMQ_LARGE_SIZE message property.) s
+5 214 M
+(> > And some headers are separated using comma and space, some with comma) s
+5 203 M
+(> only.) s
+5 192 M
+(> >) s
+5 181 M
+(> > By the way, is there a possibility to add metrics with sent/received) s
+5 170 M
+(> bytes) s
+5 159 M
+(> > to each address or queue?) s
+5 148 M
+(> > Is it complicated to implement or may cause significant overhead?) s
+5 137 M
+(> >) s
+5 126 M
+(> > --) s
+5 115 M
+(> > Regards,) s
+5 104 M
+(> > Alexander) s
+5 93 M
+(> >) s
+5 82 M
+(>) s
+5 60 M
+(--000000000000ba87c30625133e18--) s
+5 49 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 38 M
+(Return-Path: <users-return-57564-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 27 M
+(rg>) s
+5 16 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 5 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 4 def
+/fname (./CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:08 2024) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 676 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id D98333E817) s
+5 665 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 15:57:24 +0000 \(UT) s
+5 654 M
+(C\)) s
+5 643 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 632 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 621 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 610 M
+(        \(No client certificate requested\)) s
+5 599 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 588 M
+(MTPS id A3021644BF) s
+5 577 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 15:57:23 +0000 \(UT) s
+5 566 M
+(C\)) s
+5 555 M
+(Received: \(qmail 517967 invoked by uid 998\); 22 Oct 2024 15:57:15 -0000) s
+5 544 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 533 M
+(Precedence: bulk) s
+5 522 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 511 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 500 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 489 M
+(List-Id: <users.activemq.apache.org>) s
+5 478 M
+(Reply-To: users@activemq.apache.org) s
+5 467 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 456 M
+(Received: \(qmail 517909 invoked by uid 116\); 22 Oct 2024 15:57:15 -0000) s
+5 445 M
+(Received: from ec2-52-204-25-47.compute-1.amazonaws.com \(HELO mailrelay1-ec2-va.apache.) s
+5 434 M
+(org\) \(52.204.25.47\)) s
+5 423 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Tue, 22 Oct 2024 15:57:15 +0000) s
+5 412 M
+(Authentication-Results: apache.org; auth=none) s
+5 401 M
+(Received: from mail-ed1-f45.google.com \(mail-ed1-f45.google.com [209.85.208.45]\)) s
+5 390 M
+(        by mailrelay1-ec2-va.apache.org \(ASF Mail Server at mailrelay1-ec2-va.apache.or) s
+5 379 M
+(g\) with ESMTPSA id 003AE3FCCF) s
+5 368 M
+(        for <users@activemq.apache.org>; Tue, 22 Oct 2024 15:57:14 +0000 \(UTC\)) s
+5 357 M
+(Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c9552d02e6so7402354a12) s
+5 346 M
+(.2) s
+5 335 M
+(        for <users@activemq.apache.org>; Tue, 22 Oct 2024 08:57:14 -0700 \(PDT\)) s
+5 324 M
+(X-Gm-Message-State: AOJu0YzfevE+oT1+1gFC2CO4s/fLcND8ieFivBmNuEng5AZZXXp2Fc5P) s
+5 313 M
+(        wWKLb8l1MPq8yeiIyALkvzJl2yQxgx00l6Scdp/XIk7duPB63x2zGkC7l4edBM58dHJH0s+a2zT) s
+5 302 M
+(        ip3aHv9Xu3A36EsRfgJ4Y7pZea2OgADR9rbxL8w==) s
+5 291 M
+(X-Google-Smtp-Source: AGHT+IEulQL+oGGU8Jqux6s74xRKHcq285dsKDl/Pk7OztF4mhc5whSatZUP5Ifh9) s
+5 280 M
+(rK/5zgP0T5hHc6ZRH51no4/0Ts=) s
+5 269 M
+(X-Received: by 2002:a17:907:7b8e:b0:a9a:6752:ba80 with SMTP id) s
+5 258 M
+( a640c23a62f3a-a9a69774585mr1587089766b.5.1729612634163; Tue, 22 Oct 2024) s
+5 247 M
+( 08:57:14 -0700 \(PDT\)) s
+5 236 M
+(MIME-Version: 1.0) s
+5 225 M
+(References: <CAFQnLh2M7RNsArgARrFtHNtfufG5JMpZ8rNSmG-B0qE7KNAA6A@mail.gmail.com>) s
+5 214 M
+(In-Reply-To: <CAFQnLh2M7RNsArgARrFtHNtfufG5JMpZ8rNSmG-B0qE7KNAA6A@mail.gmail.com>) s
+5 203 M
+(From: Justin Bertram <jbertram@apache.org>) s
+5 192 M
+(Date: Tue, 22 Oct 2024 10:56:47 -0500) s
+5 181 M
+(X-Gmail-Original-Message-ID: <CAF+kE=TcxVKY5Hw+POw6j2jxzYyt3K_z92PPmQDGOSsi6QOzag@mail.) s
+5 170 M
+(gmail.com>) s
+5 159 M
+(Message-ID: <CAF+kE=TcxVKY5Hw+POw6j2jxzYyt3K_z92PPmQDGOSsi6QOzag@mail.gmail.com>) s
+5 148 M
+(Subject: Re: Artemis message audit logs) s
+5 137 M
+(To: users@activemq.apache.org) s
+5 126 M
+(Content-Type: multipart/alternative; boundary="000000000000a8af61062512d24b") s
+5 104 M
+(--000000000000a8af61062512d24b) s
+5 93 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 82 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 60 M
+(What specific logging code is in the audit message you're inspecting?) s
+5 27 M
+(Justin) s
+5 5 M
+(On Tue, Oct 22, 2024 at 10:25=E2=80=AFAM Alexander Milovidov <milovidoff@gm=) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 5 def
+/fname (./CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:08 2024) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(ail.com>) s
+5 676 M
+(wrote:) s
+5 654 M
+(> Hi All,) s
+5 643 M
+(>) s
+5 632 M
+(> Recently I tried to parse Artemis audit logs to get information about) s
+5 621 M
+(> message size. It is needed to gather information about client application=) s
+5 610 M
+(s) s
+5 599 M
+(> that cause the most of the message broker load.) s
+5 588 M
+(> I mentioned that message headers in the audit log usually include duplica=) s
+5 577 M
+(te) s
+5 566 M
+(> "durable" property. Is it the same property of the message, or properties) s
+5 555 M
+(> of two different objects?) s
+5 544 M
+(>) s
+5 533 M
+(> For example:) s
+5 522 M
+(> messageID=3D123, durable=3Dtrue, userID=3Dsome_uuid, priority=3D4, timest=) s
+5 511 M
+(amp=3Dsome) s
+5 500 M
+(> timestamp, expiration=3Dsome expiration date, durable=3Dtrue, address=3DT=) s
+5 489 M
+(EST,) s
+5 478 M
+(> size=3D309, properties=3DTypedProperties[...]) s
+5 467 M
+(>) s
+5 456 M
+(> I also mentioned that message size is not logged in the large message) s
+5 445 M
+(> header, but it can be extracted from _AMQ_LARGE_SIZE message property.) s
+5 434 M
+(> And some headers are separated using comma and space, some with comma onl=) s
+5 423 M
+(y.) s
+5 412 M
+(>) s
+5 401 M
+(> By the way, is there a possibility to add metrics with sent/received byte=) s
+5 390 M
+(s) s
+5 379 M
+(> to each address or queue?) s
+5 368 M
+(> Is it complicated to implement or may cause significant overhead?) s
+5 357 M
+(>) s
+5 346 M
+(> --) s
+5 335 M
+(> Regards,) s
+5 324 M
+(> Alexander) s
+5 313 M
+(>) s
+5 291 M
+(--000000000000a8af61062512d24b--) s
+5 280 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 269 M
+(Return-Path: <users-return-57562-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 258 M
+(rg>) s
+5 247 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 236 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 225 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 214 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id B45BF3E817) s
+5 203 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 15:26:19 +0000 \(UT) s
+5 192 M
+(C\)) s
+5 181 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 170 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 159 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 148 M
+(        \(No client certificate requested\)) s
+5 137 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 126 M
+(MTPS id 108EE6360F) s
+5 115 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 15:24:21 +0000 \(UT) s
+5 104 M
+(C\)) s
+5 93 M
+(Received: \(qmail 420180 invoked by uid 998\); 22 Oct 2024 15:24:20 -0000) s
+5 82 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 71 M
+(Precedence: bulk) s
+5 60 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 49 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 38 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 27 M
+(List-Id: <users.activemq.apache.org>) s
+5 16 M
+(Reply-To: users@activemq.apache.org) s
+5 5 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 6 def
+/fname (./CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:08 2024) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Received: \(qmail 420161 invoked by uid 116\); 22 Oct 2024 15:24:19 -0000) s
+5 676 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 665 M
+(6.100\)) s
+5 654 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Tue, 22 Oct 2024 15:24:19 +0000) s
+5 643 M
+(Authentication-Results: apache.org; auth=none) s
+5 632 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 621 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 610 M
+(ith ESMTP id 354F12000E1) s
+5 599 M
+(        for <users@activemq.apache.org>; Tue, 22 Oct 2024 15:24:19 +0000 \(UTC\)) s
+5 588 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 577 M
+(X-Spam-Flag: NO) s
+5 566 M
+(X-Spam-Score: 0) s
+5 555 M
+(X-Spam-Level: ) s
+5 544 M
+(X-Spam-Status: No, score=0 tagged_above=-999 required=6.31) s
+5 533 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 522 M
+(        DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,) s
+5 511 M
+(        SPF_PASS=-0.001] autolearn=disabled) s
+5 500 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 489 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 478 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 467 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 456 M
+(10024\)) s
+5 445 M
+(        with ESMTP id s9_hP23XUfTX for <users@activemq.apache.org>;) s
+5 434 M
+(        Tue, 22 Oct 2024 15:24:18 +0000 \(UTC\)) s
+5 423 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2607:f8b0:4864:20::433; helo) s
+5 412 M
+(=mail-pf1-x433.google.com; envelope-from=milovidoff@gmail.com; receiver=<UNKNOWN> ) s
+5 401 M
+(Received: from mail-pf1-x433.google.com \(mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:) s
+5 390 M
+(20::433]\)) s
+5 379 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 368 M
+(d 8F68A816B3) s
+5 357 M
+(        for <users@activemq.apache.org>; Tue, 22 Oct 2024 15:24:18 +0000 \(UTC\)) s
+5 346 M
+(Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-71e74900866so3869499b3) s
+5 335 M
+(a.1) s
+5 324 M
+(        for <users@activemq.apache.org>; Tue, 22 Oct 2024 08:24:18 -0700 \(PDT\)) s
+5 313 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 302 M
+(        d=gmail.com; s=20230601; t=1729610656; x=1730215456; darn=activemq.apache.org;) s
+5 291 M
+(        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject) s
+5 280 M
+(         :date:message-id:reply-to;) s
+5 269 M
+(        bh=rwCldVZMrsUoC7cFRlWIIuAfEGc2Maucn/DNHJyS0lU=;) s
+5 258 M
+(        b=WIADWpsY/IWGSlFrN4cV8AHIUxLS0xIK/rE2zC4uBtVJEC69s+WgckOvAzL3rdFER8) s
+5 247 M
+(         co54084VxFgr0sWUgShoRXTPnB4qL1gpZ62tdB9mRpUDl7TiN1o37mqtzqV3FlUyCZU5) s
+5 236 M
+(         TFRYMOwnpWxP7OeUWwBMjoEl7QXrETDdxgkClry4xQkwdEg6khU3XMTiC4iGWuQCgqXN) s
+5 225 M
+(         uLQLNesUDJ9FjTDamvBmajoNj/FH9zArBo26Ox0IMK+68pQVJw4PEqR1+CgVr+N+AS+A) s
+5 214 M
+(         lsnP546JVI/jlNYs7fhx7LJKFQvgk0m2M1SC5jlDBW6Ei+4MOwMAA1lQGmd+M0v/5iEm) s
+5 203 M
+(         WFbA==) s
+5 192 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 181 M
+(        d=1e100.net; s=20230601; t=1729610656; x=1730215456;) s
+5 170 M
+(        h=to:subject:message-id:date:from:mime-version:x-gm-message-state) s
+5 159 M
+(         :from:to:cc:subject:date:message-id:reply-to;) s
+5 148 M
+(        bh=rwCldVZMrsUoC7cFRlWIIuAfEGc2Maucn/DNHJyS0lU=;) s
+5 137 M
+(        b=o7Q+4bePE2jMLHJ1j6qrFp8uBHkwRbOdtc/AEX9Bmbx8EsPj+Vpbr6zktqWtb7bHP2) s
+5 126 M
+(         k7cqjp5x+kXk/ViV44gKP5sffPGmG+O5rL4uUbMi/IfBGyQZr4fDwlepgGVDd7JuLu2f) s
+5 115 M
+(         6j3CbX/BTotVDlJBEeHu9EySlqU7gJUGE70BGjMeRaFawvptnkgXQHViNwtKBkWfebrb) s
+5 104 M
+(         iCdq0i8GK686850UrL2fzb3cwX0OYTGZYrl85ZNd+IGwrcr90L9kalSI+DwdzJXXYTP8) s
+5 93 M
+(         GYMYp9AZ3AVZkdIoJAoNB4s5vihzAR4VZPSQspa+smmFOXRZ7lzATRt0Fueh481cnw4O) s
+5 82 M
+(         G2hQ==) s
+5 71 M
+(X-Gm-Message-State: AOJu0Yy5lttj/rCltwtLSqXU6Qq8Ay/PNnAYXZsy2sttIT3ss1PiDGaZ) s
+5 60 M
+(        4BBMStQNNCYHhPty5NP/mNXxjlkixJSODgI/cba/NJo0M6VVoaaN7omEwMuOwtk0HmUXfk+PcLO) s
+5 49 M
+(        SU2HBSmz1wobX3OSrQEIgQlH1JtlfDjWD) s
+5 38 M
+(X-Google-Smtp-Source: AGHT+IHh+TPbowUX7tutZhstNLwycThH/jz0Xm3gZTW2OsuDX1qwXS6Bo+ObN9MUK) s
+5 27 M
+(8RjgIPYLI2lDZhm2+zlJ0lCldI=) s
+5 16 M
+(X-Received: by 2002:a05:6a00:194a:b0:71e:786c:3fa9 with SMTP id) s
+5 5 M
+( d2e1a72fcca58-71ea3085322mr22849236b3a.0.1729610656331; Tue, 22 Oct 2024) s
+_R
+S
+%%Page: (7) 7
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 7 def
+/fname (./CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:08 2024) def
+/pagenumstr (7) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+( 08:24:16 -0700 \(PDT\)) s
+5 676 M
+(MIME-Version: 1.0) s
+5 665 M
+(From: Alexander Milovidov <milovidoff@gmail.com>) s
+5 654 M
+(Date: Tue, 22 Oct 2024 18:24:05 +0300) s
+5 643 M
+(Message-ID: <CAFQnLh2M7RNsArgARrFtHNtfufG5JMpZ8rNSmG-B0qE7KNAA6A@mail.gmail.com>) s
+5 632 M
+(Subject: Artemis message audit logs) s
+5 621 M
+(To: users@activemq.apache.org) s
+5 610 M
+(Content-Type: multipart/alternative; boundary="000000000000c543940625125c2a") s
+5 588 M
+(--000000000000c543940625125c2a) s
+5 577 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 555 M
+(Hi All,) s
+5 533 M
+(Recently I tried to parse Artemis audit logs to get information about) s
+5 522 M
+(message size. It is needed to gather information about client applications) s
+5 511 M
+(that cause the most of the message broker load.) s
+5 500 M
+(I mentioned that message headers in the audit log usually include duplicate) s
+5 489 M
+("durable" property. Is it the same property of the message, or properties) s
+5 478 M
+(of two different objects?) s
+5 456 M
+(For example:) s
+5 445 M
+(messageID=123, durable=true, userID=some_uuid, priority=4, timestamp=some) s
+5 434 M
+(timestamp, expiration=some expiration date, durable=true, address=TEST,) s
+5 423 M
+(size=309, properties=TypedProperties[...]) s
+5 401 M
+(I also mentioned that message size is not logged in the large message) s
+5 390 M
+(header, but it can be extracted from _AMQ_LARGE_SIZE message property.) s
+5 379 M
+(And some headers are separated using comma and space, some with comma only.) s
+5 357 M
+(By the way, is there a possibility to add metrics with sent/received bytes) s
+5 346 M
+(to each address or queue?) s
+5 335 M
+(Is it complicated to implement or may cause significant overhead?) s
+5 313 M
+(-- ) s
+5 302 M
+(Regards,) s
+5 291 M
+(Alexander) s
+5 269 M
+(--000000000000c543940625125c2a--) s
+_R
+S
+%%Trailer
+%%Pages: 7
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

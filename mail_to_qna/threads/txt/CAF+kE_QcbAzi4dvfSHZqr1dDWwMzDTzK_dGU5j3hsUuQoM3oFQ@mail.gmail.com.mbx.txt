@@ -1,0 +1,428 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57536-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id EE0863E72B
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 11 Oct 2024 20:21:51 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 43E17507F8
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 11 Oct 2024 20:21:26 +0000 (UTC)
+Received: (qmail 204077 invoked by uid 998); 11 Oct 2024 20:21:24 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 204060 invoked by uid 116); 11 Oct 2024 20:21:24 -0000
+Received: from mailrelay1-he-de.apache.org (HELO mailrelay1-he-de.apache.org) (116.203.21.61)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Fri, 11 Oct 2024 20:21:24 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	by mailrelay1-he-de.apache.org (ASF Mail Server at mailrelay1-he-de.apache.org) with ESMTPSA id 585AB3E886
+	for <users@activemq.apache.org>; Fri, 11 Oct 2024 20:21:24 +0000 (UTC)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c903f5bd0eso3337303a12.3
+        for <users@activemq.apache.org>; Fri, 11 Oct 2024 13:21:24 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzL9SDTkL6XiSIbTDxvUHrxC8ib8jG08kjJKl/N4y1BAMRvsYx5
+	Yp2Kd1JnMS3CCdeuDAS8LQaZ+LHSzNYI0kTV6dIGpj37S7dOX0TVGCFwLv+WdhmZ0VgpfE4cTbF
+	6j3YUCdi2O/M50meEE2FhGipM5gwm4eTkgfu2Jg==
+X-Google-Smtp-Source: AGHT+IEygIvj9MfRXGCyynlshn9e0Dh2i/cw8kV8DNWMbGUXJbOKesukDECqkuHFHSGuSquhUxfOB5h52G5S4YpZ/SU=
+X-Received: by 2002:a17:907:9495:b0:a99:d34b:111b with SMTP id
+ a640c23a62f3a-a99d34b1220mr142378366b.31.1728678084099; Fri, 11 Oct 2024
+ 13:21:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <YT3PR01MB97555CE2A38E6234623B6483D6792@YT3PR01MB9755.CANPRD01.PROD.OUTLOOK.COM>
+In-Reply-To: <YT3PR01MB97555CE2A38E6234623B6483D6792@YT3PR01MB9755.CANPRD01.PROD.OUTLOOK.COM>
+From: Justin Bertram <jbertram@apache.org>
+Date: Fri, 11 Oct 2024 15:20:57 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=QcbAzi4dvfSHZqr1dDWwMzDTzK_dGU5j3hsUuQoM3oFQ@mail.gmail.com>
+Message-ID: <CAF+kE=QcbAzi4dvfSHZqr1dDWwMzDTzK_dGU5j3hsUuQoM3oFQ@mail.gmail.com>
+Subject: Re: Performance test tool
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="0000000000002262e40624393be1"
+
+--0000000000002262e40624393be1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Fundamentally, messaging is about producing and consuming messages so the
+performance tools shipped with the broker should provide you with most of
+the functionality you'd need. Those tools support both the Core and AMQP
+1.0 protocols.
+
+Keep in mind that the official end-user documentation is on the Apache
+ActiveMQ website [1].
+
+To run the broker in Docker please refer to the documentation [2].
+
+If you don't want to use the performance tools shipped with the broker then
+JMeter [3] is another great option.
+
+
+Justin
+
+[1]
+https://activemq.apache.org/components/artemis/documentation/latest/perf-to=
+ols.html#performance-tools
+[2]
+https://activemq.apache.org/components/artemis/documentation/latest/docker.=
+html#docker
+[3] https://jmeter.apache.org/
+
+On Fri, Oct 11, 2024 at 1:02=E2=80=AFPM Snene, Amna
+<amna.snene.1@ens.etsmtl.ca.invalid> wrote:
+
+> Hi,
+>
+> I'm new to ActiveMQ Artemis and I want to run performance tests on an
+> Artemis cluster with different workload scenarios using the AMQP 1.0
+> protocol. Is there any tool that can help with this?
+>
+> Also, I found a performance tool<
+> https://github.com/apache/activemq-artemis/blob/c58210cc29d665584b3a1d556=
+a1edd0ca97c4514/docs/user-manual/perf-tools.adoc#performance-tools>
+> based on JMS 2.0=E2=80=94how can I run it inside Docker, with the client =
+in one
+> container and the broker in a separate container?
+>
+> Best,
+> Amna
+>
+
+--0000000000002262e40624393be1--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57534-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id B0F483E8C8
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 11 Oct 2024 18:00:59 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 70235621A5
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 11 Oct 2024 18:00:59 +0000 (UTC)
+Received: (qmail 4178369 invoked by uid 998); 11 Oct 2024 18:00:57 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 4178350 invoked by uid 116); 11 Oct 2024 18:00:56 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Fri, 11 Oct 2024 18:00:56 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 43AC12000CE
+	for <users@activemq.apache.org>; Fri, 11 Oct 2024 18:00:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.102
+X-Spam-Level: 
+X-Spam-Status: No, score=0.102 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,
+	RCVD_IN_MSPIKE_H2=-0.001, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=ens.etsmtl.ca
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id EqRVgppk-maZ for <users@activemq.apache.org>;
+	Fri, 11 Oct 2024 18:00:54 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=40.107.193.110; helo=yt6pr01cu002.outbound.protection.outlook.com; envelope-from=amna.snene.1@ens.etsmtl.ca; receiver=<UNKNOWN> 
+Received: from YT6PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11022110.outbound.protection.outlook.com [40.107.193.110])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id EEC3B8203C
+	for <users@activemq.apache.org>; Fri, 11 Oct 2024 18:00:53 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YGcRruaq3KzHyoQv+eh2i82g25hDkF0i9UTEPpHIpBftE2z06VwB8d39aA/Wt5WO/X3/gRqr1ZFgB3z47tyFWCuPiaVLprhgP3pa1q97O/zmtKSGwDiKKIua3BDlBRv4igFaeOgIrNpaA/I5jB8+6FZwaQ21EF+RbMBWwLZv+hM48hc510Y5YG2CkN4eXFrrpYnWNO3uT+ONU35Sk766H4F1KwbTLqfFqqlzEQkEcGfz0AJG9CdeaVyoNpsvFQhC1ymyLgmWM9bkZNWOto3eE8hxLwuz+o/+PLDZcBA19D+AAiQdLJco2aQM2V8NRj+JiQg1MqsMzXDuXYM1QlD0Tg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0fxO3TxcF5Kd/jP8g2r1WUZ2ABv4xp4KCGU0IhzDXFU=;
+ b=gnpRz/i02a8Lz0fOfBHUDYvkPxXWrD8Uz9SmzbKFAXuCIFyMh/kfG2PRab72oQh/9t1M2JlEfhH3JeFBAYa3aoeleSr4WzMfNefMCYBDOfvScQQb36NCGhWFro0hn1OdRCGQsujNrkR8eC7BGP6u5l8c992NmGQgZFJzeyZBM+2M+qOvLaLSbmb80Xb3d2opqoe3Cs4GN54QBOV7cJqDtfAcjX9mPcaxygp7G/ejSxUrWZYzdlfnEj9Kg16bkIvejcNFElGihWrrGYtqlJa/gCx32LPFReWpza8nFKoXpHqvJ5PQmRStzOWGHJ6zrD4Kb4/7hB0wcq8DdrJl6Nt4zw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ens.etsmtl.ca; dmarc=pass action=none
+ header.from=ens.etsmtl.ca; dkim=pass header.d=ens.etsmtl.ca; arc=none
+X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ens.etsmtl.ca;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0fxO3TxcF5Kd/jP8g2r1WUZ2ABv4xp4KCGU0IhzDXFU=;
+ b=gxtP5uowZuic9e4lVnH4xgetvArsTGguUZOGtP/cHsI2yN9Am5/GDILwaT8tuCcDuAmCOOSslG4hGp/PejECmR+Bq3DoPKMsyvjsnu8ZcL9bruGwH55RHWXXGihmiyVTBQYNaGOnSmRmilI7SmwftwRYto7NaTPD1hrDz/EqqwHL7t7tlUqvwaYPjvwa+IGhL+qoP45ImDYmZthwYditkIuUEN9dcBWHuiGdYNeWCSX5zkm6iGMnAtILtT2ssXbj/Qb4xOhkx6v7X6iWeZj98zksmzlhwrFsjGtPRhZ86iHMeSRQbWFYvz/YF5P/yvSlYAmPLuVTiuDYgVncWmpbKw==
+Received: from YT3PR01MB9755.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:8b::9)
+ by YT2PR01MB5694.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:56::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Fri, 11 Oct
+ 2024 18:00:44 +0000
+Received: from YT3PR01MB9755.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::1ae7:6c54:3ba3:f267]) by YT3PR01MB9755.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::1ae7:6c54:3ba3:f267%4]) with mapi id 15.20.8048.018; Fri, 11 Oct 2024
+ 18:00:44 +0000
+From: "Snene, Amna" <amna.snene.1@ens.etsmtl.ca.INVALID>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: Performance test tool
+Thread-Topic: Performance test tool
+Thread-Index: AQHbHAZv+0EyazYGp0mjKQYY+3DaHg==
+Date: Fri, 11 Oct 2024 18:00:44 +0000
+Message-ID: 
+ <YT3PR01MB97555CE2A38E6234623B6483D6792@YT3PR01MB9755.CANPRD01.PROD.OUTLOOK.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ens.etsmtl.ca;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: YT3PR01MB9755:EE_|YT2PR01MB5694:EE_
+x-ms-office365-filtering-correlation-id: 2b545470-5095-4441-acc8-08dcea1ea09f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: 
+ =?Windows-1252?Q?GZ4/OTMt5iS51so8IlHgE0BPMksVfJFfgSxU58UuNHfOk9GOGCgdJdW7?=
+ =?Windows-1252?Q?mXSgSK/1W1uofjkJQpiY9IUpkqmtstfxY0r3TNSNBoYNoxHhtPfwwMW1?=
+ =?Windows-1252?Q?/QMwn7fFPDtwcET5NpXbSUd3yZgz4iqtabcnrXhXDPA472VZOMblOeQf?=
+ =?Windows-1252?Q?4dD8IwIyP04mIpCCVkikhVoVKzIfRMOI7nbmc6JHoMP4q8Eirbx1Pugd?=
+ =?Windows-1252?Q?EFj2ybcLLsIn4w4SsupkdQwVyeEP4zgTOSbSxTZCN+pXDUt0ecNSDnoQ?=
+ =?Windows-1252?Q?yKKFxMseKqiKh21Lz6IoV6trAaf4M6pOQYY8zfddk0oP+MrXVMNWXLgk?=
+ =?Windows-1252?Q?6xcqCY6kuUE4AYh4A4n54RU4hERiEOo/T1yr0I+dGRutd2MdxNvdNDrV?=
+ =?Windows-1252?Q?OUkc4GSDgjRsrzrHR/jkWkeAIEjBAgFSBUVDKQgXaRL5i6VRd45N52jz?=
+ =?Windows-1252?Q?8FdU6RLHTMsgUbE/jSVMfB2jCgtw1Gjv183QMP7DJJNda1z0U+3DSobN?=
+ =?Windows-1252?Q?BCt1ztvmr83yff12pqLA2DDVP5JSQ46a8emN4LSVl/7nfStYcTe2U5AF?=
+ =?Windows-1252?Q?AEpK1uuR7PsOj+q9DdfJB8ibMgeHUq7G1AQfZjXui+//Um5b0o/XWlLA?=
+ =?Windows-1252?Q?MPdK2aqGRJtlq/aj9SX76RPoXeJT3GrgjIHHC2Y0fP0rSLyrDxIGqR6H?=
+ =?Windows-1252?Q?ZIbSngDXRr2mPxK8saVq9toJ2mWRdOKFYxMC3FZdIg9mLZXsCZ+NVX8e?=
+ =?Windows-1252?Q?rz8UmuFpzT74TZ1qsOecpAa/gQQ+hw2Yank+qTm4HJUKuDY6nKZv6HAn?=
+ =?Windows-1252?Q?nNEyH6Ur3aAYT/cK802/BKA2ffH7JTq9CyK9SMZEyFmovmltlOQXCojW?=
+ =?Windows-1252?Q?slPaE8/NimLrEOK2jkgAWcKQW0WfVI4N4vMPrkidx9XPXwB1FHtudRtR?=
+ =?Windows-1252?Q?Didb+kY7Ov76hbZqacRegYDrxrKlXoOi/Aw8F3sQZ2t8B3GwuJxvm2FA?=
+ =?Windows-1252?Q?VKfFVHJLZ+VSX93ehe5JJ+CtnOVWmAN1hpbmdeWEPMv7243/a3P+QpSb?=
+ =?Windows-1252?Q?WWt4ahEjqmqeaJHxPj4Bqy8AHdlyKLN4llLhj65otd2iWfKvp1Z5XNIN?=
+ =?Windows-1252?Q?5PTwa9bNfY0O4YddTByfAP96MIO3aXV2aiQaVM2vPRLwXtzYXYel3Z9W?=
+ =?Windows-1252?Q?KjhOKfohPT2IW+P5ZoyFfuklOzs+u03bl1F3ySrL6Pdcl2sRg8+3RCEx?=
+ =?Windows-1252?Q?DkxpQ6I7PozZE6aWDZomaOcmgmRRanZh1gcve2BuNURM/dCv1lJb8TIo?=
+ =?Windows-1252?Q?qERdbbG7Cz2PGJoPAKr6VQUTDT+0vCBAUuQ0FEM6kAkc6ttlAg/Ug6HZ?=
+ =?Windows-1252?Q?fLrOUWZhHKBjz2ghuk6P9vS5zzCgbdOBiA0=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT3PR01MB9755.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?Windows-1252?Q?+NKf3OscNVyg1URPNDmBRy6xhVQvYZ0deu+Xzvbh0Noi6BeoZspa8I6R?=
+ =?Windows-1252?Q?YW9uGC2qjvcGEnrX+RMfAGxPPahlMYikyoeLyVMj8SGuKLugiPBCuUc+?=
+ =?Windows-1252?Q?iECRmBeOfEykLTrPvUO6JKasRV79eWw/p0+0UqKzBBI7S/pNOqW+fiSh?=
+ =?Windows-1252?Q?d7s6HqiKN26amA2bBgLmnxM0V/Emi1xw5vlaiiQGTdDCpe0D0RHaLBPL?=
+ =?Windows-1252?Q?xuDhnXFmkFKSn4YQDCPngP4uWjlSp9AfRbw2TZYiLZolgOh4Mq4b65PI?=
+ =?Windows-1252?Q?qGuO+uGNxwidUum/XxD7EYMu45NDMfCBa7YsT9fhs+3GQ6f6FUtUWi/i?=
+ =?Windows-1252?Q?c7n5n8+DeY3kUOiG/QQZH33kApOVF9DK1UXue2Kv1Hdug1yT/YFkuUZ1?=
+ =?Windows-1252?Q?ndUm3/oeoSO/FZxWjJ5344f8uz0wqDEe77HfH0B0AODL9cQv/1jcyv/Q?=
+ =?Windows-1252?Q?9BWzYMe2IE817p4kimBl0ixUoMHLivgYYeEe6Ay+I4xtixWyvWcXY+bj?=
+ =?Windows-1252?Q?3w1smF597fwcwNM/k2JGtK4Oo91ypetfjxT/XSn48j51GW/3j1d8lcWo?=
+ =?Windows-1252?Q?4G+Uqd9wuf9hxrfdswVSbONVY5hhakok5zSkAerkThn7kb0/H9nzxMyj?=
+ =?Windows-1252?Q?VzdXzLgscg085gAl6SWEEI6ykcajsxZOs3QAjTHPH30iHz3/vgUqutIV?=
+ =?Windows-1252?Q?GweVlQ38SpU3rCvuBTtfi+lquxV7A7Hmk/bpzK32ERZn1ig6tEa+K2VM?=
+ =?Windows-1252?Q?nyIiShXEA+E+1P++MIdjHuJ1cy3rbOGXdCvEkVjRN35EJ266dwh9PKye?=
+ =?Windows-1252?Q?aMm3NkfxjU2sRFNO2dM0WVrYuT9762dC/qrH1adUVhihhW+MDZwLvp+h?=
+ =?Windows-1252?Q?//t50sDz4ei4gcvFR/25B1xNE/Whf5YV7DRCZR2Yi1pZNjqOwqh+jp9N?=
+ =?Windows-1252?Q?GoW+wrq4PAEA/DvN5auTgBP1iiD2XMkr2Ibv0Siccgzuqk6Lj6pcDx5g?=
+ =?Windows-1252?Q?Jxhb35bYLOEFY8V/P1odDzOy0zxO6rurtg9mOkgXFCWHnsnb0adhsmV5?=
+ =?Windows-1252?Q?Mx5GwFM0IcMZtdb56asCiYHv+mUBOqEfyYhnJDAbpXEeovDoVj2JbqYA?=
+ =?Windows-1252?Q?2npWzgqSmlZ6zpQOeeVVBtPJniN0SuOxpaHK05zsFhS2W7sUOZ0OLg/Y?=
+ =?Windows-1252?Q?jQ8Hb1MdB79LvSYOEDUn5kOTV9J7mnGiqwdnwboRgPIu4gktdgkfNVAH?=
+ =?Windows-1252?Q?rObQ2NKr8moBJQeDhKxmhiB4r+ySrc+kGgsSHBxgSsTVEI9AC3O15C5t?=
+ =?Windows-1252?Q?d9f7Nfda+vrGNgcLnH3ZpZxwl2lPvy7j9LEMMai0cQKQyDhrzY3pvqRS?=
+ =?Windows-1252?Q?FkouwnlxXdNS/s5iPFOwEqQTLqbDnIxcu2vtvK8PWgI5h2B10X8/Ghnw?=
+ =?Windows-1252?Q?+Qj4lxdjUhlSrM0axmEskVYfHM4HXyvOSEsy8dMVCDDxvFRbLJnjuuzY?=
+ =?Windows-1252?Q?eXbU2Om3+EfCNbUFtcu1o89z9/K9CJeXtrwpQlNO5cA+fi7ri8iMuz/P?=
+ =?Windows-1252?Q?MkjFQNOuZsaUrqYo2O7ktfWGnbC0RQF74uUNyS7QwHMLbLn2A+m10Jfg?=
+ =?Windows-1252?Q?sLUIJKAYpPeIhPPhnTVOcPrSQrxvC+MAovVtHvjIfcApFMk8UOqgN0ld?=
+ =?Windows-1252?Q?roChZqIVCVlCKz9dcmjBAm40sHalSNks?=
+Content-Type: multipart/alternative;
+	boundary="_000_YT3PR01MB97555CE2A38E6234623B6483D6792YT3PR01MB9755CANP_"
+MIME-Version: 1.0
+X-OriginatorOrg: ens.etsmtl.ca
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: YT3PR01MB9755.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b545470-5095-4441-acc8-08dcea1ea09f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2024 18:00:44.3950
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70aae3b7-9f3b-484d-8f95-49e8fbb783c0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vivvuWmKHqb9p9M2VnWD1U9IPjJAC0O6LI43b8PsA9pQyhGMp4oPOJPXq3DssZEoGabq3sRGBrt8HxLLnoK3xOHMKzQxABDAb6c60FXA0PI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB5694
+
+--_000_YT3PR01MB97555CE2A38E6234623B6483D6792YT3PR01MB9755CANP_
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+I'm new to ActiveMQ Artemis and I want to run performance tests on an Artem=
+is cluster with different workload scenarios using the AMQP 1.0 protocol. I=
+s there any tool that can help with this?
+
+Also, I found a performance tool<https://github.com/apache/activemq-artemis=
+/blob/c58210cc29d665584b3a1d556a1edd0ca97c4514/docs/user-manual/perf-tools.=
+adoc#performance-tools> based on JMS 2.0=97how can I run it inside Docker, =
+with the client in one container and the broker in a separate container?
+
+Best,
+Amna
+
+--_000_YT3PR01MB97555CE2A38E6234623B6483D6792YT3PR01MB9755CANP_--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57535-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 04F2D3E72B
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 11 Oct 2024 19:48:29 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 0D92045452
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 11 Oct 2024 19:48:27 +0000 (UTC)
+Received: (qmail 151458 invoked by uid 998); 11 Oct 2024 19:48:25 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 151317 invoked by uid 116); 11 Oct 2024 19:48:19 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Fri, 11 Oct 2024 19:48:19 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id 13294C225D
+	for <users@activemq.apache.org>; Fri, 11 Oct 2024 19:48:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -0.2
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, SPF_PASS=-0.001, URIBL_BLOCKED=0.001]
+	autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=cgi.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id mIxRUqT75x52 for <users@activemq.apache.org>;
+	Fri, 11 Oct 2024 19:48:18 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2620:100:900d:1:67:231:151:1; helo=mx0d-00131701.pphosted.com; envelope-from=prvs=0014ffd175=erwin.dondorp@cgi.com; receiver=<UNKNOWN> 
+Received: from mx0d-00131701.pphosted.com (mx0d-00131701.pphosted.com [IPv6:2620:100:900d:1:67:231:151:1])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 375038203C
+	for <users@activemq.apache.org>; Fri, 11 Oct 2024 19:47:47 +0000 (UTC)
+Received: from pps.filterd (m0212685.ppops.net [127.0.0.1])
+	by -00131701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BIaQfS025579
+	for <users@activemq.apache.org>; Fri, 11 Oct 2024 19:47:41 GMT
+X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cgi.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	cgi-hosted-201911; bh=RfdV+VS0uA4xw7rmF+SHuIYH/gfG9EbkOzsX3q8nG4
+	A=; b=WaUqzKW6vNDEXYPhBtyb00qdkst157RNqcKwI2FrrY3GfEf/d0iuC7KXNr
+	OAOQT3rAt54L95JIBkeEc8hMwM6uI2ND3M7R1XZaYZuojEdbYn8sBZ7cDGUQpV72
+	noeVaCm0tjn6bm4BgADjmi9SLZalXw1C8pe9CPi++2+Ha1ujUcV1KoVxTmO43uH7
+	QQEl0lWRLTN79DnN8FMRwtKvexiMxi95UFx/64/6QixXBuCAljSIafLfHf4vtRnN
+	WpYzQiPgxj/GL+Ua97XZj06PF52Vn0yZgcMPbbkFAJayTrjQwesFKnvJyomg5w/i
+	lJDyM3+lPYPy9Cdf+VfsBcoAEUuQ==
+Received: from globalmail.cgi.com (globalmail-eu.cgi.com [217.150.168.72])
+	by -00131701.pphosted.com (PPS) with ESMTPS id 422v7r6aw6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <users@activemq.apache.org>; Fri, 11 Oct 2024 19:47:40 +0000 (GMT)
+Received: from SE-EX10114.groupinfra.com (142.101.45.153) by
+ SE-EX10110.groupinfra.com (142.101.45.149) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 11 Oct 2024 21:47:38 +0200
+Received: from SE-EX10114.groupinfra.com ([142.101.45.153]) by
+ SE-EX10114.groupinfra.com ([142.101.45.153]) with mapi id 15.02.1544.011;
+ Fri, 11 Oct 2024 21:47:38 +0200
+From: "Dondorp, Erwin" <erwin.dondorp@cgi.com.INVALID>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: RE: Performance test tool
+Thread-Topic: Performance test tool
+Thread-Index: AQHbHAZv+0EyazYGp0mjKQYY+3DaHrKB86AQ
+Date: Fri, 11 Oct 2024 19:47:38 +0000
+Message-ID: <38e63c9367df4ed289bf7333e9f36cb3@cgi.com>
+References: <YT3PR01MB97555CE2A38E6234623B6483D6792@YT3PR01MB9755.CANPRD01.PROD.OUTLOOK.COM>
+In-Reply-To: <YT3PR01MB97555CE2A38E6234623B6483D6792@YT3PR01MB9755.CANPRD01.PROD.OUTLOOK.COM>
+Accept-Language: nl-NL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Enabled=true;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SetDate=2024-10-11T19:47:36Z;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Method=Privileged;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Name=d9290083-bd2f-48a2-8ac5-09a524b17d15;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SiteId=b9fec68c-c92d-461e-9a97-3d03a0f18b82;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ActionId=683b78d1-2972-4b8b-8455-11528abe3da2;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ContentBits=1
+x-originating-ip: [142.101.28.247]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Proofpoint-GUID: duYMoOF37TquM4vACoqv2taIz4IAVUxy
+X-Proofpoint-ORIG-GUID: duYMoOF37TquM4vACoqv2taIz4IAVUxy
+
+Classification: Public
+
+Amna,
+
+For some performance tests in the past, I have used the command-line progra=
+m "A".
+It supports OpenWire (ActiveMQ), Core (Artemis) and AMQP 1.0 (e.g. Artemis)=
+.
+
+See https://github.com/fmtn/a
+
+e.
+
+-----Original Message-----
+From: Snene, Amna <amna.snene.1@ens.etsmtl.ca.INVALID>=20
+Sent: Friday, October 11, 2024 8:01 PM
+To: users@activemq.apache.org
+Subject: Performance test tool
+
+
+EXTERNAL SENDER:   Do not click any links or open any attachments unless yo=
+u trust the sender and know the content is safe.
+EXP=C9DITEUR EXTERNE:    Ne cliquez sur aucun lien et n'ouvrez aucune pi=E8=
+ce jointe =E0 moins qu'ils ne proviennent d'un exp=E9diteur fiable, ou que =
+vous ayez l'assurance que le contenu provient d'une source s=FBre.
+
+Hi,
+
+I'm new to ActiveMQ Artemis and I want to run performance tests on an Artem=
+is cluster with different workload scenarios using the AMQP 1.0 protocol. I=
+s there any tool that can help with this?
+
+Also, I found a performance tool<https://urldefense.com/v3/__https://github=
+.com/apache/activemq-artemis/blob/c58210cc29d665584b3a1d556a1edd0ca97c4514/=
+docs/user-manual/perf-tools.adoc*performance-tools__;Iw!!AaIhyw!unAhY5SP5xV=
+y6BkneSw-HbQpt1r8WEZ1jwZLNxXjPlFRNHYMcR_CrbmvQ3JCYT5nzlQF-z5c2QdYNmLOqeeB0v=
+XLP8SBZ0-Cq-s$ > based on JMS 2.0-how can I run it inside Docker, with the =
+client in one container and the broker in a separate container?
+
+Best,
+Amna
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+

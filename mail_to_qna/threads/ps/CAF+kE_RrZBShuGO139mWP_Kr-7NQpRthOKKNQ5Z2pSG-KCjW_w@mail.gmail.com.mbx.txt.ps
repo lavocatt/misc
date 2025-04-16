@@ -1,0 +1,1250 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 38 24 574 768
+%%Title: Enscript Output
+%%For: Thomas Lavocat
+%%Creator: GNU Enscript 1.6.6
+%%CreationDate: Tue Apr  1 15:59:19 2025
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 6
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 6
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 6
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      fname length fmodstr length add pagenumstr length add 95 6 idiv add d_header_w 6 idiv le{
+        5 0 moveto fname show
+        45 0 rmoveto fmodstr show
+        45 0 rmoveto pagenumstr show
+      } {
+        5 0 moveto fmodstr show
+        45 0 rmoveto pagenumstr show
+        fname length d_header_w 6 idiv idiv 1 add 10 mul 5 exch moveto
+        1 1 fname length d_header_w 6 idiv idiv
+        {
+          dup fname exch 1 sub d_header_w 6 idiv mul d_header_w 6 idiv getinterval show
+          5 exch 10 mul fname length d_header_w 6 idiv idiv 1 add 10 mul exch sub moveto
+        } for
+        5 10 moveto
+        fname fname length d_header_w 6 idiv idiv d_header_w 6 idiv mul dup fname length exch sub getinterval show
+      }ifelse
+    }ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 536 def
+/d_page_h 744 def
+/d_header_x 0 def
+/d_header_y 700 def
+/d_header_w 536 def
+/d_header_h 44 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 536 def
+/d_footer_h 0 def
+/d_output_w 536 def
+/d_output_h 700 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (./CAF+kE_RrZBShuGO139mWP_Kr-7NQpRthOKKNQ5Z2pSG-KCjW_w@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_RrZBShuGO139mWP_Kr-7NQpRthOKKNQ5Z2pSG-KCjW_w@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 676 M
+(Return-Path: <users-return-57513-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 665 M
+(rg>) s
+5 654 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 643 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 632 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 621 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 994313E6D6) s
+5 610 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:48:23 +0000 \(UT) s
+5 599 M
+(C\)) s
+5 588 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 577 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 566 M
+(        \(No client certificate requested\)) s
+5 555 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 544 M
+(ESMTPS id 9460745D57) s
+5 533 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:48:22 +0000 \(UT) s
+5 522 M
+(C\)) s
+5 511 M
+(Received: \(qmail 1060432 invoked by uid 998\); 3 Oct 2024 15:48:20 -0000) s
+5 500 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 489 M
+(Precedence: bulk) s
+5 478 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 467 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 456 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 445 M
+(List-Id: <users.activemq.apache.org>) s
+5 434 M
+(Reply-To: users@activemq.apache.org) s
+5 423 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 412 M
+(Received: \(qmail 1060415 invoked by uid 116\); 3 Oct 2024 15:48:20 -0000) s
+5 401 M
+(Received: from mailrelay1-he-de.apache.org \(HELO mailrelay1-he-de.apache.org\) \(116.203.) s
+5 390 M
+(21.61\)) s
+5 379 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 03 Oct 2024 15:48:20 +0000) s
+5 368 M
+(Authentication-Results: apache.org; auth=none) s
+5 357 M
+(Received: from mail-ej1-f45.google.com \(mail-ej1-f45.google.com [209.85.218.45]\)) s
+5 346 M
+(        by mailrelay1-he-de.apache.org \(ASF Mail Server at mailrelay1-he-de.apache.org\)) s
+5 335 M
+( with ESMTPSA id 8FFE63EBFE) s
+5 324 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:48:20 +0000 \(UTC\)) s
+5 313 M
+(Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d446adf6eso182752366b) s
+5 302 M
+(.2) s
+5 291 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 08:48:20 -0700 \(PDT\)) s
+5 280 M
+(X-Gm-Message-State: AOJu0Yy/7qIwu7E7Nbf2W54URPLw0wXL2Y3vU3DciLPrShCoIDL0HMAe) s
+5 269 M
+(        xqMem3SzWPVrVJAR9ltF5Q41bDQqAuTw5pHNbbeZxRA8ujgUtrpsL7fVRLEqWY/tot2FwP7rigf) s
+5 258 M
+(        2Sj+5467EufL9TWamTEYOqDRUvLaGIN25GYAbjA==) s
+5 247 M
+(X-Google-Smtp-Source: AGHT+IFW2LskCjOjtmo/aR0bnSMa49EaPZuCFdoQdW2XbqBP5/nzut2jB0c1OLcIu) s
+5 236 M
+(qVPDWNHCtnUHnMWlQd4ns5oe8g=) s
+5 225 M
+(X-Received: by 2002:a17:907:2da5:b0:a8d:3085:a7b1 with SMTP id) s
+5 214 M
+( a640c23a62f3a-a98f825ab00mr696802066b.38.1727970500228; Thu, 03 Oct 2024) s
+5 203 M
+( 08:48:20 -0700 \(PDT\)) s
+5 192 M
+(MIME-Version: 1.0) s
+5 181 M
+(References: <IA0PR20MB6000A4E8573A3D6C329F1355B4712@IA0PR20MB6000.namprd20.prod.outlook) s
+5 170 M
+(.com>) s
+5 159 M
+(In-Reply-To: <IA0PR20MB6000A4E8573A3D6C329F1355B4712@IA0PR20MB6000.namprd20.prod.outloo) s
+5 148 M
+(k.com>) s
+5 137 M
+(From: Justin Bertram <jbertram@apache.org>) s
+5 126 M
+(Date: Thu, 3 Oct 2024 10:47:53 -0500) s
+5 115 M
+(X-Gmail-Original-Message-ID: <CAF+kE=RrZBShuGO139mWP=Kr-7NQpRthOKKNQ5Z2pSG-KCjW=w@mail.) s
+5 104 M
+(gmail.com>) s
+5 93 M
+(Message-ID: <CAF+kE=RrZBShuGO139mWP=Kr-7NQpRthOKKNQ5Z2pSG-KCjW=w@mail.gmail.com>) s
+5 82 M
+(Subject: Re: Camel Route to Bridge 2 ActiveMQ Classic Brokers) s
+5 71 M
+(To: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 60 M
+(Content-Type: multipart/alternative; boundary="000000000000d969840623947bcf") s
+5 38 M
+(--000000000000d969840623947bcf) s
+5 27 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 16 M
+(Content-Transfer-Encoding: quoted-printable) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (./CAF+kE_RrZBShuGO139mWP_Kr-7NQpRthOKKNQ5Z2pSG-KCjW_w@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_RrZBShuGO139mWP_Kr-7NQpRthOKKNQ5Z2pSG-KCjW_w@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> I have a Camel Route that drains all of the queues and topics \(excluding) s
+5 676 M
+(Advisory Topics\) from the old broker to the new broker.) s
+5 654 M
+(Conceptually speaking, there is no real way to "drain a topic" since topics) s
+5 643 M
+(don't hold messages like a queue does. When dealing with topics, messages) s
+5 632 M
+(are stored in _subscriptions_ which are created by consumers. Furthermore,) s
+5 621 M
+(any message sent to a topic without any subscriptions is simply dropped.) s
+5 610 M
+(So, depending on your use-case you may need to recreate any relevant) s
+5 599 M
+(subscriptions on the destination broker and have Camel drain the) s
+5 588 M
+(corresponding subscriptions on the source broker.) s
+5 566 M
+(> Is there a way to just create the queue or topic on the new broker with) s
+5 555 M
+(Camel without creating this stub message?) s
+5 533 M
+(Destinations are created when a message is sent or when a consumer) s
+5 522 M
+(attaches. If Camel doesn't send a message then the destination won't be) s
+5 511 M
+(created.) s
+5 489 M
+(I'm not 100% sure about your advisory question, but I believe you are) s
+5 478 M
+(correct. Ultimately your best bet is to test various configuration) s
+5 467 M
+(permutations for your use-case and see which one works best.) s
+5 434 M
+(Justin) s
+5 412 M
+(On Thu, Oct 3, 2024 at 9:51=E2=80=AFAM William Crowell) s
+5 401 M
+(<WCrowell@perforce.com.invalid> wrote:) s
+5 379 M
+(> Good morning,) s
+5 368 M
+(>) s
+5 357 M
+(> I am using ActiveMQ Classic 5.18.5 on 2 separate brokers on Windows) s
+5 346 M
+(> \(unfortunately\).  One broker is using the default kahaDB, and the other) s
+5 335 M
+(> broker has been configured with database persistence using Microsoft SQL) s
+5 324 M
+(> Server.  I am migrating messages from the old broker using kahaDB to the) s
+5 313 M
+(> new broker setup with database persistence.) s
+5 302 M
+(>) s
+5 291 M
+(> I have a Camel Route that drains all of the queues and topics \(excluding) s
+5 280 M
+(> Advisory Topics\) from the old broker to the new broker.  I am using XPath) s
+5 269 M
+(> on the to get all the queues and topics using these 2 URLs on the old) s
+5 258 M
+(> ActiveMQ broker:) s
+5 247 M
+(>) s
+5 236 M
+(> http://xxx:8161/admin/xml/queues.jsp) s
+5 225 M
+(> http://xxx:8161/admin/xml/topics.jsp) s
+5 214 M
+(>) s
+5 203 M
+(> What I have noticed is that queues that have no pending messages in them) s
+5 192 M
+(> are not created on the new broker.  I always have to put a small stub) s
+5 181 M
+(> message in the queue in order for it to be migrated over to the new broke=) s
+5 170 M
+(r.) s
+5 159 M
+(>) s
+5 148 M
+(> A few questions on this:) s
+5 137 M
+(>) s
+5 126 M
+(> 1\) Am I approaching this wrong?  Is there a way to just create the queue) s
+5 115 M
+(> or topic on the new broker with Camel without creating this stub message?) s
+5 104 M
+(>) s
+5 93 M
+(> 2\) I do not want to migrate the Advisory topics over to the new broker) s
+5 82 M
+(> because those will get created anyway when the topics and queues are move=) s
+5 71 M
+(d) s
+5 60 M
+(> over.  Is this assumption correct?) s
+5 49 M
+(>) s
+5 38 M
+(> Thank you in advance,) s
+5 27 M
+(>) s
+5 16 M
+(> William Crowell) s
+5 5 M
+(>) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 3 def
+/fname (./CAF+kE_RrZBShuGO139mWP_Kr-7NQpRthOKKNQ5Z2pSG-KCjW_w@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_RrZBShuGO139mWP_Kr-7NQpRthOKKNQ5Z2pSG-KCjW_w@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(>) s
+5 676 M
+(> This e-mail may contain information that is privileged or confidential. I=) s
+5 665 M
+(f) s
+5 654 M
+(> you are not the intended recipient, please delete the e-mail and any) s
+5 643 M
+(> attachments and notify us immediately.) s
+5 632 M
+(>) s
+5 621 M
+(>) s
+5 599 M
+(--000000000000d969840623947bcf--) s
+5 588 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 577 M
+(Return-Path: <users-return-57507-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 566 M
+(rg>) s
+5 555 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 544 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 533 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 522 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id E3FD43E6D6) s
+5 511 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 14:49:09 +0000 \(UT) s
+5 500 M
+(C\)) s
+5 489 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 478 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 467 M
+(        \(No client certificate requested\)) s
+5 456 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 445 M
+(ESMTPS id CB66E4A271) s
+5 434 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 14:49:08 +0000 \(UT) s
+5 423 M
+(C\)) s
+5 412 M
+(Received: \(qmail 936604 invoked by uid 998\); 3 Oct 2024 14:49:05 -0000) s
+5 401 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 390 M
+(Precedence: bulk) s
+5 379 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 368 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 357 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 346 M
+(List-Id: <users.activemq.apache.org>) s
+5 335 M
+(Reply-To: users@activemq.apache.org) s
+5 324 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 313 M
+(Received: \(qmail 936585 invoked by uid 116\); 3 Oct 2024 14:49:04 -0000) s
+5 302 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 291 M
+(6.100\)) s
+5 280 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 03 Oct 2024 14:49:04 +0000) s
+5 269 M
+(Authentication-Results: apache.org; auth=none) s
+5 258 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 247 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 236 M
+(ith ESMTP id 967CB1FFF86) s
+5 225 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 14:49:04 +0000 \(UTC\)) s
+5 214 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 203 M
+(X-Spam-Flag: NO) s
+5 192 M
+(X-Spam-Score: -1.045) s
+5 181 M
+(X-Spam-Level: ) s
+5 170 M
+(X-Spam-Status: No, score=-1.045 tagged_above=-999 required=6.31) s
+5 159 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 148 M
+(        DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,) s
+5 137 M
+(        RCVD_IN_MSPIKE_H2=-1.048, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,) s
+5 126 M
+(        RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,) s
+5 115 M
+(        URIBL_BLOCKED=0.001] autolearn=disabled) s
+5 104 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 93 M
+(        dkim=pass \(2048-bit key\) header.d=perforce.com) s
+5 82 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 71 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 60 M
+(10024\)) s
+5 49 M
+(        with ESMTP id FJ_z2lRgyPix for <users@activemq.apache.org>;) s
+5 38 M
+(        Thu,  3 Oct 2024 14:49:04 +0000 \(UTC\)) s
+5 27 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=40.107.102.95; helo=nam04-dm) s
+5 16 M
+(6-obe.outbound.protection.outlook.com; envelope-from=wcrowell@perforce.com; receiver=<U) s
+5 5 M
+(NKNOWN> ) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 4 def
+/fname (./CAF+kE_RrZBShuGO139mWP_Kr-7NQpRthOKKNQ5Z2pSG-KCjW_w@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_RrZBShuGO139mWP_Kr-7NQpRthOKKNQ5Z2pSG-KCjW_w@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Received: from NAM04-DM6-obe.outbound.protection.outlook.com \(mail-dm6nam04on2095.outbo) s
+5 676 M
+(und.protection.outlook.com [40.107.102.95]\)) s
+5 665 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 654 M
+(d F14D881FC0) s
+5 643 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 14:49:03 +0000 \(UTC\)) s
+5 632 M
+(ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;) s
+5 621 M
+( b=MqZg76o8qVhUcA/CHXNPPVyTbnChAm90pW7ZyrbGFY25u+9Gu+1QRQeDz43TU2T4xZDeJ3kUuzOQPSkWrMve) s
+5 610 M
+(DKkaKR+VmNOeCXVqdXC5smvJTFX/kXLkNoO/mkLoG3J7/lXPKE6s0X9dEe39lot58RadmpnnAte3QkYZ4cIhCbc) s
+5 599 M
+(2ZfXBE10BmFb6914CpAlcrM57O8T+7QPuDZN3NqfjjIv7iYnWkkpPxYtt/BOwuIj2TdwDghogGPSNnjKRyjTR16) s
+5 588 M
+(HZJxPq1pb7PlVMwg8WNUdHuuUrjMPH44GGpERGNVCDk3Xo42FMj1jnNVHVKGLGnWud+qNFy7VU98DRHx3vzQ==) s
+5 577 M
+(ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;) s
+5 566 M
+( s=arcselector10001;) s
+5 555 M
+( h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-Messag) s
+5 544 M
+(eData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageDat) s
+5 533 M
+(a-1;) s
+5 522 M
+( bh=cWb5eU6auu2/b4r2k0UgaeZryz+iwovHuJ5Oggv3DRk=;) s
+5 511 M
+( b=F97gzePWP+wvO8ihTYylBd7MQhvFruPqwjm6KZMqbpCkU2NhPcnlQctKMRY9YPM0mFZjhQA2Bbe4ddhDcGVy) s
+5 500 M
+(rKq5tP/412jfptjNXILtAdc/5kvH3UF0LZGJky6cbkL7prhre4EmcjPpJwa8V/Qs9LbY84Oi1Q9pSpLniecegMW) s
+5 489 M
+(35m+At5NL5f6dTQG3Jr1AbObWLcfpROjgkHqorlOWCk83uguV0PeO90xZTZ87va77Bj7uao4+Bqn8yJYonHXRWa) s
+5 478 M
+(ikXGRi58VnabOcrgnKmvhgJMjcVxpZdsKtDjsUBBTjJmW0Pl4qR0/vhVg+bDJl3+tbtsPQn2vdrYjE1iES/A==) s
+5 467 M
+(ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass) s
+5 456 M
+( smtp.mailfrom=perforce.com; dmarc=pass action=none header.from=perforce.com;) s
+5 445 M
+( dkim=pass header.d=perforce.com; arc=none) s
+5 434 M
+(X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perforce.com;) s
+5 423 M
+( s=selector1;) s
+5 412 M
+( h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;) s
+5 401 M
+( bh=cWb5eU6auu2/b4r2k0UgaeZryz+iwovHuJ5Oggv3DRk=;) s
+5 390 M
+( b=lqadoQzLrWHLkG4cpQp1Yd1JhQ0QSQRXHBfSyQB67Fg4rmzqi/wrYnRgV875SVFA0kTcFelO60ufxKpQhXmu) s
+5 379 M
+(qtYKSGVuA+OYnIeE4lk0QzWqFPii8XujAsGICyRbBk9YTYbrDN2ordOerrDOq+lQv5sEwUghQNCF24qQ714QMPf) s
+5 368 M
+(aGa+lXoxwGcMo1mCqTxwhuHlp7zp8gz+Y0t/mG7ENF3cztlhefHy9Gvmvk/nE859XIm2w5lgLC4EpVInyqznexu) s
+5 357 M
+(iWrY81ZSfRB9DL0NjcW2h6eVf5oyLdZdI3LOg0kai3kRiRGcdmOQTAUapAs0u5G18ClwPijLLtwlEx+z7vbA==) s
+5 346 M
+(Received: from IA0PR20MB6000.namprd20.prod.outlook.com \(2603:10b6:208:408::7\)) s
+5 335 M
+( by DS0PR20MB6943.namprd20.prod.outlook.com \(2603:10b6:8:1b3::13\) with) s
+5 324 M
+( Microsoft SMTP Server \(version=TLS1_2,) s
+5 313 M
+( cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\) id 15.20.8026.16; Thu, 3 Oct) s
+5 302 M
+( 2024 14:48:52 +0000) s
+5 291 M
+(Received: from IA0PR20MB6000.namprd20.prod.outlook.com) s
+5 280 M
+( \([fe80::b086:9cec:a4a1:47f1]\) by IA0PR20MB6000.namprd20.prod.outlook.com) s
+5 269 M
+( \([fe80::b086:9cec:a4a1:47f1%5]\) with mapi id 15.20.8048.007; Thu, 3 Oct 2024) s
+5 258 M
+( 14:48:52 +0000) s
+5 247 M
+(From: William Crowell <WCrowell@perforce.com.INVALID>) s
+5 236 M
+(To: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 225 M
+(Subject: Camel Route to Bridge 2 ActiveMQ Classic Brokers) s
+5 214 M
+(Thread-Topic: Camel Route to Bridge 2 ActiveMQ Classic Brokers) s
+5 203 M
+(Thread-Index: AQHbFaJIImIcd0o8AEWN7OOa8oYP2A==) s
+5 192 M
+(Date: Thu, 3 Oct 2024 14:48:52 +0000) s
+5 181 M
+(Message-ID: ) s
+5 170 M
+( <IA0PR20MB6000A4E8573A3D6C329F1355B4712@IA0PR20MB6000.namprd20.prod.outlook.com>) s
+5 159 M
+(Accept-Language: en-US) s
+5 148 M
+(Content-Language: en-US) s
+5 137 M
+(X-MS-Has-Attach: ) s
+5 126 M
+(X-MS-TNEF-Correlator: ) s
+5 115 M
+(authentication-results: dkim=none \(message not signed\)) s
+5 104 M
+( header.d=none;dmarc=none action=none header.from=perforce.com;) s
+5 93 M
+(x-ms-publictraffictype: Email) s
+5 82 M
+(x-ms-traffictypediagnostic: IA0PR20MB6000:EE_|DS0PR20MB6943:EE_) s
+5 71 M
+(x-ms-office365-filtering-correlation-id: e4ae531a-658e-40b6-78bd-08dce3ba7f72) s
+5 60 M
+(x-ms-exchange-senderadcheck: 1) s
+5 49 M
+(x-ms-exchange-antispam-relay: 0) s
+5 38 M
+(x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;) s
+5 27 M
+(x-microsoft-antispam-message-info: ) s
+5 16 M
+( =?us-ascii?Q?OHxMkXfZPZU/lKwbcBfHNf9xgKtBlRzj3m0wzhhRIw9M08qXdEqVm5DbD855?=) s
+5 5 M
+( =?us-ascii?Q?53trDkiqEWpYmpK4Liw2f+SXKf1+J5VsZ8lK06zVVCR8bhk3Rqt8fcQbtmCz?=) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 5 def
+/fname (./CAF+kE_RrZBShuGO139mWP_Kr-7NQpRthOKKNQ5Z2pSG-KCjW_w@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_RrZBShuGO139mWP_Kr-7NQpRthOKKNQ5Z2pSG-KCjW_w@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+( =?us-ascii?Q?oSdMR4dTOHK+g7Dmlw3MHYOs9xOft+uSa4TC8oCFwHb7/NvRgW/kcn3oCUdm?=) s
+5 676 M
+( =?us-ascii?Q?kLmTE5KBoP0GNUvCQx2R3xygQQb8ypnFZZ5QzhEN+rvu3QEcmOCaK2wvQSDk?=) s
+5 665 M
+( =?us-ascii?Q?A+YziClfk/WmQ2IyniHSsAQ+II1PpuRkhE1RpB72+mMcNdWGPWL/k9fhNCB1?=) s
+5 654 M
+( =?us-ascii?Q?ZjC7xqsqyd/Nkt/DHXef1tEAXDP9ttEKr8a5qRk+UWmQ90jCEqFvQ9lPhTF0?=) s
+5 643 M
+( =?us-ascii?Q?QFcLDpnG9hpZXrFwjElkLWnf/3jrE2uGtNxgHDq0B+GPTAf7lOQg13XEM7pF?=) s
+5 632 M
+( =?us-ascii?Q?zGbnZzV5uusHyYz+9kAJbT7btUhW/Cy2LZh/0/JtgiHzGhl2li0mkoo3nZ/n?=) s
+5 621 M
+( =?us-ascii?Q?oHdEJrZ0HuLES+JfxRByFsrTxHhzTY2PTq96XWcUr60XhYARi15lvbgKRrog?=) s
+5 610 M
+( =?us-ascii?Q?s1qoGPGJZp35uEqB83Lvtvsu2rP9pGnDvnROAh9aUsW2jX2XUJyr2A5WabVJ?=) s
+5 599 M
+( =?us-ascii?Q?awl20SbdsC2P3cDSjFWY6OkzRwcYqHRlgOPCus/tU4etHYqdAEpyykbjfKND?=) s
+5 588 M
+( =?us-ascii?Q?1SEnvKyivaF5apRy3d8dnu7tFdyhYWiOt2xZg5FH4eKDuNVHJjjMnSklZQpR?=) s
+5 577 M
+( =?us-ascii?Q?m/Dxxq5icYK3epJbEUQdiwfAmlG1EtrhYAjSc82Jzinmp0yP9JLF1WDgnvrV?=) s
+5 566 M
+( =?us-ascii?Q?TZwX/j/yH+NEsy5dDgALrUOyfpYG+8qXxq4GfWYPhDobPLxis0U5EzObV0vX?=) s
+5 555 M
+( =?us-ascii?Q?AwVBViPzyoal5O+g1AFF1yN6KbH/OVo5mKGU9tKz4E71OzUoQWn3ZKbc3IMi?=) s
+5 544 M
+( =?us-ascii?Q?+Zc7S9fgKBvCu74QCV5Vbh2ytWCpqBWcGwkUTs/KGAzZcNv+7RtjdZyHB69o?=) s
+5 533 M
+( =?us-ascii?Q?QWftBFl/1tQXeXlDy1m+ZD35J0RX/KrZF8QUGv6inS4uJLSYCDPozfYo3mX7?=) s
+5 522 M
+( =?us-ascii?Q?+u8SpAXRMGqWvGCsEQ0RddoeKtEeSB4UInXi+/jVPFm3batA4Xod2Xycuj8O?=) s
+5 511 M
+( =?us-ascii?Q?nEXoiSpAv/7qcApC6TTCtodiHgHp7Vu4mELbmdiFUioZ3IwCoQ4p9pfMTtfC?=) s
+5 500 M
+( =?us-ascii?Q?Mj6eGm0lgnWUpXKVnrudFzDE0QscZffPXpxjHxMK5tN3zlpRRRZJCZzvp3Jx?=) s
+5 489 M
+( =?us-ascii?Q?3NAl9M5qR31GZMF20u5EsD2ocKlel9TvFZBvT6wrNVG0Sm0XQeqzkT9kv9qB?=) s
+5 478 M
+( =?us-ascii?Q?7SnuivlDTlMBnXoxNYnHsSMY3SanGBh87yfz+JCpN0GdSu1iFwykOkozWn8b?=) s
+5 467 M
+( =?us-ascii?Q?2LkJBoIqzNWFGF6d+z6+8ilhBNPk44uqIWCWEKT5qsplsw=3D=3D?=) s
+5 456 M
+(x-forefront-antispam-report: ) s
+5 445 M
+( CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR20MB6000.namprd20) s
+5 434 M
+(.prod.outlook.com;PTR:;CAT:NONE;SFS:\(13230040\)\(366016\)\(376014\)\(1800799024\)\(38070700018\)) s
+5 423 M
+(;DIR:OUT;SFP:1102;) s
+5 412 M
+(x-ms-exchange-antispam-messagedata-chunkcount: 1) s
+5 401 M
+(x-ms-exchange-antispam-messagedata-0: ) s
+5 390 M
+( =?us-ascii?Q?7cfdsSrduGvqpsnQeve7YoxDI8iXV81DpzeGhfn2L8Jv/ak2xfnsQJTHM2sE?=) s
+5 379 M
+( =?us-ascii?Q?Hl4Mn7StYCUStpb9xCtWstioBXSQjAEnjI1S+whwu3QPjlj8jSpXEn09JLbp?=) s
+5 368 M
+( =?us-ascii?Q?mYpOwLMtJTuqMX6/4XKLzMauqD3cuZHpSKG9IiVLvpOyvaCAMelmUg1CC2RF?=) s
+5 357 M
+( =?us-ascii?Q?jbLaRttWF+UQ6DgS9n+agTOs8tTBXFnNk95q26tJhSu/2S5h3IrhxbxDSEfL?=) s
+5 346 M
+( =?us-ascii?Q?2P3qzktta0Qf/sujhRW8g9C3UeTb6v9xuOYUiv9in0PZ5CnGdJarzqKoZMnf?=) s
+5 335 M
+( =?us-ascii?Q?9Pf3K9Q6X0xx9mZM1ooiB//Roostp0rrrqKNT5kHKMhFy/S9TzHVfLs+gzyu?=) s
+5 324 M
+( =?us-ascii?Q?DMdFqNBKcDC90gEjJsWDb+cjZYbFOgRO0YfHlahqleuA1MG6dkzfBzFTqlmh?=) s
+5 313 M
+( =?us-ascii?Q?caZv16hHtMkuxCBOiOsRaEXimwVeFB2RvgrD6kuIbXoB3DqtbQXllOam2BgI?=) s
+5 302 M
+( =?us-ascii?Q?po9fCzsRtX9w0xFAx34vYCuf7Mm/QrxlQfb3Uk6Rq5zYKYPorobr2q2K4LHk?=) s
+5 291 M
+( =?us-ascii?Q?fj0c6qqIK0HNQ0CLeysHkWBtcUIdWL7nd1RAJxcQkJ5XSo+5EICcr8AWi8w9?=) s
+5 280 M
+( =?us-ascii?Q?ZSxg3W/DidJL0Z08YcxbcaJJuOL4oJ+I/WNzejjEhRzHQSOl/89XYRMsJx09?=) s
+5 269 M
+( =?us-ascii?Q?oFqlSnKFNHmBZJu9xZiLlkmzbJow2xIygew4MocoHbkZ623mB+hOU8swVghC?=) s
+5 258 M
+( =?us-ascii?Q?lTiCc3s5fmpo47O2Whf5bU36SoynmRVHglFUejjVNLzkULFvXeVO0JHckQRJ?=) s
+5 247 M
+( =?us-ascii?Q?1w0sKHu2B20bfTej8iVJZLwoKnSwayUX0PGw23O5QESyFByvpRtvi7RksS8U?=) s
+5 236 M
+( =?us-ascii?Q?c22o0Oqc3q6bn4r96MI0WppJQIDrAQf6ew8tsoRpGHRv14uSfZ6TsyhBKhEz?=) s
+5 225 M
+( =?us-ascii?Q?pQBiUxylZy44oBGeaC0DsaajZcI7ySf+vgX2Qy2lci8jD5veUJPiG6a+CsYw?=) s
+5 214 M
+( =?us-ascii?Q?U4yLKSvNIU7b5S2b0mcipLGRnldKxgIbci2rPHpGvapMdE+taAYGuThmDzHq?=) s
+5 203 M
+( =?us-ascii?Q?Y+uc87HyBLHM6l6thU1G161il9/Ew6hcXocHSSQFITApr+Rl++3DHZAHsosO?=) s
+5 192 M
+( =?us-ascii?Q?YIXjU92RowGZCLqgSIQdJzw0C5iHmcvqyTZlqy+1c7Im/PMKWY1gI/d2VF/q?=) s
+5 181 M
+( =?us-ascii?Q?mgEzRNYx8bVWhD5duH5o25G78wjvsymH0Ej8qcbq0vov48FKdUe8bA6nQTjD?=) s
+5 170 M
+( =?us-ascii?Q?hTPFO9hfrga9B/n38/MgEf0G45cWSwXpLlXmYZJV2iiLonchG1HjDsdh2pOX?=) s
+5 159 M
+( =?us-ascii?Q?Z8rDALCHUzDi6aRrcEwd57GzwEV7GyCj01IZKIeYGCi0UCUtFKCPzlCWz0B8?=) s
+5 148 M
+( =?us-ascii?Q?EIacY2kYxSbseC0+6UPIETMp+0anSg0k9OfO0vmVb7B5LwqbpUXedF2CQNgP?=) s
+5 137 M
+( =?us-ascii?Q?Z5SedThuSPY8ndLI3NAaliKemPl3b5EE1EsV94qqwBh8QucGncagQE1wi2mb?=) s
+5 126 M
+( =?us-ascii?Q?YXhvoMFQbhO05Z+khCEjvMWUEjTyONIp5by7Io4zjNeQ+NnVuWR/7OPqWMSR?=) s
+5 115 M
+( =?us-ascii?Q?e2/XCyF9jACa41NRqEDp6vQDr5SCtqGKGazA/8oLJtkG/rsbBFLNJbyrgI6h?=) s
+5 104 M
+( =?us-ascii?Q?VEZ4wau6KMIbLdX8FZzBp4sQBbF/c+7o3OYGxYdbnCWcSGyFYPJTwp24nSgg?=) s
+5 93 M
+( =?us-ascii?Q?jg=3D=3D?=) s
+5 82 M
+(Content-Type: multipart/alternative;) s
+5 71 M
+(        boundary="_000_IA0PR20MB6000A4E8573A3D6C329F1355B4712IA0PR20MB6000namp_") s
+5 60 M
+(MIME-Version: 1.0) s
+5 49 M
+(X-OriginatorOrg: perforce.com) s
+5 38 M
+(X-MS-Exchange-CrossTenant-AuthAs: Internal) s
+5 27 M
+(X-MS-Exchange-CrossTenant-AuthSource: IA0PR20MB6000.namprd20.prod.outlook.com) s
+5 16 M
+(X-MS-Exchange-CrossTenant-Network-Message-Id: e4ae531a-658e-40b6-78bd-08dce3ba7f72) s
+5 5 M
+(X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2024 14:48:52.1240) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 6 def
+/fname (./CAF+kE_RrZBShuGO139mWP_Kr-7NQpRthOKKNQ5Z2pSG-KCjW_w@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_RrZBShuGO139mWP_Kr-7NQpRthOKKNQ5Z2pSG-KCjW_w@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+( \(UTC\)) s
+5 676 M
+(X-MS-Exchange-CrossTenant-fromentityheader: Hosted) s
+5 665 M
+(X-MS-Exchange-CrossTenant-id: 95b666d1-9a75-49ab-95a3-8969fbcdc08c) s
+5 654 M
+(X-MS-Exchange-CrossTenant-mailboxtype: HOSTED) s
+5 643 M
+(X-MS-Exchange-CrossTenant-userprincipalname: wLPH6MW29hSPD2Q/SODXt1JuGVT/jxSmpwQxZ9l2a0) s
+5 632 M
+(2EjsHYLdE1UylC8sXcyhDQSEGiAiaIHiX/REFjc9pEoQ==) s
+5 621 M
+(X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR20MB6943) s
+5 599 M
+(--_000_IA0PR20MB6000A4E8573A3D6C329F1355B4712IA0PR20MB6000namp_) s
+5 588 M
+(Content-Type: text/plain; charset="us-ascii") s
+5 577 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 555 M
+(Good morning,) s
+5 533 M
+(I am using ActiveMQ Classic 5.18.5 on 2 separate brokers on Windows \(unfort=) s
+5 522 M
+(unately\).  One broker is using the default kahaDB, and the other broker has=) s
+5 511 M
+( been configured with database persistence using Microsoft SQL Server.  I a=) s
+5 500 M
+(m migrating messages from the old broker using kahaDB to the new broker set=) s
+5 489 M
+(up with database persistence.) s
+5 467 M
+(I have a Camel Route that drains all of the queues and topics \(excluding Ad=) s
+5 456 M
+(visory Topics\) from the old broker to the new broker.  I am using XPath on =) s
+5 445 M
+(the to get all the queues and topics using these 2 URLs on the old ActiveMQ=) s
+5 434 M
+( broker:) s
+5 412 M
+(http://xxx:8161/admin/xml/queues.jsp) s
+5 401 M
+(http://xxx:8161/admin/xml/topics.jsp) s
+5 379 M
+(What I have noticed is that queues that have no pending messages in them ar=) s
+5 368 M
+(e not created on the new broker.  I always have to put a small stub message=) s
+5 357 M
+( in the queue in order for it to be migrated over to the new broker.) s
+5 335 M
+(A few questions on this:) s
+5 313 M
+(1\) Am I approaching this wrong?  Is there a way to just create the queue or=) s
+5 302 M
+( topic on the new broker with Camel without creating this stub message?) s
+5 280 M
+(2\) I do not want to migrate the Advisory topics over to the new broker beca=) s
+5 269 M
+(use those will get created anyway when the topics and queues are moved over=) s
+5 258 M
+(.  Is this assumption correct?) s
+5 236 M
+(Thank you in advance,) s
+5 214 M
+(William Crowell) s
+5 181 M
+(This e-mail may contain information that is privileged or confidential. If =) s
+5 170 M
+(you are not the intended recipient, please delete the e-mail and any attach=) s
+5 159 M
+(ments and notify us immediately.) s
+5 126 M
+(--_000_IA0PR20MB6000A4E8573A3D6C329F1355B4712IA0PR20MB6000namp_--) s
+_R
+S
+%%Trailer
+%%Pages: 6
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

@@ -1,0 +1,328 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57523-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 6E4143E697
+	for <archive-asf-public@cust-asf.ponee.io>; Mon,  7 Oct 2024 14:31:45 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 3E60765DB4
+	for <archive-asf-public@cust-asf.ponee.io>; Mon,  7 Oct 2024 14:31:45 +0000 (UTC)
+Received: (qmail 3297724 invoked by uid 998); 7 Oct 2024 14:31:44 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 3297707 invoked by uid 116); 7 Oct 2024 14:31:43 -0000
+Received: from mailrelay1-he-de.apache.org (HELO mailrelay1-he-de.apache.org) (116.203.21.61)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 07 Oct 2024 14:31:43 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	by mailrelay1-he-de.apache.org (ASF Mail Server at mailrelay1-he-de.apache.org) with ESMTPSA id C91A63EBFE
+	for <users@activemq.apache.org>; Mon,  7 Oct 2024 14:31:43 +0000 (UTC)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9941a48ac8so261757466b.3
+        for <users@activemq.apache.org>; Mon, 07 Oct 2024 07:31:43 -0700 (PDT)
+X-Gm-Message-State: AOJu0YxxmM6qjmZMJE2aF8pfAwwi9BDbx+RZVRkwnkgN6nWFnV089Qnl
+	uInfcy23rub9gPaff4ifbaB9EwB8e4wUm6siRWC2TgeFcO5MvUVDjirRSVQU3Impkq+Dnxc3nbZ
+	y/pvkP4NtH77Cjg7Mhx3GdzDrvLj1640B3S1LpA==
+X-Google-Smtp-Source: AGHT+IE8fESD7I4sEM7QN90L+D/dy7p4DnfnsATNdQZZK7rKdrETQimaUlWMAl56Z2c/JFf/VBtlt8DUl4bbjk+Yl8M=
+X-Received: by 2002:a17:907:1c1f:b0:a99:35f0:8306 with SMTP id
+ a640c23a62f3a-a9935f084a1mr864109666b.61.1728311503480; Mon, 07 Oct 2024
+ 07:31:43 -0700 (PDT)
+MIME-Version: 1.0
+References: <AM7PR05MB66634B5DCB527A4854EFA58BF37D2@AM7PR05MB6663.eurprd05.prod.outlook.com>
+In-Reply-To: <AM7PR05MB66634B5DCB527A4854EFA58BF37D2@AM7PR05MB6663.eurprd05.prod.outlook.com>
+From: Justin Bertram <jbertram@apache.org>
+Date: Mon, 7 Oct 2024 09:31:16 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=S5=YRHW6p5+DjbAjg8pUMCuhfSVmDUpw3Gnnsg_XoiXA@mail.gmail.com>
+Message-ID: <CAF+kE=S5=YRHW6p5+DjbAjg8pUMCuhfSVmDUpw3Gnnsg_XoiXA@mail.gmail.com>
+Subject: Re: ActiveMQ KahaDB Export Tool
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="0000000000003a102d0623e3e141"
+
+--0000000000003a102d0623e3e141
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+The "export" script which is part of the binary distribution is for a *nix
+environment. However, the export tool is written in Java so it can be run
+on any platform with a Java Virtual Machine (e.g. Windows). The script
+basically just takes care of setting the classpath, but you can do that
+yourself. You just need to include the files in the "lib" and "conf"
+directories on your classpath and then run
+"org.apache.activemq.cli.kahadb.exporter.Exporter" with the parameters
+described in the documentation.
+
+The tool doesn't support the reverse migration from the ActiveMQ Artemis
+journal to KahaDB, and I don't believe there is any other tool which does.
+
+In any case, if you don't want to (or can't) use the KahaDB Export Tool
+then you can use something like Camel to move messages from one broker to
+the other while the brokers are running. With Camel you can move messages
+in either direction.
+
+Lastly, please don't post the same question to multiple mailing lists.
+Thanks!
+
+
+Justin
+
+On Mon, Oct 7, 2024 at 6:01=E2=80=AFAM Nagy, Balint, Dr. (AHA/FP-1) <
+balint.nagy@audi.hu> wrote:
+
+>
+> Hi,
+>
+> I'm writing this email regarding the ActiveMQ Artemis Migration,
+> specifically the KahaDB Export Tool.
+>
+> When I tried to migrate my ActiveMQ Classic broker to Artemis, I found
+> that the KahaDB Export Tool is a Linux tool, but my environment is on
+> Windows and couldn't execute the export. Because of our policy,  I mustn'=
+t
+> use features like WSL to solve this issue.
+> Is there a Windows-based KahaDB Export Tool or is there any solution that
+> could work without any extra application?
+>
+>
+> My other topic: is it possible to "migrate back" to ActiveMQ Classic from
+> Artemis? In some cases, that would be useful if I could export the messag=
+e
+> store of Artemis and import it in the a Classic broker.
+>
+>
+> Thanks in advance for your support.
+>
+> Best Regards
+>
+>
+>
+> INTERNAL
+>
+
+--0000000000003a102d0623e3e141--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57521-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id D26763E6FB
+	for <archive-asf-public@cust-asf.ponee.io>; Mon,  7 Oct 2024 11:00:40 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 8479365711
+	for <archive-asf-public@cust-asf.ponee.io>; Mon,  7 Oct 2024 10:59:14 +0000 (UTC)
+Received: (qmail 2954102 invoked by uid 998); 7 Oct 2024 10:59:13 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 2954043 invoked by uid 116); 7 Oct 2024 10:59:12 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 07 Oct 2024 10:59:12 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 7C7842001B3
+	for <users@activemq.apache.org>; Mon,  7 Oct 2024 10:59:12 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.204
+X-Spam-Level: 
+X-Spam-Status: No, score=0.204 tagged_above=-999 required=6.31
+	tests=[HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,
+	RCVD_IN_MSPIKE_H3=0.001, RCVD_IN_MSPIKE_WL=0.001,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]
+	autolearn=disabled
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id oif3OUgWhpmU for <users@activemq.apache.org>;
+	Mon,  7 Oct 2024 10:59:12 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=143.164.102.18; helo=mailin4.audi.de; envelope-from=balint.nagy@audi.hu; receiver=<UNKNOWN> 
+Received: from mailin4.audi.de (mailin4.audi.de [143.164.102.18])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 0D64581FDD
+	for <users@activemq.apache.org>; Mon,  7 Oct 2024 10:59:11 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=e24ZXr98F5+hz/Jy1NUalfIUhc41PIB217BKTorem8mklYy0yEOnzJ29dZCpC4Jy9ZzCRW0LC4Y81MST9z5/CJHEe0gtEZn5tJl3LdLOp3+8zEr4RrFI0k9QfRh4SHpWcJz/ghT5SIpWjVq6DFJmZCbXpkNJotpohXciO1MlFkv6Igh4PRFp5m5iF7qCPAdXOvDZI+gw/ShUiy4NzJIDQNgV3btBHnIB0HgwzL0e7SIGh86ykHgP9Do2IZd5LrVq7JaBj7qpK12gn+K77dsDzFpqKjSUF2JI3WyX01VDY0McqzxFCNrqx1W3nIwDHQHetdPmW+H5urmuNwRaw8kNPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ExxeDXeVgVTTdgayIj1XwcToYkOyMoFBO+i7gXmJG0I=;
+ b=djahwsR3aJTmhCxmFfl/QZA5YmpTlOlVwU+5CiQau8G9wN7wQOzlGAJd651Bv+KCUWbnbduszVA+WTePS/cdCUB8q7L933gGLaMHRozeRqP3jZ2q6agA8f+9YgHZkENoZooXipc3ZsYJ7+k50vWUVBR3xwXmIgPfaglg8QL8E733DCrhQ+Ybgl+XHYi3WoZLTguiPJqqrIXAQxa68mJRe7w2xQXQAqZBRIUbLJmrO8utYFPWhdeKxrMECkeAX4S5aiuqVI3kH4JhiMAEiwJUv+yC3Jn6csXSg8UnSfV2oDtpfv6Cfh9+EQPKPX7i3TndwLyL/r6Q6NRjLb9MeEYZNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=audi.hu; dmarc=pass action=none header.from=audi.hu; dkim=pass
+ header.d=audi.hu; arc=none
+From: "Nagy, Balint, Dr. (AHA/FP-1)" <balint.nagy@audi.hu>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: ActiveMQ KahaDB Export Tool
+Thread-Topic: ActiveMQ KahaDB Export Tool
+Thread-Index: AdsYp+pHtdpb73y3SqyHy4gqojrFoQ==
+Date: Mon, 7 Oct 2024 10:59:07 +0000
+Message-ID: <AM7PR05MB66634B5DCB527A4854EFA58BF37D2@AM7PR05MB6663.eurprd05.prod.outlook.com>
+Accept-Language: hu-HU, en-US
+Content-Language: hu-HU
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_b1c9b508-7c6e-42bd-bedf-808292653d6c_ActionId=2cecb410-ad63-4e0c-9f07-e6b2e13bb8fe;MSIP_Label_b1c9b508-7c6e-42bd-bedf-808292653d6c_ContentBits=0;MSIP_Label_b1c9b508-7c6e-42bd-bedf-808292653d6c_Enabled=true;MSIP_Label_b1c9b508-7c6e-42bd-bedf-808292653d6c_Method=Standard;MSIP_Label_b1c9b508-7c6e-42bd-bedf-808292653d6c_Name=b1c9b508-7c6e-42bd-bedf-808292653d6c;MSIP_Label_b1c9b508-7c6e-42bd-bedf-808292653d6c_SetDate=2024-10-07T10:58:42Z;MSIP_Label_b1c9b508-7c6e-42bd-bedf-808292653d6c_SiteId=2882be50-2012-4d88-ac86-544124e120c8;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=audi.hu;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM7PR05MB6663:EE_|PAXPR05MB9339:EE_
+x-ms-office365-filtering-correlation-id: 904ef1e1-8389-4cee-ed0f-08dce6bf1120
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?NIIbQRpGqD3yvNTqrxLiFchDDIQMqa1Sa2igQR78wp5P0qpqkOYNSnIpYrxs?=
+ =?us-ascii?Q?Y2onOpqJxeYPN4OJmNysYSjBEACzUM8uwCKoDtdcLWJGhYdV2cUzmr6tWzRf?=
+ =?us-ascii?Q?p6Ht11M0B+yhsXxI6fsfqK1sIFQqom0ZUTKd/uu9R/n7GGn5/z30b26Xannw?=
+ =?us-ascii?Q?RYCgVGcV6tAhNSoPECYGEe2mhDO3bqMKCKjHBLT4wqpfBmUkBzQCAyVEb1M6?=
+ =?us-ascii?Q?yH7TAHD2hi/jtS7qNsLDrquqy7DAOCLtXmHGU7jRHryadgD3D+0NqXJ4+8/s?=
+ =?us-ascii?Q?oJjC68xmA1t/G0LwWW0o4EJJornxU/SzV11AJpW0FtxnA4/+MbvQQRw+c9pS?=
+ =?us-ascii?Q?+Bvc/Xe1PCkuaCdVGtXzqJqBojhY8wD3PqVGMZ3VM0CNosmY7w8b+94ZDl8M?=
+ =?us-ascii?Q?xTH1REGWLG5huWOKx2q8sUVFBbnc6thC6teG2KlofMYtH0zUYlnhs/LJY3cL?=
+ =?us-ascii?Q?ZX8pmmlwqBIUOzRnA/HP9ECaWv1eZYXvtBuubdMYB02254KU8ptP3R7j6K//?=
+ =?us-ascii?Q?D5NnIdDuF1GZCpJhMQ1vUdaPxP04S0qYHUqXdumXjmNrDg3VqSc1+IjhFXDt?=
+ =?us-ascii?Q?O4jeqC1MU/Q5kLg8lF2UrH5jM6hco+NuljqLctKJ/g1hR9v2K14bi6VoKNKm?=
+ =?us-ascii?Q?LuLpYQ9GmykMA5Xndiue8RKVujCkrTwi/Nydb9pq4Vs7+8LUHECMm0n1V1hj?=
+ =?us-ascii?Q?sDaW0geNRxDIfj6sgBzYqkTft6OEYG2jcMtd2SDwBx5PH204k4l53WKAL56Z?=
+ =?us-ascii?Q?SyiOXrgOtz4NLd875wdViEEDkyYg5feCrZIrkbnNHZJ+Lqyp55Uxhnf9Y8F2?=
+ =?us-ascii?Q?X6N5F7g68Z68b7qaCCEAvLlC5JPaK8F2usgY5cvmi7h+xJutTaKoFktn/xxO?=
+ =?us-ascii?Q?PLCVbv0JHgXVVgjKHW08wvB6HNsBsr79k8Eg/6xODd0gitIE/GD2kSUikTkH?=
+ =?us-ascii?Q?BKJ4mka+e4zkzFYZKTBdL6Lzi6vrhEGI/59iPTdvfuGz9JpKWdjB8f47shmM?=
+ =?us-ascii?Q?OSAxU93egQlrBSJOoScBnhjIOt3pa0LPv9d83lhSYYNb27ZZq7aqv0g9iRLQ?=
+ =?us-ascii?Q?rf9Yvagmt2O9ppWjE4dvSkZI4yUQus1aJ7pljqxmpG5y3IGQ7TFq6xkGaRUs?=
+ =?us-ascii?Q?SEaUAmUIW3CppbkmI2kED5d9ztYKDFHERYYTXjxKswt45+B37iSMjhVviHZL?=
+ =?us-ascii?Q?/3NsEY8hJaczdo596oyh2NHkk9KZac+zcbABeuUc6QV0kyLmxP9uYJkafP5T?=
+ =?us-ascii?Q?JOXdeRT1u4kgQnBz+wIDw17UsKRSjR1cjitzAsysO4mps6pW2tUIbFEN5NYc?=
+ =?us-ascii?Q?gILOZGNzWBG6xACBzDgFOi9+1poLtYF7XBom5mJvk9SBpw=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR05MB6663.eurprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?4Kb/+iCCHnSF9eHm7MQbOty4haWY2Av1fxvEhqCsmpS4nnwBBwLYu19VDj6z?=
+ =?us-ascii?Q?8EoGWKxQnBYKEk1FjbuM/yDB1ZAQ4VCsN8PhyQ96n6C1+c307dp19fLyhpyS?=
+ =?us-ascii?Q?pSB0aZNtX6We5L9DhsT2lHjkOk5g02Fyu7iH+X0abnHcrwfp2+BChZbbJJTs?=
+ =?us-ascii?Q?vihr5bIXslgZ+D3V1byLq+QCQgtXjfR1HZos60XxJvIs7B4knb8kjYBj5J6A?=
+ =?us-ascii?Q?t1qX7L0PII/Of9MwusrMeHnkwdq0fa7cjs/YwDEJiNTLWyt8Z+x/+cBY1fuZ?=
+ =?us-ascii?Q?xJew3ApHTDBfGX1hdlTlL+F3WADQmYpt7N+fkZVcYTHlzorIx5LdfD7I1nrd?=
+ =?us-ascii?Q?Drjo/OzNcp2IbBPHkJsyCdl9Y8ciFJqZk4uKFFlYTggfPCR0VCIQiut78+yB?=
+ =?us-ascii?Q?iTN0fYT0QFMSOBuDtfLAxwOFRgAo4vO67g2IEP5BSeDaPWYfYDYwIYa/SuaV?=
+ =?us-ascii?Q?vccfoUwARO0FDKKA3ABQMkDAhigWaF2c4sg0Vwmj+ceMOB/hONNPBWMKgDtj?=
+ =?us-ascii?Q?BDQoFsvBJOYDC2YqZM2v88+qoRiAU0RLnqyVMD54Sa54fF49LxN3Y9jUGtpX?=
+ =?us-ascii?Q?PR392diwcgSH9lJqWw/CYIfY+fQpIY8TTPy+JAFIZoN5A2nbod13J1ka9250?=
+ =?us-ascii?Q?2wBJC4BvXK5RiFlT4PPWzH63fti+8XFakbBbKtMB1tXlrzzr/vjQ7YaDrsUz?=
+ =?us-ascii?Q?Zg7gjktWzAlKdkaE/KBOoXJSjNbErlopVhSqIinzOBpjLuqxeu4zDlVwGSoA?=
+ =?us-ascii?Q?cakKIDrgBkv3sgfTfYWgMMeX+HqEzlqU8YTWAzv8jO17PGA1O1x/NxV6q4FB?=
+ =?us-ascii?Q?y24S7lt4/1vXtD3p12X2BRy/n4qUl0NJEHrjgDklmSQwOYu6o6oQZk6fN4/T?=
+ =?us-ascii?Q?4fmg8tYVb2GNbiYsWthZTfsDBYA9QlfbJsbsawk//iYoaRI4qTDLldakJh1e?=
+ =?us-ascii?Q?I42ZIiPx4vxenHO6onRh9KlL51TpA0tw8qEEkiLOPu1POAJRQZwVjeg/9SwT?=
+ =?us-ascii?Q?kvKvgVZTgW/7hg7DQxnIpBkMz6pZ1C/t2hb1dyq1HlHEkLOIAW6hO4dXedcz?=
+ =?us-ascii?Q?TC770tv4ckqzklHYlGMfsNUdViJJxZYIxh9Eof8l4XW+adFzafKkeoOQZNli?=
+ =?us-ascii?Q?WhiIPOB/MZNet3bWOMq7JMSvznCoNmaVRJgx2jyKTeDfzYphZM6mHscBXluq?=
+ =?us-ascii?Q?R/sUR2OhNDQZ7tQnWf5fTWXps0KpGrbE5BQNLZ0oBiEy97NN/PRJgZHjk2An?=
+ =?us-ascii?Q?MPXETfFcrOtt18KwKc3wDKT6PhSqzdJ4HL+JfvURD76U9wVX/7CLbqrPKyL3?=
+ =?us-ascii?Q?OiiosXO6vzmDcmxI5gfEdU8xn1D9q5ZBranrSp7XknasOiR+2kdcAYITN/uR?=
+ =?us-ascii?Q?SzmmhtW2yw/VmEPACdhc+8Js8VBH4ePwlWy9/RJv33o59605LjkpztV7ibTg?=
+ =?us-ascii?Q?vAH8M801AvWViAJCRWmezE3BJ7XfWVJsvcsLGTFsC890bAiXJ73oTiADKYIe?=
+ =?us-ascii?Q?YxXTuwJLl8pN+FY0sZLjK2RnK/uqKHL7zViesvtazv7V/Ta4X3JZXfb8Q3sL?=
+ =?us-ascii?Q?MutzdLyj0xNmnbomLk+6WF6OMBk5/5FhyJ4hDqvq?=
+Content-Type: multipart/alternative;
+	boundary="_000_AM7PR05MB66634B5DCB527A4854EFA58BF37D2AM7PR05MB6663eurp_"
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR05MB6663.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 904ef1e1-8389-4cee-ed0f-08dce6bf1120
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2024 10:59:07.9900
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 2882be50-2012-4d88-ac86-544124e120c8
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: sBkWFIXPpK/TmtqhfOq42m6+0ul6GsYXiHMkZl27DCjemPfPMd8KnxzJpLSkaVyW15XUTaIy1I1zjF5cn9Mj/w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR05MB9339
+X-OriginatorOrg: audi.hu
+X-SGG-fe5a965be60fd73f3484b58bce070295-STATE-CONN: 
+	 ewogICAgICAgICAgJ21mcm9tJyA9PiB7CiAgICAgICAgICAgICAgICAgICAgICAgJ2FjbF9jX3Jl
+	 c29sdmVteCcgPT4gJycsCiAgICAgICAgICAgICAgICAgICAgICAgJ2FjbF9tX3NwZicgPT4gJycs
+	 CiAgICAgICAgICAgICAgICAgICAgICAgJ2FjbF9jX2Ruc2JsJyA9PiAnJywKICAgICAgICAgICAg
+	 ICAgICAgICAgICAnYWNsX2Nfc3BmX3Jlc3VsdCcgPT4gJycKICAgICAgICAgICAgICAgICAgICAg
+	 fSwKICAgICAgICAgICdob3N0JyA9PiB7CiAgICAgICAgICAgICAgICAgICAgICAnYWNsX2NfaGVs
+	 bycgPT4gJycsCiAgICAgICAgICAgICAgICAgICAgICAnYWNsX2NfY29ubmVjdCcgPT4gJycKICAg
+	ICAgICAgICAgICAgICAgICB9CiAgICAgICAgfQo=
+X-SGG-ACC-fe5a965be60fd73f3484b58bce070295: 10.186.25.210 noauth
+X-SGG-UMAMSID: 20241007105910Z99983mxmos05.wob.vw.vwg 1sxlSI-000Q0d-35
+X-SGG-fe5a965be60fd73f3484b58bce070295-STATE-DATA: 
+	 ewogICAgICAgICAgJ2FudGlzcGFtJyA9PiB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgJ2Fj
+	 bF9tX2N0YXZfY291bnQnID0+ICcwJywKICAgICAgICAgICAgICAgICAgICAgICAgICAnYWNsX21f
+	 c29waG9zYXNfc3BhbScgPT4gJycsCiAgICAgICAgICAgICAgICAgICAgICAgICAgJ2FjbF9tX2N5
+	 cmVuX3NwYW0nID0+ICdvZmYnLAogICAgICAgICAgICAgICAgICAgICAgICAgICdhY2xfbV9jMScg
+	 PT4gJzAnLAogICAgICAgICAgICAgICAgICAgICAgICAgICdhY2xfbV9jNScgPT4gJzAnLAogICAg
+	 ICAgICAgICAgICAgICAgICAgICAgICdhY2xfbV9leHB1cmdhdGVfeF9wdXJnYXRlX2lkJyA9PiAn
+	 JywKICAgICAgICAgICAgICAgICAgICAgICAgICAnYWNsX21fY3InID0+ICdOb1JlZklEJywKICAg
+	 ICAgICAgICAgICAgICAgICAgICAgICAnYWNsX21fYzInID0+ICcwJywKICAgICAgICAgICAgICAg
+	 ICAgICAgICAgICAnYWNsX21fYzQnID0+ICcwJywKICAgICAgICAgICAgICAgICAgICAgICAgICAn
+	 YWNsX21fY2gnID0+ICdvZmYnLAogICAgICAgICAgICAgICAgICAgICAgICAgICdhY2xfbV9zb3Bo
+	 b3Nhc19sb2cnID0+ICcnLAogICAgICAgICAgICAgICAgICAgICAgICAgICdhY2xfbV9leHB1cmdh
+	 dGVfbG9nJyA9PiAnJywKICAgICAgICAgICAgICAgICAgICAgICAgICAnYWNsX21fYzYnID0+ICcw
+	 JywKICAgICAgICAgICAgICAgICAgICAgICAgICAnYWNsX21fY3Rhdl9tYWx3YXJlX25hbWUnID0+
+	 ICciIicsCiAgICAgICAgICAgICAgICAgICAgICAgICAgJ2FjbF9tX2V4cHVyZ2F0ZV94X3B1cmdh
+	 dGUnID0+ICcnLAogICAgICAgICAgICAgICAgICAgICAgICAgICdhY2xfbV9leHB1cmdhdGVfc3Bh
+	 bV9hY3Rpb24nID0+ICcnLAogICAgICAgICAgICAgICAgICAgICAgICAgICdhY2xfbV9zb3Bob3Nh
+	 c19zY29yZScgPT4gJzAnLAogICAgICAgICAgICAgICAgICAgICAgICAgICdhY2xfbV9jeXJlbl92
+	 YWxpZCcgPT4gJ2ZhbHNlJywKICAgICAgICAgICAgICAgICAgICAgICAgICAnYWNsX21fZXhwdXJn
+	 YXRlX3NwYW1fc2NvcmUnID0+ICcwJywKICAgICAgICAgICAgICAgICAgICAgICAgICAnYWNsX21f
+	 YXNfbWFsd2FyZV91cmwnID0+ICcwJywKICAgICAgICAgICAgICAgICAgICAgICAgICAnYWNsX21f
+	 c29waG9zYXNfc3BhbXByb2JhYmlsaXR5JyA9PiAnMCcsCiAgICAgICAgICAgICAgICAgICAgICAg
+	 ICAgJ2FjbF9tX2FzX3BoaXNoaW5nX3VybCcgPT4gJzAnLAogICAgICAgICAgICAgICAgICAgICAg
+	 ICAgICdhY2xfbV9jMycgPT4gJzAnLAogICAgICAgICAgICAgICAgICAgICAgICAgICdhY2xfbV9j
+	 eXJlbmFzX2xvZycgPT4gJ0FOVElTUEFNIE9VVEJPVU5EIENZUkVOOm9mZiBYLVNHRy1DVFJlZklk
+	OiBOb1JlZklEJwogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgfQo=
+X-SGG-fe5a965be60fd73f3484b58bce070295-CYREN-AS-RESULT: ANTISPAM OUTBOUND CYREN:off X-SGG-CTRefId: NoRefID
+X-SGG-RESULT: 20241007105910Z99983mxmos05.wob.vw.vwg C1:OK E1:OK MX1:OK BL:OK SPF:off  CT:off CM: SIP:10.186.25.210 SMF:balint.nagy@audi.hu
+X-SGG-MF: balint.nagy@audi.hu
+X-SGG-DKIM-Signing: fe5a965be60fd73f3484b58bce070295
+X-TM-AS-GCONF: 00
+
+--_000_AM7PR05MB66634B5DCB527A4854EFA58BF37D2AM7PR05MB6663eurp_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+
+Hi,
+
+I'm writing this email regarding the ActiveMQ Artemis Migration, specifical=
+ly the KahaDB Export Tool.
+
+When I tried to migrate my ActiveMQ Classic broker to Artemis, I found that=
+ the KahaDB Export Tool is a Linux tool, but my environment is on Windows a=
+nd couldn't execute the export. Because of our policy,  I mustn't use featu=
+res like WSL to solve this issue.
+Is there a Windows-based KahaDB Export Tool or is there any solution that c=
+ould work without any extra application?
+
+
+My other topic: is it possible to "migrate back" to ActiveMQ Classic from A=
+rtemis? In some cases, that would be useful if I could export the message s=
+tore of Artemis and import it in the a Classic broker.
+
+
+Thanks in advance for your support.
+
+Best Regards
+
+
+
+INTERNAL
+
+--_000_AM7PR05MB66634B5DCB527A4854EFA58BF37D2AM7PR05MB6663eurp_--
+

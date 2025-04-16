@@ -1,0 +1,93 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57585-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 0C6AA3E6A3
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 25 Oct 2024 16:22:43 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 192A450173
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 25 Oct 2024 16:22:42 +0000 (UTC)
+Received: (qmail 528191 invoked by uid 998); 25 Oct 2024 16:22:40 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 528157 invoked by uid 116); 25 Oct 2024 16:22:40 -0000
+Received: from mailrelay1-he-de.apache.org (HELO mailrelay1-he-de.apache.org) (116.203.21.61)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Fri, 25 Oct 2024 16:22:40 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	by mailrelay1-he-de.apache.org (ASF Mail Server at mailrelay1-he-de.apache.org) with ESMTPSA id 2098641857
+	for <users@activemq.apache.org>; Fri, 25 Oct 2024 16:22:40 +0000 (UTC)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a0cee600aso285222066b.1
+        for <users@activemq.apache.org>; Fri, 25 Oct 2024 09:22:40 -0700 (PDT)
+X-Gm-Message-State: AOJu0YwXntXlSf+pGTcmbfIPRMng9URcbnCgji0U8Hzb3gU0HAvX2/Ff
+	MlojFMx8N6c6Kr6HUH4edB4VS9pUCy/JnAoWXtMYX3/8BVMxbQPL6tQS1LTgL25zIDZh0Hdw5Ji
+	lq/jrD531lj8nEq8rldsAcQIS6gpN9WO9Ll2nTg==
+X-Google-Smtp-Source: AGHT+IGmQXBqIurjtvh0zUhUAxzJhSvknFwccE8sJIVtZaYMMexTiRuDorb3Q6E1k+6QYY6mTiZKHnpY+j6q+K5t6Vg=
+X-Received: by 2002:a17:906:f588:b0:a99:e831:1b52 with SMTP id
+ a640c23a62f3a-a9abf96ce31mr955462066b.51.1729873359856; Fri, 25 Oct 2024
+ 09:22:39 -0700 (PDT)
+MIME-Version: 1.0
+From: Justin Bertram <jbertram@apache.org>
+Date: Fri, 25 Oct 2024 11:22:13 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=QvMxds3CRDBJoiXJfs5CGmw=h=F_Q5dnJ2hBfknVe1CQ@mail.gmail.com>
+Message-ID: <CAF+kE=QvMxds3CRDBJoiXJfs5CGmw=h=F_Q5dnJ2hBfknVe1CQ@mail.gmail.com>
+Subject: [ANNOUNCE] ActiveMQ Artemis 2.38.0 Released
+To: users@activemq.apache.org, dev@activemq.apache.org
+Content-Type: multipart/alternative; boundary="0000000000001f0b0806254f872c"
+
+--0000000000001f0b0806254f872c
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+I'm pleased to announce the release of ActiveMQ Artemis 2.38.0.
+
+* Downloads:
+https://activemq.apache.org/components/artemis/download/
+
+* Complete list of updates:
+https://activemq.apache.org/components/artemis/download/release-notes-2.38.=
+0
+
+I would like to highlight these improvements:
+
+- WebSocket compression is now supported. This compression can be used
+transparently for AMQP, STOMP, or MQTT when communication is over
+WebSockets.
+- The ActiveMQServerMessagePlugin now has a messageMoved() callback.
+- Core bridge configuration now supports client-id which will make it much
+easier to identify bridge connections on remote brokers.
+- The consumer CLI command now supports consuming messages "forever."
+- The authentication & authorization caches now have detailed debug logging=
+.
+- There=E2=80=99s been a handful of updates to broker management including:
+    - The documentation has been improved with more examples for Jolokia
+and a new sub-section on management method option syntax.
+    - It=E2=80=99s now possible to pass empty "options" to the management m=
+ethods
+that accept them.
+    - The management methods which return paged results can now return all
+the results together by specifying -1 for either the page or the pageSize.
+    - The management method option syntax now supports the NOT_EQUALS
+operator for greater flexibility with filtering results of management
+operations.
+    - Configuration for diverts created via management can now be done via
+JSON.
+
+As usual it contains a handful of bug fixes, other improvements, and
+dependency upgrades.
+
+Many thanks to all those who contributed to this release!
+
+
+Justin
+
+--0000000000001f0b0806254f872c--

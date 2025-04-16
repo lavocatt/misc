@@ -1,0 +1,327 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57571-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 207C03E6A3
+	for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 21:46:08 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 2C59F4C4D3
+	for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 21:46:07 +0000 (UTC)
+Received: (qmail 3938953 invoked by uid 998); 23 Oct 2024 21:46:05 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 3938936 invoked by uid 116); 23 Oct 2024 21:46:05 -0000
+Received: from mailrelay1-he-de.apache.org (HELO mailrelay1-he-de.apache.org) (116.203.21.61)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Wed, 23 Oct 2024 21:46:05 +0000
+Authentication-Results: apache.org; auth=none
+Received: from smtpclient.apple (unknown [IPv6:2600:1702:5890:67d0:cd13:ded:3aec:7a15])
+	by mailrelay1-he-de.apache.org (ASF Mail Server at mailrelay1-he-de.apache.org) with ESMTPSA id E9C7E3E886
+	for <users@activemq.apache.org>; Wed, 23 Oct 2024 21:46:04 +0000 (UTC)
+From: Matt Pavlovich <mattrpav@apache.org>
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: ActiveMQ Classic Broker and Client Module Issue
+Date: Wed, 23 Oct 2024 16:45:53 -0500
+References: <LV8PR12MB926309229A33D153653620BEF8402@LV8PR12MB9263.namprd12.prod.outlook.com>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+In-Reply-To: <LV8PR12MB926309229A33D153653620BEF8402@LV8PR12MB9263.namprd12.prod.outlook.com>
+Message-Id: <6B8F1CB2-629A-4FA5-BCE6-9152DB895950@apache.org>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+
+Yes, ActiveMQ 7.x is a ways off. Having a Java module-friendly =
+client-jar would be interesting though. In the past, we=E2=80=99ve added =
+transition jars to the tree (ie. Activemq-cliekt-jakarta in 5.18.x) and =
+we could do something similar.=20
+
+If you go down the route of making a shaded jar, share your shaded jar =
+that solves it, I=E2=80=99d be up for integrating into the Apache tree.
+
+Note: another one to look at would be the activemq-all jar. It may be =
+really close to what you are needing.
+
+Thanks,
+Matt Pavlovich
+
+> On Oct 18, 2024, at 2:11=E2=80=AFPM, Freeman, Christopher =
+<christopher.freeman@sap.com.INVALID> wrote:
+>=20
+> It looks like the OSGi version would be compatible code wise, but it =
+appears that it has not been packaged with a module-info unfortunately.
+> I was attempting to avoid using a shaded jar so that there is less =
+dependency micromanagement, but I may have to look in to that route if =
+we wish to proceed with it.
+> I imagine the a version 7.x release is quite a ways off correct?
+>=20
+> On 2024/10/15 23:22:37 Matt Pavlovich wrote:
+>> Hi Christopher-
+>>=20
+>> I cannot confirm that ActiveMQ is packaged to align with Java =
+modules. The broker does depend on classes in the client jar, so if you =
+depend on the broker, it will drag the client classes.
+>=20
+>>=20
+>> Since ActiveMQ has been prevalent for so long, moving packages to =
+proper separation will need to wait until the next major release =E2=80=94=
+ 7.x.
+>=20
+>>=20
+>> Tip=E2=80=94 the OSGi module is a single jar with everything =
+packaged, you may look to try that dependency, or rolling your own =
+shaded jar with everything you need in one place.
+>=20
+>>=20
+>> Thanks,
+>> Matt Pavlovich
+>>=20
+>>> On Oct 15, 2024, at 4:42=E2=80=AFPM, Freeman, Christopher =
+<ch...@sap.com.INVALID> wrote:
+>>>=20
+>>> Hello all,
+>>>=20
+>>> We are in the process of upgrading our application from Java 8 to 17 =
+using ActiveMQ Classic version 6.1.2.  I am learning about the modules =
+as I go so I apologize if this much easier than it seems.
+>=20
+>>>=20
+>>> While setting up our module-info, in it we require the =
+activemq.broker and activemq.client. However it seems this is not =
+allowed as both of those modules export the same packages names to the =
+same modules which causes it to error. Is the expectation that the =
+client and broker should not be together and be implemented differently =
+on our end?
+>=20
+>>>=20
+>>=20
+>>=20
+>> ---------------------------------------------------------------------
+>> To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+>> For additional commands, e-mail: users-help@activemq.apache.org
+>> For further information, visit: https://activemq.apache.org/contact
+>>=20
+>>=20
+>>=20
+
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57568-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 3B8633E6A3
+	for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 17:37:35 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 1DBFA64D5E
+	for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 17:37:35 +0000 (UTC)
+Received: (qmail 3503694 invoked by uid 998); 23 Oct 2024 17:37:33 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Delivered-To: moderator for users@activemq.apache.org
+Received: (qmail 894139 invoked by uid 116); 18 Oct 2024 19:12:01 -0000
+Authentication-Results: apache.org; auth=none
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -0.999
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.999 tagged_above=-999 required=6.31
+	tests=[DKIMWL_WL_HIGH=-0.095, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+	DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2,
+	RCVD_IN_MSPIKE_H2=-0.906, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=sap.com
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=40.107.100.86; helo=nam04-bn8-obe.outbound.protection.outlook.com; envelope-from=christopher.freeman@sap.com; receiver=<UNKNOWN> 
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=k1ExHeQAJ+t4icsloYLmOvaGjelnr6XSnFlEl0e8AGFIDKA5zGBBwx9BtmdCA0hqPT90Z5TR1zmzB2TtwPsoTn8jN7YVWgkmteM7I6Q9M2DyuSmqUi3LTFcEzL89c0StIDUs2eWHNdqZN+c3NyeYas/LE+z9RmRa/h0qa+cJ9czYY90sh6yMP7ZzuL+PUhzzRZXD7HjZQ9Da5aO+DIKBoAwkmaatT6MtafsjstUtyCSGyYx6jusHFrvYTatTdYOnaHqJV7DDZ1L53jKRFd4lMFnbI+23dHoVeOPjrAoUedVUldiXKD94/XjgPOrUTyMBBlmrc/DZzSsALrOvjVOSug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xXi9Yeeoin0Ie+kPHcq5+djFbefduy4mXIJQTLcTCRA=;
+ b=uoc7OJD58l5LqRsr/+UmSVpLuQvTdIzgWeOag2oNVb+CBqxq0hOO98D2pQRsUIwRmOFVOGTnvd+JJKTQSkQcNH1EXa+glAvEXdYtPFWj9XJCOHrAmpyWhfbwjSrsW09MUHTGL+46yZUZ6ZLDSI91Tcxo54uU2vdHa8c87eCCIXvvZQlNFBatOV08Z6rWtyme4VPUdeSjZtBnBSTOX8hvPJKD8A4BsztHq94IsKy7YB6PM2cxSJb1etMJWnXsfN3Mq8BJAQOVxXagFB6EK2lmE2yu29L9+ay+pYN7JIJvnk0udsVGGk77vNsVRohSrVMVPxl8sQW0+U8uFgSu1TuxBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sap.com; dmarc=pass action=none header.from=sap.com; dkim=pass
+ header.d=sap.com; arc=none
+X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sap.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xXi9Yeeoin0Ie+kPHcq5+djFbefduy4mXIJQTLcTCRA=;
+ b=G+1Ddf880ji9kwnN7BArq2aMjjiwdGNlAlEq3tASw+rNqW/8XdDSKA74fuELnddc0iqZfdB03l1haGDdqEoUmbQi9G8lpM3uE9FUWdGHHtmIwW7GadgJ6FfBzHtHyWyEXMaYgIhI0ZPg+LCkFWQQ+L1Cd3AUoaVU9NqKIvfe3fuq82ENey/pxHWqNjzlstABJGCx4POfWWhMJOKRGsvC/HhYqn0sc8Mc2YnmsbMHxnnk8soy3k6ie3Onb5cnZ3B9pHirPu80J/tDYZ1gyAvk8U4t6lvYlzA4h1FHukc7rvAyxZUH8wXFZtBJTDdhkFZPh8p67X81R6RIwu1XruitvA==
+From: "Freeman, Christopher" <christopher.freeman@sap.com.INVALID>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: RE: Re: ActiveMQ Classic Broker and Client Module Issue
+Thread-Topic: RE: Re: ActiveMQ Classic Broker and Client Module Issue
+Thread-Index: AdshkF2eY72KPNv5SEedYPACVOWopw==
+Date: Fri, 18 Oct 2024 19:11:39 +0000
+Deferred-Delivery: Fri, 18 Oct 2024 19:10:36 +0000
+Message-ID: 
+ <LV8PR12MB926309229A33D153653620BEF8402@LV8PR12MB9263.namprd12.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-processedbytemplafy: true
+x-templafyemailsigvstoversion: 9.13.3.0
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=sap.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV8PR12MB9263:EE_|PH7PR12MB8427:EE_
+x-ms-office365-filtering-correlation-id: b6718e1f-e53e-423a-dc26-08dcefa8b772
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|4022899009|376014|366016|1800799024|8096899003|38070700018;
+x-microsoft-antispam-message-info: 
+ =?utf-8?B?cG51cm5yOGVvTU01RDJGZXIrRHp1RmFuYkl5Q0R6bXRFS3ZMRFdpblhoazkx?=
+ =?utf-8?B?YUFaS0l3MnFidHdhNlhZTXZOUTRjbCt2VDkrZU1qb0xFdUdOMngzMHBoNklt?=
+ =?utf-8?B?WllXNmtiWlU4SkY5UGRGa3BTWDlDOVdUQTlvcGVWMXdPc1g3YjhTMTljTmVx?=
+ =?utf-8?B?S0wrbW5OeTNWWFU2RmVwWks2MmRQZXAxTWpwTHZVV3RjS1ArQTllSXFFNXE0?=
+ =?utf-8?B?TlpFWTRHdWhtSmpkZmFBbXkybW5tRFRESE8yZXlmVkJYdWRvMGFiTkhVV3Z5?=
+ =?utf-8?B?Um9wWWpvOWdhSjlEZ05YVVFvOFZ2WkhMWTBtWCtEMGtLYWdWMDgxNXVYOGpl?=
+ =?utf-8?B?Z1huYjhpcjR6Vnp1QXg3RVNXcmJpVVNrNVorcXhCYTlnaHRrNUJuTVNsMitL?=
+ =?utf-8?B?RXVBNUlYT0ljenBxV1B3UDRMWjdrcEg3M3BUdGNLZ285d3JEeWZJbGRPVGtY?=
+ =?utf-8?B?bU9Tb25jajVvYlBVZ3VSaElyKzN6Uk5FTFZMNERrNGE3clN4cVBNWmNSSmZQ?=
+ =?utf-8?B?cDdkQzdxdU9BMkgvanM1Y2pvVytTaVZIU2Q0ZnpJcHRnU3g4ZEJXbTU2ZnZI?=
+ =?utf-8?B?bWFQb1JxM0dPeDZKdXNrK21hZS9lSzFaOFdmdFgyVlJnN0NwckVISE5XdWl6?=
+ =?utf-8?B?eHBjV3JaUDRsaDJDaHFSeGFXbEpWQWplYjNxcXFNV2MweG5zcC9nbW9NZVd2?=
+ =?utf-8?B?Z1lhZEZxRzJFZXJEV3hUTTVTbHdmS0NueVM3QkhkdkpKWWMxM2hpaEpGeDRr?=
+ =?utf-8?B?clhKZTMyZ2RWYndIUjB1Nnk5ODRVcWZpejl5U0ZlSkVYNHlrSlJXRGM5VFo0?=
+ =?utf-8?B?Ym82RWlVekNUQm9tOUpsWnVSU1c0L1Qrc0YwZ0pNTTU4enBuWjhaVDB1QmE4?=
+ =?utf-8?B?Q3lLbUVSQ2F3RWtFbjdOTnpwd3pDVHpXbW9OdXJ0SUhkc2JmUlFWNlFTalRu?=
+ =?utf-8?B?NURRMHBDM1lKcEFYL3hxTDM1bUNwTnZFbmxKYTRtaVVYZzMvNFVrbEVjN1pN?=
+ =?utf-8?B?K2E4ZHZWcFcwcWs3M2NLb3NuaksrcDFpR0ZZSkZLV1A1YTBtZnVHUW1jbjUz?=
+ =?utf-8?B?d3czUnI0RGFMdzluM2xMTGtDZTd6NkZGWTcwdi9mSGtlS3BkSDRiaTRJVGlN?=
+ =?utf-8?B?bXBWUUE2RXhJWDh1RStiWTF2VTkvSjd1VXk5TEl2dDRBc2k4dkxOQ1VHRUVq?=
+ =?utf-8?B?WDluQVFBc2NHeWRJNW9UN3YvUXVtOUw2aE5laDZxcXN4SnNTV2NGaVBDaksz?=
+ =?utf-8?B?R2kzWU85Um5MYjhvQUViQ2ZPTUZ2QjVOczU2OXZhSnVCTy9aQ1VydjQwTnFP?=
+ =?utf-8?B?RDhqNGlENGJYWEI5VGtlTU9TMjU3MVlINm9hRzlTaVlrZmNKbDU0cXh4YzIy?=
+ =?utf-8?B?WjM0NDlsY2xwT1JoTGdJUC82RVM5SkJLbGhtZTdYZ1RiSmJDaXhNRG1ObjVQ?=
+ =?utf-8?B?b1FqZG5uNTdxWkNZdko4cFFuQzNkNmlDSTN1QVUzc0cvNHB3Mk5tZ0hqVHo0?=
+ =?utf-8?B?QWRib3ZKMHdQOHRrSGRiMzZRZit0Mkl3YkNYekhmTlZidGtrZzNCL1VzbmJ0?=
+ =?utf-8?B?dTlxRGpZQ3FwdXlPak9jZzZXU2UwdWdsZnA1YzJxZTVqdVZhbmRzYVZNU1dz?=
+ =?utf-8?B?S2xoV3B6RGdIUG1mZnA2Vnk4OWNsTWNJcmxxQjVWZGMwem9HeFJ5WnpYUWZt?=
+ =?utf-8?B?bHJzRUw0NSswbGFEbHBORlVQQnJNN3FQZTEvLzJGQWt6MXJ0YzVzd2xUbWxn?=
+ =?utf-8?B?cmMxY1FmeVJHdTR2YklTdTIzOEkxZHJYa1JkYXViT0NiQmRZKzNzMytxaWNI?=
+ =?utf-8?B?MWY0Zmd0ZTlGR0VUL2NoVmN4d2ZMWGtSdUI1M1BrbkdTREp0YUpRdGRRWDNw?=
+ =?utf-8?Q?j86C49JLAwT6m?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9263.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(4022899009)(376014)(366016)(1800799024)(8096899003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?VnBtVEdjN2hobGhmR3BNVlF4TkZ5T3NSaWdmWVY3aEFhTDlQb0NIT3hVOXJ1?=
+ =?utf-8?B?M3R5c1dGZHZES1RtR3FhWVNiQzdqa3d3SklpRGgrMmVaOW1JYTRYaHBZNStn?=
+ =?utf-8?B?RDZWU0t6cGdOWFFVdkluci9DYVFSQkxVcVFHdzRRQkhSOGdibGl0U2wrM2Jl?=
+ =?utf-8?B?bXZ6T0F3WUNhMXpyWlJKc1BnaUlKdnNtR1hKdmhWOTUwdWJMdTJqcjhZMnNM?=
+ =?utf-8?B?UVpnODRVcG54SzJza2VOS0VrQkUrQUlZajNjM1JRa2JwTG9rZi8xK2NqdUpD?=
+ =?utf-8?B?RGJqajhFc1BwcWN4ZUpTTVp6VFhjemxZY3BIT2hyN2xFRDd0ZzBoTnBISVRO?=
+ =?utf-8?B?S0xiKytBQXJIODk2K25VTHhlV3ZwNS8zQnZwWnQ1SnRnNzExMUxiMnFrb0Jo?=
+ =?utf-8?B?UGRvTjdTdmU3SzVyK3UzVllPdGRmRFoxUGFpT3NZYkQzUlZTM0poRUdXUFht?=
+ =?utf-8?B?Qk0rTkNadmpOTVFObnhGRFA3QXJ1ZWNuajlQaWhGOXBZQVkyVllXSGFaZkRk?=
+ =?utf-8?B?OEZ3MWNrZWtaWVZCMERyN2M4REVqWTlQWjU1SVQvZFJKYUlIVTlZdlQrOUVK?=
+ =?utf-8?B?dm9VVStJNHlaM2lsT21mUHFBWDljcjJQWTVSb3JLaGVVMVpicjV1L0xFTHR4?=
+ =?utf-8?B?eW8wOU1jMFVwdXpFdCtnTFVGdnQ4UGtBdkp0d2RwVnMwQmZBKzVuZ3hjcTUw?=
+ =?utf-8?B?bVE2dHJjSWJKb2pXYnRWTDc1Zzc5b3RCRGdXSjdtdXJrTHZ1QkcxcEtrT0pY?=
+ =?utf-8?B?UjBESVNEQUxEZmY4dDY5U2hyS1Z2WVB5QnBsY2kwZ1h3amloRVBYUWwyYU5B?=
+ =?utf-8?B?U25lRlhTTyt5QWI5bGNaTmFmUjhrQkFBbE5nOHIxa0gwcGI0Q2VGWnpmZ0VR?=
+ =?utf-8?B?Z2xtdk1VajhkZVF4MDRSMWhGTk05YStHS2U3cC85V2UvblNvUEsveCswVW9U?=
+ =?utf-8?B?OGZvZHZuOTFpL3FYeW9NdFMxczVwQVdZdTBrRUpjOVlBWDhVeEhxWXJWc1NI?=
+ =?utf-8?B?OWJHQkxNT0NuVVhNOG9aVWJnNTE1OVlTN2NWSExkTUxBOGpoaFdtNCs2eG9L?=
+ =?utf-8?B?bW9Kak9OZk8yalNGdDNrcUNkbzJsUkQ0RUFTZFJZNVk2a3VzWmNKbFA0OHov?=
+ =?utf-8?B?djliMCtGbHNOZGRVNUo1MVVnS2pSUjJGWjVzZUhmeXdVQlc4K3d5S0xYMUZy?=
+ =?utf-8?B?dG9vdlVPTWw5NVlDZTVHeXVKdjRBQmhDRDNqOVdwdldablRuYTR2RjlpbENn?=
+ =?utf-8?B?S1B4YVJMM2k1SHNySC9JUjcvaGg2VktsM3Q1dUlReldWRGU1d2NiVk1yOFJU?=
+ =?utf-8?B?MGpyNnJrSDVQYmQwb2doMFBtcmZuY0ZMZjlrQ3dBbnNPQkcrclJJZHhBTEtT?=
+ =?utf-8?B?UUZSaG1nOTRVSmMvVElWcW1kS0I3UFR6NlRVRmFxYWdYQ0NVVFBHWnYxRHNL?=
+ =?utf-8?B?clFqaE1PWlY2c1I2aDU3MThUWDN6TG1aWEd6WTdHWm9ubTFyalBMYm14QWJm?=
+ =?utf-8?B?SVZyWjBPS3N3S24xNmVXbmRsdG9JbmczdmVxY1NOWWE3Mm14Tm9YVW9RR1cw?=
+ =?utf-8?B?czdwTWF1Ylh2U3k2Tis2WHAwNGMxYWZlMmVBZVJpak5UbTFSTjQzbjlZQ2FW?=
+ =?utf-8?B?N0oyQkhNbWNJTmMzSmRLTXFPYXJaeE9ZUGoyaFVSaHRKbEFHMHRzU085LzZT?=
+ =?utf-8?B?ZXBzekZGVGQ4d0V0M3prT1UxeU5EWEFkaC9KdzMybHA2NWN6RHAwekx0cE1l?=
+ =?utf-8?B?bmtranl2WmZRbUVJdUc5NHBiOWJGSnJrRGNmbE81Tm8rblZjVElONzZRZWtU?=
+ =?utf-8?B?N2VqUTQwQnBPdkFqVHkxdEtCUUVYOTBkVndzUlZId1JkODBTbnlGWWVqRElS?=
+ =?utf-8?B?QmduWUhLR1ZGUjhVZllxVzMwMDYrbzFldWtoUFR6Yk1KWHR6YkhZWHNzMDZa?=
+ =?utf-8?B?ZHRuY29KbXdVTzkveURvM2xSWFZyVWtjRDcwT2prWjA0VWtTYStiR2UwdHZX?=
+ =?utf-8?B?bVJsaVNCQXFPZ0xWcUUzOFJNd0NlaWpxSmFZRVhqN2JmV0ZpMGJFSDVLSHN2?=
+ =?utf-8?B?RHVpTU42RzYrcFl1Y0FGZmhNUGFJbTRLR2pVT0w2WEZ1R1VNVFB6U1lVQy85?=
+ =?utf-8?B?QXZBZG00ano3VFZtQjk5WjJUYytNZStpdGd0RlA5Nmh4UWxrYkwrUmV6RDla?=
+ =?utf-8?B?Y1E9PQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_LV8PR12MB926309229A33D153653620BEF8402LV8PR12MB9263namp_"
+MIME-Version: 1.0
+X-OriginatorOrg: sap.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9263.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6718e1f-e53e-423a-dc26-08dcefa8b772
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2024 19:11:49.0443
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 42f7676c-f455-423c-82f6-dc2d99791af7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zYKNQ+lNE9ZykVraM06hhPUkt7bbjl2z2cWUt3EbCA4S1vCMZMa5sErlyqXETT5Phy2bAc80DmAG+ZKPdaRg17QPzwz+0RPYmjZqLd1jc+8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8427
+
+--_000_LV8PR12MB926309229A33D153653620BEF8402LV8PR12MB9263namp_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+
+SXQgbG9va3MgbGlrZSB0aGUgT1NHaSB2ZXJzaW9uIHdvdWxkIGJlIGNvbXBhdGlibGUgY29kZSB3
+aXNlLCBidXQgaXQgYXBwZWFycyB0aGF0IGl0IGhhcyBub3QgYmVlbiBwYWNrYWdlZCB3aXRoIGEg
+bW9kdWxlLWluZm8gdW5mb3J0dW5hdGVseS4NCkkgd2FzIGF0dGVtcHRpbmcgdG8gYXZvaWQgdXNp
+bmcgYSBzaGFkZWQgamFyIHNvIHRoYXQgdGhlcmUgaXMgbGVzcyBkZXBlbmRlbmN5IG1pY3JvbWFu
+YWdlbWVudCwgYnV0IEkgbWF5IGhhdmUgdG8gbG9vayBpbiB0byB0aGF0IHJvdXRlIGlmIHdlIHdp
+c2ggdG8gcHJvY2VlZCB3aXRoIGl0Lg0KSSBpbWFnaW5lIHRoZSBhIHZlcnNpb24gNy54IHJlbGVh
+c2UgaXMgcXVpdGUgYSB3YXlzIG9mZiBjb3JyZWN0Pw0KDQpPbiAyMDI0LzEwLzE1IDIzOjIyOjM3
+IE1hdHQgUGF2bG92aWNoIHdyb3RlOg0KPiBIaSBDaHJpc3RvcGhlci0NCj4NCj4gSSBjYW5ub3Qg
+Y29uZmlybSB0aGF0IEFjdGl2ZU1RIGlzIHBhY2thZ2VkIHRvIGFsaWduIHdpdGggSmF2YSBtb2R1
+bGVzLiBUaGUgYnJva2VyIGRvZXMgZGVwZW5kIG9uIGNsYXNzZXMgaW4gdGhlIGNsaWVudCBqYXIs
+IHNvIGlmIHlvdSBkZXBlbmQgb24gdGhlIGJyb2tlciwgaXQgd2lsbCBkcmFnIHRoZSBjbGllbnQg
+Y2xhc3Nlcy4NCg0KPg0KPiBTaW5jZSBBY3RpdmVNUSBoYXMgYmVlbiBwcmV2YWxlbnQgZm9yIHNv
+IGxvbmcsIG1vdmluZyBwYWNrYWdlcyB0byBwcm9wZXIgc2VwYXJhdGlvbiB3aWxsIG5lZWQgdG8g
+d2FpdCB1bnRpbCB0aGUgbmV4dCBtYWpvciByZWxlYXNlIOKAlCA3LnguDQoNCj4NCj4gVGlw4oCU
+IHRoZSBPU0dpIG1vZHVsZSBpcyBhIHNpbmdsZSBqYXIgd2l0aCBldmVyeXRoaW5nIHBhY2thZ2Vk
+LCB5b3UgbWF5IGxvb2sgdG8gdHJ5IHRoYXQgZGVwZW5kZW5jeSwgb3Igcm9sbGluZyB5b3VyIG93
+biBzaGFkZWQgamFyIHdpdGggZXZlcnl0aGluZyB5b3UgbmVlZCBpbiBvbmUgcGxhY2UuDQoNCj4N
+Cj4gVGhhbmtzLA0KPiBNYXR0IFBhdmxvdmljaA0KPg0KPiA+IE9uIE9jdCAxNSwgMjAyNCwgYXQg
+NDo0MuKAr1BNLCBGcmVlbWFuLCBDaHJpc3RvcGhlciA8Y2guLi5Ac2FwLmNvbS5JTlZBTElEPiB3
+cm90ZToNCj4gPg0KPiA+IEhlbGxvIGFsbCwNCj4gPg0KPiA+IFdlIGFyZSBpbiB0aGUgcHJvY2Vz
+cyBvZiB1cGdyYWRpbmcgb3VyIGFwcGxpY2F0aW9uIGZyb20gSmF2YSA4IHRvIDE3IHVzaW5nIEFj
+dGl2ZU1RIENsYXNzaWMgdmVyc2lvbiA2LjEuMi4gIEkgYW0gbGVhcm5pbmcgYWJvdXQgdGhlIG1v
+ZHVsZXMgYXMgSSBnbyBzbyBJIGFwb2xvZ2l6ZSBpZiB0aGlzIG11Y2ggZWFzaWVyIHRoYW4gaXQg
+c2VlbXMuDQoNCj4gPg0KPiA+IFdoaWxlIHNldHRpbmcgdXAgb3VyIG1vZHVsZS1pbmZvLCBpbiBp
+dCB3ZSByZXF1aXJlIHRoZSBhY3RpdmVtcS5icm9rZXIgYW5kIGFjdGl2ZW1xLmNsaWVudC4gSG93
+ZXZlciBpdCBzZWVtcyB0aGlzIGlzIG5vdCBhbGxvd2VkIGFzIGJvdGggb2YgdGhvc2UgbW9kdWxl
+cyBleHBvcnQgdGhlIHNhbWUgcGFja2FnZXMgbmFtZXMgdG8gdGhlIHNhbWUgbW9kdWxlcyB3aGlj
+aCBjYXVzZXMgaXQgdG8gZXJyb3IuIElzIHRoZSBleHBlY3RhdGlvbiB0aGF0IHRoZSBjbGllbnQg
+YW5kIGJyb2tlciBzaG91bGQgbm90IGJlIHRvZ2V0aGVyIGFuZCBiZSBpbXBsZW1lbnRlZCBkaWZm
+ZXJlbnRseSBvbiBvdXIgZW5kPw0KDQo+ID4NCj4NCj4NCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IFRvIHVu
+c3Vic2NyaWJlLCBlLW1haWw6IHVzZXJzLXVuc3Vic2NyaWJlQGFjdGl2ZW1xLmFwYWNoZS5vcmcN
+Cj4gRm9yIGFkZGl0aW9uYWwgY29tbWFuZHMsIGUtbWFpbDogdXNlcnMtaGVscEBhY3RpdmVtcS5h
+cGFjaGUub3JnDQo+IEZvciBmdXJ0aGVyIGluZm9ybWF0aW9uLCB2aXNpdDogaHR0cHM6Ly9hY3Rp
+dmVtcS5hcGFjaGUub3JnL2NvbnRhY3QNCj4NCj4NCj4NCg==
+
+--_000_LV8PR12MB926309229A33D153653620BEF8402LV8PR12MB9263namp_--

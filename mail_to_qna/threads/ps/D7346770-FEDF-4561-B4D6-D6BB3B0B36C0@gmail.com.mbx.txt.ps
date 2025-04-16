@@ -1,0 +1,2739 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 38 24 574 768
+%%Title: Enscript Output
+%%For: Thomas Lavocat
+%%Creator: GNU Enscript 1.6.6
+%%CreationDate: Tue Apr  1 15:59:19 2025
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 6
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 6
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 6
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      fname length fmodstr length add pagenumstr length add 95 6 idiv add d_header_w 6 idiv le{
+        5 0 moveto fname show
+        45 0 rmoveto fmodstr show
+        45 0 rmoveto pagenumstr show
+      } {
+        5 0 moveto fmodstr show
+        45 0 rmoveto pagenumstr show
+        fname length d_header_w 6 idiv idiv 1 add 10 mul 5 exch moveto
+        1 1 fname length d_header_w 6 idiv idiv
+        {
+          dup fname exch 1 sub d_header_w 6 idiv mul d_header_w 6 idiv getinterval show
+          5 exch 10 mul fname length d_header_w 6 idiv idiv 1 add 10 mul exch sub moveto
+        } for
+        5 10 moveto
+        fname fname length d_header_w 6 idiv idiv d_header_w 6 idiv mul dup fname length exch sub getinterval show
+      }ifelse
+    }ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 536 def
+/d_page_h 744 def
+/d_header_x 0 def
+/d_header_y 700 def
+/d_header_w 536 def
+/d_header_h 44 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 536 def
+/d_footer_h 0 def
+/d_output_w 536 def
+/d_output_h 700 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 676 M
+(Return-Path: <users-return-57552-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 665 M
+(rg>) s
+5 654 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 643 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 632 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 621 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 22B573E680) s
+5 610 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 14:57:15 +0000 \(UT) s
+5 599 M
+(C\)) s
+5 588 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 577 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 566 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 555 M
+(        \(No client certificate requested\)) s
+5 544 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 533 M
+(MTPS id 0DC9F61DE1) s
+5 522 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 14:57:15 +0000 \(UT) s
+5 511 M
+(C\)) s
+5 500 M
+(Received: \(qmail 1506042 invoked by uid 998\); 21 Oct 2024 14:57:14 -0000) s
+5 489 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 478 M
+(Precedence: bulk) s
+5 467 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 456 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 445 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 434 M
+(List-Id: <users.activemq.apache.org>) s
+5 423 M
+(Reply-To: users@activemq.apache.org) s
+5 412 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 401 M
+(Received: \(qmail 1506022 invoked by uid 116\); 21 Oct 2024 14:57:13 -0000) s
+5 390 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 379 M
+(6.100\)) s
+5 368 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Mon, 21 Oct 2024 14:57:13 +0000) s
+5 357 M
+(Authentication-Results: apache.org; auth=none) s
+5 346 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 335 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 324 M
+(ith ESMTP id 0923220023A) s
+5 313 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 14:57:13 +0000 \(UTC\)) s
+5 302 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 291 M
+(X-Spam-Flag: NO) s
+5 280 M
+(X-Spam-Score: 5.2) s
+5 269 M
+(X-Spam-Level: *****) s
+5 258 M
+(X-Spam-Status: No, score=5.2 tagged_above=-999 required=6.31) s
+5 247 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 236 M
+(        DKIM_VALID_EF=-0.1, ENA_SUBJ_LONG_WORD=2.2, ENA_SUBJ_ODD_CASE=3.2,) s
+5 225 M
+(        RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001] autolearn=disabled) s
+5 214 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 203 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 192 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 181 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 170 M
+(10024\)) s
+5 159 M
+(        with ESMTP id vK7ZcAf5YOiP for <users@activemq.apache.org>;) s
+5 148 M
+(        Mon, 21 Oct 2024 14:57:12 +0000 \(UTC\)) s
+5 137 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2607:f8b0:4864:20::32f; helo) s
+5 126 M
+(=mail-ot1-x32f.google.com; envelope-from=mattrpav@gmail.com; receiver=<UNKNOWN> ) s
+5 115 M
+(Received: from mail-ot1-x32f.google.com \(mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:) s
+5 104 M
+(20::32f]\)) s
+5 93 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 82 M
+(d 755C1816AC) s
+5 71 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 14:57:12 +0000 \(UTC\)) s
+5 60 M
+(Received: by mail-ot1-x32f.google.com with SMTP id 46e09a7af769-7181285c7c4so1968499a34) s
+5 49 M
+(.0) s
+5 38 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 07:57:12 -0700 \(PDT\)) s
+5 27 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 16 M
+(        d=gmail.com; s=20230601; t=1729522631; x=1730127431; darn=activemq.apache.org;) s
+5 5 M
+(        h=message-id:in-reply-to:to:references:date:subject:mime-version) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(         :content-transfer-encoding:from:from:to:cc:subject:date:message-id) s
+5 676 M
+(         :reply-to;) s
+5 665 M
+(        bh=XcyAo+yaLq9cd0UeT+yOOs/VTknl93GGqen7wJ5wtHc=;) s
+5 654 M
+(        b=Lrl3YZTGo5bOjKz++FyyZsUR49xje1JC6+2BkrdxqIjDPN9Flz47Al7WAcBuKfUtnh) s
+5 643 M
+(         jWyd3DUPA3P4su67J2KPlWl+pjPs7dUE7IeEYSMoHhnkpbH0cgR5j3LgLFqS5s/P7eE6) s
+5 632 M
+(         Sys450ZbZjaX7PTNJLRucQokV08jIn4svyTSIvBZk43Fzw912tmsJs4dnjkcyAyR5/3f) s
+5 621 M
+(         gIGiX62oBRnwgYRhCsmzoQJ+nvHG8qmSBymMh0KukQ3pK2Ep9DXzRAMLD/0wQRCCkfqg) s
+5 610 M
+(         sF1IYy8ZQ6vPHDu8jeEcZd+TOz3l9JHKjgfPB1AH8n2Y6D14lFvVkk1ydoYFKaeDv0zK) s
+5 599 M
+(         i9KA==) s
+5 588 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 577 M
+(        d=1e100.net; s=20230601; t=1729522631; x=1730127431;) s
+5 566 M
+(        h=message-id:in-reply-to:to:references:date:subject:mime-version) s
+5 555 M
+(         :content-transfer-encoding:from:x-gm-message-state:from:to:cc) s
+5 544 M
+(         :subject:date:message-id:reply-to;) s
+5 533 M
+(        bh=XcyAo+yaLq9cd0UeT+yOOs/VTknl93GGqen7wJ5wtHc=;) s
+5 522 M
+(        b=uXu37ggEgPak9AMoHZu5tjqVjMX3AUj8VfLZJeqYjiCaBukLFM1C/lvj4mc9trIt+P) s
+5 511 M
+(         GHPxk05k84iGPM1vtb7Ru3+hs3ReM51NKEzAgQU5OL2lp7OLgGUJeEct+jmcI44TROa8) s
+5 500 M
+(         ccfiBbuhpMG0WLtaRARsQ5OP9PyYMLyRGXLy1yLIwqO172k6xuKPjsS/lco2mO8CJ3pb) s
+5 489 M
+(         lKPIbNZBeyp9xUrnQdM4MJSNMiPncLHcjU+5M9tvmhwOWo+rqMDnxBflYYn2itFFSlop) s
+5 478 M
+(         O+zEn/u5aJzPGph6RaZuxQ5YSXSsycDr5yN7Z8qrwrp7o8V5IK/WESEFfdqwEISfWF5n) s
+5 467 M
+(         6dyA==) s
+5 456 M
+(X-Gm-Message-State: AOJu0YyoyFUOUcCVIRwkcDEykL8DK1qmmE9/GZYG5Al2OxwRYcGx3ijg) s
+5 445 M
+(        kWufaPcjuiLgNewJiv5Y9O+xUJRbtbWhJkDQAK6+EdAlWaO93LHm40Mrxg==) s
+5 434 M
+(X-Google-Smtp-Source: AGHT+IEAFPLEOTjoi8qA7izLaTqzGQhrJasejkpzaJqCkH0bz8khmG3CC2pnm9VD+) s
+5 423 M
+(B7vclkeEjUS1A==) s
+5 412 M
+(X-Received: by 2002:a05:6830:6a98:b0:718:10eb:1eab with SMTP id 46e09a7af769-7181a6eddd) s
+5 401 M
+(2mr10123080a34.11.1729522630749;) s
+5 390 M
+(        Mon, 21 Oct 2024 07:57:10 -0700 \(PDT\)) s
+5 379 M
+(Received: from smtpclient.apple \(syn-068-203-012-010.res.spectrum.com. [68.203.12.10]\)) s
+5 368 M
+(        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7182ec03211sm773739a34.67.2024.1) s
+5 357 M
+(0.21.07.57.10) s
+5 346 M
+(        for <users@activemq.apache.org>) s
+5 335 M
+(        \(version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128\);) s
+5 324 M
+(        Mon, 21 Oct 2024 07:57:10 -0700 \(PDT\)) s
+5 313 M
+(From: Matt Pavlovich <mattrpav@gmail.com>) s
+5 302 M
+(Content-Type: text/plain;) s
+5 291 M
+(        charset=utf-8) s
+5 280 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 269 M
+(Mime-Version: 1.0 \(Mac OS X Mail 16.0 \\\(3818.100.11.1.3\\\)\)) s
+5 258 M
+(Subject: Re: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?) s
+5 247 M
+(Date: Mon, 21 Oct 2024 09:56:59 -0500) s
+5 236 M
+(References: <DB9PR07MB8474EAAEBF2DDD37D248DEF494432@DB9PR07MB8474.eurprd07.prod.outlook) s
+5 225 M
+(.com>) s
+5 214 M
+(To: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 203 M
+(In-Reply-To: <DB9PR07MB8474EAAEBF2DDD37D248DEF494432@DB9PR07MB8474.eurprd07.prod.outloo) s
+5 192 M
+(k.com>) s
+5 181 M
+(Message-Id: <D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com>) s
+5 170 M
+(X-Mailer: Apple Mail \(2.3818.100.11.1.3\)) s
+5 148 M
+(Hi Nicolas-) s
+5 126 M
+(The selector is cached from first consumer registration until it is =) s
+5 115 M
+(replaced by a new consumer registration. The selector is also written to =) s
+5 104 M
+(disk so it will become active on broker restart, so there is no loss =) s
+5 93 M
+(between broker startup and consume connecting.) s
+5 71 M
+(The selector will be active the entire time it is registered with the =) s
+5 60 M
+(broker up until a new selector is provided by a new consumer=E2=80=94 in =) s
+5 49 M
+(your example, that would be step #3 when the second selector would =) s
+5 38 M
+(become active and the first selector is deactivated.) s
+5 16 M
+(Thanks,) s
+5 5 M
+(Matt Pavlovich) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 3 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 676 M
+(> On Oct 21, 2024, at 4:58=E2=80=AFAM, CASAUX Nicolas =) s
+5 665 M
+(<nicolas.casaux@soprasteria.com> wrote:) s
+5 654 M
+(>=20) s
+5 643 M
+(>=20) s
+5 632 M
+(> Hello !) s
+5 621 M
+(>=20) s
+5 610 M
+(> I have a question regarding the VirtualSelectorCacheBrokerPlugin =) s
+5 599 M
+(mentioned here : =) s
+5 588 M
+(https://activemq.apache.org/components/classic/documentation/virtual-desti=) s
+5 577 M
+(nations) s
+5 566 M
+(>=20) s
+5 555 M
+(> If a consumer follows those actions in order:) s
+5 544 M
+(>=20) s
+5 533 M
+(>  1.  subscribes to a queue "Consumer.consumer01.VirtualTopic.invoices" =) s
+5 522 M
+(with selector "k1=3Dv1") s
+5 511 M
+(>  2.  disconnects) s
+5 500 M
+(>  3.  reconnects and subscribes to the same queue =) s
+5 489 M
+("Consumer.consumer01.VirtualTopic.invoices" with a new selector "k2=3Dv2") s
+5 478 M
+(>=20) s
+5 467 M
+(> How long will the "k1=3Dv1" condition will be used to forward message =) s
+5 456 M
+(from the topic to the queue ? Will it be forever ?) s
+5 445 M
+(> I could not find such info in the docs, and I was not able to find it =) s
+5 434 M
+(in the code. \(I saw the 10 mn scheduler to persist selectors, but it's =) s
+5 423 M
+(another topic\)) s
+5 412 M
+(>=20) s
+5 401 M
+(> Thanks in advance!) s
+5 390 M
+(>=20) s
+5 379 M
+(> Regards,) s
+5 368 M
+(> Nicolas) s
+5 357 M
+(>=20) s
+5 346 M
+(>=20) s
+5 335 M
+(> C2 - Usage restreint) s
+5 302 M
+(---------------------------------------------------------------------) s
+5 291 M
+(To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org) s
+5 280 M
+(For additional commands, e-mail: users-help@activemq.apache.org) s
+5 269 M
+(For further information, visit: https://activemq.apache.org/contact) s
+5 236 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 225 M
+(Return-Path: <users-return-57554-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 214 M
+(rg>) s
+5 203 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 192 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 181 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 170 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id B8AE93E680) s
+5 159 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 15:26:58 +0000 \(UT) s
+5 148 M
+(C\)) s
+5 137 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 126 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 115 M
+(        \(No client certificate requested\)) s
+5 104 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 93 M
+(ESMTPS id A820E49402) s
+5 82 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 15:26:57 +0000 \(UT) s
+5 71 M
+(C\)) s
+5 60 M
+(Received: \(qmail 1609486 invoked by uid 998\); 21 Oct 2024 15:26:56 -0000) s
+5 49 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 38 M
+(Precedence: bulk) s
+5 27 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 16 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 5 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 4 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(List-Id: <users.activemq.apache.org>) s
+5 676 M
+(Reply-To: users@activemq.apache.org) s
+5 665 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 654 M
+(Received: \(qmail 1609419 invoked by uid 116\); 21 Oct 2024 15:26:53 -0000) s
+5 643 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 632 M
+(6.100\)) s
+5 621 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Mon, 21 Oct 2024 15:26:53 +0000) s
+5 610 M
+(Authentication-Results: apache.org; auth=none) s
+5 599 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 588 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 577 M
+(ith ESMTP id E48882001E1) s
+5 566 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 15:26:53 +0000 \(UTC\)) s
+5 555 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 544 M
+(X-Spam-Flag: NO) s
+5 533 M
+(X-Spam-Score: 5.202) s
+5 522 M
+(X-Spam-Level: *****) s
+5 511 M
+(X-Spam-Status: No, score=5.202 tagged_above=-999 required=6.31) s
+5 500 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 489 M
+(        DKIM_VALID_EF=-0.1, ENA_SUBJ_LONG_WORD=2.2, ENA_SUBJ_ODD_CASE=3.2,) s
+5 478 M
+(        RCVD_IN_DNSWL_BLOCKED=0.001, RCVD_IN_MSPIKE_H2=-0.001,) s
+5 467 M
+(        RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,) s
+5 456 M
+(        RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,) s
+5 445 M
+(        URIBL_BLOCKED=0.001] autolearn=disabled) s
+5 434 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 423 M
+(        dkim=pass \(1024-bit key\) header.d=soprasteria.com) s
+5 412 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 401 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 390 M
+(10024\)) s
+5 379 M
+(        with ESMTP id iqKbFac9ntFm for <users@activemq.apache.org>;) s
+5 368 M
+(        Mon, 21 Oct 2024 15:26:53 +0000 \(UTC\)) s
+5 357 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=40.107.21.60; helo=eur05-vi1) s
+5 346 M
+(-obe.outbound.protection.outlook.com; envelope-from=nicolas.casaux@soprasteria.com; rec) s
+5 335 M
+(eiver=<UNKNOWN> ) s
+5 324 M
+(Received: from EUR05-VI1-obe.outbound.protection.outlook.com \(mail-vi1eur05on2060.outbo) s
+5 313 M
+(und.protection.outlook.com [40.107.21.60]\)) s
+5 302 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 291 M
+(d 63725816AC) s
+5 280 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 15:26:53 +0000 \(UTC\)) s
+5 269 M
+(ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;) s
+5 258 M
+( b=Kh7jLGaotOlAL1I7CndcOAoSb7M30SAU3p6YriSZ8gtOc7kz6dYhO3nKWzLDz0Uk+FENYFw4gQWj97JzyLn7) s
+5 247 M
+(J1zlVonT/UaJxzWi5hnnkn4fc9KNARh2jFfztVf3nvJsUUIS68vEQwpVuFMzGF4pKtGrKU5VINGAeJtRlRk8z+4) s
+5 236 M
+(bzEH375r5+MmGpqhMN4dUyUT4aBAMzCsjzcmrgfEo54JLRbI5OFbCyA5POoG+xwd738mby52JmuCNNkUMAad8sa) s
+5 225 M
+(oUTIZNQkc9F1HELOdKQ8vUjvonG2ohQzul1NvM4dn1UzHYUAYvFOv4lZL5MxGJ4HhbjoiduF6CH70HzUbmLg==) s
+5 214 M
+(ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;) s
+5 203 M
+( s=arcselector10001;) s
+5 192 M
+( h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-Messag) s
+5 181 M
+(eData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageDat) s
+5 170 M
+(a-1;) s
+5 159 M
+( bh=N2HQ1bSb5+OMaGdIR7y5HBw5q7HSkTDMIBxMYzU2rMA=;) s
+5 148 M
+( b=LYhLMS+eOODdXK5uFRribLI906cYl8gtq4h3Ec1ISnmxHdCbdRWOQSYMjwDsJq1BBn1iwzmx9lH88KWJ0SyW) s
+5 137 M
+(vlJVEDjcJab1xQOfPSxTEZDeBZj2FK5VZBMNCuWVwtU7p9vKIjq7K/3Pn9mlqq/bg5D78gDH5meirWFFe9yUI+y) s
+5 126 M
+(H3Pk5sjKbHwebimRSUiJ174OFbc6VCcEIA6Zt0vCz7FuSjY3kyVwsyYVWSAUQcBRY8P2Fx8IC7M9cZgS/04STrB) s
+5 115 M
+(RO2AmnYl0QQzrCDgwSUhzTB4ngPjwuAjI5Gx2GR2TpOqHSj0tSfTQ6CuoHvN+MY2RXdaouXdYutcosKfGv6Q==) s
+5 104 M
+(ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass) s
+5 93 M
+( smtp.mailfrom=soprasteria.com; dmarc=pass action=none) s
+5 82 M
+( header.from=soprasteria.com; dkim=pass header.d=soprasteria.com; arc=none) s
+5 71 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=soprasteria.com;) s
+5 60 M
+( s=selector1;) s
+5 49 M
+( h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;) s
+5 38 M
+( bh=N2HQ1bSb5+OMaGdIR7y5HBw5q7HSkTDMIBxMYzU2rMA=;) s
+5 27 M
+( b=UERDcrty7wtMy2szMobkHnwx+RwKohpQ2Px+8azJkweuODUyCy8PeiTRkCsjYdnKD8nvossQmNN00FYeE7ME) s
+5 16 M
+(OYVDj4nML8uknwMMlp2LYIADfN/CHZgerszML8J52nngZI/CQ8TtFfnPOGit+gbl4bU7XJz4936zA51Rwaqt93E) s
+5 5 M
+(=) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 5 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Received: from DB9PR07MB8474.eurprd07.prod.outlook.com \(2603:10a6:10:36e::13\)) s
+5 676 M
+( by DB9PR07MB7931.eurprd07.prod.outlook.com \(2603:10a6:10:2aa::21\) with) s
+5 665 M
+( Microsoft SMTP Server \(version=TLS1_2,) s
+5 654 M
+( cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\) id 15.20.8069.28; Mon, 21 Oct) s
+5 643 M
+( 2024 15:26:46 +0000) s
+5 632 M
+(Received: from DB9PR07MB8474.eurprd07.prod.outlook.com) s
+5 621 M
+( \([fe80::9d81:2fdd:7f92:c1f4]\) by DB9PR07MB8474.eurprd07.prod.outlook.com) s
+5 610 M
+( \([fe80::9d81:2fdd:7f92:c1f4%6]\) with mapi id 15.20.8069.024; Mon, 21 Oct 2024) s
+5 599 M
+( 15:26:46 +0000) s
+5 588 M
+(From: CASAUX Nicolas <nicolas.casaux@soprasteria.com>) s
+5 577 M
+(To: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 566 M
+(Subject: RE: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?) s
+5 555 M
+(Thread-Topic: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?) s
+5 544 M
+(Thread-Index: Adsjn7lq+Cu097wxR3mLx7s5XmXukgAKcEyAAACnPcA=) s
+5 533 M
+(Date: Mon, 21 Oct 2024 15:26:46 +0000) s
+5 522 M
+(Message-ID: ) s
+5 511 M
+( <DB9PR07MB84745473EE97F3CFC8C78DB994432@DB9PR07MB8474.eurprd07.prod.outlook.com>) s
+5 500 M
+(References: ) s
+5 489 M
+( <DB9PR07MB8474EAAEBF2DDD37D248DEF494432@DB9PR07MB8474.eurprd07.prod.outlook.com>) s
+5 478 M
+( <D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com>) s
+5 467 M
+(In-Reply-To: <D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com>) s
+5 456 M
+(Accept-Language: fr-FR, en-US) s
+5 445 M
+(Content-Language: fr-FR) s
+5 434 M
+(X-MS-Has-Attach: ) s
+5 423 M
+(X-MS-TNEF-Correlator: ) s
+5 412 M
+(msip_labels: ) s
+5 401 M
+( MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_ActionId=8e0b99cf-2b00-42a8-b4d3-f7edf) s
+5 390 M
+(41bcbcb;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_ContentBits=0;MSIP_Label_7bd1f1) s
+5 379 M
+(44-26ac-4410-8fdb-05c7de218e82_Enabled=true;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de21) s
+5 368 M
+(8e82_Method=Standard;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_Name=FR) s
+5 357 M
+( Usage) s
+5 346 M
+( restreint;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_SetDate=2024-10-21T15:15:41Z) s
+5 335 M
+(;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_SiteId=8b87af7d-8647-4dc7-8df4-5f69a20) s
+5 324 M
+(11bb5;) s
+5 313 M
+(authentication-results: dkim=none \(message not signed\)) s
+5 302 M
+( header.d=none;dmarc=none action=none header.from=soprasteria.com;) s
+5 291 M
+(x-ms-publictraffictype: Email) s
+5 280 M
+(x-ms-traffictypediagnostic: DB9PR07MB8474:EE_|DB9PR07MB7931:EE_) s
+5 269 M
+(x-ms-office365-filtering-correlation-id: 5da2581d-c415-49f5-59ac-08dcf1e4c651) s
+5 258 M
+(x-ms-exchange-senderadcheck: 1) s
+5 247 M
+(x-ms-exchange-antispam-relay: 0) s
+5 236 M
+(x-microsoft-antispam: ) s
+5 225 M
+( BCL:0;ARA:13230040|4022899009|366016|376014|1800799024|38070700018;) s
+5 214 M
+(x-microsoft-antispam-message-info: ) s
+5 203 M
+( =?utf-8?B?eXBtTDErSGYvQmJCSmVPVUUrQ0NqVXQ5RVQ0a1dRME4rS3N2RmdpZG45dmZi?=) s
+5 192 M
+( =?utf-8?B?eWR1dzczMkU5MGFabmFmQWVuZDZ2d08wQm5WYXRWNk1VcDA2RVc3bmpXWTNR?=) s
+5 181 M
+( =?utf-8?B?NzBJNXNVY3VDYVhxUE5xSzJON3BKY0pJSEdjM3ZYNlVyWmFlSDBqcWx1NU5m?=) s
+5 170 M
+( =?utf-8?B?eGNjaUhSY2NrYXhhMHJIOWlJU0hxNXcreTl2U2Z3V3JaVExyaTNGL3VmUlp2?=) s
+5 159 M
+( =?utf-8?B?ZkttWFVyVzVPcER4SFVadWtMWDJzNlBZakIzbDJicjVTeXVPTVFHVngxcEdp?=) s
+5 148 M
+( =?utf-8?B?ZStZam0rWmFFRmpsNWhTSDdZT3FETGw5VVc5NUNqNDhVWEc3dEtKaGl2UzRP?=) s
+5 137 M
+( =?utf-8?B?dkJod1RtUk5IRmFoZGdJUzJHYmtIL0orMWFZMlNQTVhTUVFSWTFGSFc5WHVW?=) s
+5 126 M
+( =?utf-8?B?V0RpVExJblFlbUx1QnhPbVh6UlQxbktGUGkzVG81ejBvd3pVdTNpZ09Uc1ho?=) s
+5 115 M
+( =?utf-8?B?QUNQbjc2WXdvZTRnYnZOeGgyUmNiS3JibWxBMWp5N3RjRFAvSlVmakpNU2tP?=) s
+5 104 M
+( =?utf-8?B?aFN3cm5zTHFST0NnbFVaUXRKb3FSeWdaZWtPRVNFZC9Odmx5Kzk0VmUxRWxW?=) s
+5 93 M
+( =?utf-8?B?d28yckVteDN0UlF3NUVkR014QVhwSk9MR0NteC83NCtTTk1BQ01YUVZwcEly?=) s
+5 82 M
+( =?utf-8?B?dVVOZGNrdTMrRFlQOE12dVJRRWV2NXRoc25ESjhKMGtUNHBmUE4remlwYnBl?=) s
+5 71 M
+( =?utf-8?B?SlpVeDBTWWdYQU1tcmhWNFJmMitXRHI5QXl5QVpOcnZIakM3cFhSS3hXbmVn?=) s
+5 60 M
+( =?utf-8?B?ZXQ3UHByZG5uUk9JV2RKdmZ5V1FxVUFENERHRExBT3MyZExJdklCTU9TUGRJ?=) s
+5 49 M
+( =?utf-8?B?QkppWnU2U2VEN1VYZU1MS0Vobnlpakxwb2JoTSt6bEFocWZKNVh3OWFQQ05v?=) s
+5 38 M
+( =?utf-8?B?QVhxNHlNckxnZVArUzZ4QW5iOGU0cmJPNU9pbUo3a1FGRXU4aHFOc2g5ZGoy?=) s
+5 27 M
+( =?utf-8?B?cVdMYUdQTVdsMm1TRTYybGlSMitiemlibEo3aG9sVENUeVBrb2wwaHRtNXE2?=) s
+5 16 M
+( =?utf-8?B?dDVNNE42OUNrdWFETkU3aTJtalF0OGxjQ0tVZzY2dk5FV2xibjdqRlpMWmNa?=) s
+5 5 M
+( =?utf-8?B?dGpkbnVKQkhFL3F5RU1hdFdLK2kxWGRpQnlDTnJncitUU3pKUTMxOUZra3pq?=) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 6 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+( =?utf-8?B?K2dUazM4RU4wcWc4U1c2NmR3SkdoV04zU25TSU1JTlE5cVlJOS84bWs2djhM?=) s
+5 676 M
+( =?utf-8?B?cDBvL2ZjeFM0dGJNWW5pQy96WUNSV29WcStTMzJyUEhrOFFkTnpydVlqMmNi?=) s
+5 665 M
+( =?utf-8?B?WVZ3Znk4aDZMNUkzT1hVRDVyTHI1dUJ5VGNycW5KbTkwKzRIRFU0SUxtNlJs?=) s
+5 654 M
+( =?utf-8?B?NW9MQ3RvamUrWXFpMzZaWk82YlNVMUFCZHdReEZkdjRtS0pmb21PVHpWV0R0?=) s
+5 643 M
+( =?utf-8?B?SjFNSys1ajBUeTlPblduQlkrSU45bFF6dXk5MitLbzJYVVdmUzArWnlDRThv?=) s
+5 632 M
+( =?utf-8?B?TzhJWGFpcCtwaDdMeE5uZDVESTA4OFFINDdEM0wzanpXaERrWk9hNUJZNVdM?=) s
+5 621 M
+( =?utf-8?B?aEhrQnpod1RPenJoSFNNYytndXpubGNWbmpDeDQ1VmtqTVhOSklDYjZ1MGR6?=) s
+5 610 M
+( =?utf-8?B?VldKTnI0ZDk1VjZJMVZ4QktzMy9qaXk1ZHFCRXVhcVpZN2ZYTXAvMmJla0w0?=) s
+5 599 M
+( =?utf-8?B?ME44eHllV2E5RjhBMUFIeDlQVndLb0hudFVMdU9RZEVRTFUxbDRoVDNWRTBD?=) s
+5 588 M
+( =?utf-8?B?R3JVVnFES1F5L0pDNnRlWjZEcXhoa0tvY2l1NWQ3dWZNZGRTOU43SVR3TE9s?=) s
+5 577 M
+( =?utf-8?B?NzlwaldPd1ZZektGNkRvSjVpSlFYU0pLRGp2SjV3STdjRWhaRytGb3FmK0FW?=) s
+5 566 M
+( =?utf-8?B?YzE1NnIxb2NjQ3ZpVlJHMXBzVi95cVVaNzRUNFhIV05ySVhRQk8zRGhDc0pD?=) s
+5 555 M
+( =?utf-8?Q?LbnU/mn7Pjfp4?=) s
+5 544 M
+(x-forefront-antispam-report: ) s
+5 533 M
+( CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR07MB8474.eurprd07) s
+5 522 M
+(.prod.outlook.com;PTR:;CAT:NONE;SFS:\(13230040\)\(4022899009\)\(366016\)\(376014\)\(1800799024\)\() s
+5 511 M
+(38070700018\);DIR:OUT;SFP:1101;) s
+5 500 M
+(x-ms-exchange-antispam-messagedata-chunkcount: 1) s
+5 489 M
+(x-ms-exchange-antispam-messagedata-0: ) s
+5 478 M
+( =?utf-8?B?Rm94eHVBbWg2MkxhbERrZlQvc1huazZKeFB3NXZwbjg4YjV2aUxieUJJeVlK?=) s
+5 467 M
+( =?utf-8?B?eVFXeTdrZWhWUDl3UE9xdE1iYzVzL3JtUUlwRldBN01MNVB6YVZVTjdndkVL?=) s
+5 456 M
+( =?utf-8?B?V2FsRnQ4MVE2cnkxUUl1LzZ3dEQwbVhrUXo4UTAvVEJ1d2dNNkVoeGtiN2JU?=) s
+5 445 M
+( =?utf-8?B?bGYvaXg5RkN0MVpxMC9NZk5Cc2VuelVFWEZNU1lHb1NxNjh6T24wM09PUjNq?=) s
+5 434 M
+( =?utf-8?B?dHFaVEpaR3B4U05QVGlEOW1yR3ljMWxUeUVLZGRac3RRMFk4RTY0TGZ4d0hw?=) s
+5 423 M
+( =?utf-8?B?V3AzLzZBYThTdnd3Z1VFRzJBSHdmTHViK1pqaVk2cTVadlorZm56bjRGZm80?=) s
+5 412 M
+( =?utf-8?B?YVVncGZDaFBYT2ErK1A3MXhNcFNwbkJIaE8raDIvR0hXNGhxbXpvVWkyTG5n?=) s
+5 401 M
+( =?utf-8?B?aXhWazVzeHQzR0FnT0JyQlVJSlVBVW1oRVhYQW5OZVlXR3ZKaGNUR1ptQ0tP?=) s
+5 390 M
+( =?utf-8?B?MGhiYWRBTldIUlUvV0lVS2l1Vi9NTHgxS3B4cEJ6QWFSZ05zWjJPbmZCMFFK?=) s
+5 379 M
+( =?utf-8?B?cTRjOURlMlA0RlNDcnBpdG0wSE1EbmMwMkMwYVVudFN3RURjc1IzSC9paWFT?=) s
+5 368 M
+( =?utf-8?B?SEVOOVRnSGZuUVVPVEhGWTNxTk9iOExsUkJHQmlmQ2VjT1ZnTWgyWUZqNldp?=) s
+5 357 M
+( =?utf-8?B?NEt2aDB2UGY0Y1p0MzBVNDRlaGxQbU1lTDMyd29YR0J2R2NOUFFNemM3YjdF?=) s
+5 346 M
+( =?utf-8?B?SXJLSllUai9QQndwWllHOWFQS2o1SEZEN1FiTURTd2FmYjhWeDZLS1BsTGdv?=) s
+5 335 M
+( =?utf-8?B?UlVTZXduRnZ5Tm0vd2M0MTliYjkxcmN1ejV2SHZaOXQ3bm5idXFILytwUkdS?=) s
+5 324 M
+( =?utf-8?B?SE1jVnFVdVlndTkxdFEwWFpkb2hWTm5qUndRZzBWa2F3VFNXNENFK3hyQWk2?=) s
+5 313 M
+( =?utf-8?B?d3YxUlFJU2pQYnloTDhhaUtOMFFxZDV0QWJMbUlMeHV0WUlqYnV3Mm95alI4?=) s
+5 302 M
+( =?utf-8?B?M2k2a094RTZFSUdHaStkTitvU2graE1mN2phTWJ4cFl3RmJXeWQyODkwOWhp?=) s
+5 291 M
+( =?utf-8?B?WTk1KzlYUGJ1V2x4TS9lalhOZERPbW5HaFE5UVdkcDRsczdtblVQY0EzRmdI?=) s
+5 280 M
+( =?utf-8?B?QUhOdHNRRzY2dlE1eEJ5R0ljS2lxWGNKSWlSdFlKMTd2c1RFa3RDeFdjWTh3?=) s
+5 269 M
+( =?utf-8?B?eEltVktpRHVxZno2N1IrMmlnOFZJWHlyMTM1bzlCb25XZkhMaENndXM5QTNU?=) s
+5 258 M
+( =?utf-8?B?c2JZNjVHZFYveDJDR0EvSVNJdGxrak42VXVBcmJrUUdYNU5DTHVzM0RTeCtq?=) s
+5 247 M
+( =?utf-8?B?dnJDa1VsTnNVQmY1QXUwRnVYQWtwRVlobmdqeTN1VU9ZZFoyYmFRWVh0emFD?=) s
+5 236 M
+( =?utf-8?B?UHdvTkFoYXg5emNyd1JJa20rSzN5ODdGVXpnV2FiSnNhaFZxclYyTFFQRUgy?=) s
+5 225 M
+( =?utf-8?B?TFpoaEYwYSs2dStVWDFZT285WFpHSnNxbWJMQnZKVEtNaS9GcENJelJvcDhj?=) s
+5 214 M
+( =?utf-8?B?K1NjNlF1OWR0cFVCSTVFYmc4UnBCaEJmODRkT2Y2V1h0eEFWQWZoL2lkQ2hL?=) s
+5 203 M
+( =?utf-8?B?anlLOHQwSEZIYzcvM2lsQkZ2ZFpMbU0xQS9FU2g3cTZ6a2QvMzgvTkpTMDUy?=) s
+5 192 M
+( =?utf-8?B?SG5qY2RqVTR0NmVNM2FHQlNPODByOHZQNFRVYnJJcXZ5czRoYi9PdzFBcjRL?=) s
+5 181 M
+( =?utf-8?B?ZnRpVWhybFhGd0Q0VStiUDkrVk81R2V3UE5UVndEOEFNQWN0cktsVTViNnha?=) s
+5 170 M
+( =?utf-8?B?Ly9SQmcrY2tHMWtYZHMrbUpaV2wyMThib0xXeXlONTNuVTFPNGdzN29wZzBx?=) s
+5 159 M
+( =?utf-8?B?dS9uU2N5cWo2R1MwMHNYMklsNmJ6VGZyR21WMFpJMUhWeWE5cTNNSnZuNkFQ?=) s
+5 148 M
+( =?utf-8?B?TjVzQUw4QkJXOG4xa001MjYxaUQ2akxzUXVUWHR2QjBsd1hVVXFnRVBCOGc1?=) s
+5 137 M
+( =?utf-8?B?OFFCVUlOa2VLMk8vUjVKMytrL202cENDS1BGVERLcUF2UFhrejR1TjNDTWFp?=) s
+5 126 M
+( =?utf-8?B?TkZnMzc1M2VOS0IxKzBGMG9CdGNGR2M0VmRXMXVpNTF2K2kyWml2TXA4ZUZv?=) s
+5 115 M
+( =?utf-8?B?T3VTWkJSKzM5cGZxU01pQmxjSzdnMDU5YytaY3lBa2Y5NmJpaGlZZCtTZ0RH?=) s
+5 104 M
+( =?utf-8?B?QzloOWlEdlBwMmR3QVZ2bjhJUDZSdGoxQlIxMGNwVmVaWTN0eXlLeDZ3bzl1?=) s
+5 93 M
+( =?utf-8?B?ZFRJenF6eEdEd0ZKMmIvQ1BjN0kyMHovdHY0cG13aUNtTTJQd0tQRS9xbFhT?=) s
+5 82 M
+( =?utf-8?B?N3c9PQ==?=) s
+5 71 M
+(Content-Type: text/plain; charset="utf-8") s
+5 60 M
+(Content-Transfer-Encoding: base64) s
+5 49 M
+(MIME-Version: 1.0) s
+5 38 M
+(X-OriginatorOrg: soprasteria.com) s
+5 27 M
+(X-MS-Exchange-CrossTenant-AuthAs: Internal) s
+5 16 M
+(X-MS-Exchange-CrossTenant-AuthSource: DB9PR07MB8474.eurprd07.prod.outlook.com) s
+5 5 M
+(X-MS-Exchange-CrossTenant-Network-Message-Id: 5da2581d-c415-49f5-59ac-08dcf1e4c651) s
+_R
+S
+%%Page: (7) 7
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 7 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (7) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2024 15:26:46.1264) s
+5 676 M
+( \(UTC\)) s
+5 665 M
+(X-MS-Exchange-CrossTenant-fromentityheader: Hosted) s
+5 654 M
+(X-MS-Exchange-CrossTenant-id: 8b87af7d-8647-4dc7-8df4-5f69a2011bb5) s
+5 643 M
+(X-MS-Exchange-CrossTenant-mailboxtype: HOSTED) s
+5 632 M
+(X-MS-Exchange-CrossTenant-userprincipalname: MU/zpkCW6Tf7mSd6iPy/h9ecKkkapdV+ovVwsA/clf) s
+5 621 M
+(VnXGupuv+PS1AGMaqhw63TMpK4s9sew27wu5IvqSgtR6O207AA3eLrwkVmzle6zHU=) s
+5 610 M
+(X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR07MB7931) s
+5 599 M
+(X-MS-Exchange-CrossPremises-AuthAs: Internal) s
+5 588 M
+(X-MS-Exchange-CrossPremises-AuthMechanism: 04) s
+5 577 M
+(X-MS-Exchange-CrossPremises-AuthSource: DB9PR07MB8474.eurprd07.prod.outlook.com) s
+5 566 M
+(X-MS-Exchange-CrossPremises-TransportTrafficType: Email) s
+5 555 M
+(X-MS-Exchange-CrossPremises-SCL: 1) s
+5 544 M
+(X-MS-Exchange-CrossPremises-messagesource: StoreDriver) s
+5 533 M
+(X-MS-Exchange-CrossPremises-BCC: ) s
+5 522 M
+(X-MS-Exchange-CrossPremises-originalclientipaddress: 81.66.135.116) s
+5 511 M
+(X-MS-Exchange-CrossPremises-transporttraffictype: Email) s
+5 500 M
+(X-MS-Exchange-CrossPremises-disclaimer-hash: 0a291ef45dbeaddd3c2a8ba60f43906764fc4f3e49) s
+5 489 M
+(5eff2ecd40117e05115c44) s
+5 478 M
+(X-MS-Exchange-CrossPremises-antispam-scancontext: DIR:Originating;SFV:NSPM;SKIP:0;) s
+5 467 M
+(X-MS-Exchange-CrossPremises-processed-by-journaling: Journal Agent) s
+5 456 M
+(X-OrganizationHeadersPreserved: DB9PR07MB7931.eurprd07.prod.outlook.com) s
+5 434 M
+(DQoNCkhlbGxvIE1hdHQsDQoNClRoYW5rcyBmb3IgeW91ciBhbnN3ZXIuIEhvd2V2ZXIsIEknbSBu) s
+5 423 M
+(b3QgYWJsZSB0byByZXByb2R1Y2Ugd2hhdCB5b3Ugc3VnZ2VzdHMgb3IgSSBtYXliZSBtaXN1bmRl) s
+5 412 M
+(cnN0b29kIHNvbWV0aGluZy4gSGVyZSBpcyBteSB0ZXN0IHByb2NlZHVyZToNCg0KSWYgYSBjb25z) s
+5 401 M
+(dW1lcjoNCjEuIHN1YnNjcmliZXMgdG8gdGhlIHF1ZXVlICJDb25zdW1lci5jb25zdW1lcjAxLlZp) s
+5 390 M
+(cnR1YWxUb3BpYy5pbnZvaWNlcyIgd2l0aCBzZWxlY3RvciAiazE9djEiIGFuZCBDbGllbnRJRCAi) s
+5 379 M
+(bXlDbGllbnQiDQoyLiBkaXNjb25uZWN0cw0KMy4gcmVjb25uZWN0cyBhbmQgc3Vic2NyaWJlcyB0) s
+5 368 M
+(byB0aGUgcXVldWUgIkNvbnN1bWVyLmNvbnN1bWVyMDEuVmlydHVhbFRvcGljLmludm9pY2VzIiB3) s
+5 357 M
+(aXRoIHNlbGVjdG9yICJrMT12MiIgYW5kIENsaWVudElEICJteUNsaWVudCINCg0KVGhlbiwgdGhl) s
+5 346 M
+(IHNlbGVjdG9ycyBpbiBjYWNoZSBmcm9tIHRoZSBsb2dzIGFyZToNCiBERUJVRyB8IGN1cnJlbnQg) s
+5 335 M
+(c2VsZWN0b3JzIGluIGNhY2hlOiBbazE9J3YxJywgazE9J3YyJ10NCg0KU28sIHRoZSBmaXJzdCBz) s
+5 324 M
+(ZWxlY3RvciBpcyBuZXZlciByZXBsYWNlZCBvciByZW1vdmVkIGZyb20gdGhlIGNhY2hlLCBhbmQg) s
+5 313 M
+(dGhvc2UgdW53YW50ZWQgbWVzc2FnZSBhcmUgc3RpbGwgYmVpbmcgY29waWVkIHRvIHRoZSBxdWV1) s
+5 302 M
+(ZS4NCklzIHRoYXQgdGhlIGV4cGVjdGVkIGJlaGF2aW9yIG9yIGFtIEkgZG9pbmcgc29tZXRoaW5n) s
+5 291 M
+(IGluY29ycmVjdCA/DQoNClRoYW5rcyBpbiBhZHZhbmNlDQoNClJlZ2FyZHMsDQpOaWNvbGFzDQoN) s
+5 280 M
+(Ci0tLS0tTWVzc2FnZSBkJ29yaWdpbmUtLS0tLQ0KRGUgOiBNYXR0IFBhdmxvdmljaCA8bWF0dHJw) s
+5 269 M
+(YXZAZ21haWwuY29tPg0KRW52b3nDqSA6IGx1bmRpIDIxIG9jdG9icmUgMjAyNCAxNjo1Nw0Kw4Ag) s
+5 258 M
+(OiB1c2Vyc0BhY3RpdmVtcS5hcGFjaGUub3JnDQpPYmpldCA6IFJlOiBWaXJ0dWFsU2VsZWN0b3JD) s
+5 247 M
+(YWNoZUJyb2tlclBsdWdpbiAtIGV4cGlyYXRpb24gb2Ygc2VsZWN0b3JzID8NCg0KSGkgTmljb2xh) s
+5 236 M
+(cy0NCg0KVGhlIHNlbGVjdG9yIGlzIGNhY2hlZCBmcm9tIGZpcnN0IGNvbnN1bWVyIHJlZ2lzdHJh) s
+5 225 M
+(dGlvbiB1bnRpbCBpdCBpcyByZXBsYWNlZCBieSBhIG5ldyBjb25zdW1lciByZWdpc3RyYXRpb24u) s
+5 214 M
+(IFRoZSBzZWxlY3RvciBpcyBhbHNvIHdyaXR0ZW4gdG8gZGlzayBzbyBpdCB3aWxsIGJlY29tZSBh) s
+5 203 M
+(Y3RpdmUgb24gYnJva2VyIHJlc3RhcnQsIHNvIHRoZXJlIGlzIG5vIGxvc3MgYmV0d2VlbiBicm9r) s
+5 192 M
+(ZXIgc3RhcnR1cCBhbmQgY29uc3VtZSBjb25uZWN0aW5nLg0KDQpUaGUgc2VsZWN0b3Igd2lsbCBi) s
+5 181 M
+(ZSBhY3RpdmUgdGhlIGVudGlyZSB0aW1lIGl0IGlzIHJlZ2lzdGVyZWQgd2l0aCB0aGUgYnJva2Vy) s
+5 170 M
+(IHVwIHVudGlsIGEgbmV3IHNlbGVjdG9yIGlzIHByb3ZpZGVkIGJ5IGEgbmV3IGNvbnN1bWVy4oCU) s
+5 159 M
+(IGluIHlvdXIgZXhhbXBsZSwgdGhhdCB3b3VsZCBiZSBzdGVwICMzIHdoZW4gdGhlIHNlY29uZCBz) s
+5 148 M
+(ZWxlY3RvciB3b3VsZCBiZWNvbWUgYWN0aXZlIGFuZCB0aGUgZmlyc3Qgc2VsZWN0b3IgaXMgZGVh) s
+5 137 M
+(Y3RpdmF0ZWQuDQoNClRoYW5rcywNCk1hdHQgUGF2bG92aWNoDQoNCj4gT24gT2N0IDIxLCAyMDI0) s
+5 126 M
+(LCBhdCA0OjU44oCvQU0sIENBU0FVWCBOaWNvbGFzIDxuaWNvbGFzLmNhc2F1eEBzb3ByYXN0ZXJp) s
+5 115 M
+(YS5jb20+IHdyb3RlOg0KPg0KPg0KPiBIZWxsbyAhDQo+DQo+IEkgaGF2ZSBhIHF1ZXN0aW9uIHJl) s
+5 104 M
+(Z2FyZGluZyB0aGUgVmlydHVhbFNlbGVjdG9yQ2FjaGVCcm9rZXJQbHVnaW4NCj4gbWVudGlvbmVk) s
+5 93 M
+(IGhlcmUgOg0KPiBodHRwczovL2FjdGkvDQo+IHZlbXEuYXBhY2hlLm9yZyUyRmNvbXBvbmVudHMl) s
+5 82 M
+(MkZjbGFzc2ljJTJGZG9jdW1lbnRhdGlvbiUyRnZpcnR1YWwtZGVzdGkNCj4gbmF0aW9ucyZkYXRh) s
+5 71 M
+(PTA1JTdDMDIlN0NuaWNvbGFzLmNhc2F1eCU0MHNvcHJhc3RlcmlhLmNvbSU3QzY4OTYwZTFjYTdh) s
+5 60 M
+(Mw0KPiA0NWRkNTJlYzA4ZGNmMWUwYThmMSU3QzhiODdhZjdkODY0NzRkYzc4ZGY0NWY2OWEyMDEx) s
+5 49 M
+(YmI1JTdDMCU3QzAlN0M2Mzg2DQo+IDUxMTk0NDEzMjE5MDczJTdDVW5rbm93biU3Q1RXRnBiR1pz) s
+5 38 M
+(YjNkOGV5SldJam9pTUM0d0xqQXdNREFpTENKUUlqb2lWMmwNCj4gdU16SWlMQ0pCVGlJNklrMWhh) s
+5 27 M
+(V3dpTENKWFZDSTZNbjAlM0QlN0MwJTdDJTdDJTdDJnNkYXRhPXNHZXdwalp5R0NyJTJCbA0KPiBm) s
+5 16 M
+(SUNJOGxxQWZiSGh3WHFOVHdiYjUlMkZleEtqcERjSSUzRCZyZXNlcnZlZD0wDQo+DQo+IElmIGEg) s
+5 5 M
+(Y29uc3VtZXIgZm9sbG93cyB0aG9zZSBhY3Rpb25zIGluIG9yZGVyOg0KPg0KPiAgMS4gIHN1YnNj) s
+_R
+S
+%%Page: (8) 8
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 8 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (8) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(cmliZXMgdG8gYSBxdWV1ZSAiQ29uc3VtZXIuY29uc3VtZXIwMS5WaXJ0dWFsVG9waWMuaW52b2lj) s
+5 676 M
+(ZXMiIHdpdGggc2VsZWN0b3IgImsxPXYxIg0KPiAgMi4gIGRpc2Nvbm5lY3RzDQo+ICAzLiAgcmVj) s
+5 665 M
+(b25uZWN0cyBhbmQgc3Vic2NyaWJlcyB0byB0aGUgc2FtZSBxdWV1ZSAiQ29uc3VtZXIuY29uc3Vt) s
+5 654 M
+(ZXIwMS5WaXJ0dWFsVG9waWMuaW52b2ljZXMiIHdpdGggYSBuZXcgc2VsZWN0b3IgImsyPXYyIg0K) s
+5 643 M
+(Pg0KPiBIb3cgbG9uZyB3aWxsIHRoZSAiazE9djEiIGNvbmRpdGlvbiB3aWxsIGJlIHVzZWQgdG8g) s
+5 632 M
+(Zm9yd2FyZCBtZXNzYWdlIGZyb20gdGhlIHRvcGljIHRvIHRoZSBxdWV1ZSA/IFdpbGwgaXQgYmUg) s
+5 621 M
+(Zm9yZXZlciA/DQo+IEkgY291bGQgbm90IGZpbmQgc3VjaCBpbmZvIGluIHRoZSBkb2NzLCBhbmQg) s
+5 610 M
+(SSB3YXMgbm90IGFibGUgdG8gZmluZCBpdA0KPiBpbiB0aGUgY29kZS4gKEkgc2F3IHRoZSAxMCBt) s
+5 599 M
+(biBzY2hlZHVsZXIgdG8gcGVyc2lzdCBzZWxlY3RvcnMsIGJ1dCBpdCdzDQo+IGFub3RoZXIgdG9w) s
+5 588 M
+(aWMpDQo+DQo+IFRoYW5rcyBpbiBhZHZhbmNlIQ0KPg0KPiBSZWdhcmRzLA0KPiBOaWNvbGFzDQo+) s
+5 577 M
+(DQo+DQo+IEMyIC0gVXNhZ2UgcmVzdHJlaW50DQoNCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t) s
+5 566 M
+(LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpUbyB1bnN1YnNj) s
+5 555 M
+(cmliZSwgZS1tYWlsOiB1c2Vycy11bnN1YnNjcmliZUBhY3RpdmVtcS5hcGFjaGUub3JnDQpGb3Ig) s
+5 544 M
+(YWRkaXRpb25hbCBjb21tYW5kcywgZS1tYWlsOiB1c2Vycy1oZWxwQGFjdGl2ZW1xLmFwYWNoZS5v) s
+5 533 M
+(cmcgRm9yIGZ1cnRoZXIgaW5mb3JtYXRpb24sIHZpc2l0OiBodHRwczovL2FjdGl2ZW1xLmFwYWNo) s
+5 522 M
+(ZS5vcmcvY29udGFjdA0KDQoNCg0KQzIg4oCTIFVzYWdlIHJlc3RyZWludA0K) s
+5 511 M
+(DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t) s
+5 500 M
+(LS0tLS0tLS0tLS0tLS0tLS0NClRvIHVuc3Vic2NyaWJlLCBlLW1haWw6IHVzZXJzLXVuc3Vi) s
+5 489 M
+(c2NyaWJlQGFjdGl2ZW1xLmFwYWNoZS5vcmcNCkZvciBhZGRpdGlvbmFsIGNvbW1hbmRzLCBl) s
+5 478 M
+(LW1haWw6IHVzZXJzLWhlbHBAYWN0aXZlbXEuYXBhY2hlLm9yZw0KRm9yIGZ1cnRoZXIgaW5m) s
+5 467 M
+(b3JtYXRpb24sIHZpc2l0OiBodHRwczovL2FjdGl2ZW1xLmFwYWNoZS5vcmcvY29udGFjdA0K) s
+5 456 M
+(DQoN) s
+5 445 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 434 M
+(Return-Path: <users-return-57590-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 423 M
+(rg>) s
+5 412 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 401 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 390 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 379 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 377123E6E9) s
+5 368 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 28 Oct 2024 13:46:01 +0000 \(UT) s
+5 357 M
+(C\)) s
+5 346 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 335 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 324 M
+(        \(No client certificate requested\)) s
+5 313 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 302 M
+(ESMTPS id C621044EF4) s
+5 291 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 28 Oct 2024 13:45:58 +0000 \(UT) s
+5 280 M
+(C\)) s
+5 269 M
+(Received: \(qmail 1428991 invoked by uid 998\); 28 Oct 2024 13:45:56 -0000) s
+5 258 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 247 M
+(Precedence: bulk) s
+5 236 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 225 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 214 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 203 M
+(List-Id: <users.activemq.apache.org>) s
+5 192 M
+(Reply-To: users@activemq.apache.org) s
+5 181 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 170 M
+(Received: \(qmail 1428755 invoked by uid 116\); 28 Oct 2024 13:45:50 -0000) s
+5 159 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 148 M
+(6.100\)) s
+5 137 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Mon, 28 Oct 2024 13:45:50 +0000) s
+5 126 M
+(Authentication-Results: apache.org; auth=none) s
+5 115 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 104 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 93 M
+(ith ESMTP id D50C7200206) s
+5 82 M
+(        for <users@activemq.apache.org>; Mon, 28 Oct 2024 13:45:50 +0000 \(UTC\)) s
+5 71 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 60 M
+(X-Spam-Flag: NO) s
+5 49 M
+(X-Spam-Score: 5.202) s
+5 38 M
+(X-Spam-Level: *****) s
+5 27 M
+(X-Spam-Status: No, score=5.202 tagged_above=-999 required=6.31) s
+5 16 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 5 M
+(        DKIM_VALID_EF=-0.1, ENA_SUBJ_LONG_WORD=2.2, ENA_SUBJ_ODD_CASE=3.2,) s
+_R
+S
+%%Page: (9) 9
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 9 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (9) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        RCVD_IN_DNSWL_BLOCKED=0.001, RCVD_IN_MSPIKE_H2=-0.001,) s
+5 676 M
+(        RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,) s
+5 665 M
+(        RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,) s
+5 654 M
+(        URIBL_BLOCKED=0.001] autolearn=disabled) s
+5 643 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 632 M
+(        dkim=pass \(1024-bit key\) header.d=soprasteria.com) s
+5 621 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 610 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 599 M
+(10024\)) s
+5 588 M
+(        with ESMTP id 1zJoRniIUfqR for <users@activemq.apache.org>;) s
+5 577 M
+(        Mon, 28 Oct 2024 13:45:50 +0000 \(UTC\)) s
+5 566 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=40.107.103.72; helo=eur03-vi) s
+5 555 M
+(1-obe.outbound.protection.outlook.com; envelope-from=nicolas.casaux@soprasteria.com; re) s
+5 544 M
+(ceiver=<UNKNOWN> ) s
+5 533 M
+(Received: from EUR03-VI1-obe.outbound.protection.outlook.com \(mail-vi1eur03on2072.outbo) s
+5 522 M
+(und.protection.outlook.com [40.107.103.72]\)) s
+5 511 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 500 M
+(d 58F2F8211D) s
+5 489 M
+(        for <users@activemq.apache.org>; Mon, 28 Oct 2024 13:45:50 +0000 \(UTC\)) s
+5 478 M
+(ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;) s
+5 467 M
+( b=kg1shZKJ5T0/4cZ4FenmfjiDes1rrsy8OGMeIQaCKIiJOXZ2N/l1jLDik+cQV/M9qJOOC7k3gN9jb1WcW/Nx) s
+5 456 M
+(mqgd9xQHxT7Ie7JJzZAuPamOAuiLprt9Ski9zp94q9ywuCvNMdFB+lIqMaoJqh691tp1E8hWKZiKFHXc4GLZZZc) s
+5 445 M
+(Mfd5Xx21pPnyHur6z3jtolv5V6WCSLbwdxWYeCngxA/lX9iozcwgJYLZFxwoOTPzxzUh/WA2K72yR/aZJndy2q4) s
+5 434 M
+(fRS+pPihhte1douUsZNiwhA3VJYgTu4kGGOAa6GOtRq6C1qtEovzM06Rl+z6wHzTizrO+2o29cKnu1BiKi7w==) s
+5 423 M
+(ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;) s
+5 412 M
+( s=arcselector10001;) s
+5 401 M
+( h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-Messag) s
+5 390 M
+(eData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageDat) s
+5 379 M
+(a-1;) s
+5 368 M
+( bh=mjXVXx1FrZnUwwZbE//HRIsJFjU8uQYZF0Hny3ZGoCE=;) s
+5 357 M
+( b=FI5K/Cr/UaGylSR1oRotOLvEDx5+wS1wTHN4hMQGL0xv0k+uIVSQtDgH/QDyXTuInZYAA8mP5Mm32eOnSXuU) s
+5 346 M
+(nP7psy9fCGdXYsmJsTwvtm/mc+brkplZFjNR/qb3BcmxqWrMUHsQ66DWKVDJvcedQ8vfAemQyboP9Sf2bX3eMx6) s
+5 335 M
+(tghtLZ3lzx4/n45dNpnZPtRm3oXXotxclvooU6MXahyhvzZG3hDnMGU4tQJAQO1W402BwEJwJ8kkmgOLUgevwC0) s
+5 324 M
+(p0ji5mOd+elymA+w42dUJ+hPmKgx4K633KEo/bD3pMvnkWhZjYuu4jkjCBdltMZ0YyrOHnhg/8m4aqoRFQpg==) s
+5 313 M
+(ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass) s
+5 302 M
+( smtp.mailfrom=soprasteria.com; dmarc=pass action=none) s
+5 291 M
+( header.from=soprasteria.com; dkim=pass header.d=soprasteria.com; arc=none) s
+5 280 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=soprasteria.com;) s
+5 269 M
+( s=selector1;) s
+5 258 M
+( h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;) s
+5 247 M
+( bh=mjXVXx1FrZnUwwZbE//HRIsJFjU8uQYZF0Hny3ZGoCE=;) s
+5 236 M
+( b=E1bxl0tIxRVoNfdrTVKyRxIeFkzRrrUu0rzIkVjFJFGNSj79tdrGTgoN9Vvr/ulH59iyCXAlC0OEnBmYTlUU) s
+5 225 M
+(Z4+xcQMc5SgmIuS6/7sbyIIMwCdw5NFsqW06Q3wwSN8BEjyyteEWvPdv5xmxsTkT2ohYlm1odGMY+4uimboMjcA) s
+5 214 M
+(=) s
+5 203 M
+(Received: from DB9PR07MB8474.eurprd07.prod.outlook.com \(2603:10a6:10:36e::13\)) s
+5 192 M
+( by DB9PR07MB7948.eurprd07.prod.outlook.com \(2603:10a6:10:26f::23\) with) s
+5 181 M
+( Microsoft SMTP Server \(version=TLS1_2,) s
+5 170 M
+( cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\) id 15.20.8093.25; Mon, 28 Oct) s
+5 159 M
+( 2024 13:45:42 +0000) s
+5 148 M
+(Received: from DB9PR07MB8474.eurprd07.prod.outlook.com) s
+5 137 M
+( \([fe80::9d81:2fdd:7f92:c1f4]\) by DB9PR07MB8474.eurprd07.prod.outlook.com) s
+5 126 M
+( \([fe80::9d81:2fdd:7f92:c1f4%6]\) with mapi id 15.20.8093.021; Mon, 28 Oct 2024) s
+5 115 M
+( 13:45:42 +0000) s
+5 104 M
+(From: CASAUX Nicolas <nicolas.casaux@soprasteria.com>) s
+5 93 M
+(To: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 82 M
+(Subject: RE: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?) s
+5 71 M
+(Thread-Topic: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?) s
+5 60 M
+(Thread-Index: Adsjn7lq+Cu097wxR3mLx7s5XmXukgAKcEyAAACnPcABXNrigA==) s
+5 49 M
+(Date: Mon, 28 Oct 2024 13:45:42 +0000) s
+5 38 M
+(Message-ID: ) s
+5 27 M
+( <DB9PR07MB84741E15D7F9C891058E6B81944A2@DB9PR07MB8474.eurprd07.prod.outlook.com>) s
+5 16 M
+(References: ) s
+5 5 M
+( <DB9PR07MB8474EAAEBF2DDD37D248DEF494432@DB9PR07MB8474.eurprd07.prod.outlook.com>) s
+_R
+S
+%%Page: (10) 10
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 10 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (10) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+( <D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com>) s
+5 676 M
+( <DB9PR07MB84745473EE97F3CFC8C78DB994432@DB9PR07MB8474.eurprd07.prod.outlook.com>) s
+5 665 M
+(In-Reply-To: ) s
+5 654 M
+( <DB9PR07MB84745473EE97F3CFC8C78DB994432@DB9PR07MB8474.eurprd07.prod.outlook.com>) s
+5 643 M
+(Accept-Language: fr-FR, en-US) s
+5 632 M
+(Content-Language: fr-FR) s
+5 621 M
+(X-MS-Has-Attach: ) s
+5 610 M
+(X-MS-TNEF-Correlator: ) s
+5 599 M
+(msip_labels: ) s
+5 588 M
+( MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_ActionId=8e0b99cf-2b00-42a8-b4d3-f7edf) s
+5 577 M
+(41bcbcb;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_ContentBits=0;MSIP_Label_7bd1f1) s
+5 566 M
+(44-26ac-4410-8fdb-05c7de218e82_Enabled=true;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de21) s
+5 555 M
+(8e82_Method=Standard;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_Name=FR) s
+5 544 M
+( Usage) s
+5 533 M
+( restreint;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_SetDate=2024-10-21T15:15:41Z) s
+5 522 M
+(;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_SiteId=8b87af7d-8647-4dc7-8df4-5f69a20) s
+5 511 M
+(11bb5;) s
+5 500 M
+(authentication-results: dkim=none \(message not signed\)) s
+5 489 M
+( header.d=none;dmarc=none action=none header.from=soprasteria.com;) s
+5 478 M
+(x-ms-publictraffictype: Email) s
+5 467 M
+(x-ms-traffictypediagnostic: DB9PR07MB8474:EE_|DB9PR07MB7948:EE_) s
+5 456 M
+(x-ms-office365-filtering-correlation-id: a9486aea-ee08-4d89-76d4-08dcf756d122) s
+5 445 M
+(x-ms-exchange-senderadcheck: 1) s
+5 434 M
+(x-ms-exchange-antispam-relay: 0) s
+5 423 M
+(x-microsoft-antispam: ) s
+5 412 M
+( BCL:0;ARA:13230040|1800799024|376014|366016|4022899009|38070700018;) s
+5 401 M
+(x-microsoft-antispam-message-info: ) s
+5 390 M
+( =?utf-8?B?eU45cUJsTTE2K2J3UzBxUjlkU1BoVndTYWNMbm42WGR5Rjh3N2RYVXNVTDdR?=) s
+5 379 M
+( =?utf-8?B?L0ZyRE13eW0yQmpwWXB1dldzOHFObkpualIvLzc0WjlDT0dTN2RRUWZlQzY0?=) s
+5 368 M
+( =?utf-8?B?NkRQYWhJVGVUVVN3RlVmemhyYzdmc0haVDNOY3lrQ2hyU3F6L1NrNHU1STR3?=) s
+5 357 M
+( =?utf-8?B?aXcyLy95VkFaTVNhZGlTTzIwZXA4UzAzVTBYVTdGR2xlNEY0SkpmKzlJQTRB?=) s
+5 346 M
+( =?utf-8?B?ZENZS3U1eTVzUkVnRm5ncnRLOXFMR1Q3cWdLQW1QVWd6NnJNUnpPSUxkakZr?=) s
+5 335 M
+( =?utf-8?B?d1AxeG53TnpIR3RSTy8vVWlwWkVUUk5PVkhFcGFSYSs0Tk5ZV2dENUJJUzZL?=) s
+5 324 M
+( =?utf-8?B?LzNqb2lsMHR4alI5Zjl6eGJFZXZrbjhlbVlyTHJOa3M3enlnMGtkazIvYThu?=) s
+5 313 M
+( =?utf-8?B?R0V5ek9BYnppYzVzM0RqcnN5UklkRVdhVkFrMWdFR3N5aUlJdjJqcEwyL2hw?=) s
+5 302 M
+( =?utf-8?B?VVFadm43ZnpYeWJwRzhnNkxHcjJoTWc0NjF2R2w5Q2ZlcHBjM25UR0NOVFo4?=) s
+5 291 M
+( =?utf-8?B?cDVTMHpNcGRralVnclJ4WHpGdG82ZW8zT3hsSHNyaXpZQk93MzJrbTdCUG9u?=) s
+5 280 M
+( =?utf-8?B?RWUrUWxRTDJDaWp0UjFXME9NTGd1M3kzRUEyOVpZb3UxNG52TjNJakdNMUxK?=) s
+5 269 M
+( =?utf-8?B?WHFpRVJyc0RVUncxWTduV2xOZzFYaVdzcnl6d25CWmJCc1RhTnhlalFkU0gw?=) s
+5 258 M
+( =?utf-8?B?bVpkb0M2LzdoSFV4Z3lEZHdPZ3JZTXFQVWQyT2FkNmJiMU1oNTNEZlQybCt5?=) s
+5 247 M
+( =?utf-8?B?WE9EM3dKSXRJZVpnRUs1TEwwdDR2d3k4UTUxcHZuRjlad0hrb3lFcFBvbzBN?=) s
+5 236 M
+( =?utf-8?B?b1BMR3lzSlVyMjMxTmxXbitEYnpxOVlUTXhVbUtPZFJGTHk1WFc3OTJNa3Jq?=) s
+5 225 M
+( =?utf-8?B?cHZtNVpJZVdKb21lQ3VvNTVjRkdUbnJnNW9tVGRtandjL2EwbXJ6c25vb3o3?=) s
+5 214 M
+( =?utf-8?B?eTdtN2c4b2d3WjdZazBwcy9xT1dKa0J5NWNwcmRxWUw4MVJGUjJpTFdrTnpP?=) s
+5 203 M
+( =?utf-8?B?blJybnBZcUhVTzArL29NSlJod1RmUlN0NFVVeG40dFpvS2tPeG5RN1lhMzUz?=) s
+5 192 M
+( =?utf-8?B?Rm1ZbUdpVDJ4ZDFqTC9RV1FqbnZ5emwwa0JqQkZBNFgwMldMdHBlUUg5OE1h?=) s
+5 181 M
+( =?utf-8?B?NGVTZFY5WUtqbFVCb3JuUDdDUkUwVjlUY2VXVEJYQU53Mk40dEs4WHRQeE81?=) s
+5 170 M
+( =?utf-8?B?YWdlMGhkcHdqWFZ0MkJ1M3ZKdVJsNCsxakJsU2syemYyb3pIZkZ4Z3AwUFdI?=) s
+5 159 M
+( =?utf-8?B?M01iKzhEK0pPNlVKWHdQN01qZjA2U01IbXJrTUFSYVhWTk5JVW1vOVhyKzNW?=) s
+5 148 M
+( =?utf-8?B?ZkM3S3BpbTJjeFNTUENZZktOaThmbHBKejlUTWdQZnJoWVhzKzB3VTg1WFRH?=) s
+5 137 M
+( =?utf-8?B?blNXQWZWVlVLKzJiQkNwNGhwaGRieDdPODk3VHdWVXk4eE84L0pSNmhMVG1q?=) s
+5 126 M
+( =?utf-8?B?V2ZMUTVTZHVuVlRVdWgvUXErbkJpa1QvWEpaWXg4VHNNR1lQWnE2N2FiYisw?=) s
+5 115 M
+( =?utf-8?B?aVhiN0J5VHFyMXk1S21SZS9wTHRBV2pjSkVCY2xmMEFjV3Z0ME16TXBHMTNM?=) s
+5 104 M
+( =?utf-8?B?S2g2L1BlT1BTWm9hbkh2dzlzdDBPY1NWTXVMaHhQeS9CTXBia0lYbVJ6cThp?=) s
+5 93 M
+( =?utf-8?B?TEFMVk4xb09BeE9iRklXa0xLbUhjdDJqWTBJYlBkN2hpblVUNldvOTMyMnpL?=) s
+5 82 M
+( =?utf-8?B?eTZxSmxoT0oxME5wQVY3YWFGQ3JJQ2R4MDI2UzJMcXFGWFZvM2Njc2d5WVhW?=) s
+5 71 M
+( =?utf-8?B?eTZiWmZqSEFpNnZQNi9yQi9RcjY5OWFpdndqeXRMZE1teGZaSkFCVDQwaHdw?=) s
+5 60 M
+( =?utf-8?B?T2pUZWZrT1FZSDFMbHgzTFZ5WFlQQzNDSnhoQnlWTGxiNjN5Sjgxak0ydU54?=) s
+5 49 M
+( =?utf-8?Q?ZJsK+5wmTnbd8?=) s
+5 38 M
+(x-forefront-antispam-report: ) s
+5 27 M
+( CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR07MB8474.eurprd07) s
+5 16 M
+(.prod.outlook.com;PTR:;CAT:NONE;SFS:\(13230040\)\(1800799024\)\(376014\)\(366016\)\(4022899009\)\() s
+5 5 M
+(38070700018\);DIR:OUT;SFP:1101;) s
+_R
+S
+%%Page: (11) 11
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 11 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (11) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(x-ms-exchange-antispam-messagedata-chunkcount: 1) s
+5 676 M
+(x-ms-exchange-antispam-messagedata-0: ) s
+5 665 M
+( =?utf-8?B?Z2o2UkdjSTF4dWxTZFcrZmtuVm0zSEhxUTZEMDM1TXBFMUw0ZW5zZ3RuZXRl?=) s
+5 654 M
+( =?utf-8?B?a1ViMFFVOE9SZXZqdWJGLzVzaFhPRmh0MEdDVGJjTUQ4bXFkMXNROVpROGpK?=) s
+5 643 M
+( =?utf-8?B?eC9QbGVDbm9IZmRlK285eW9DZ3RnNk1ML2l0NDJpSnFNTlVSMFpGZHVyY1FV?=) s
+5 632 M
+( =?utf-8?B?ZHpKaWRYR3FPTkJsYks3bVA2emhTY0ZHSWR4M1pocHJONzZJRUZhcFJVMmwr?=) s
+5 621 M
+( =?utf-8?B?RUpRd25uTlhMSEV6K0RuZVlaQUdkblM3b0JzaTFON2pPbldrUU92am5YTjlw?=) s
+5 610 M
+( =?utf-8?B?YmRtM3FxUkJWWjdlOVlCbW12TEV6dzN0OXFROVJEUCthdmZDL1lYM09VMllZ?=) s
+5 599 M
+( =?utf-8?B?VTlyRWN3ZFlIVGVUUXZPMXl0eE5wdG5neXRtYXVYemlJMWxiaWFtTGhMeUps?=) s
+5 588 M
+( =?utf-8?B?OGVHTlVzSVNNRlFRYTBDVjM4TlhENzQ5ZFUyV2FmQ1FvYzVpdk54MWxTZkRx?=) s
+5 577 M
+( =?utf-8?B?MVVjWWlmRWwzbE1WbWhXdXB6eFlZN2xpd3NjS1FocnlRMVA1L0J1MHRDR0Fw?=) s
+5 566 M
+( =?utf-8?B?dmZtZTFVQ1V3R3ZPYStLL21BWDBOVURFcXRaYzZvelF2WVhyZUhlYktLSU5s?=) s
+5 555 M
+( =?utf-8?B?RWZ6c3JrUG5iMGhQVVY0clVuV0ZrVnRUSGZtSmpJeDVyLzJMK3lpR09zRmJj?=) s
+5 544 M
+( =?utf-8?B?T0dEK1RUNkNZZGpGSVVnc2E2Z3JScytSSmkxRzNtamNrSmZXU1hxMjludmtw?=) s
+5 533 M
+( =?utf-8?B?WW1MQkJSemNZNmhIVnB4dmM3V0FVQ2FCdEpORHgzMkdmRXNrSjJVWVRjNHh0?=) s
+5 522 M
+( =?utf-8?B?dEVJSm9OalRWUXVyNmFmRE9pK3ovTy94WDBIN1kxdXFYdEtybDZ4cjBNeVJv?=) s
+5 511 M
+( =?utf-8?B?d2NvZkhBUUY2VmtmclUvQ3ZQTFJUWUgvRTBocHp5NzhUUFBIT2Q2Uy9qa1F5?=) s
+5 500 M
+( =?utf-8?B?OTBRaVpZN3V0KzdnRjZGS3Zka0pxUG80ankxbE5iWGNjRWxHR0NwUGhobVVk?=) s
+5 489 M
+( =?utf-8?B?dTcyOUtaUTBjc0gvNDhWdEZQS1JzM1BWOVNOYW9OK2I3ZjQ2VG9CU0NURmRQ?=) s
+5 478 M
+( =?utf-8?B?MVRTd0NwejhwTEdsVjl6TldwbmQ5K0JxMlp1cjVaVy9vbFVFWkVGZDhoYnlG?=) s
+5 467 M
+( =?utf-8?B?WDJYOVJxN1ZtemFFMDJoZWQzNklwdHlaQ3FtNlZSbnBYQmVKMjBmZjFtS05V?=) s
+5 456 M
+( =?utf-8?B?akJ5QWQxT3FkUWNvMkVXUzhHUHZtVTJJclhGTlRKTDdWQlJFMGUrYWpoMHlN?=) s
+5 445 M
+( =?utf-8?B?Z1RDdE13WmU1Tkltb3dpUXZYQnZZanFsVlA5V1BYZHdwRnRMUDY5aFE3dFRo?=) s
+5 434 M
+( =?utf-8?B?L2FaSFJkZDdkRXk5T2RoOGFVSWJWQThveUkwbEJRQ1lqcmNZbFBEL1ZvRytD?=) s
+5 423 M
+( =?utf-8?B?LzFIeDR4OXVIVkwzc0YrdlJlSUFrb3lQQjdlMzFRSk9teFEwVUdGa01IOXdk?=) s
+5 412 M
+( =?utf-8?B?c1liN0k0LytMbG9xZ1FyWmlmN0lrRmJQdjgxdTNORzQzaStwZlVBRk44ZTE0?=) s
+5 401 M
+( =?utf-8?B?N0FldlBRUy9GaEpxS0dXQUV0bmJycVE1dXlpSGRhQjFmdWR6aFJBUkVSK1NG?=) s
+5 390 M
+( =?utf-8?B?QVZwSFZrMXpROCsyOGg4L1B6TWhiV3B1aVRRaC84c282NUFXOUFYdk05WS9z?=) s
+5 379 M
+( =?utf-8?B?NHRoeFNITjVXdEhpK2MybXNTaHVCbjVVNUYvYWI0dDJFeXhLZUIwVHhhYWFq?=) s
+5 368 M
+( =?utf-8?B?emNadnZFZVpDSmM0NmFJenNaQjNhODBtaXo2eDF1LzFLL0xEYWVDKzZ5b0xG?=) s
+5 357 M
+( =?utf-8?B?VDQyc2VuNy9CdTJ0V2VuZ1QybVVMYmpmbktxSG5rSWc4ZjVHZ3dma2hvUmFy?=) s
+5 346 M
+( =?utf-8?B?NmxRaE4xOHcveVJNakJTajdiU2RhVDRIQ1Z3MS9VaElZOXVDbGFBYVJibGdP?=) s
+5 335 M
+( =?utf-8?B?UnM5NmYwdndQNzdQb0V0ZDZsckkvK0d2OFY2Z2VqN1pGTnJGS2ZYQ0FJWk8x?=) s
+5 324 M
+( =?utf-8?B?OHJhZVRSaHBpelhxbmpxZ1RvUURSbFozai9hVG1kNzVtZXkyUVBjdVY1RTRK?=) s
+5 313 M
+( =?utf-8?B?dG9tbzZZT3k5MEMvdStHeE5xb2gxcnFvc2xSL2ZpdE9MNWJ5TmFIcXdKTWMw?=) s
+5 302 M
+( =?utf-8?B?NERaNGpQSHVpU0xCaEpnUFFobzZaVnFpYWhKZlZGanpoVjkxbStyNkcwTkFk?=) s
+5 291 M
+( =?utf-8?B?UDQvUGhKSHNDdU02bUZrNVN6U2JjNDJBcVFvUkszZ1ZUQ3JqTXNacnVjRkp5?=) s
+5 280 M
+( =?utf-8?B?T2RUaEh5cDAvV2RtUUhjVmVXbXBuK0pvMGNucHFIWitCY3d4WHJWSU96eEha?=) s
+5 269 M
+( =?utf-8?B?Y3c9PQ==?=) s
+5 258 M
+(Content-Type: text/plain; charset="utf-8") s
+5 247 M
+(Content-Transfer-Encoding: base64) s
+5 236 M
+(MIME-Version: 1.0) s
+5 225 M
+(X-OriginatorOrg: soprasteria.com) s
+5 214 M
+(X-MS-Exchange-CrossTenant-AuthAs: Internal) s
+5 203 M
+(X-MS-Exchange-CrossTenant-AuthSource: DB9PR07MB8474.eurprd07.prod.outlook.com) s
+5 192 M
+(X-MS-Exchange-CrossTenant-Network-Message-Id: a9486aea-ee08-4d89-76d4-08dcf756d122) s
+5 181 M
+(X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Oct 2024 13:45:42.7517) s
+5 170 M
+( \(UTC\)) s
+5 159 M
+(X-MS-Exchange-CrossTenant-fromentityheader: Hosted) s
+5 148 M
+(X-MS-Exchange-CrossTenant-id: 8b87af7d-8647-4dc7-8df4-5f69a2011bb5) s
+5 137 M
+(X-MS-Exchange-CrossTenant-mailboxtype: HOSTED) s
+5 126 M
+(X-MS-Exchange-CrossTenant-userprincipalname: ESbmQooKjIAUyAdNB6ASQLHlNthdihfsoBj5Tg/C0A) s
+5 115 M
+(kxVwaysaJcS3OnYdiyI6mYPwGue7boiuuemX5gQveVaBsYRXhWeJDiLw01An0BUQU=) s
+5 104 M
+(X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR07MB7948) s
+5 93 M
+(X-MS-Exchange-CrossPremises-AuthAs: Internal) s
+5 82 M
+(X-MS-Exchange-CrossPremises-AuthMechanism: 04) s
+5 71 M
+(X-MS-Exchange-CrossPremises-AuthSource: DB9PR07MB8474.eurprd07.prod.outlook.com) s
+5 60 M
+(X-MS-Exchange-CrossPremises-TransportTrafficType: Email) s
+5 49 M
+(X-MS-Exchange-CrossPremises-SCL: 1) s
+5 38 M
+(X-MS-Exchange-CrossPremises-messagesource: StoreDriver) s
+5 27 M
+(X-MS-Exchange-CrossPremises-BCC: ) s
+5 16 M
+(X-MS-Exchange-CrossPremises-originalclientipaddress: 81.66.135.116) s
+5 5 M
+(X-MS-Exchange-CrossPremises-transporttraffictype: Email) s
+_R
+S
+%%Page: (12) 12
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 12 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (12) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(X-MS-Exchange-CrossPremises-disclaimer-hash: 0a291ef45dbeaddd3c2a8ba60f43906764fc4f3e49) s
+5 676 M
+(5eff2ecd40117e05115c44) s
+5 665 M
+(X-MS-Exchange-CrossPremises-antispam-scancontext: DIR:Originating;SFV:NSPM;SKIP:0;) s
+5 654 M
+(X-MS-Exchange-CrossPremises-processed-by-journaling: Journal Agent) s
+5 643 M
+(X-OrganizationHeadersPreserved: DB9PR07MB7948.eurprd07.prod.outlook.com) s
+5 621 M
+(DQoNCkhlbGxvLA0KDQpDb3VsZCBhbnlvbmUgY29uZmlybSBteSBhbmFseXNpcyBvciBpbmRpY2F0) s
+5 610 M
+(ZSBpZiBJJ20gZG9pbmcgc29tZXRoaW5nIHdyb25nIGhlcmUgPw0KVGhhbmtzIQ0KDQpOaWNvbGFz) s
+5 599 M
+(DQoNCi0tLS0tTWVzc2FnZSBkJ29yaWdpbmUtLS0tLQ0KRGUgOiBDQVNBVVggTmljb2xhcw0KRW52) s
+5 588 M
+(b3nDqSA6IGx1bmRpIDIxIG9jdG9icmUgMjAyNCAxNzoyNw0Kw4AgOiB1c2Vyc0BhY3RpdmVtcS5h) s
+5 577 M
+(cGFjaGUub3JnDQpPYmpldCA6IFJFOiBWaXJ0dWFsU2VsZWN0b3JDYWNoZUJyb2tlclBsdWdpbiAt) s
+5 566 M
+(IGV4cGlyYXRpb24gb2Ygc2VsZWN0b3JzID8NCg0KSGVsbG8gTWF0dCwNCg0KVGhhbmtzIGZvciB5) s
+5 555 M
+(b3VyIGFuc3dlci4gSG93ZXZlciwgSSdtIG5vdCBhYmxlIHRvIHJlcHJvZHVjZSB3aGF0IHlvdSBz) s
+5 544 M
+(dWdnZXN0cyBvciBJIG1heWJlIG1pc3VuZGVyc3Rvb2Qgc29tZXRoaW5nLiBIZXJlIGlzIG15IHRl) s
+5 533 M
+(c3QgcHJvY2VkdXJlOg0KDQpJZiBhIGNvbnN1bWVyOg0KMS4gc3Vic2NyaWJlcyB0byB0aGUgcXVl) s
+5 522 M
+(dWUgIkNvbnN1bWVyLmNvbnN1bWVyMDEuVmlydHVhbFRvcGljLmludm9pY2VzIiB3aXRoIHNlbGVj) s
+5 511 M
+(dG9yICJrMT12MSIgYW5kIENsaWVudElEICJteUNsaWVudCINCjIuIGRpc2Nvbm5lY3RzDQozLiBy) s
+5 500 M
+(ZWNvbm5lY3RzIGFuZCBzdWJzY3JpYmVzIHRvIHRoZSBxdWV1ZSAiQ29uc3VtZXIuY29uc3VtZXIw) s
+5 489 M
+(MS5WaXJ0dWFsVG9waWMuaW52b2ljZXMiIHdpdGggc2VsZWN0b3IgImsxPXYyIiBhbmQgQ2xpZW50) s
+5 478 M
+(SUQgIm15Q2xpZW50Ig0KDQpUaGVuLCB0aGUgc2VsZWN0b3JzIGluIGNhY2hlIGZyb20gdGhlIGxv) s
+5 467 M
+(Z3MgYXJlOg0KIERFQlVHIHwgY3VycmVudCBzZWxlY3RvcnMgaW4gY2FjaGU6IFtrMT0ndjEnLCBr) s
+5 456 M
+(MT0ndjInXQ0KDQpTbywgdGhlIGZpcnN0IHNlbGVjdG9yIGlzIG5ldmVyIHJlcGxhY2VkIG9yIHJl) s
+5 445 M
+(bW92ZWQgZnJvbSB0aGUgY2FjaGUsIGFuZCB0aG9zZSB1bndhbnRlZCBtZXNzYWdlIGFyZSBzdGls) s
+5 434 M
+(bCBiZWluZyBjb3BpZWQgdG8gdGhlIHF1ZXVlLg0KSXMgdGhhdCB0aGUgZXhwZWN0ZWQgYmVoYXZp) s
+5 423 M
+(b3Igb3IgYW0gSSBkb2luZyBzb21ldGhpbmcgaW5jb3JyZWN0ID8NCg0KVGhhbmtzIGluIGFkdmFu) s
+5 412 M
+(Y2UNCg0KUmVnYXJkcywNCk5pY29sYXMNCg0KLS0tLS1NZXNzYWdlIGQnb3JpZ2luZS0tLS0tDQpE) s
+5 401 M
+(ZSA6IE1hdHQgUGF2bG92aWNoIDxtYXR0cnBhdkBnbWFpbC5jb20+IEVudm95w6kgOiBsdW5kaSAy) s
+5 390 M
+(MSBvY3RvYnJlIDIwMjQgMTY6NTcgw4AgOiB1c2Vyc0BhY3RpdmVtcS5hcGFjaGUub3JnIE9iamV0) s
+5 379 M
+(IDogUmU6IFZpcnR1YWxTZWxlY3RvckNhY2hlQnJva2VyUGx1Z2luIC0gZXhwaXJhdGlvbiBvZiBz) s
+5 368 M
+(ZWxlY3RvcnMgPw0KDQpIaSBOaWNvbGFzLQ0KDQpUaGUgc2VsZWN0b3IgaXMgY2FjaGVkIGZyb20g) s
+5 357 M
+(Zmlyc3QgY29uc3VtZXIgcmVnaXN0cmF0aW9uIHVudGlsIGl0IGlzIHJlcGxhY2VkIGJ5IGEgbmV3) s
+5 346 M
+(IGNvbnN1bWVyIHJlZ2lzdHJhdGlvbi4gVGhlIHNlbGVjdG9yIGlzIGFsc28gd3JpdHRlbiB0byBk) s
+5 335 M
+(aXNrIHNvIGl0IHdpbGwgYmVjb21lIGFjdGl2ZSBvbiBicm9rZXIgcmVzdGFydCwgc28gdGhlcmUg) s
+5 324 M
+(aXMgbm8gbG9zcyBiZXR3ZWVuIGJyb2tlciBzdGFydHVwIGFuZCBjb25zdW1lIGNvbm5lY3Rpbmcu) s
+5 313 M
+(DQoNClRoZSBzZWxlY3RvciB3aWxsIGJlIGFjdGl2ZSB0aGUgZW50aXJlIHRpbWUgaXQgaXMgcmVn) s
+5 302 M
+(aXN0ZXJlZCB3aXRoIHRoZSBicm9rZXIgdXAgdW50aWwgYSBuZXcgc2VsZWN0b3IgaXMgcHJvdmlk) s
+5 291 M
+(ZWQgYnkgYSBuZXcgY29uc3VtZXLigJQgaW4geW91ciBleGFtcGxlLCB0aGF0IHdvdWxkIGJlIHN0) s
+5 280 M
+(ZXAgIzMgd2hlbiB0aGUgc2Vjb25kIHNlbGVjdG9yIHdvdWxkIGJlY29tZSBhY3RpdmUgYW5kIHRo) s
+5 269 M
+(ZSBmaXJzdCBzZWxlY3RvciBpcyBkZWFjdGl2YXRlZC4NCg0KVGhhbmtzLA0KTWF0dCBQYXZsb3Zp) s
+5 258 M
+(Y2gNCg0KPiBPbiBPY3QgMjEsIDIwMjQsIGF0IDQ6NTjigK9BTSwgQ0FTQVVYIE5pY29sYXMgPG5p) s
+5 247 M
+(Y29sYXMuY2FzYXV4QHNvcHJhc3RlcmlhLmNvbT4gd3JvdGU6DQo+DQo+DQo+IEhlbGxvICENCj4N) s
+5 236 M
+(Cj4gSSBoYXZlIGEgcXVlc3Rpb24gcmVnYXJkaW5nIHRoZSBWaXJ0dWFsU2VsZWN0b3JDYWNoZUJy) s
+5 225 M
+(b2tlclBsdWdpbg0KPiBtZW50aW9uZWQgaGVyZSA6DQo+IGh0dHBzOi8vYWN0aS8NCj4gdmVtcS5h) s
+5 214 M
+(cGFjaGUub3JnJTJGY29tcG9uZW50cyUyRmNsYXNzaWMlMkZkb2N1bWVudGF0aW9uJTJGdmlydHVh) s
+5 203 M
+(bC1kZXN0aQ0KPiBuYXRpb25zJmRhdGE9MDUlN0MwMiU3Q25pY29sYXMuY2FzYXV4JTQwc29wcmFz) s
+5 192 M
+(dGVyaWEuY29tJTdDNjg5NjBlMWNhN2EzDQo+IDQ1ZGQ1MmVjMDhkY2YxZTBhOGYxJTdDOGI4N2Fm) s
+5 181 M
+(N2Q4NjQ3NGRjNzhkZjQ1ZjY5YTIwMTFiYjUlN0MwJTdDMCU3QzYzODYNCj4gNTExOTQ0MTMyMTkw) s
+5 170 M
+(NzMlN0NVbmtub3duJTdDVFdGcGJHWnNiM2Q4ZXlKV0lqb2lNQzR3TGpBd01EQWlMQ0pRSWpvaVYy) s
+5 159 M
+(bA0KPiB1TXpJaUxDSkJUaUk2SWsxaGFXd2lMQ0pYVkNJNk1uMCUzRCU3QzAlN0MlN0MlN0Mmc2Rh) s
+5 148 M
+(dGE9c0dld3BqWnlHQ3IlMkJsDQo+IGZJQ0k4bHFBZmJIaHdYcU5Ud2JiNSUyRmV4S2pwRGNJJTNE) s
+5 137 M
+(JnJlc2VydmVkPTANCj4NCj4gSWYgYSBjb25zdW1lciBmb2xsb3dzIHRob3NlIGFjdGlvbnMgaW4g) s
+5 126 M
+(b3JkZXI6DQo+DQo+ICAxLiAgc3Vic2NyaWJlcyB0byBhIHF1ZXVlICJDb25zdW1lci5jb25zdW1l) s
+5 115 M
+(cjAxLlZpcnR1YWxUb3BpYy5pbnZvaWNlcyIgd2l0aCBzZWxlY3RvciAiazE9djEiDQo+ICAyLiAg) s
+5 104 M
+(ZGlzY29ubmVjdHMNCj4gIDMuICByZWNvbm5lY3RzIGFuZCBzdWJzY3JpYmVzIHRvIHRoZSBzYW1l) s
+5 93 M
+(IHF1ZXVlICJDb25zdW1lci5jb25zdW1lcjAxLlZpcnR1YWxUb3BpYy5pbnZvaWNlcyIgd2l0aCBh) s
+5 82 M
+(IG5ldyBzZWxlY3RvciAiazI9djIiDQo+DQo+IEhvdyBsb25nIHdpbGwgdGhlICJrMT12MSIgY29u) s
+5 71 M
+(ZGl0aW9uIHdpbGwgYmUgdXNlZCB0byBmb3J3YXJkIG1lc3NhZ2UgZnJvbSB0aGUgdG9waWMgdG8g) s
+5 60 M
+(dGhlIHF1ZXVlID8gV2lsbCBpdCBiZSBmb3JldmVyID8NCj4gSSBjb3VsZCBub3QgZmluZCBzdWNo) s
+5 49 M
+(IGluZm8gaW4gdGhlIGRvY3MsIGFuZCBJIHdhcyBub3QgYWJsZSB0byBmaW5kIGl0DQo+IGluIHRo) s
+5 38 M
+(ZSBjb2RlLiAoSSBzYXcgdGhlIDEwIG1uIHNjaGVkdWxlciB0byBwZXJzaXN0IHNlbGVjdG9ycywg) s
+5 27 M
+(YnV0IGl0J3MNCj4gYW5vdGhlciB0b3BpYykNCj4NCj4gVGhhbmtzIGluIGFkdmFuY2UhDQo+DQo+) s
+5 16 M
+(IFJlZ2FyZHMsDQo+IE5pY29sYXMNCj4NCj4NCj4gQzIgLSBVc2FnZSByZXN0cmVpbnQNCg0KDQot) s
+5 5 M
+(LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t) s
+_R
+S
+%%Page: (13) 13
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 13 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (13) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(LS0tLS0tLS0tLS0NClRvIHVuc3Vic2NyaWJlLCBlLW1haWw6IHVzZXJzLXVuc3Vic2NyaWJlQGFj) s
+5 676 M
+(dGl2ZW1xLmFwYWNoZS5vcmcNCkZvciBhZGRpdGlvbmFsIGNvbW1hbmRzLCBlLW1haWw6IHVzZXJz) s
+5 665 M
+(LWhlbHBAYWN0aXZlbXEuYXBhY2hlLm9yZyBGb3IgZnVydGhlciBpbmZvcm1hdGlvbiwgdmlzaXQ6) s
+5 654 M
+(IGh0dHBzOi8vYWN0aXZlbXEuYXBhY2hlLm9yZy9jb250YWN0DQoNCg0KDQpDMiDigJMgVXNhZ2Ug) s
+5 643 M
+(cmVzdHJlaW50DQo=) s
+5 632 M
+(DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t) s
+5 621 M
+(LS0tLS0tLS0tLS0tLS0tLS0NClRvIHVuc3Vic2NyaWJlLCBlLW1haWw6IHVzZXJzLXVuc3Vi) s
+5 610 M
+(c2NyaWJlQGFjdGl2ZW1xLmFwYWNoZS5vcmcNCkZvciBhZGRpdGlvbmFsIGNvbW1hbmRzLCBl) s
+5 599 M
+(LW1haWw6IHVzZXJzLWhlbHBAYWN0aXZlbXEuYXBhY2hlLm9yZw0KRm9yIGZ1cnRoZXIgaW5m) s
+5 588 M
+(b3JtYXRpb24sIHZpc2l0OiBodHRwczovL2FjdGl2ZW1xLmFwYWNoZS5vcmcvY29udGFjdA0K) s
+5 577 M
+(DQoN) s
+5 566 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 555 M
+(Return-Path: <users-return-57550-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 544 M
+(rg>) s
+5 533 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 522 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 511 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 500 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 6C3933E680) s
+5 489 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 09:59:07 +0000 \(UT) s
+5 478 M
+(C\)) s
+5 467 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 456 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 445 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 434 M
+(        \(No client certificate requested\)) s
+5 423 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 412 M
+(MTPS id 02F2861C14) s
+5 401 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 09:58:46 +0000 \(UT) s
+5 390 M
+(C\)) s
+5 379 M
+(Received: \(qmail 845512 invoked by uid 998\); 21 Oct 2024 09:58:46 -0000) s
+5 368 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 357 M
+(Precedence: bulk) s
+5 346 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 335 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 324 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 313 M
+(List-Id: <users.activemq.apache.org>) s
+5 302 M
+(Reply-To: users@activemq.apache.org) s
+5 291 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 280 M
+(Received: \(qmail 845485 invoked by uid 116\); 21 Oct 2024 09:58:45 -0000) s
+5 269 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 258 M
+(6.100\)) s
+5 247 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Mon, 21 Oct 2024 09:58:45 +0000) s
+5 236 M
+(Authentication-Results: apache.org; auth=none) s
+5 225 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 214 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 203 M
+(ith ESMTP id EA1D1200228) s
+5 192 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 09:58:44 +0000 \(UTC\)) s
+5 181 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 170 M
+(X-Spam-Flag: NO) s
+5 159 M
+(X-Spam-Score: 5.402) s
+5 148 M
+(X-Spam-Level: *****) s
+5 137 M
+(X-Spam-Status: No, score=5.402 tagged_above=-999 required=6.31) s
+5 126 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 115 M
+(        DKIM_VALID_EF=-0.1, ENA_SUBJ_LONG_WORD=2.2, ENA_SUBJ_ODD_CASE=3.2,) s
+5 104 M
+(        HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,) s
+5 93 M
+(        RCVD_IN_MSPIKE_H2=-0.001, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,) s
+5 82 M
+(        RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,) s
+5 71 M
+(        URIBL_BLOCKED=0.001] autolearn=disabled) s
+5 60 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 49 M
+(        dkim=pass \(1024-bit key\) header.d=soprasteria.com) s
+5 38 M
+(Received: from mx1-ec2-va.apache.org \([116.203.227.195]\)) s
+5 27 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 16 M
+(10024\)) s
+5 5 M
+(        with ESMTP id LAzV6Qh3DwGm for <users@activemq.apache.org>;) s
+_R
+S
+%%Page: (14) 14
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 14 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (14) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        Mon, 21 Oct 2024 09:58:40 +0000 \(UTC\)) s
+5 676 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=40.107.105.77; helo=eur03-am) s
+5 665 M
+(7-obe.outbound.protection.outlook.com; envelope-from=nicolas.casaux@soprasteria.com; re) s
+5 654 M
+(ceiver=<UNKNOWN> ) s
+5 643 M
+(Received: from EUR03-AM7-obe.outbound.protection.outlook.com \(mail-am7eur03on2077.outbo) s
+5 632 M
+(und.protection.outlook.com [40.107.105.77]\)) s
+5 621 M
+(        by mx1-ec2-va.apache.org \(ASF Mail Server at mx1-ec2-va.apache.org\) with ESMTPS) s
+5 610 M
+( id 572A5BFF7D) s
+5 599 M
+(        for <users@activemq.apache.org>; Mon, 21 Oct 2024 09:58:40 +0000 \(UTC\)) s
+5 588 M
+(ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;) s
+5 577 M
+( b=QThjvESMCqcqoxm6KQ+UDsdr8kLf81JgA7GFhMgeafx7195y+u0cRToxRSeDFkIuSqCZBCxVzMVospYrTZ1R) s
+5 566 M
+(Q6ZKRkO8r39Q0GzFje4/I9ZERc0ZG8angD2SUkRvOvheDcORXd/82E2akyCQ2jGZEGosWjUnhYLhMfaKq539ABI) s
+5 555 M
+(SaFs+joh3K8l8ypwcjxCzHooXZgD+mfPFUCPtqBgM5txtEFMK+oxcdULvAW3bnCo7qij91Ka1uLX/l+8c124WTE) s
+5 544 M
+(qv1vnKL+tNycm3VpyUZYQk3Uh+JyVnMTaQkZkwTiVVR02HrkIUEkr1OzFcwr3+ATwHFs5h+O2gayqF9Wi8hg==) s
+5 533 M
+(ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;) s
+5 522 M
+( s=arcselector10001;) s
+5 511 M
+( h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-Messag) s
+5 500 M
+(eData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageDat) s
+5 489 M
+(a-1;) s
+5 478 M
+( bh=nx1OSw5zg7xbxHm5KGoRdyJt184BSCY6SN3v2x64CUM=;) s
+5 467 M
+( b=j38Kx/04f+pIVoiBN+6EhLHity9PGbg3evrDu8C20CIW0xWFXyze18xTNtqP+okP6WgLKA2l7/9cxSyWc9o1) s
+5 456 M
+(UfGNn32fKxsbAEts+PF+s3GcsC75PReXwMwHEAxq8b0GfWhRR9SQDnVz+WSannrWtblgCHFIZlu718jyPSYaIkf) s
+5 445 M
+(sNJ6I9NTg5hUJH5Z0f1/AzP7YRlISJ4X8WT1phUjBo32ucSRjXp9EiO1GT8PHyrttrf3mtX+xSqczP9jZ73Mjtc) s
+5 434 M
+(FSG6XHR2oTlpKrQvKBZrJnURIrkXqK9Rv50sbtEyUWMc87waVCGiy4KzJ6QL0xmegP8dfilOYPS6nluBK5xw==) s
+5 423 M
+(ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass) s
+5 412 M
+( smtp.mailfrom=soprasteria.com; dmarc=pass action=none) s
+5 401 M
+( header.from=soprasteria.com; dkim=pass header.d=soprasteria.com; arc=none) s
+5 390 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=soprasteria.com;) s
+5 379 M
+( s=selector1;) s
+5 368 M
+( h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;) s
+5 357 M
+( bh=nx1OSw5zg7xbxHm5KGoRdyJt184BSCY6SN3v2x64CUM=;) s
+5 346 M
+( b=n8kHc4cJs4NERXzc5zsmWx377GOEhJRdjwsZ7oqa+sSsjPhbu8GP03ce1Mi0I0qNwl/eEUAd/1Qky33fmcn+) s
+5 335 M
+(2sVt3YXFD2ieY4shGESJ3sdA9KDflpd0GeDNULhPLxrvYWFrOLIyyKsebCPhoGqzq9cYC6Tmh9Qph+pYIGL+uq0) s
+5 324 M
+(=) s
+5 313 M
+(Received: from DB9PR07MB8474.eurprd07.prod.outlook.com \(2603:10a6:10:36e::13\)) s
+5 302 M
+( by AS8PR07MB7813.eurprd07.prod.outlook.com \(2603:10a6:20b:38e::10\) with) s
+5 291 M
+( Microsoft SMTP Server \(version=TLS1_2,) s
+5 280 M
+( cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\) id 15.20.8069.28; Mon, 21 Oct) s
+5 269 M
+( 2024 09:58:31 +0000) s
+5 258 M
+(Received: from DB9PR07MB8474.eurprd07.prod.outlook.com) s
+5 247 M
+( \([fe80::9d81:2fdd:7f92:c1f4]\) by DB9PR07MB8474.eurprd07.prod.outlook.com) s
+5 236 M
+( \([fe80::9d81:2fdd:7f92:c1f4%6]\) with mapi id 15.20.8069.024; Mon, 21 Oct 2024) s
+5 225 M
+( 09:58:25 +0000) s
+5 214 M
+(From: CASAUX Nicolas <nicolas.casaux@soprasteria.com>) s
+5 203 M
+(To: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 192 M
+(Subject: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?) s
+5 181 M
+(Thread-Topic: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?) s
+5 170 M
+(Thread-Index: Adsjn7lq+Cu097wxR3mLx7s5XmXukg==) s
+5 159 M
+(Date: Mon, 21 Oct 2024 09:58:25 +0000) s
+5 148 M
+(Message-ID: ) s
+5 137 M
+( <DB9PR07MB8474EAAEBF2DDD37D248DEF494432@DB9PR07MB8474.eurprd07.prod.outlook.com>) s
+5 126 M
+(Accept-Language: fr-FR, en-US) s
+5 115 M
+(Content-Language: fr-FR) s
+5 104 M
+(X-MS-Has-Attach: ) s
+5 93 M
+(X-MS-TNEF-Correlator: ) s
+5 82 M
+(msip_labels: ) s
+5 71 M
+( MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_ActionId=02a117c1-adfd-4bfa-9f9f-83e67) s
+5 60 M
+(6346a24;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_ContentBits=0;MSIP_Label_7bd1f1) s
+5 49 M
+(44-26ac-4410-8fdb-05c7de218e82_Enabled=true;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de21) s
+5 38 M
+(8e82_Method=Standard;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_Name=FR) s
+5 27 M
+( Usage) s
+5 16 M
+( restreint;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_SetDate=2024-10-21T09:45:55Z) s
+5 5 M
+(;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_SiteId=8b87af7d-8647-4dc7-8df4-5f69a20) s
+_R
+S
+%%Page: (15) 15
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 15 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (15) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(11bb5;) s
+5 676 M
+(authentication-results: dkim=none \(message not signed\)) s
+5 665 M
+( header.d=none;dmarc=none action=none header.from=soprasteria.com;) s
+5 654 M
+(x-ms-publictraffictype: Email) s
+5 643 M
+(x-ms-traffictypediagnostic: DB9PR07MB8474:EE_|AS8PR07MB7813:EE_) s
+5 632 M
+(x-ms-office365-filtering-correlation-id: f0aec40c-ab5d-4da1-d1c0-08dcf1b6e78f) s
+5 621 M
+(x-ms-exchange-senderadcheck: 1) s
+5 610 M
+(x-ms-exchange-antispam-relay: 0) s
+5 599 M
+(x-microsoft-antispam: ) s
+5 588 M
+( BCL:0;ARA:13230040|366016|376014|1800799024|38070700018|8096899003;) s
+5 577 M
+(x-microsoft-antispam-message-info: ) s
+5 566 M
+( =?us-ascii?Q?LdH4JsuAd5xia00buieY1suSO0W3R/8M9BMP2fie4DLZ4vKjXP+ldxmdbIFo?=) s
+5 555 M
+( =?us-ascii?Q?ka+Xhy/S5iA3ZQ9oQCaADYzPq/TyAbxPBQS3HuyYWJqGalCFeXvEC7bstsia?=) s
+5 544 M
+( =?us-ascii?Q?BMfTHMsjbUlup/EE/4btrUgunkqoE5HrkTU78oXvi6rQ+ykKGaV9vzd0jlhY?=) s
+5 533 M
+( =?us-ascii?Q?YmTWFKFLgMKC5prU3boGh8DQyAzUdf1Xl0ixrAqo8pzKl8sx3aoQqOfAiSrV?=) s
+5 522 M
+( =?us-ascii?Q?x+evuz33jQnS4u5JLM6w9S0R4UNkP6jNQ778pvDPvmY6sWIvgpSeY/rfJKrG?=) s
+5 511 M
+( =?us-ascii?Q?1LMJnavLFfO7wr/yYmsL4aubS1tHm9fpVein+IGLHvWEYY2PXF45tLkZ27Fi?=) s
+5 500 M
+( =?us-ascii?Q?//vPazPnlE5lQxe74MGR6C++FX9+fd5xWNCNZdDp6mOpCBNQHFeUsmO2ygZH?=) s
+5 489 M
+( =?us-ascii?Q?6bZOzTelBUAwVWpe6gajZEVJWfhYuvPUhtEm5jP7+x+1Jl0E5vUdBkq5W+u1?=) s
+5 478 M
+( =?us-ascii?Q?kPZFYLOZWLEH+kQXT+WqFEwV2YMgbzpzYMDlO/H0nej79RFGLCOoLEwB7oVu?=) s
+5 467 M
+( =?us-ascii?Q?lITdl4caZhKikrBUtlEAhxN1mi8D0nSrQ6rGqvqmJHuHxNy9YK9t42aDkVJ+?=) s
+5 456 M
+( =?us-ascii?Q?yDWl4AOpLc+WB2EqZK9uWRolLsOLw3VSjWbu9EJO3k+BYnVYsKsI0Tpz9fp6?=) s
+5 445 M
+( =?us-ascii?Q?V2wWob73D+JhVlUfkPrF9w+196FsNVPmRptzDinSvkGTbxxgqowF6bDQ/TjE?=) s
+5 434 M
+( =?us-ascii?Q?TtLpVqiUM8okyU8QU0bafwOqjfZxJUUs+ZkAx30oDNHooFgGR8epsLfFeUAe?=) s
+5 423 M
+( =?us-ascii?Q?wY4WCnIRp4g7xlrARaBHyE2FNWo1zuUy3jF/HTzygu3hlJ8R/shFTXAFgIdj?=) s
+5 412 M
+( =?us-ascii?Q?Y5cLmPIJ57PPFGnv5j0xOOlchTq1PxVYGNwbiLIIvW4Qh7FYDIG5dehd73vK?=) s
+5 401 M
+( =?us-ascii?Q?VD9EojeqoDumID6bXJ8ZPfpQ5kBFr7AH6Uyn5Av+ya6WA+9dCwOB1Sqj9RqM?=) s
+5 390 M
+( =?us-ascii?Q?y7r8C9MOxJzzNgUTABrQTy9vcodADvB9fkAksASjXkwkoAPP0SlfyQw1jfUZ?=) s
+5 379 M
+( =?us-ascii?Q?CejPhWT590ohnCPpnQWZCXPV54tT56u2yu3updRehfYDrWl5ZZLAdJTScZRM?=) s
+5 368 M
+( =?us-ascii?Q?16R4yMgQGyynZMRbE1aHDlBilw8DnR7xkAYhDlYQN1VcdFW3uNh4+4OwPlJx?=) s
+5 357 M
+( =?us-ascii?Q?QDS6gf9Jf2eXG2YK8sLjGoSABDNBC0lX42ubKnnCP2zh62O7m1PPdlrMcfen?=) s
+5 346 M
+( =?us-ascii?Q?9qCduOxn3wrx261q26ypXOlRaREKbeN88qrA0OkxRUrOlFKhhvhasvNUU+cm?=) s
+5 335 M
+( =?us-ascii?Q?s1B0k2hmSk5IUO65zH46ptG/P/rgXAOdXk0SekJWHBVV0XF7EM3FsK0PZ8PK?=) s
+5 324 M
+( =?us-ascii?Q?EIelvoUeHtCPf7TRhp67vMtp2UVX7++Os+IW5Yi1BQcmVOWlAKkD+QWN4MCq?=) s
+5 313 M
+( =?us-ascii?Q?3sE3RiHCV5Zvcc4Kzjx+hIqlPo9Y?=) s
+5 302 M
+(x-forefront-antispam-report: ) s
+5 291 M
+( CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR07MB8474.eurprd07) s
+5 280 M
+(.prod.outlook.com;PTR:;CAT:NONE;SFS:\(13230040\)\(366016\)\(376014\)\(1800799024\)\(38070700018\)) s
+5 269 M
+(\(8096899003\);DIR:OUT;SFP:1101;) s
+5 258 M
+(x-ms-exchange-antispam-messagedata-chunkcount: 1) s
+5 247 M
+(x-ms-exchange-antispam-messagedata-0: ) s
+5 236 M
+( =?us-ascii?Q?GX+QXDJaOxA2zjVtoghKlMA9ODnsD9JBpYchAXEI+/uziI6vifAek8ATW3Hm?=) s
+5 225 M
+( =?us-ascii?Q?9RZIlBetO5TO1+3c5EVLgTqzx8Oj86e2LOtWehANID+pq4w44Iw7Zw3p+8mX?=) s
+5 214 M
+( =?us-ascii?Q?K6pzVxlTVsEnpncS0Jf2c9HxqCmryjtUFxPgl+cF8VRv3fb1I8oTyNSGI8YE?=) s
+5 203 M
+( =?us-ascii?Q?8YFxiWIcK44meTjWELZgtUugN0HBMR+ZeKiyZyDIeoIEk2WXwihEPSMZxsiB?=) s
+5 192 M
+( =?us-ascii?Q?q45cB9B0vKwjxmOVJDXDB0NH6Y7OVJfOZ2DDv0mleChW1nm5ofuZSIlY4t5I?=) s
+5 181 M
+( =?us-ascii?Q?P3g3rw3pzblV6cRacSCkrkE84luLU9AKY7SFZn7cagCCrV1zRJMHYgIW2Sy8?=) s
+5 170 M
+( =?us-ascii?Q?x1W9UmCEXf3fwMn7MozccLgiXhSfom56vrlq8hOXNpCkdyn8vuz8lZzLbopd?=) s
+5 159 M
+( =?us-ascii?Q?sOpN/6OWuBc74z7Q5W+uEatktAw84LpyThqfjEG/QwDOMXn9fgHHpJ9o5tru?=) s
+5 148 M
+( =?us-ascii?Q?qIwQNZazcVOQwRFOhSftBeGF/Q4U60cbcseFY09Ye8U71yQCTBavjtZKVU20?=) s
+5 137 M
+( =?us-ascii?Q?CamLS8ncQTrN3p5eycBG/AJtycSOE28wcOk6qXbLIzm46OU8hbycHOcL60Lm?=) s
+5 126 M
+( =?us-ascii?Q?yD+mYeUPevaQQlEvYOrtiDJfp/sdeslsRzIBJmLxhIQXLGcmgIRk41o6cA3n?=) s
+5 115 M
+( =?us-ascii?Q?bUVDeL3agWGqUeXDBEufDr7SSi8T6Is0EBJKh6vC96ra00X7oX78TpGexwUA?=) s
+5 104 M
+( =?us-ascii?Q?MT+QgxIKRx/Ko3SlG0YFSGC/Mil4CUYFJ5hKM5L+iitBv2wEdpvExoZXKtpR?=) s
+5 93 M
+( =?us-ascii?Q?ExWVcLNRs24hKzQk1wdIaynFtaThTkyFPPHVOclAVV68rjmdrQ1FpvYXWDbU?=) s
+5 82 M
+( =?us-ascii?Q?PwRhdhBsLtNussGiJjdb1EtH0MIm8i2a+aND6Bv8EEmFvan6yr70eQZQPPV/?=) s
+5 71 M
+( =?us-ascii?Q?FJXBrjrvq1hu/NRBOyBN+ulktfjoBuwYLvYxvgQPg5lfq+nljiL47S34LKHo?=) s
+5 60 M
+( =?us-ascii?Q?pegw7Qc4RYWKccOnHNXh0QAKYPMu0DlsjN5OiP4KCzYlAn4UMG8l0kd2dBVJ?=) s
+5 49 M
+( =?us-ascii?Q?gSd8hJ3JAwNq7syBgI+5DygIJaHPpAwoo0DLjnj0ge8pp2oLve2Z4i+xcPZe?=) s
+5 38 M
+( =?us-ascii?Q?sUuHyMEtPbq8vzCnX0Qcd/EX+kxxaZnhlpIfxxu6znViqR/HyAIZLW5Bljbl?=) s
+5 27 M
+( =?us-ascii?Q?wWeu8cK9cybdiI/tA800Wb6r/YasfcvAr/dMZ2QvgIV5n17EvjQG1clVdUMn?=) s
+5 16 M
+( =?us-ascii?Q?GqBfl0oXKrfF/lOjGJoVMd+fZc8vmmnAWNdZ/ipUwy/FNlmPREFxkW9bKOyF?=) s
+5 5 M
+( =?us-ascii?Q?KMA8OJYvOiyJS34cwYuMEV4SMVHz/kachBS1tmfMmGHz9RAHsq6E/bWOi3uJ?=) s
+_R
+S
+%%Page: (16) 16
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 16 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (16) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+( =?us-ascii?Q?QtEgL7rEVs6z/yoMgd+ePg9P3ZNSFXCIf+k6NSsMhCGtzBbeGAKD1aR5t6VY?=) s
+5 676 M
+( =?us-ascii?Q?2QXnjIiK4FZcvKA1fzXwvT0wMQcDFno+c5TNwg+MdekfM8MBJ59OLsZlMOBA?=) s
+5 665 M
+( =?us-ascii?Q?naN0181732rG9CfWz8jYegE4H1PQ7mgDIcko3ncg/iJKlIlREPahrJ3dorbr?=) s
+5 654 M
+( =?us-ascii?Q?ULYdgSlSb46kcaKo5Bl2dmCXys6KcFJA+pIYj2nXhv+UngfO8MGQbGFFBESM?=) s
+5 643 M
+( =?us-ascii?Q?Zd0tDA89mSvi/3sT/aOX5JlOLvhOsVDJZWeWjJxGxjfMLx+CJ+DQKxbuy6V8?=) s
+5 632 M
+( =?us-ascii?Q?/A=3D=3D?=) s
+5 621 M
+(Content-Type: multipart/alternative;) s
+5 610 M
+(        boundary="_000_DB9PR07MB8474EAAEBF2DDD37D248DEF494432DB9PR07MB8474eurp_") s
+5 599 M
+(MIME-Version: 1.0) s
+5 588 M
+(X-OriginatorOrg: soprasteria.com) s
+5 577 M
+(X-MS-Exchange-CrossTenant-AuthAs: Internal) s
+5 566 M
+(X-MS-Exchange-CrossTenant-AuthSource: DB9PR07MB8474.eurprd07.prod.outlook.com) s
+5 555 M
+(X-MS-Exchange-CrossTenant-Network-Message-Id: f0aec40c-ab5d-4da1-d1c0-08dcf1b6e78f) s
+5 544 M
+(X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2024 09:58:25.0559) s
+5 533 M
+( \(UTC\)) s
+5 522 M
+(X-MS-Exchange-CrossTenant-fromentityheader: Hosted) s
+5 511 M
+(X-MS-Exchange-CrossTenant-id: 8b87af7d-8647-4dc7-8df4-5f69a2011bb5) s
+5 500 M
+(X-MS-Exchange-CrossTenant-mailboxtype: HOSTED) s
+5 489 M
+(X-MS-Exchange-CrossTenant-userprincipalname: SK0Re92G0ayJJ5Oie88rROGuoT4PzeP6EXJd/Xks1g) s
+5 478 M
+(vxeQOODf7AwiDXO/mZQrXgysE9l9Id0zEo3nTqrJFmhjrtIgYudrOUUyOZmDi86XU=) s
+5 467 M
+(X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR07MB7813) s
+5 456 M
+(X-MS-Exchange-CrossPremises-AuthAs: Internal) s
+5 445 M
+(X-MS-Exchange-CrossPremises-AuthMechanism: 04) s
+5 434 M
+(X-MS-Exchange-CrossPremises-AuthSource: DB9PR07MB8474.eurprd07.prod.outlook.com) s
+5 423 M
+(X-MS-Exchange-CrossPremises-TransportTrafficType: Email) s
+5 412 M
+(X-MS-Exchange-CrossPremises-SCL: 1) s
+5 401 M
+(X-MS-Exchange-CrossPremises-messagesource: StoreDriver) s
+5 390 M
+(X-MS-Exchange-CrossPremises-BCC: ) s
+5 379 M
+(X-MS-Exchange-CrossPremises-originalclientipaddress: 81.66.135.116) s
+5 368 M
+(X-MS-Exchange-CrossPremises-transporttraffictype: Email) s
+5 357 M
+(X-MS-Exchange-CrossPremises-disclaimer-hash: 0a291ef45dbeaddd3c2a8ba60f43906764fc4f3e49) s
+5 346 M
+(5eff2ecd40117e05115c44) s
+5 335 M
+(X-MS-Exchange-CrossPremises-antispam-scancontext: DIR:Originating;SFV:NSPM;SKIP:0;) s
+5 324 M
+(X-MS-Exchange-CrossPremises-processed-by-journaling: Journal Agent) s
+5 313 M
+(X-OrganizationHeadersPreserved: AS8PR07MB7813.eurprd07.prod.outlook.com) s
+5 291 M
+(--_000_DB9PR07MB8474EAAEBF2DDD37D248DEF494432DB9PR07MB8474eurp_) s
+5 280 M
+(Content-Type: text/plain; charset="us-ascii") s
+5 269 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 236 M
+(Hello !) s
+5 214 M
+(I have a question regarding the VirtualSelectorCacheBrokerPlugin mentioned =) s
+5 203 M
+(here : https://activemq.apache.org/components/classic/documentation/virtual=) s
+5 192 M
+(-destinations) s
+5 170 M
+(If a consumer follows those actions in order:) s
+5 148 M
+(  1.  subscribes to a queue "Consumer.consumer01.VirtualTopic.invoices" wit=) s
+5 137 M
+(h selector "k1=3Dv1") s
+5 126 M
+(  2.  disconnects) s
+5 115 M
+(  3.  reconnects and subscribes to the same queue "Consumer.consumer01.Virt=) s
+5 104 M
+(ualTopic.invoices" with a new selector "k2=3Dv2") s
+5 82 M
+(How long will the "k1=3Dv1" condition will be used to forward message from =) s
+5 71 M
+(the topic to the queue ? Will it be forever ?) s
+5 60 M
+(I could not find such info in the docs, and I was not able to find it in th=) s
+5 49 M
+(e code. \(I saw the 10 mn scheduler to persist selectors, but it's another t=) s
+5 38 M
+(opic\)) s
+5 16 M
+(Thanks in advance!) s
+_R
+S
+%%Page: (17) 17
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 17 def
+/fname (./D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:05 2024) def
+/pagenumstr (17) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Regards,) s
+5 676 M
+(Nicolas) s
+5 643 M
+(C2 - Usage restreint) s
+5 621 M
+(--_000_DB9PR07MB8474EAAEBF2DDD37D248DEF494432DB9PR07MB8474eurp_--) s
+_R
+S
+%%Trailer
+%%Pages: 17
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

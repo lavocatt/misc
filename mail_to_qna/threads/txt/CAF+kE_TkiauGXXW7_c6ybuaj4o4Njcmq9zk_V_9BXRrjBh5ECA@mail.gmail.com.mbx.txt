@@ -1,0 +1,378 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57527-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 8AE4E3E689
+	for <archive-asf-public@cust-asf.ponee.io>; Wed,  9 Oct 2024 18:56:51 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 8BD784BFD6
+	for <archive-asf-public@cust-asf.ponee.io>; Wed,  9 Oct 2024 18:56:50 +0000 (UTC)
+Received: (qmail 2552217 invoked by uid 998); 9 Oct 2024 18:56:48 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 2552200 invoked by uid 116); 9 Oct 2024 18:56:48 -0000
+Received: from mailrelay1-he-de.apache.org (HELO mailrelay1-he-de.apache.org) (116.203.21.61)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Wed, 09 Oct 2024 18:56:48 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	by mailrelay1-he-de.apache.org (ASF Mail Server at mailrelay1-he-de.apache.org) with ESMTPSA id A7F933E886
+	for <users@activemq.apache.org>; Wed,  9 Oct 2024 18:56:48 +0000 (UTC)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c896b9b3e1so41677a12.2
+        for <users@activemq.apache.org>; Wed, 09 Oct 2024 11:56:48 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzhS6HXzg6POg1lLro3vygHsd5Ie14F09B/NsP2KqeOwyeeR5jx
+	3z731qsoPwnOZGIB2F7p1JFUfCD/S6aysCSf1omawquHEpcXRw9Iad3gkuBqmOUaOAgIfTyfNJ1
+	Lw5MbaQofWRk/YZhx69e2DXlRGFZ80t3lT8OqGw==
+X-Google-Smtp-Source: AGHT+IFZTEnaQM7JeHLy/4uwvdJ298Bjbtz3r6XksMk7dnqlrT3kVOVTUMwfuAWjyJz0r5D8uUB0d3sh+OzbC3/X+yg=
+X-Received: by 2002:a05:6402:2815:b0:5c5:b9c2:c5bb with SMTP id
+ 4fb4d7f45d1cf-5c91d6f6c17mr3200417a12.35.1728500208403; Wed, 09 Oct 2024
+ 11:56:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <CH3PR11MB7203A7934F1140989513670F957F2@CH3PR11MB7203.namprd11.prod.outlook.com>
+In-Reply-To: <CH3PR11MB7203A7934F1140989513670F957F2@CH3PR11MB7203.namprd11.prod.outlook.com>
+From: Justin Bertram <jbertram@apache.org>
+Date: Wed, 9 Oct 2024 13:56:22 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=TkiauGXXW7=c6ybuaj4o4Njcmq9zk_V_9BXRrjBh5ECA@mail.gmail.com>
+Message-ID: <CAF+kE=TkiauGXXW7=c6ybuaj4o4Njcmq9zk_V_9BXRrjBh5ECA@mail.gmail.com>
+Subject: Re: filtered consumer.receive()
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="000000000000eaa63d06240fd0e2"
+
+--000000000000eaa63d06240fd0e2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+I'm not aware of any issues like the one you describe. If you could write
+up a reproducer that would be awesome.
+
+Also, please clarify the following:
+ - Broker version
+ - Client implementation and version
+
+Thanks!
+
+
+Justin
+
+On Wed, Oct 9, 2024 at 1:48=E2=80=AFPM John Lilley
+<john.lilley@redpointglobal.com.invalid> wrote:
+
+> Greetings,
+>
+> Are there known issues with a =E2=80=9Cfiltering consumer=E2=80=9D callin=
+g
+> receive(timeout)?
+>
+> I=E2=80=99ve found that we need to call receive twice, e.g.
+>
+> try (var consumer =3D session.createConsumer(destination, selector)) {
+>     Message message =3D consumer.receive(PURGE_TIMEOUT_MS);
+>     if (message =3D=3D null) {
+>         message =3D consumer.receive(PURGE_TIMEOUT_MS);
+>     }
+>     =E2=80=A6
+> }
+>
+> If we only call it once, the message is never received, regardless of the
+> timeout value.  This kind of looks like ARTEMIS-3916, but that was for a
+> legacy JMS client and was reported fixed in 2.25.
+>
+> If this doesn=E2=80=99t sound familiar, I can write up a reproduction tes=
+t.
+>
+> Thanks
+> John
+>
+>  PLEASE NOTE: This e-mail from Redpoint Global Inc. (=E2=80=9CRedpoint=E2=
+=80=9D) is
+> confidential and is intended solely for the use of the individual(s) to
+> whom it is addressed. If you believe you received this e-mail in error,
+> please notify the sender immediately, delete the e-mail from your compute=
+r
+> and do not copy, print or disclose it to anyone else. If you properly
+> received this e-mail as a customer, partner or vendor of Redpoint, you
+> should maintain its contents in confidence subject to the terms and
+> conditions of your agreement(s) with Redpoint.
+>
+
+--000000000000eaa63d06240fd0e2--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57526-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 5A72C3E689
+	for <archive-asf-public@cust-asf.ponee.io>; Wed,  9 Oct 2024 18:47:59 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 446164AD0A
+	for <archive-asf-public@cust-asf.ponee.io>; Wed,  9 Oct 2024 18:47:58 +0000 (UTC)
+Received: (qmail 2536385 invoked by uid 998); 9 Oct 2024 18:47:56 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 2536359 invoked by uid 116); 9 Oct 2024 18:47:55 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Wed, 09 Oct 2024 18:47:55 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id 5DE31C2246
+	for <users@activemq.apache.org>; Wed,  9 Oct 2024 18:47:55 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.004
+X-Spam-Level: 
+X-Spam-Status: No, score=0.004 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_MSPIKE_H4=0.001,
+	RCVD_IN_MSPIKE_WL=0.001, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (1024-bit key) header.d=redpointglobal.com
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id AhFUD0-fUMFD for <users@activemq.apache.org>;
+	Wed,  9 Oct 2024 18:47:54 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=209.222.82.37; helo=outbound-ip169a.ess.barracuda.com; envelope-from=john.lilley@redpointglobal.com; receiver=<UNKNOWN> 
+Received: from outbound-ip169a.ess.barracuda.com (outbound-ip169a.ess.barracuda.com [209.222.82.37])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id 4B8EAC0C6A
+	for <users@activemq.apache.org>; Wed,  9 Oct 2024 18:47:52 +0000 (UTC)
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101]) by mx-outbound-ea15-210.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Wed, 09 Oct 2024 18:47:38 +0000
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=fail;
+ b=XwXu7VOE2nxvoa7LpOILft4opeZPQN35mFRou7vfIgrGjX4n5Dzw7AwemqTviqhu11qw7xg2xlxIH8wtv4j45tPgKKVjzV6EwqXSHE+EoPXUzV0qUvHKhh0iTi94fcBruskdKwaV2M3UjtaZbj9MTSv5gJ/b25iZen/TDVUZ5Xcont5D1tVCJgTerLdNiZGRDeWMA7+qRTp+8DsQ5hI935jXDMgP7eh0MqXecEdlXDtCmsvYRO9IPDzsh9kTXe5qCZu5JXCn3lbyj9Ex9BbaZz1uYPkBb2LSx4jEOFeqCHezGqiPGngBCPSs717hqhBKyZKtHbNsOkFDM7Jt/GbgQA==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S9hrdCTz3aYhi3whOpBu4Rnw4IKWpfJG3WQbmAiFjT8=;
+ b=uKkfOTe9w9rF1e/cXFDbV8/nX3s+IoICQQuQ0QumX3dymTwYVlewL/Tyjm6ymgSwd1VvUldv0w14wtIpuOWvOXDT4Ygt8zFC9HpQF9gR2U7G/9ntN4nC4YwqaTcJZnUEicVgCYoc9K45W2stffxvRyyL5+gBFWMPq6Zldu/1ilvvq25RQt85Ykyamr89km8rcS3IKanvfQf95SWTWwRwezKb9nsRhwSs0fUxl/RxLYGajalNSMSxW9Ydcbj2fwbx3hdDt5jQql/bl79ZsIz9CGv//cESwyyTfI1NKd0ROMnRX3WXD+A5HJ4CahS+ya+57QwX/YFCSOpGFsVvQ3YvwQ==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 51.81.11.12) smtp.rcpttodomain=activemq.apache.org
+ smtp.mailfrom=redpointglobal.com; dmarc=pass (p=reject sp=reject pct=100)
+ action=none header.from=redpointglobal.com; dkim=none (message not signed);
+ arc=fail (47)
+X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redpointglobal.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S9hrdCTz3aYhi3whOpBu4Rnw4IKWpfJG3WQbmAiFjT8=;
+ b=M+4n+yoD7vVChu0gfdgOhK3JbDsdCymgiKI24APZI7diJGAo8L42rq4jnAoS6FlkS/d9JFiJNEA1WzOfXxhMzUQ8m3Cw6BZjDdAPNAD+Zh1bHZfoENhiZxvTPV4XgFvtIBdCEavGfPjBdSuxPhOpv/C/xptg4Fq5nG+449BG4uA=
+Received: from CH5PR03CA0010.namprd03.prod.outlook.com (2603:10b6:610:1f1::20)
+ by CY8PR11MB7034.namprd11.prod.outlook.com (2603:10b6:930:52::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Wed, 9 Oct
+ 2024 18:47:32 +0000
+Received: from CH2PEPF00000141.namprd02.prod.outlook.com
+ (2603:10b6:610:1f1:cafe::b0) by CH5PR03CA0010.outlook.office365.com
+ (2603:10b6:610:1f1::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18 via Frontend
+ Transport; Wed, 9 Oct 2024 18:47:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 51.81.11.12)
+ smtp.mailfrom=redpointglobal.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=redpointglobal.com;
+Received-SPF: Pass (protection.outlook.com: domain of redpointglobal.com
+ designates 51.81.11.12 as permitted sender) receiver=protection.outlook.com;
+ client-ip=51.81.11.12; helo=vin1-relay.sendergen.com; pr=C
+Received: from vin1-relay.sendergen.com (51.81.11.12) by
+ CH2PEPF00000141.mail.protection.outlook.com (10.167.244.74) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8048.13
+ via Frontend Transport; Wed, 9 Oct 2024 18:47:32 +0000
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2173.outbound.protection.outlook.com [104.47.73.173])
+	by vin1-relay.sendergen.com (Postfix) with ESMTPS id B56841098968F
+	for <users@activemq.apache.org>; Wed,  9 Oct 2024 14:47:31 -0400 (EDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=elAq9tesTO8SLSseEnS3hGDtw8xxQLj8RTfwxP9BsXoyw6HzY3QzVSw/9j/0gSRZLaZcpRaAXyksScIk//IGBnzO38TaMeLzXloOU2Wva36YopOTrQp0tYJmSHPAI19WOz1cNHRG5jMEZ1tCzAiPkCmZ9uOcozVgHuY6jc2k166AtquaVCu4dryo9xcLkiN9CprH5Nhq7ooZ6lxRCxUmztuaV89n6GBIYhbJIP1ylEYYJUX35gqzhihwzrwXP3CFVPKPVY+Yj2QAZCoUmuiqiZ088lsGnX0gv0iAzb4fOadqN6/2Rz+w27Vm7M7Gb49AIfhfS0evQnAG/jCABg/udg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dskKUbJfZd4oP+OXtOuGZX1hhohxrPnPlBKz/3EzJU0=;
+ b=uGguXgzR6XoPb3zYxTkHJxQjpKR7W0WTxPMyKi/4pInV2kgTe9iI40DcTYA0tpU3ngqbjUO8EOqspmcbKnURrqDaLrCTk9VKHvEWEpI33jl7o87HFV/XQLTylPJCrnMzj6VYv1Z7YJamUExYIzUMp6dfVUvP54ztW+4ks8V+9L4wQTCxUpJ7gR7lORpzDuLhw9q3gGoKdFxu4vtrpRSuqTFdey5Ymyq8oNhm2sLSKjt/GvmfEEdRU7kRPq8xQx/kaSuoQnfjV528sX6dF94+FBm5vud+Z1uYoCNgvy0DW7Zd1dNo4Ui5jMZuAVEJJ1S0ZljLwxh8lKg/VXQlWVzYNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=redpointglobal.com; dmarc=pass action=none
+ header.from=redpointglobal.com; dkim=pass header.d=redpointglobal.com;
+ arc=none
+Received: from CH3PR11MB7203.namprd11.prod.outlook.com (2603:10b6:610:148::15)
+ by PH7PR11MB8250.namprd11.prod.outlook.com (2603:10b6:510:1a8::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Wed, 9 Oct
+ 2024 18:47:24 +0000
+Received: from CH3PR11MB7203.namprd11.prod.outlook.com
+ ([fe80::a076:d6c7:1256:d222]) by CH3PR11MB7203.namprd11.prod.outlook.com
+ ([fe80::a076:d6c7:1256:d222%4]) with mapi id 15.20.8048.013; Wed, 9 Oct 2024
+ 18:47:23 +0000
+From: John Lilley <john.lilley@redpointglobal.com.INVALID>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: filtered consumer.receive()
+Thread-Topic: filtered consumer.receive()
+Thread-Index: Adsaexlrrve/1mCwSrO6ffNReXSP8g==
+X-SG-Signature: true
+Date: Wed, 9 Oct 2024 18:47:23 +0000
+Message-ID: 
+ <CH3PR11MB7203A7934F1140989513670F957F2@CH3PR11MB7203.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=redpointglobal.com;
+x-ms-traffictypediagnostic: 
+	CH3PR11MB7203:EE_|PH7PR11MB8250:EE_|CH2PEPF00000141:EE_|CY8PR11MB7034:EE_
+X-MS-Office365-Filtering-Correlation-Id: b0ea6bb6-6130-491d-6da8-08dce892d59e
+x-sg-stamp: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: 
+ BCL:0;ARA:13230040|366016|376014|10070799003|1800799024|38070700018;
+X-Microsoft-Antispam-Message-Info-Original: 
+ =?us-ascii?Q?DYbvFxdnA0TNnJc2rAtKuCHmMSBruc01mth2g/GzxgOHmFy5pXJubU3/IQZd?=
+ =?us-ascii?Q?aqimE8H2HL5fq9X3HzM6gydI7CUkD/5tGtF2hvDK/scEvuSz4tlVt/46JHYY?=
+ =?us-ascii?Q?mtV7YFGWA46aEQ2KYLMcr1C5En/ExGbzNDAfN7U7Vw/tlRIkMEvItVhYluF9?=
+ =?us-ascii?Q?HIJcACoS+GYakPWfbxR0mU6QSnoU70Ic9lxyOPz9f+A2WWVY/jIMQHxp3YKb?=
+ =?us-ascii?Q?pszuPzkyVbfHARTJqgLYC6GytjQLR00qFhECkJrgIMZjm/BW1y2HvNsLEbsM?=
+ =?us-ascii?Q?QDSBI7X2jjKbn/Ks5TNSJmP8TTZb9eCYvxsWOpBnW4rctQMEUg/fv8JXKEQ1?=
+ =?us-ascii?Q?321mQGtpq/ouKjoQ6AmLQyq8Zdhwx+ThhAmfHC3dQbLB8ajTJcH0AcSf3gRk?=
+ =?us-ascii?Q?7hIlT7zCfnzz68Tk5bEjJr85+iK9ozq61UehnRH4bVECC0GV6jQPTCMvTc9C?=
+ =?us-ascii?Q?zF0YwmJTJeaZUQ/NVCpOXygVMEmPwtzhGPTFsw231JNCoFvM4eQFy14EfrgP?=
+ =?us-ascii?Q?X4l7blUEkLo9hj7BtE7VdlsjePig9aWPwwgNijchI0+5sv6lEYM7ZiLm/Ffw?=
+ =?us-ascii?Q?WrMEybqvwawgq73Ppj/vFiUjkFtBCBSZIzmbUDtXoCnVNaMythkQygifAYdg?=
+ =?us-ascii?Q?MEAPMvqWzvOj11wCoXkCtjKFxA0knZV5LF8KjrkHNs3N6uf8RMYUaV74drHu?=
+ =?us-ascii?Q?9eGJsKvPjVEYWLlZpfYqN4+t4dFTCqeNYrYXq30OyCC/qBhma3R7BRpnv2SK?=
+ =?us-ascii?Q?OVNVr8wS6HJ/rOl9mq6KVFugcZXYeoLWlJU0ePEfOQqh8b2dFjpDHVD299RE?=
+ =?us-ascii?Q?8UMAbj4W067ZjeJ6FAtze0daZz1wOHmrof5CdnZPU8LBXdnomkQVYv8U8l5x?=
+ =?us-ascii?Q?3H961bGqBwn4Ir7hbEJSB9w91ahjSxCGzZT8fyq93Ek0G8ttn6oFIIh+z++l?=
+ =?us-ascii?Q?/lpwhIuVEKMruNuDGrfysiWeUJDk5WHU3Wj5t4mCHyPoUp3ijKWmzdlbka7i?=
+ =?us-ascii?Q?3eBuS8A+qxyQILO1HirHwVWn0pEAGI6vDWEx8YGihQAWMb8ZMUYom4fQ/MX1?=
+ =?us-ascii?Q?1bpNar6tEphvUK7WEWg46YCoGrXhHtuvwLfuwuEgZI6icrab6F8H7GQ9pdjF?=
+ =?us-ascii?Q?wGAGHBhemIdSEuOjaIDj45xIp0SUq/hW5K8JPTWHiXJaNUH1wGIs6tcPyuwU?=
+ =?us-ascii?Q?JURYyV9v5me+xY9TCbj7JqafU03NhxZf3/CKaAVPOlfjI6O9c9+ekv9ymLdb?=
+ =?us-ascii?Q?d8l4d+gOfeA4LDFsLDaaUFPn6qaZWoFwO/wJ3xfm3U/yDXJ1U5d+UW74wyI+?=
+ =?us-ascii?Q?RZhPEddFboEPpIPBMy5oXXkxN6ymySLZVkh4QGkycqk00Q=3D=3D?=
+X-Forefront-Antispam-Report-Untrusted: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB7203.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(10070799003)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+Content-Type: multipart/alternative;
+	boundary="_000_CH3PR11MB7203A7934F1140989513670F957F2CH3PR11MB7203namp_"
+MIME-Version: 1.0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8250
+X-Scanned-By: EmailPostmaster on 127.0.1.1
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: 
+ CH2PEPF00000141.namprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 
+	ff0f2818-42b3-424c-84c8-08dce892d042
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|82310400026|35042699022|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?ZzVwZWhYSjN2Y3ozR0hUZGhTZUVkcldHbDdOcHF5V3BISkR2WUlubDJYL0N5?=
+ =?utf-8?B?M0ZSMzFpMG9wQUhkMXFmTTBOMUt3ZDF2T2ZONXFWSlkxNG9YL21hUGJvQUJi?=
+ =?utf-8?B?MndCdHN4K1YwTXF6V0F0VGQ3OHZwL0dPdktFVjBSTEZNVjFzWnErNDl0OVZV?=
+ =?utf-8?B?ajk2aU9TWVJ3ZVF1U3R1U2w5THc0bFNVM0tDa1IvaG11bDNjYmRUWVcvb1VY?=
+ =?utf-8?B?Z3d5LzA5RWpEbENISDlXaVJKMlFaenBaMkgyN1VrTlRNQ0tZVzFodU5GdWxI?=
+ =?utf-8?B?aURIUzRKd0ZwU0xjcDFkblNCTzZSeFRRUXJpbWxrS2tkaDNNSmkzWk5yLzJj?=
+ =?utf-8?B?dDNyQ0JYTytzTzlqZ1RZdzdITXRQcS92VnArTzhXc2RhaGkrSUlTVElrUjhu?=
+ =?utf-8?B?VGpiUWI5eHh4TmxLS3lBQmpIa2pRdUhFaXpYdnNoSno5MG1UZVlJc2JPUEpO?=
+ =?utf-8?B?K1IvV2pBR1o1bHErNzAwbFkyQjFLTzJqZy91NEZDZlYxY2prSmNGTlFTY1pC?=
+ =?utf-8?B?WnJaUGcrQTc3Uk95U3duS3IxN1dIVXNOV2E3VE5xVWpySGgvdjdjS0pCVk5j?=
+ =?utf-8?B?cFA1emtKbi9sNnUwanpOTmxEMC8xcUduVXh1UDIyQkh1aDdTUjBFZ0haK3l4?=
+ =?utf-8?B?a1lNMTVOK1RUWXFEL2Z3eGpFdDZLb3ZBdjJ0YXRvWlNLVFUvZVhwVmRLWDJW?=
+ =?utf-8?B?cXlpVCtZakN1YVZENHFLczFma0xXYUIyNm0xcGsyQ1NrM3I2akQ0dU0rc1lG?=
+ =?utf-8?B?UUNzNEZ0SlVxUTdpTDJlZG9PTExmUmtEcGJyc285RnNGdnJ0QXZ2ejJIeEZt?=
+ =?utf-8?B?ZVRYMW1OSHVpNEtsUE5qOVVNdTF0UXQ1OXMxTnVlUURVWnA4a2VPeHFYNUkr?=
+ =?utf-8?B?eWt0dzFKMzBtSThQM0g4R0MydTZVTEFDK1lJbktERjYybkZCYm93Q3FQSzdk?=
+ =?utf-8?B?c0llZlNuUklmWCtHOGVlTEdDRFpsemdDSStjVjBuZ0IweEFXS3B0blR4Qzk1?=
+ =?utf-8?B?VDVTNWdGOThaLzJHaEdkS2U0U2dDSkFlV2tsMWNBcEF3ZWxEY1c0MFhidVdR?=
+ =?utf-8?B?RSsySy92T05QSUUzZWJERDRSUU03dUFZWkoxWHZvNUcyOUNrYytWYmZhNmRT?=
+ =?utf-8?B?SkM4OXNackJrVHQrR3BvMFJNUHY2T2VUby9WTUx0VWhEVnpNUkJmMXhDNGUr?=
+ =?utf-8?B?MXZGOUpQTnVRWXhWR3RWZnByOTMvOVBJM3pOZzNzYk9Sc09US1Zad3B1STFJ?=
+ =?utf-8?B?VUlKQ0hGendhamJLeUFJclpWYnFzUXZTOTdWSTBuOU13Qnc4VlRBWGpueEZn?=
+ =?utf-8?B?clJaMWtXb1RrdUlyRE9HMGpKeHpiTGhRTmcxcG95a21XRXB6NmZIZUY5dTVs?=
+ =?utf-8?B?MDUzZzdaY3RGTUFQOUZBNDNMU2NhakExYzFaUXE1SlFJc2dPZGYwRlZMeGNq?=
+ =?utf-8?B?cTV4Z2wwVnpZRmRSdm1qaGluWVNab3liUmQrYUVWdVcwdEVIMzloWmMxWEtD?=
+ =?utf-8?B?Q2c0bnlvdFkvakFwRHFoM0YvMlQ3QnZkVTJnczJPMmNTV0YzT3hrZElqNzF6?=
+ =?utf-8?B?dXR5Wk9LU3E2MU05M0Z3c3FkNXdBaGNoNG80V1JEYnBtSVAzcXZKM21KSkI0?=
+ =?utf-8?B?R1JMTTlmT09yaHUwYVg1Yi9SRzN3NjZBLzVES0FtT3pUM2s4dk1QVmxJSDQ4?=
+ =?utf-8?B?S05OUTg5T2RsdldxYXBjVXIxS2RPUWYyMDA4RUNyWlhsNFFaN3RESVRsMTRp?=
+ =?utf-8?B?VDZQNEZDK295SXpKcXIvK0lFTEN3dnRaYXozUklSWVlMVlBRV3QvNEZtblJ5?=
+ =?utf-8?B?OWlZY20yV21yNWMwa3ZjL3JUa2plU2ZqQi9RWEtRU3dWYzhoZDNFVXJ1bFhH?=
+ =?utf-8?Q?maz64OZOMCuoR?=
+X-Forefront-Antispam-Report: 
+	CIP:51.81.11.12;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:vin1-relay.sendergen.com;PTR:vin1-relay.sendergen.com;CAT:NONE;SFS:(13230040)(82310400026)(35042699022)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1102;
+X-OriginatorOrg: redpointglobal.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 18:47:32.5629
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0ea6bb6-6130-491d-6da8-08dce892d59e
+X-MS-Exchange-CrossTenant-Id: 16a3d264-4987-408a-a6aa-69dd136253fc
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=16a3d264-4987-408a-a6aa-69dd136253fc;Ip=[51.81.11.12];Helo=[vin1-relay.sendergen.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	CH2PEPF00000141.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7034
+X-BESS-ID: 1728499656-104050-1735-15001-1
+X-BESS-VER: 2019.3_20241004.2056
+X-BESS-Apparent-Source-IP: 104.47.58.101
+X-BESS-Parts: H4sIAAAAAAACAzXLMQ7DIAyF4bt4zmAbg0muUnXAYJQlylCGSlXuXoZkefr1pO
+	/1A/8O2GDMXeD8wEaMOmufp5UWfW1IybiIsnFj0YRrl0RmBNfy+H0ctw9CfHvWUINXM8
+	w194jFQ67dKFXmqOJwvf/9TjdTgQAAAA==
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.259609 [from 
+	cloudscan20-186.us-east-2b.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.00 HTML_MESSAGE           BODY: HTML included in message 
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS68988 scores of KILL_LEVEL=7.0 tests=HTML_MESSAGE, BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
+
+--_000_CH3PR11MB7203A7934F1140989513670F957F2CH3PR11MB7203namp_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Greetings,
+
+Are there known issues with a =E2=80=9Cfiltering consumer=E2=80=9D calling =
+receive(timeout)?
+
+I=E2=80=99ve found that we need to call receive twice, e.g.
+
+try (var consumer =3D session.createConsumer(destination, selector)) {
+    Message message =3D consumer.receive(PURGE_TIMEOUT_MS);
+    if (message =3D=3D null) {
+        message =3D consumer.receive(PURGE_TIMEOUT_MS);
+    }
+    =E2=80=A6
+}
+
+If we only call it once, the message is never received, regardless of the t=
+imeout value.  This kind of looks like ARTEMIS-3916, but that was for a leg=
+acy JMS client and was reported fixed in 2.25.
+
+If this doesn=E2=80=99t sound familiar, I can write up a reproduction test.
+
+Thanks
+John
+
+=E2=80=8A PLEASE NOTE: This e-mail from Redpoint Global Inc. (=E2=80=9CRedp=
+oint=E2=80=9D) is confidential and is intended solely for the use of the in=
+dividual(s) to whom it is addressed. If you believe you received this e-mai=
+l in error, please notify the sender immediately, delete the e-mail from yo=
+ur computer and do not copy, print or disclose it to anyone else. If you pr=
+operly received this e-mail as a customer, partner or vendor of Redpoint, y=
+ou should maintain its contents in confidence subject to the terms and cond=
+itions of your agreement(s) with Redpoint.
+
+--_000_CH3PR11MB7203A7934F1140989513670F957F2CH3PR11MB7203namp_--

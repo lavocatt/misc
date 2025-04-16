@@ -1,0 +1,331 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57513-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 994313E6D6
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:48:23 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 9460745D57
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:48:22 +0000 (UTC)
+Received: (qmail 1060432 invoked by uid 998); 3 Oct 2024 15:48:20 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1060415 invoked by uid 116); 3 Oct 2024 15:48:20 -0000
+Received: from mailrelay1-he-de.apache.org (HELO mailrelay1-he-de.apache.org) (116.203.21.61)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 03 Oct 2024 15:48:20 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	by mailrelay1-he-de.apache.org (ASF Mail Server at mailrelay1-he-de.apache.org) with ESMTPSA id 8FFE63EBFE
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:48:20 +0000 (UTC)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d446adf6eso182752366b.2
+        for <users@activemq.apache.org>; Thu, 03 Oct 2024 08:48:20 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yy/7qIwu7E7Nbf2W54URPLw0wXL2Y3vU3DciLPrShCoIDL0HMAe
+	xqMem3SzWPVrVJAR9ltF5Q41bDQqAuTw5pHNbbeZxRA8ujgUtrpsL7fVRLEqWY/tot2FwP7rigf
+	2Sj+5467EufL9TWamTEYOqDRUvLaGIN25GYAbjA==
+X-Google-Smtp-Source: AGHT+IFW2LskCjOjtmo/aR0bnSMa49EaPZuCFdoQdW2XbqBP5/nzut2jB0c1OLcIuqVPDWNHCtnUHnMWlQd4ns5oe8g=
+X-Received: by 2002:a17:907:2da5:b0:a8d:3085:a7b1 with SMTP id
+ a640c23a62f3a-a98f825ab00mr696802066b.38.1727970500228; Thu, 03 Oct 2024
+ 08:48:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <IA0PR20MB6000A4E8573A3D6C329F1355B4712@IA0PR20MB6000.namprd20.prod.outlook.com>
+In-Reply-To: <IA0PR20MB6000A4E8573A3D6C329F1355B4712@IA0PR20MB6000.namprd20.prod.outlook.com>
+From: Justin Bertram <jbertram@apache.org>
+Date: Thu, 3 Oct 2024 10:47:53 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=RrZBShuGO139mWP=Kr-7NQpRthOKKNQ5Z2pSG-KCjW=w@mail.gmail.com>
+Message-ID: <CAF+kE=RrZBShuGO139mWP=Kr-7NQpRthOKKNQ5Z2pSG-KCjW=w@mail.gmail.com>
+Subject: Re: Camel Route to Bridge 2 ActiveMQ Classic Brokers
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Content-Type: multipart/alternative; boundary="000000000000d969840623947bcf"
+
+--000000000000d969840623947bcf
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+> I have a Camel Route that drains all of the queues and topics (excluding
+Advisory Topics) from the old broker to the new broker.
+
+Conceptually speaking, there is no real way to "drain a topic" since topics
+don't hold messages like a queue does. When dealing with topics, messages
+are stored in _subscriptions_ which are created by consumers. Furthermore,
+any message sent to a topic without any subscriptions is simply dropped.
+So, depending on your use-case you may need to recreate any relevant
+subscriptions on the destination broker and have Camel drain the
+corresponding subscriptions on the source broker.
+
+> Is there a way to just create the queue or topic on the new broker with
+Camel without creating this stub message?
+
+Destinations are created when a message is sent or when a consumer
+attaches. If Camel doesn't send a message then the destination won't be
+created.
+
+I'm not 100% sure about your advisory question, but I believe you are
+correct. Ultimately your best bet is to test various configuration
+permutations for your use-case and see which one works best.
+
+
+Justin
+
+On Thu, Oct 3, 2024 at 9:51=E2=80=AFAM William Crowell
+<WCrowell@perforce.com.invalid> wrote:
+
+> Good morning,
+>
+> I am using ActiveMQ Classic 5.18.5 on 2 separate brokers on Windows
+> (unfortunately).  One broker is using the default kahaDB, and the other
+> broker has been configured with database persistence using Microsoft SQL
+> Server.  I am migrating messages from the old broker using kahaDB to the
+> new broker setup with database persistence.
+>
+> I have a Camel Route that drains all of the queues and topics (excluding
+> Advisory Topics) from the old broker to the new broker.  I am using XPath
+> on the to get all the queues and topics using these 2 URLs on the old
+> ActiveMQ broker:
+>
+> http://xxx:8161/admin/xml/queues.jsp
+> http://xxx:8161/admin/xml/topics.jsp
+>
+> What I have noticed is that queues that have no pending messages in them
+> are not created on the new broker.  I always have to put a small stub
+> message in the queue in order for it to be migrated over to the new broke=
+r.
+>
+> A few questions on this:
+>
+> 1) Am I approaching this wrong?  Is there a way to just create the queue
+> or topic on the new broker with Camel without creating this stub message?
+>
+> 2) I do not want to migrate the Advisory topics over to the new broker
+> because those will get created anyway when the topics and queues are move=
+d
+> over.  Is this assumption correct?
+>
+> Thank you in advance,
+>
+> William Crowell
+>
+>
+> This e-mail may contain information that is privileged or confidential. I=
+f
+> you are not the intended recipient, please delete the e-mail and any
+> attachments and notify us immediately.
+>
+>
+
+--000000000000d969840623947bcf--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57507-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id E3FD43E6D6
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 14:49:09 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id CB66E4A271
+	for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 14:49:08 +0000 (UTC)
+Received: (qmail 936604 invoked by uid 998); 3 Oct 2024 14:49:05 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 936585 invoked by uid 116); 3 Oct 2024 14:49:04 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Thu, 03 Oct 2024 14:49:04 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 967CB1FFF86
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 14:49:04 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -1.045
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.045 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,
+	RCVD_IN_MSPIKE_H2=-1.048, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=perforce.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id FJ_z2lRgyPix for <users@activemq.apache.org>;
+	Thu,  3 Oct 2024 14:49:04 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=40.107.102.95; helo=nam04-dm6-obe.outbound.protection.outlook.com; envelope-from=wcrowell@perforce.com; receiver=<UNKNOWN> 
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2095.outbound.protection.outlook.com [40.107.102.95])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id F14D881FC0
+	for <users@activemq.apache.org>; Thu,  3 Oct 2024 14:49:03 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MqZg76o8qVhUcA/CHXNPPVyTbnChAm90pW7ZyrbGFY25u+9Gu+1QRQeDz43TU2T4xZDeJ3kUuzOQPSkWrMveDKkaKR+VmNOeCXVqdXC5smvJTFX/kXLkNoO/mkLoG3J7/lXPKE6s0X9dEe39lot58RadmpnnAte3QkYZ4cIhCbc2ZfXBE10BmFb6914CpAlcrM57O8T+7QPuDZN3NqfjjIv7iYnWkkpPxYtt/BOwuIj2TdwDghogGPSNnjKRyjTR16HZJxPq1pb7PlVMwg8WNUdHuuUrjMPH44GGpERGNVCDk3Xo42FMj1jnNVHVKGLGnWud+qNFy7VU98DRHx3vzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cWb5eU6auu2/b4r2k0UgaeZryz+iwovHuJ5Oggv3DRk=;
+ b=F97gzePWP+wvO8ihTYylBd7MQhvFruPqwjm6KZMqbpCkU2NhPcnlQctKMRY9YPM0mFZjhQA2Bbe4ddhDcGVyrKq5tP/412jfptjNXILtAdc/5kvH3UF0LZGJky6cbkL7prhre4EmcjPpJwa8V/Qs9LbY84Oi1Q9pSpLniecegMW35m+At5NL5f6dTQG3Jr1AbObWLcfpROjgkHqorlOWCk83uguV0PeO90xZTZ87va77Bj7uao4+Bqn8yJYonHXRWaikXGRi58VnabOcrgnKmvhgJMjcVxpZdsKtDjsUBBTjJmW0Pl4qR0/vhVg+bDJl3+tbtsPQn2vdrYjE1iES/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=perforce.com; dmarc=pass action=none header.from=perforce.com;
+ dkim=pass header.d=perforce.com; arc=none
+X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perforce.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cWb5eU6auu2/b4r2k0UgaeZryz+iwovHuJ5Oggv3DRk=;
+ b=lqadoQzLrWHLkG4cpQp1Yd1JhQ0QSQRXHBfSyQB67Fg4rmzqi/wrYnRgV875SVFA0kTcFelO60ufxKpQhXmuqtYKSGVuA+OYnIeE4lk0QzWqFPii8XujAsGICyRbBk9YTYbrDN2ordOerrDOq+lQv5sEwUghQNCF24qQ714QMPfaGa+lXoxwGcMo1mCqTxwhuHlp7zp8gz+Y0t/mG7ENF3cztlhefHy9Gvmvk/nE859XIm2w5lgLC4EpVInyqznexuiWrY81ZSfRB9DL0NjcW2h6eVf5oyLdZdI3LOg0kai3kRiRGcdmOQTAUapAs0u5G18ClwPijLLtwlEx+z7vbA==
+Received: from IA0PR20MB6000.namprd20.prod.outlook.com (2603:10b6:208:408::7)
+ by DS0PR20MB6943.namprd20.prod.outlook.com (2603:10b6:8:1b3::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Thu, 3 Oct
+ 2024 14:48:52 +0000
+Received: from IA0PR20MB6000.namprd20.prod.outlook.com
+ ([fe80::b086:9cec:a4a1:47f1]) by IA0PR20MB6000.namprd20.prod.outlook.com
+ ([fe80::b086:9cec:a4a1:47f1%5]) with mapi id 15.20.8048.007; Thu, 3 Oct 2024
+ 14:48:52 +0000
+From: William Crowell <WCrowell@perforce.com.INVALID>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: Camel Route to Bridge 2 ActiveMQ Classic Brokers
+Thread-Topic: Camel Route to Bridge 2 ActiveMQ Classic Brokers
+Thread-Index: AQHbFaJIImIcd0o8AEWN7OOa8oYP2A==
+Date: Thu, 3 Oct 2024 14:48:52 +0000
+Message-ID: 
+ <IA0PR20MB6000A4E8573A3D6C329F1355B4712@IA0PR20MB6000.namprd20.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=perforce.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA0PR20MB6000:EE_|DS0PR20MB6943:EE_
+x-ms-office365-filtering-correlation-id: e4ae531a-658e-40b6-78bd-08dce3ba7f72
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: 
+ =?us-ascii?Q?OHxMkXfZPZU/lKwbcBfHNf9xgKtBlRzj3m0wzhhRIw9M08qXdEqVm5DbD855?=
+ =?us-ascii?Q?53trDkiqEWpYmpK4Liw2f+SXKf1+J5VsZ8lK06zVVCR8bhk3Rqt8fcQbtmCz?=
+ =?us-ascii?Q?oSdMR4dTOHK+g7Dmlw3MHYOs9xOft+uSa4TC8oCFwHb7/NvRgW/kcn3oCUdm?=
+ =?us-ascii?Q?kLmTE5KBoP0GNUvCQx2R3xygQQb8ypnFZZ5QzhEN+rvu3QEcmOCaK2wvQSDk?=
+ =?us-ascii?Q?A+YziClfk/WmQ2IyniHSsAQ+II1PpuRkhE1RpB72+mMcNdWGPWL/k9fhNCB1?=
+ =?us-ascii?Q?ZjC7xqsqyd/Nkt/DHXef1tEAXDP9ttEKr8a5qRk+UWmQ90jCEqFvQ9lPhTF0?=
+ =?us-ascii?Q?QFcLDpnG9hpZXrFwjElkLWnf/3jrE2uGtNxgHDq0B+GPTAf7lOQg13XEM7pF?=
+ =?us-ascii?Q?zGbnZzV5uusHyYz+9kAJbT7btUhW/Cy2LZh/0/JtgiHzGhl2li0mkoo3nZ/n?=
+ =?us-ascii?Q?oHdEJrZ0HuLES+JfxRByFsrTxHhzTY2PTq96XWcUr60XhYARi15lvbgKRrog?=
+ =?us-ascii?Q?s1qoGPGJZp35uEqB83Lvtvsu2rP9pGnDvnROAh9aUsW2jX2XUJyr2A5WabVJ?=
+ =?us-ascii?Q?awl20SbdsC2P3cDSjFWY6OkzRwcYqHRlgOPCus/tU4etHYqdAEpyykbjfKND?=
+ =?us-ascii?Q?1SEnvKyivaF5apRy3d8dnu7tFdyhYWiOt2xZg5FH4eKDuNVHJjjMnSklZQpR?=
+ =?us-ascii?Q?m/Dxxq5icYK3epJbEUQdiwfAmlG1EtrhYAjSc82Jzinmp0yP9JLF1WDgnvrV?=
+ =?us-ascii?Q?TZwX/j/yH+NEsy5dDgALrUOyfpYG+8qXxq4GfWYPhDobPLxis0U5EzObV0vX?=
+ =?us-ascii?Q?AwVBViPzyoal5O+g1AFF1yN6KbH/OVo5mKGU9tKz4E71OzUoQWn3ZKbc3IMi?=
+ =?us-ascii?Q?+Zc7S9fgKBvCu74QCV5Vbh2ytWCpqBWcGwkUTs/KGAzZcNv+7RtjdZyHB69o?=
+ =?us-ascii?Q?QWftBFl/1tQXeXlDy1m+ZD35J0RX/KrZF8QUGv6inS4uJLSYCDPozfYo3mX7?=
+ =?us-ascii?Q?+u8SpAXRMGqWvGCsEQ0RddoeKtEeSB4UInXi+/jVPFm3batA4Xod2Xycuj8O?=
+ =?us-ascii?Q?nEXoiSpAv/7qcApC6TTCtodiHgHp7Vu4mELbmdiFUioZ3IwCoQ4p9pfMTtfC?=
+ =?us-ascii?Q?Mj6eGm0lgnWUpXKVnrudFzDE0QscZffPXpxjHxMK5tN3zlpRRRZJCZzvp3Jx?=
+ =?us-ascii?Q?3NAl9M5qR31GZMF20u5EsD2ocKlel9TvFZBvT6wrNVG0Sm0XQeqzkT9kv9qB?=
+ =?us-ascii?Q?7SnuivlDTlMBnXoxNYnHsSMY3SanGBh87yfz+JCpN0GdSu1iFwykOkozWn8b?=
+ =?us-ascii?Q?2LkJBoIqzNWFGF6d+z6+8ilhBNPk44uqIWCWEKT5qsplsw=3D=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR20MB6000.namprd20.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?7cfdsSrduGvqpsnQeve7YoxDI8iXV81DpzeGhfn2L8Jv/ak2xfnsQJTHM2sE?=
+ =?us-ascii?Q?Hl4Mn7StYCUStpb9xCtWstioBXSQjAEnjI1S+whwu3QPjlj8jSpXEn09JLbp?=
+ =?us-ascii?Q?mYpOwLMtJTuqMX6/4XKLzMauqD3cuZHpSKG9IiVLvpOyvaCAMelmUg1CC2RF?=
+ =?us-ascii?Q?jbLaRttWF+UQ6DgS9n+agTOs8tTBXFnNk95q26tJhSu/2S5h3IrhxbxDSEfL?=
+ =?us-ascii?Q?2P3qzktta0Qf/sujhRW8g9C3UeTb6v9xuOYUiv9in0PZ5CnGdJarzqKoZMnf?=
+ =?us-ascii?Q?9Pf3K9Q6X0xx9mZM1ooiB//Roostp0rrrqKNT5kHKMhFy/S9TzHVfLs+gzyu?=
+ =?us-ascii?Q?DMdFqNBKcDC90gEjJsWDb+cjZYbFOgRO0YfHlahqleuA1MG6dkzfBzFTqlmh?=
+ =?us-ascii?Q?caZv16hHtMkuxCBOiOsRaEXimwVeFB2RvgrD6kuIbXoB3DqtbQXllOam2BgI?=
+ =?us-ascii?Q?po9fCzsRtX9w0xFAx34vYCuf7Mm/QrxlQfb3Uk6Rq5zYKYPorobr2q2K4LHk?=
+ =?us-ascii?Q?fj0c6qqIK0HNQ0CLeysHkWBtcUIdWL7nd1RAJxcQkJ5XSo+5EICcr8AWi8w9?=
+ =?us-ascii?Q?ZSxg3W/DidJL0Z08YcxbcaJJuOL4oJ+I/WNzejjEhRzHQSOl/89XYRMsJx09?=
+ =?us-ascii?Q?oFqlSnKFNHmBZJu9xZiLlkmzbJow2xIygew4MocoHbkZ623mB+hOU8swVghC?=
+ =?us-ascii?Q?lTiCc3s5fmpo47O2Whf5bU36SoynmRVHglFUejjVNLzkULFvXeVO0JHckQRJ?=
+ =?us-ascii?Q?1w0sKHu2B20bfTej8iVJZLwoKnSwayUX0PGw23O5QESyFByvpRtvi7RksS8U?=
+ =?us-ascii?Q?c22o0Oqc3q6bn4r96MI0WppJQIDrAQf6ew8tsoRpGHRv14uSfZ6TsyhBKhEz?=
+ =?us-ascii?Q?pQBiUxylZy44oBGeaC0DsaajZcI7ySf+vgX2Qy2lci8jD5veUJPiG6a+CsYw?=
+ =?us-ascii?Q?U4yLKSvNIU7b5S2b0mcipLGRnldKxgIbci2rPHpGvapMdE+taAYGuThmDzHq?=
+ =?us-ascii?Q?Y+uc87HyBLHM6l6thU1G161il9/Ew6hcXocHSSQFITApr+Rl++3DHZAHsosO?=
+ =?us-ascii?Q?YIXjU92RowGZCLqgSIQdJzw0C5iHmcvqyTZlqy+1c7Im/PMKWY1gI/d2VF/q?=
+ =?us-ascii?Q?mgEzRNYx8bVWhD5duH5o25G78wjvsymH0Ej8qcbq0vov48FKdUe8bA6nQTjD?=
+ =?us-ascii?Q?hTPFO9hfrga9B/n38/MgEf0G45cWSwXpLlXmYZJV2iiLonchG1HjDsdh2pOX?=
+ =?us-ascii?Q?Z8rDALCHUzDi6aRrcEwd57GzwEV7GyCj01IZKIeYGCi0UCUtFKCPzlCWz0B8?=
+ =?us-ascii?Q?EIacY2kYxSbseC0+6UPIETMp+0anSg0k9OfO0vmVb7B5LwqbpUXedF2CQNgP?=
+ =?us-ascii?Q?Z5SedThuSPY8ndLI3NAaliKemPl3b5EE1EsV94qqwBh8QucGncagQE1wi2mb?=
+ =?us-ascii?Q?YXhvoMFQbhO05Z+khCEjvMWUEjTyONIp5by7Io4zjNeQ+NnVuWR/7OPqWMSR?=
+ =?us-ascii?Q?e2/XCyF9jACa41NRqEDp6vQDr5SCtqGKGazA/8oLJtkG/rsbBFLNJbyrgI6h?=
+ =?us-ascii?Q?VEZ4wau6KMIbLdX8FZzBp4sQBbF/c+7o3OYGxYdbnCWcSGyFYPJTwp24nSgg?=
+ =?us-ascii?Q?jg=3D=3D?=
+Content-Type: multipart/alternative;
+	boundary="_000_IA0PR20MB6000A4E8573A3D6C329F1355B4712IA0PR20MB6000namp_"
+MIME-Version: 1.0
+X-OriginatorOrg: perforce.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR20MB6000.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4ae531a-658e-40b6-78bd-08dce3ba7f72
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2024 14:48:52.1240
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 95b666d1-9a75-49ab-95a3-8969fbcdc08c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wLPH6MW29hSPD2Q/SODXt1JuGVT/jxSmpwQxZ9l2a02EjsHYLdE1UylC8sXcyhDQSEGiAiaIHiX/REFjc9pEoQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR20MB6943
+
+--_000_IA0PR20MB6000A4E8573A3D6C329F1355B4712IA0PR20MB6000namp_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+Good morning,
+
+I am using ActiveMQ Classic 5.18.5 on 2 separate brokers on Windows (unfort=
+unately).  One broker is using the default kahaDB, and the other broker has=
+ been configured with database persistence using Microsoft SQL Server.  I a=
+m migrating messages from the old broker using kahaDB to the new broker set=
+up with database persistence.
+
+I have a Camel Route that drains all of the queues and topics (excluding Ad=
+visory Topics) from the old broker to the new broker.  I am using XPath on =
+the to get all the queues and topics using these 2 URLs on the old ActiveMQ=
+ broker:
+
+http://xxx:8161/admin/xml/queues.jsp
+http://xxx:8161/admin/xml/topics.jsp
+
+What I have noticed is that queues that have no pending messages in them ar=
+e not created on the new broker.  I always have to put a small stub message=
+ in the queue in order for it to be migrated over to the new broker.
+
+A few questions on this:
+
+1) Am I approaching this wrong?  Is there a way to just create the queue or=
+ topic on the new broker with Camel without creating this stub message?
+
+2) I do not want to migrate the Advisory topics over to the new broker beca=
+use those will get created anyway when the topics and queues are moved over=
+.  Is this assumption correct?
+
+Thank you in advance,
+
+William Crowell
+
+
+This e-mail may contain information that is privileged or confidential. If =
+you are not the intended recipient, please delete the e-mail and any attach=
+ments and notify us immediately.
+
+
+--_000_IA0PR20MB6000A4E8573A3D6C329F1355B4712IA0PR20MB6000namp_--

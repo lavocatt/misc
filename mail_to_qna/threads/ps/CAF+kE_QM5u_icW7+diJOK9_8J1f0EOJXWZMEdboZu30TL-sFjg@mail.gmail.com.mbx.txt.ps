@@ -1,0 +1,2860 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 38 24 574 768
+%%Title: Enscript Output
+%%For: Thomas Lavocat
+%%Creator: GNU Enscript 1.6.6
+%%CreationDate: Tue Apr  1 15:59:19 2025
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 6
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 6
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 6
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      fname length fmodstr length add pagenumstr length add 95 6 idiv add d_header_w 6 idiv le{
+        5 0 moveto fname show
+        45 0 rmoveto fmodstr show
+        45 0 rmoveto pagenumstr show
+      } {
+        5 0 moveto fmodstr show
+        45 0 rmoveto pagenumstr show
+        fname length d_header_w 6 idiv idiv 1 add 10 mul 5 exch moveto
+        1 1 fname length d_header_w 6 idiv idiv
+        {
+          dup fname exch 1 sub d_header_w 6 idiv mul d_header_w 6 idiv getinterval show
+          5 exch 10 mul fname length d_header_w 6 idiv idiv 1 add 10 mul exch sub moveto
+        } for
+        5 10 moveto
+        fname fname length d_header_w 6 idiv idiv d_header_w 6 idiv mul dup fname length exch sub getinterval show
+      }ifelse
+    }ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 536 def
+/d_page_h 744 def
+/d_header_x 0 def
+/d_header_y 700 def
+/d_header_w 536 def
+/d_header_h 44 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 536 def
+/d_footer_h 0 def
+/d_output_w 536 def
+/d_output_h 700 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 676 M
+(Return-Path: <users-return-57591-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 665 M
+(rg>) s
+5 654 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 643 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 632 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 621 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id B46DC3E6E9) s
+5 610 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 28 Oct 2024 14:05:47 +0000 \(UT) s
+5 599 M
+(C\)) s
+5 588 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 577 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 566 M
+(        \(No client certificate requested\)) s
+5 555 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 544 M
+(ESMTPS id 6187843261) s
+5 533 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 28 Oct 2024 14:05:25 +0000 \(UT) s
+5 522 M
+(C\)) s
+5 511 M
+(Received: \(qmail 1493724 invoked by uid 998\); 28 Oct 2024 14:05:23 -0000) s
+5 500 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 489 M
+(Precedence: bulk) s
+5 478 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 467 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 456 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 445 M
+(List-Id: <users.activemq.apache.org>) s
+5 434 M
+(Reply-To: users@activemq.apache.org) s
+5 423 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 412 M
+(Received: \(qmail 1493702 invoked by uid 116\); 28 Oct 2024 14:05:23 -0000) s
+5 401 M
+(Received: from ec2-52-204-25-47.compute-1.amazonaws.com \(HELO mailrelay1-ec2-va.apache.) s
+5 390 M
+(org\) \(52.204.25.47\)) s
+5 379 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Mon, 28 Oct 2024 14:05:23 +0000) s
+5 368 M
+(Authentication-Results: apache.org; auth=none) s
+5 357 M
+(Received: from mail-ej1-f51.google.com \(mail-ej1-f51.google.com [209.85.218.51]\)) s
+5 346 M
+(        by mailrelay1-ec2-va.apache.org \(ASF Mail Server at mailrelay1-ec2-va.apache.or) s
+5 335 M
+(g\) with ESMTPSA id BE3C03F1C0) s
+5 324 M
+(        for <users@activemq.apache.org>; Mon, 28 Oct 2024 14:05:22 +0000 \(UTC\)) s
+5 313 M
+(Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9932aa108cso650891566b) s
+5 302 M
+(.2) s
+5 291 M
+(        for <users@activemq.apache.org>; Mon, 28 Oct 2024 07:05:22 -0700 \(PDT\)) s
+5 280 M
+(X-Gm-Message-State: AOJu0YxStzIIme3L15mgZbuHc+oA5mD5CZxBfJ04ZUPJ2SncZaGB0LMi) s
+5 269 M
+(        Fand6ZqJ23z6KL6CBEn8KUFOXfeEP3t3NYOxMpXpqL5RsF4UmniaSnpg7rBksTi/YiM5lkakqiz) s
+5 258 M
+(        MnEQW77JsjF7LnER+NKfGSlbdwm9frVWr7WPH5A==) s
+5 247 M
+(X-Google-Smtp-Source: AGHT+IF+NiSI4zvi9lj6svV/wUvyIkmaVqAK6Z/oRbW8MacV2jyUadfyR8mSgfsll) s
+5 236 M
+(SPw9cOJk0wI2yd5qH08p4C7mAs=) s
+5 225 M
+(X-Received: by 2002:a17:907:1c12:b0:a99:7177:3f6a with SMTP id) s
+5 214 M
+( a640c23a62f3a-a9de62f4b79mr831783766b.63.1730124321813; Mon, 28 Oct 2024) s
+5 203 M
+( 07:05:21 -0700 \(PDT\)) s
+5 192 M
+(MIME-Version: 1.0) s
+5 181 M
+(References: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>) s
+5 170 M
+( <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com> <08acc429-acaf-4e) s
+5 159 M
+(0d-943e-aed1e7effc01@idfix.nl>) s
+5 148 M
+(In-Reply-To: <08acc429-acaf-4e0d-943e-aed1e7effc01@idfix.nl>) s
+5 137 M
+(From: Justin Bertram <jbertram@apache.org>) s
+5 126 M
+(Date: Mon, 28 Oct 2024 09:04:55 -0500) s
+5 115 M
+(X-Gmail-Original-Message-ID: <CAF+kE=QM5u=icW7+diJOK9=8J1f0EOJXWZMEdboZu30TL-sFjg@mail.) s
+5 104 M
+(gmail.com>) s
+5 93 M
+(Message-ID: <CAF+kE=QM5u=icW7+diJOK9=8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com>) s
+5 82 M
+(Subject: Re: Question regarding problems with JDBC persistence) s
+5 71 M
+(To: users@activemq.apache.org) s
+5 60 M
+(Content-Type: multipart/alternative; boundary="0000000000009eaa8e062589f563") s
+5 38 M
+(--0000000000009eaa8e062589f563) s
+5 27 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 16 M
+(Content-Transfer-Encoding: quoted-printable) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Based on the information you provided I can say that the problem isn't what) s
+5 676 M
+(I originally expected. Here's how the data breaks down per record type:) s
+5 654 M
+(- Add \(11\)) s
+5 643 M
+(  - Set scheduled delivery time \(36\): 376,143,458) s
+5 632 M
+(  - Update delivery count\(34\): 290,102) s
+5 621 M
+(- Add Transactional \(13\)) s
+5 610 M
+(  - Add message \(45\):  63,893) s
+5 599 M
+(- Update Transactional \(14\)) s
+5 588 M
+(  - Add reference \(32\) 63,893) s
+5 577 M
+(  - Acknowledge reference \(33\) 2) s
+5 566 M
+(- Prepare \(17\): 228) s
+5 555 M
+(- Commit \(18\): 22,941) s
+5 533 M
+(So it looks like you're using a lot of scheduled messages, either directly) s
+5 522 M
+(or indirectly \(e.g. via redelivery delay\), and the records related to the) s
+5 511 M
+(delivery schedule are accumulating. If you stop the broker and run the) s
+5 500 M
+("journal compact" command does the number of records in the database drop?) s
+5 478 M
+(Out of curiosity, is there a specific reason you're using JDBC vs. the) s
+5 467 M
+(traditional file-based journal on local disk?) s
+5 434 M
+(Justin) s
+5 412 M
+(On Mon, Oct 28, 2024 at 2:56=E2=80=AFAM Bisil <bisil@idfix.nl> wrote:) s
+5 390 M
+(> Thanks for the reply Justin.) s
+5 379 M
+(>) s
+5 368 M
+(> After restoring the database in its original state I ran counts on) s
+5 357 M
+(> recordType/userRecordType and got this:) s
+5 346 M
+(>) s
+5 335 M
+(> recordType userRecordType           count\(*\)) s
+5 324 M
+(>) s
+5 313 M
+(> 11         36 376143458) s
+5 302 M
+(>) s
+5 291 M
+(> 11         34 290102) s
+5 280 M
+(>) s
+5 269 M
+(> 13        45 63893) s
+5 258 M
+(>) s
+5 247 M
+(> 14        32 63893) s
+5 236 M
+(>) s
+5 225 M
+(> 18        255 22941) s
+5 214 M
+(>) s
+5 203 M
+(> 17        255       228) s
+5 192 M
+(>) s
+5 181 M
+(> 14        33        2) s
+5 170 M
+(>) s
+5 159 M
+(>) s
+5 148 M
+(>) s
+5 137 M
+(> The messages are posted through JMS from inside the same Wildfly) s
+5 126 M
+(> instance that runs ActiveMQ. Message handling is done by MDBs that run) s
+5 115 M
+(> inside the same JVM. We do have some clustered Wildfly setups although) s
+5 104 M
+(> most are standalone.) s
+5 93 M
+(>) s
+5 82 M
+(> We know we are running an old version. Upgrading Wildfly is on our) s
+5 71 M
+(> roadmap but that may take quite some time. We investigated upgrading) s
+5 60 M
+(> ActiveMQ separately but ran into too many issues and gave up on that idea=) s
+5 49 M
+(.) s
+5 38 M
+(>) s
+5 27 M
+(> Silvio) s
+5 16 M
+(>) s
+5 5 M
+(>) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 3 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> On 23-10-2024 22:27, Justin Bertram wrote:) s
+5 676 M
+(> > This sounds similar to an issue involving duplicate IDs proliferating i=) s
+5 665 M
+(n) s
+5 654 M
+(> > the journal. I can't find the specific Jira at the moment, but the issu=) s
+5 643 M
+(e) s
+5 632 M
+(> > was something like a huge build-up of duplicate ID records. Can you) s
+5 621 M
+(> inspect) s
+5 610 M
+(> > the "userRecordType" for the offending rows?) s
+5 599 M
+(> >) s
+5 588 M
+(> > Also, how are you sending your message exactly? Do you need duplicate) s
+5 577 M
+(> > detection?) s
+5 566 M
+(> >) s
+5 555 M
+(> > Lastly, 2.16.0 is quite old at this point. There's been improvements to) s
+5 544 M
+(> > JDBC since then which you'd almost certainly benefit from \(not to menti=) s
+5 533 M
+(on) s
+5 522 M
+(> > all the other bug-fixes and features\). Are you open to upgrading?) s
+5 511 M
+(> >) s
+5 500 M
+(> >) s
+5 489 M
+(> > Justin) s
+5 478 M
+(> >) s
+5 467 M
+(> > On Wed, Oct 23, 2024 at 4:32=E2=80=AFAM Bisil<bisil@idfix.nl> wrote:) s
+5 456 M
+(> >) s
+5 445 M
+(> >> Hello,) s
+5 434 M
+(> >>) s
+5 423 M
+(> >> Inside Wildfly 23.0.0 we are running ActiveMQ Artemis Message Broker) s
+5 412 M
+(> >> 2.16.0 with JDBC persistence on SQLServer for ~25 message queues. In) s
+5 401 M
+(> >> some production environments we have moderate-to-high message volumes) s
+5 390 M
+(> >> and since processing can be relatively slow temporary message pileup i=) s
+5 379 M
+(s) s
+5 368 M
+(> >> not uncommon.) s
+5 357 M
+(> >>) s
+5 346 M
+(> >> In one particular environment we are experiencing OutOfMemory issues) s
+5 335 M
+(> >> during startup. There are about 60K messages in 2 of the queues while) s
+5 324 M
+(> >> the message table contains over 350M records causing memory exhaustion) s
+5 313 M
+(> >> during startup. Running in a controlled environment with ~60G heap) s
+5 302 M
+(> >> startup succeeds and through JProfiler we observe that all message tab=) s
+5 291 M
+(le) s
+5 280 M
+(> >> records are selected and appear to be collected in memory. After that) s
+5 269 M
+(> >> they are processed and discarded dropping memory usage down to a) s
+5 258 M
+(> >> fraction of its peak. Using the JBoss CLI to inspect the queues then) s
+5 247 M
+(> >> shows we have indeed 60K messages in 2 queues.) s
+5 236 M
+(> >>) s
+5 225 M
+(> >> Inspecting the contents of the message table we see limited counts of) s
+5 214 M
+(> >> record types 13 \(ADD_RECORD_TX\) and 14 \(UPDATE_RECORD_TX\) roughly) s
+5 203 M
+(> >> equivalent to the 60K message count. All remaining records are type 11) s
+5 192 M
+(> >> \(ADD_RECORD\).) s
+5 181 M
+(> >>) s
+5 170 M
+(> >> When we removed all type 11 records restart was fast with limited memo=) s
+5 159 M
+(ry) s
+5 148 M
+(> >> load and we still see 60K messages in the 2 queues.) s
+5 137 M
+(> >>) s
+5 126 M
+(> >> In the past we have observed similar numbers and startup problems in) s
+5 115 M
+(> >> other environments which lead us to truncate the AMQ persistence table=) s
+5 104 M
+(s) s
+5 93 M
+(> >> to be able to restart the server without an OutOfMemoryException. But =) s
+5 82 M
+(we) s
+5 71 M
+(> >> are looking for a way to prevent this situation from happening.) s
+5 60 M
+(> >>) s
+5 49 M
+(> >> So my questions are:) s
+5 38 M
+(> >>) s
+5 27 M
+(> >> - Is the large record count in the message table expected behavior?) s
+5 16 M
+(> >>) s
+5 5 M
+(> >> - Is there anything we can/should do to limit the number of records in) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 4 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> >> the message table?) s
+5 676 M
+(> >>) s
+5 665 M
+(> >> - Is removing all type 11 records a valid workaround? If no, what woul=) s
+5 654 M
+(d) s
+5 643 M
+(> >> be the side-effect?) s
+5 632 M
+(> >>) s
+5 621 M
+(> >> Thanks for your help!) s
+5 610 M
+(> >>) s
+5 599 M
+(> >> Silvio) s
+5 588 M
+(> >>) s
+5 577 M
+(>) s
+5 555 M
+(--0000000000009eaa8e062589f563--) s
+5 544 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 533 M
+(Return-Path: <users-return-57593-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 522 M
+(rg>) s
+5 511 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 500 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 489 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 478 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 704AA3E6B5) s
+5 467 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Tue, 29 Oct 2024 13:06:02 +0000 \(UT) s
+5 456 M
+(C\)) s
+5 445 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 434 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 423 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 412 M
+(        \(No client certificate requested\)) s
+5 401 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 390 M
+(MTPS id A44A365000) s
+5 379 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Tue, 29 Oct 2024 13:04:42 +0000 \(UT) s
+5 368 M
+(C\)) s
+5 357 M
+(Received: \(qmail 4188348 invoked by uid 998\); 29 Oct 2024 13:04:41 -0000) s
+5 346 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 335 M
+(Precedence: bulk) s
+5 324 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 313 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 302 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 291 M
+(List-Id: <users.activemq.apache.org>) s
+5 280 M
+(Reply-To: users@activemq.apache.org) s
+5 269 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 258 M
+(Received: \(qmail 4188316 invoked by uid 116\); 29 Oct 2024 13:04:39 -0000) s
+5 247 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 236 M
+(6.100\)) s
+5 225 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Tue, 29 Oct 2024 13:04:39 +0000) s
+5 214 M
+(Authentication-Results: apache.org; auth=none) s
+5 203 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 192 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 181 M
+(ith ESMTP id 8597E20022A) s
+5 170 M
+(        for <users@activemq.apache.org>; Tue, 29 Oct 2024 13:04:39 +0000 \(UTC\)) s
+5 159 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 148 M
+(X-Spam-Flag: NO) s
+5 137 M
+(X-Spam-Score: 0.202) s
+5 126 M
+(X-Spam-Level: ) s
+5 115 M
+(X-Spam-Status: No, score=0.202 tagged_above=-999 required=6.31) s
+5 104 M
+(        tests=[HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,) s
+5 93 M
+(        RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,) s
+5 82 M
+(        RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]) s
+5 71 M
+(        autolearn=disabled) s
+5 60 M
+(Received: from mx1-ec2-va.apache.org \([116.203.227.195]\)) s
+5 49 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 38 M
+(10024\)) s
+5 27 M
+(        with ESMTP id PIud_9ASpw8f for <users@activemq.apache.org>;) s
+5 16 M
+(        Tue, 29 Oct 2024 13:04:38 +0000 \(UTC\)) s
+5 5 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=136.144.238.65; helo=jambo4.) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 5 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(jambo-mobile.com; envelope-from=bisil@idfix.nl; receiver=<UNKNOWN> ) s
+5 676 M
+(Received: from jambo4.jambo-mobile.com \(jambo4.jambo-mobile.com [136.144.238.65]\)) s
+5 665 M
+(        by mx1-ec2-va.apache.org \(ASF Mail Server at mx1-ec2-va.apache.org\) with ESMTPS) s
+5 654 M
+( id 87F98BFB46) s
+5 643 M
+(        for <users@activemq.apache.org>; Tue, 29 Oct 2024 13:04:37 +0000 \(UTC\)) s
+5 632 M
+(Received: from [192.168.1.106] \(86-95-102-82.fixed.kpn.net [86.95.102.82]\)) s
+5 621 M
+(        \(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 \(128/128 bits\)) s
+5 610 M
+(         key-exchange X25519 server-signature RSA-PSS \(2048 bits\) server-digest SHA256\)) s
+5 599 M
+(        \(No client certificate requested\)) s
+5 588 M
+(        by jambo4.jambo-mobile.com \(Postfix\) with ESMTPSA id D0BA36C0685) s
+5 577 M
+(        for <users@activemq.apache.org>; Tue, 29 Oct 2024 14:04:30 +0100 \(CET\)) s
+5 566 M
+(Content-Type: multipart/alternative;) s
+5 555 M
+( boundary="------------CBmZ30XvHIWNb9KIPKUJkrXO") s
+5 544 M
+(Message-ID: <9565d5b5-5d75-4d30-a0f1-908fef0fd026@idfix.nl>) s
+5 533 M
+(Date: Tue, 29 Oct 2024 14:04:30 +0100) s
+5 522 M
+(MIME-Version: 1.0) s
+5 511 M
+(User-Agent: Mozilla Thunderbird) s
+5 500 M
+(Subject: Re: Question regarding problems with JDBC persistence) s
+5 489 M
+(To: users@activemq.apache.org) s
+5 478 M
+(References: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>) s
+5 467 M
+( <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>) s
+5 456 M
+( <08acc429-acaf-4e0d-943e-aed1e7effc01@idfix.nl>) s
+5 445 M
+( <CAF+kE=QM5u=icW7+diJOK9=8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com>) s
+5 434 M
+(Content-Language: en-US) s
+5 423 M
+(From: Bisil <bisil@idfix.nl>) s
+5 412 M
+(In-Reply-To: <CAF+kE=QM5u=icW7+diJOK9=8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com>) s
+5 390 M
+(--------------CBmZ30XvHIWNb9KIPKUJkrXO) s
+5 379 M
+(Content-Type: text/plain; charset=UTF-8; format=flowed) s
+5 368 M
+(Content-Transfer-Encoding: 7bit) s
+5 346 M
+(Hi Justin,) s
+5 324 M
+(Thanks again for your valuable insights.) s
+5 302 M
+(We do use indirect scheduled messages intensively since we have ) s
+5 291 M
+(redelivery-delay=1000, redelivery-multiplier=2, redelivery-attempts=9 ) s
+5 280 M
+(settings for the majority of queues. We also use ) s
+5 269 M
+(message-counter-history-day-limit=10 for all queues if that is at all ) s
+5 258 M
+(significant.) s
+5 236 M
+(We have not tried explicit compacting the journal yet and since the ) s
+5 225 M
+(AMQ-related tables on production environments that ran into this ) s
+5 214 M
+(situation were truncated to get things back up we can not do this right now.) s
+5 203 M
+(I was under the impression that Artemis also compacts the journal during ) s
+5 192 M
+(startup. If that is true could we not simply try restarting the Wildfly ) s
+5 181 M
+(server if we see large journal volumes to check if that makes a ) s
+5 170 M
+(difference, or is that not the same? If so, could you elaborate a bit ) s
+5 159 M
+(since I know how to stop/start the broker from the JBoss CLI but have no ) s
+5 148 M
+(knowledge about an explicit journal compaction command.) s
+5 126 M
+(We use JDBC persistence for a couple of reasons. Having the journal ) s
+5 115 M
+(inside the database makes it easier for us to keep things in sync with ) s
+5 104 M
+(backups/restores which we also use heavily for trouble shooting. In ) s
+5 93 M
+(addition to that using file based persistence comes with additional ) s
+5 82 M
+(costs in our cloud environments.) s
+5 60 M
+(Silvio) s
+5 27 M
+(On 28-10-2024 15:04, Justin Bertram wrote:) s
+5 16 M
+(> Based on the information you provided I can say that the problem isn't what) s
+5 5 M
+(> I originally expected. Here's how the data breaks down per record type:) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 6 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(>) s
+5 676 M
+(> - Add \(11\)) s
+5 665 M
+(>    - Set scheduled delivery time \(36\): 376,143,458) s
+5 654 M
+(>    - Update delivery count\(34\): 290,102) s
+5 643 M
+(> - Add Transactional \(13\)) s
+5 632 M
+(>    - Add message \(45\):  63,893) s
+5 621 M
+(> - Update Transactional \(14\)) s
+5 610 M
+(>    - Add reference \(32\) 63,893) s
+5 599 M
+(>    - Acknowledge reference \(33\) 2) s
+5 588 M
+(> - Prepare \(17\): 228) s
+5 577 M
+(> - Commit \(18\): 22,941) s
+5 566 M
+(>) s
+5 555 M
+(> So it looks like you're using a lot of scheduled messages, either directly) s
+5 544 M
+(> or indirectly \(e.g. via redelivery delay\), and the records related to the) s
+5 533 M
+(> delivery schedule are accumulating. If you stop the broker and run the) s
+5 522 M
+(> "journal compact" command does the number of records in the database drop?) s
+5 511 M
+(>) s
+5 500 M
+(> Out of curiosity, is there a specific reason you're using JDBC vs. the) s
+5 489 M
+(> traditional file-based journal on local disk?) s
+5 478 M
+(>) s
+5 467 M
+(>) s
+5 456 M
+(> Justin) s
+5 445 M
+(>) s
+5 434 M
+(>) s
+5 423 M
+(--------------CBmZ30XvHIWNb9KIPKUJkrXO--) s
+5 412 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 401 M
+(Return-Path: <users-return-57594-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 390 M
+(rg>) s
+5 379 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 368 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 357 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 346 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id F0E063E6A3) s
+5 335 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Tue, 29 Oct 2024 15:55:35 +0000 \(UT) s
+5 324 M
+(C\)) s
+5 313 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 302 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 291 M
+(        \(No client certificate requested\)) s
+5 280 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 269 M
+(ESMTPS id B599545FDF) s
+5 258 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Tue, 29 Oct 2024 15:54:26 +0000 \(UT) s
+5 247 M
+(C\)) s
+5 236 M
+(Received: \(qmail 538013 invoked by uid 998\); 29 Oct 2024 15:54:24 -0000) s
+5 225 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 214 M
+(Precedence: bulk) s
+5 203 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 192 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 181 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 170 M
+(List-Id: <users.activemq.apache.org>) s
+5 159 M
+(Reply-To: users@activemq.apache.org) s
+5 148 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 137 M
+(Received: \(qmail 537996 invoked by uid 116\); 29 Oct 2024 15:54:24 -0000) s
+5 126 M
+(Received: from ec2-52-204-25-47.compute-1.amazonaws.com \(HELO mailrelay1-ec2-va.apache.) s
+5 115 M
+(org\) \(52.204.25.47\)) s
+5 104 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Tue, 29 Oct 2024 15:54:24 +0000) s
+5 93 M
+(Authentication-Results: apache.org; auth=none) s
+5 82 M
+(Received: from mail-ed1-f44.google.com \(mail-ed1-f44.google.com [209.85.208.44]\)) s
+5 71 M
+(        by mailrelay1-ec2-va.apache.org \(ASF Mail Server at mailrelay1-ec2-va.apache.or) s
+5 60 M
+(g\) with ESMTPSA id 39246402DA) s
+5 49 M
+(        for <users@activemq.apache.org>; Tue, 29 Oct 2024 15:54:24 +0000 \(UTC\)) s
+5 38 M
+(Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c984352742so6289663a12) s
+5 27 M
+(.1) s
+5 16 M
+(        for <users@activemq.apache.org>; Tue, 29 Oct 2024 08:54:24 -0700 \(PDT\)) s
+5 5 M
+(X-Gm-Message-State: AOJu0YwzHFxfeXxO6HxuZNmR2FRbbwRXMwvF638VddJpi0HbblAqUTXh) s
+_R
+S
+%%Page: (7) 7
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 7 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (7) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        piJnzKk6kkErjHpMKXKJHfAnHixeGe4Jre6Rt2/431rkyQ9UWFEHJbSqtV+WqlF+AHkU/OZLGrT) s
+5 676 M
+(        kg8xCZpkZNfThGF/S1D386NvIYRTaI1CLf2ECFA==) s
+5 665 M
+(X-Google-Smtp-Source: AGHT+IH5YqnmJaRqnPr1y8DQ/c4AsDaZTsGx1taeEXXFviVrORiPSgN1S3cLIGeXS) s
+5 654 M
+(HScArt3isuQt4DrZxZHXS64oTk=) s
+5 643 M
+(X-Received: by 2002:a05:6402:42c4:b0:5c5:cd4b:5c4d with SMTP id) s
+5 632 M
+( 4fb4d7f45d1cf-5cbbf891a4emr11622241a12.8.1730217263280; Tue, 29 Oct 2024) s
+5 621 M
+( 08:54:23 -0700 \(PDT\)) s
+5 610 M
+(MIME-Version: 1.0) s
+5 599 M
+(References: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>) s
+5 588 M
+( <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>) s
+5 577 M
+( <08acc429-acaf-4e0d-943e-aed1e7effc01@idfix.nl> <CAF+kE=QM5u=icW7+diJOK9=8J1f0EOJXWZME) s
+5 566 M
+(dboZu30TL-sFjg@mail.gmail.com>) s
+5 555 M
+( <9565d5b5-5d75-4d30-a0f1-908fef0fd026@idfix.nl>) s
+5 544 M
+(In-Reply-To: <9565d5b5-5d75-4d30-a0f1-908fef0fd026@idfix.nl>) s
+5 533 M
+(From: Justin Bertram <jbertram@apache.org>) s
+5 522 M
+(Date: Tue, 29 Oct 2024 10:53:56 -0500) s
+5 511 M
+(X-Gmail-Original-Message-ID: <CAF+kE=TqKdq_qk5f=Ltww6VOiK71JOA26Nsu3CMhgb_z7jYdgw@mail.) s
+5 500 M
+(gmail.com>) s
+5 489 M
+(Message-ID: <CAF+kE=TqKdq_qk5f=Ltww6VOiK71JOA26Nsu3CMhgb_z7jYdgw@mail.gmail.com>) s
+5 478 M
+(Subject: Re: Question regarding problems with JDBC persistence) s
+5 467 M
+(To: users@activemq.apache.org) s
+5 456 M
+(Content-Type: multipart/alternative; boundary="0000000000005cdac706259f9917") s
+5 434 M
+(--0000000000005cdac706259f9917) s
+5 423 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 412 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 390 M
+(> We do use indirect scheduled messages intensively since we have) s
+5 379 M
+(redelivery-delay=3D1000, redelivery-multiplier=3D2, redelivery-attempts=3D9) s
+5 368 M
+(settings for the majority of queues.) s
+5 346 M
+(I assume you're referring to redelivery-delay-multiplier and) s
+5 335 M
+(max-delivery-attempts here.) s
+5 313 M
+(> We also use message-counter-history-day-limit=3D10 for all queues if that) s
+5 302 M
+(is at all significant.) s
+5 280 M
+(I don't think that is relevant here.) s
+5 258 M
+(> We have not tried explicit compacting the journal yet...) s
+5 236 M
+(I had a look through the JDBC code and I see now that compaction is a red) s
+5 225 M
+(herring. The normal file-based journal is append-only which is why it) s
+5 214 M
+(requires occasional compaction. However, JDBC is not append-only. Records) s
+5 203 M
+(are removed during normal processing, including the) s
+5 192 M
+(set-scheduled-delivery-time records that are accumulating in your database.) s
+5 181 M
+(I tested this with both 2.16.0 and 2.38.0 \(i.e. the latest\) and I didn't) s
+5 170 M
+(see any accumulation. As soon as the message associated with the) s
+5 159 M
+(set-scheduled-delivery-time records was acknowledged all those records were) s
+5 148 M
+(cleaned up.) s
+5 126 M
+(In any case, I don't believe that WildFly even supports the "data compact") s
+5 115 M
+(command so it would almost certainly be a head-ache to execute it.) s
+5 93 M
+(To be clear, I typically only recommend folks use the embedded broker in) s
+5 82 M
+(WildFly for the most trivial use-cases. As soon as complexity increases) s
+5 71 M
+(it's usually good to have a standalone broker which can be managed \(e.g.) s
+5 60 M
+(upgraded, restarted, etc.\) separately.) s
+5 38 M
+(> I was under the impression that Artemis also compacts the journal during) s
+5 27 M
+(startup.) s
+5 5 M
+(Despite the fact that compaction doesn't appear to be related here I just) s
+_R
+S
+%%Page: (8) 8
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 8 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (8) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(wanted to say that I don't believe the broker always compacts the journal) s
+5 676 M
+(at startup. What gave you that impression?) s
+5 643 M
+(Ultimately I'm not sure what's going on here. I'd need to be able to) s
+5 632 M
+(reproduce the problem myself for further investigation. Do you have a way) s
+5 621 M
+(to reproduce this problem?) s
+5 588 M
+(Justin) s
+5 566 M
+(On Tue, Oct 29, 2024 at 8:05=E2=80=AFAM Bisil <bisil@idfix.nl> wrote:) s
+5 544 M
+(> Hi Justin,) s
+5 533 M
+(>) s
+5 522 M
+(> Thanks again for your valuable insights.) s
+5 511 M
+(>) s
+5 500 M
+(> We do use indirect scheduled messages intensively since we have) s
+5 489 M
+(> redelivery-delay=3D1000, redelivery-multiplier=3D2, redelivery-attempts=) s
+5 478 M
+(=3D9) s
+5 467 M
+(> settings for the majority of queues. We also use) s
+5 456 M
+(> message-counter-history-day-limit=3D10 for all queues if that is at all) s
+5 445 M
+(> significant.) s
+5 434 M
+(>) s
+5 423 M
+(> We have not tried explicit compacting the journal yet and since the) s
+5 412 M
+(> AMQ-related tables on production environments that ran into this) s
+5 401 M
+(> situation were truncated to get things back up we can not do this right) s
+5 390 M
+(> now.) s
+5 379 M
+(> I was under the impression that Artemis also compacts the journal during) s
+5 368 M
+(> startup. If that is true could we not simply try restarting the Wildfly) s
+5 357 M
+(> server if we see large journal volumes to check if that makes a) s
+5 346 M
+(> difference, or is that not the same? If so, could you elaborate a bit) s
+5 335 M
+(> since I know how to stop/start the broker from the JBoss CLI but have no) s
+5 324 M
+(> knowledge about an explicit journal compaction command.) s
+5 313 M
+(>) s
+5 302 M
+(> We use JDBC persistence for a couple of reasons. Having the journal) s
+5 291 M
+(> inside the database makes it easier for us to keep things in sync with) s
+5 280 M
+(> backups/restores which we also use heavily for trouble shooting. In) s
+5 269 M
+(> addition to that using file based persistence comes with additional) s
+5 258 M
+(> costs in our cloud environments.) s
+5 247 M
+(>) s
+5 236 M
+(> Silvio) s
+5 225 M
+(>) s
+5 214 M
+(>) s
+5 203 M
+(> On 28-10-2024 15:04, Justin Bertram wrote:) s
+5 192 M
+(> > Based on the information you provided I can say that the problem isn't) s
+5 181 M
+(> what) s
+5 170 M
+(> > I originally expected. Here's how the data breaks down per record type:) s
+5 159 M
+(> >) s
+5 148 M
+(> > - Add \(11\)) s
+5 137 M
+(> >    - Set scheduled delivery time \(36\): 376,143,458) s
+5 126 M
+(> >    - Update delivery count\(34\): 290,102) s
+5 115 M
+(> > - Add Transactional \(13\)) s
+5 104 M
+(> >    - Add message \(45\):  63,893) s
+5 93 M
+(> > - Update Transactional \(14\)) s
+5 82 M
+(> >    - Add reference \(32\) 63,893) s
+5 71 M
+(> >    - Acknowledge reference \(33\) 2) s
+5 60 M
+(> > - Prepare \(17\): 228) s
+5 49 M
+(> > - Commit \(18\): 22,941) s
+5 38 M
+(> >) s
+5 27 M
+(> > So it looks like you're using a lot of scheduled messages, either) s
+5 16 M
+(> directly) s
+5 5 M
+(> > or indirectly \(e.g. via redelivery delay\), and the records related to t=) s
+_R
+S
+%%Page: (9) 9
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 9 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (9) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(he) s
+5 676 M
+(> > delivery schedule are accumulating. If you stop the broker and run the) s
+5 665 M
+(> > "journal compact" command does the number of records in the database) s
+5 654 M
+(> drop?) s
+5 643 M
+(> >) s
+5 632 M
+(> > Out of curiosity, is there a specific reason you're using JDBC vs. the) s
+5 621 M
+(> > traditional file-based journal on local disk?) s
+5 610 M
+(> >) s
+5 599 M
+(> >) s
+5 588 M
+(> > Justin) s
+5 577 M
+(> >) s
+5 566 M
+(> >) s
+5 544 M
+(--0000000000005cdac706259f9917--) s
+5 533 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 522 M
+(Return-Path: <users-return-57589-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 511 M
+(rg>) s
+5 500 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 489 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 478 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 467 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 1CD2E3E680) s
+5 456 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 28 Oct 2024 07:54:11 +0000 \(UT) s
+5 445 M
+(C\)) s
+5 434 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 423 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 412 M
+(        \(No client certificate requested\)) s
+5 401 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 390 M
+(ESMTPS id 4D7FF42E3F) s
+5 379 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 28 Oct 2024 07:53:59 +0000 \(UT) s
+5 368 M
+(C\)) s
+5 357 M
+(Received: \(qmail 576863 invoked by uid 998\); 28 Oct 2024 07:53:57 -0000) s
+5 346 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 335 M
+(Precedence: bulk) s
+5 324 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 313 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 302 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 291 M
+(List-Id: <users.activemq.apache.org>) s
+5 280 M
+(Reply-To: users@activemq.apache.org) s
+5 269 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 258 M
+(Received: \(qmail 576832 invoked by uid 116\); 28 Oct 2024 07:53:56 -0000) s
+5 247 M
+(Received: from spamproc1-he-fi.apache.org \(HELO spamproc1-he-fi.apache.org\) \(95.217.134) s
+5 236 M
+(.168\)) s
+5 225 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Mon, 28 Oct 2024 07:53:56 +0000) s
+5 214 M
+(Authentication-Results: apache.org; auth=none) s
+5 203 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 192 M
+(        by spamproc1-he-fi.apache.org \(ASF Mail Server at spamproc1-he-fi.apache.org\) w) s
+5 181 M
+(ith ESMTP id 5445BC2344) s
+5 170 M
+(        for <users@activemq.apache.org>; Mon, 28 Oct 2024 07:53:56 +0000 \(UTC\)) s
+5 159 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org) s
+5 148 M
+(X-Spam-Flag: NO) s
+5 137 M
+(X-Spam-Score: 0.201) s
+5 126 M
+(X-Spam-Level: ) s
+5 115 M
+(X-Spam-Status: No, score=0.201 tagged_above=-999 required=6.31) s
+5 104 M
+(        tests=[HTML_MESSAGE=0.2, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,) s
+5 93 M
+(        RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]) s
+5 82 M
+(        autolearn=disabled) s
+5 71 M
+(Received: from mx1-ec2-va.apache.org \([116.203.227.195]\)) s
+5 60 M
+(        by localhost \(spamproc1-he-fi.apache.org [95.217.134.168]\) \(amavisd-new, port 1) s
+5 49 M
+(0024\)) s
+5 38 M
+(        with ESMTP id W1cGwwZCKJOf for <users@activemq.apache.org>;) s
+5 27 M
+(        Mon, 28 Oct 2024 07:53:55 +0000 \(UTC\)) s
+5 16 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=136.144.238.65; helo=jambo4.) s
+5 5 M
+(jambo-mobile.com; envelope-from=bisil@idfix.nl; receiver=<UNKNOWN> ) s
+_R
+S
+%%Page: (10) 10
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 10 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (10) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Received: from jambo4.jambo-mobile.com \(jambo4.jambo-mobile.com [136.144.238.65]\)) s
+5 676 M
+(        by mx1-ec2-va.apache.org \(ASF Mail Server at mx1-ec2-va.apache.org\) with ESMTPS) s
+5 665 M
+( id B16F9BFDF3) s
+5 654 M
+(        for <users@activemq.apache.org>; Mon, 28 Oct 2024 07:53:53 +0000 \(UTC\)) s
+5 643 M
+(Received: from [192.168.1.106] \(86-95-102-82.fixed.kpn.net [86.95.102.82]\)) s
+5 632 M
+(        \(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 \(128/128 bits\)) s
+5 621 M
+(         key-exchange X25519 server-signature RSA-PSS \(2048 bits\) server-digest SHA256\)) s
+5 610 M
+(        \(No client certificate requested\)) s
+5 599 M
+(        by jambo4.jambo-mobile.com \(Postfix\) with ESMTPSA id 2BA456C0AFC) s
+5 588 M
+(        for <users@activemq.apache.org>; Mon, 28 Oct 2024 08:53:47 +0100 \(CET\)) s
+5 577 M
+(Content-Type: multipart/alternative;) s
+5 566 M
+( boundary="------------WR5bcGL0i2NJJkSkJtTZRt63") s
+5 555 M
+(Message-ID: <08acc429-acaf-4e0d-943e-aed1e7effc01@idfix.nl>) s
+5 544 M
+(Date: Mon, 28 Oct 2024 08:53:46 +0100) s
+5 533 M
+(MIME-Version: 1.0) s
+5 522 M
+(User-Agent: Mozilla Thunderbird) s
+5 511 M
+(Subject: Re: Question regarding problems with JDBC persistence) s
+5 500 M
+(To: users@activemq.apache.org) s
+5 489 M
+(References: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>) s
+5 478 M
+( <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>) s
+5 467 M
+(Content-Language: en-US) s
+5 456 M
+(From: Bisil <bisil@idfix.nl>) s
+5 445 M
+(In-Reply-To: <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>) s
+5 423 M
+(--------------WR5bcGL0i2NJJkSkJtTZRt63) s
+5 412 M
+(Content-Type: text/plain; charset=UTF-8; format=flowed) s
+5 401 M
+(Content-Transfer-Encoding: 8bit) s
+5 379 M
+(Thanks for the reply Justin.) s
+5 357 M
+(After restoring the database in its original state I ran counts on ) s
+5 346 M
+(recordType/userRecordType and got this:) s
+5 324 M
+(recordType userRecordType\302\240\302\240\302\240\302\240\302\240\302\240\302\240\302\240\302\240\302\240 count\(*\)) s
+5 302 M
+(11\302\240\302\240\302\240\302\240\302\240\302\240\302\240\302\240 36 376143458) s
+5 280 M
+(11\302\240\302\240\302\240\302\240\302\240\302\240\302\240\302\240 34 290102) s
+5 258 M
+(13\302\240\302\240\302\240\302\240\302\240\302\240\302\240 45 63893) s
+5 236 M
+(14\302\240\302\240\302\240\302\240\302\240\302\240\302\240 32 63893) s
+5 214 M
+(18\302\240\302\240\302\240\302\240\302\240\302\240\302\240 255 22941) s
+5 192 M
+(17\302\240\302\240\302\240\302\240\302\240\302\240\302\240 255\302\240\302\240\302\240\302\240\302\240\302\240 228) s
+5 170 M
+(14\302\240\302\240\302\240\302\240\302\240\302\240\302\240 33\302\240\302\240\302\240\302\240\302\240\302\240\302\240 2) s
+5 126 M
+(The messages are posted through JMS from inside the same Wildfly ) s
+5 115 M
+(instance that runs ActiveMQ. Message handling is done by MDBs that run ) s
+5 104 M
+(inside the same JVM. We do have some clustered Wildfly setups although ) s
+5 93 M
+(most are standalone.) s
+5 71 M
+(We know we are running an old version. Upgrading Wildfly is on our ) s
+5 60 M
+(roadmap but that may take quite some time. We investigated upgrading ) s
+5 49 M
+(ActiveMQ separately but ran into too many issues and gave up on that idea.) s
+5 27 M
+(Silvio) s
+_R
+S
+%%Page: (11) 11
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 11 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (11) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(On 23-10-2024 22:27, Justin Bertram wrote:) s
+5 676 M
+(> This sounds similar to an issue involving duplicate IDs proliferating in) s
+5 665 M
+(> the journal. I can't find the specific Jira at the moment, but the issue) s
+5 654 M
+(> was something like a huge build-up of duplicate ID records. Can you inspect) s
+5 643 M
+(> the "userRecordType" for the offending rows?) s
+5 632 M
+(>) s
+5 621 M
+(> Also, how are you sending your message exactly? Do you need duplicate) s
+5 610 M
+(> detection?) s
+5 599 M
+(>) s
+5 588 M
+(> Lastly, 2.16.0 is quite old at this point. There's been improvements to) s
+5 577 M
+(> JDBC since then which you'd almost certainly benefit from \(not to mention) s
+5 566 M
+(> all the other bug-fixes and features\). Are you open to upgrading?) s
+5 555 M
+(>) s
+5 544 M
+(>) s
+5 533 M
+(> Justin) s
+5 522 M
+(>) s
+5 511 M
+(> On Wed, Oct 23, 2024 at 4:32\342\\200\257AM Bisil<bisil@idfix.nl> wrote:) s
+5 500 M
+(>) s
+5 489 M
+(>> Hello,) s
+5 478 M
+(>>) s
+5 467 M
+(>> Inside Wildfly 23.0.0 we are running ActiveMQ Artemis Message Broker) s
+5 456 M
+(>> 2.16.0 with JDBC persistence on SQLServer for ~25 message queues. In) s
+5 445 M
+(>> some production environments we have moderate-to-high message volumes) s
+5 434 M
+(>> and since processing can be relatively slow temporary message pileup is) s
+5 423 M
+(>> not uncommon.) s
+5 412 M
+(>>) s
+5 401 M
+(>> In one particular environment we are experiencing OutOfMemory issues) s
+5 390 M
+(>> during startup. There are about 60K messages in 2 of the queues while) s
+5 379 M
+(>> the message table contains over 350M records causing memory exhaustion) s
+5 368 M
+(>> during startup. Running in a controlled environment with ~60G heap) s
+5 357 M
+(>> startup succeeds and through JProfiler we observe that all message table) s
+5 346 M
+(>> records are selected and appear to be collected in memory. After that) s
+5 335 M
+(>> they are processed and discarded dropping memory usage down to a) s
+5 324 M
+(>> fraction of its peak. Using the JBoss CLI to inspect the queues then) s
+5 313 M
+(>> shows we have indeed 60K messages in 2 queues.) s
+5 302 M
+(>>) s
+5 291 M
+(>> Inspecting the contents of the message table we see limited counts of) s
+5 280 M
+(>> record types 13 \(ADD_RECORD_TX\) and 14 \(UPDATE_RECORD_TX\) roughly) s
+5 269 M
+(>> equivalent to the 60K message count. All remaining records are type 11) s
+5 258 M
+(>> \(ADD_RECORD\).) s
+5 247 M
+(>>) s
+5 236 M
+(>> When we removed all type 11 records restart was fast with limited memory) s
+5 225 M
+(>> load and we still see 60K messages in the 2 queues.) s
+5 214 M
+(>>) s
+5 203 M
+(>> In the past we have observed similar numbers and startup problems in) s
+5 192 M
+(>> other environments which lead us to truncate the AMQ persistence tables) s
+5 181 M
+(>> to be able to restart the server without an OutOfMemoryException. But we) s
+5 170 M
+(>> are looking for a way to prevent this situation from happening.) s
+5 159 M
+(>>) s
+5 148 M
+(>> So my questions are:) s
+5 137 M
+(>>) s
+5 126 M
+(>> - Is the large record count in the message table expected behavior?) s
+5 115 M
+(>>) s
+5 104 M
+(>> - Is there anything we can/should do to limit the number of records in) s
+5 93 M
+(>> the message table?) s
+5 82 M
+(>>) s
+5 71 M
+(>> - Is removing all type 11 records a valid workaround? If no, what would) s
+5 60 M
+(>> be the side-effect?) s
+5 49 M
+(>>) s
+5 38 M
+(>> Thanks for your help!) s
+5 27 M
+(>>) s
+5 16 M
+(>> Silvio) s
+5 5 M
+(>>) s
+_R
+S
+%%Page: (12) 12
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 12 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (12) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 676 M
+(--------------WR5bcGL0i2NJJkSkJtTZRt63--) s
+5 665 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 654 M
+(Return-Path: <users-return-57595-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 643 M
+(rg>) s
+5 632 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 621 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 610 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 599 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 93D5D3F486) s
+5 588 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu, 31 Oct 2024 10:00:59 +0000 \(UT) s
+5 577 M
+(C\)) s
+5 566 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 555 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 544 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 533 M
+(        \(No client certificate requested\)) s
+5 522 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 511 M
+(MTPS id 5B075665E3) s
+5 500 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu, 31 Oct 2024 09:59:53 +0000 \(UT) s
+5 489 M
+(C\)) s
+5 478 M
+(Received: \(qmail 1168215 invoked by uid 998\); 31 Oct 2024 09:59:52 -0000) s
+5 467 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 456 M
+(Precedence: bulk) s
+5 445 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 434 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 423 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 412 M
+(List-Id: <users.activemq.apache.org>) s
+5 401 M
+(Reply-To: users@activemq.apache.org) s
+5 390 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 379 M
+(Received: \(qmail 1168190 invoked by uid 116\); 31 Oct 2024 09:59:51 -0000) s
+5 368 M
+(Received: from spamproc1-he-fi.apache.org \(HELO spamproc1-he-fi.apache.org\) \(95.217.134) s
+5 357 M
+(.168\)) s
+5 346 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 31 Oct 2024 09:59:51 +0000) s
+5 335 M
+(Authentication-Results: apache.org; auth=none) s
+5 324 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 313 M
+(        by spamproc1-he-fi.apache.org \(ASF Mail Server at spamproc1-he-fi.apache.org\) w) s
+5 302 M
+(ith ESMTP id 3F155C2389) s
+5 291 M
+(        for <users@activemq.apache.org>; Thu, 31 Oct 2024 09:59:51 +0000 \(UTC\)) s
+5 280 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org) s
+5 269 M
+(X-Spam-Flag: NO) s
+5 258 M
+(X-Spam-Score: -0.905) s
+5 247 M
+(X-Spam-Level: ) s
+5 236 M
+(X-Spam-Status: No, score=-0.905 tagged_above=-999 required=6.31) s
+5 225 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 214 M
+(        DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_MSPIKE_H2=-0.906,) s
+5 203 M
+(        RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,) s
+5 192 M
+(        RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]) s
+5 181 M
+(        autolearn=disabled) s
+5 170 M
+(Authentication-Results: spamproc1-he-fi.apache.org \(amavisd-new\);) s
+5 159 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 148 M
+(Received: from mx1-ec2-va.apache.org \([116.203.227.195]\)) s
+5 137 M
+(        by localhost \(spamproc1-he-fi.apache.org [95.217.134.168]\) \(amavisd-new, port 1) s
+5 126 M
+(0024\)) s
+5 115 M
+(        with ESMTP id jRgJlYpQupso for <users@activemq.apache.org>;) s
+5 104 M
+(        Thu, 31 Oct 2024 09:59:50 +0000 \(UTC\)) s
+5 93 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=209.85.208.52; helo=mail-ed1) s
+5 82 M
+(-f52.google.com; envelope-from=clebert.suconic@gmail.com; receiver=<UNKNOWN> ) s
+5 71 M
+(Received: from mail-ed1-f52.google.com \(mail-ed1-f52.google.com [209.85.208.52]\)) s
+5 60 M
+(        by mx1-ec2-va.apache.org \(ASF Mail Server at mx1-ec2-va.apache.org\) with ESMTPS) s
+5 49 M
+( id C1A6EBFE03) s
+5 38 M
+(        for <users@activemq.apache.org>; Thu, 31 Oct 2024 09:59:49 +0000 \(UTC\)) s
+5 27 M
+(Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c937b5169cso1208268a12) s
+5 16 M
+(.1) s
+5 5 M
+(        for <users@activemq.apache.org>; Thu, 31 Oct 2024 02:59:49 -0700 \(PDT\)) s
+_R
+S
+%%Page: (13) 13
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 13 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (13) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 676 M
+(        d=gmail.com; s=20230601; t=1730368783; x=1730973583; darn=activemq.apache.org;) s
+5 665 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 654 M
+(         :from:to:cc:subject:date:message-id:reply-to;) s
+5 643 M
+(        bh=KcSwPGN7xS+KSkhlc12KUokQg9pqxwKtZgOU+3nE0XU=;) s
+5 632 M
+(        b=a/ilLXMkhvMSNygn9E2Ma4ew0Mk4bwhoFcS1KNSIOMEkJJru+QdJiUxv7zMj6nFqmj) s
+5 621 M
+(         d/zfq4LgA+0ZHV56dS5AR3IVc/jbfhGhBGYi08JFaR1KfliNAPdDbNYiq7mC/XfCKBTv) s
+5 610 M
+(         SM8ldGLL70+e4VN6Ss2MhYt5q2zKA4Cjv6vEg0LNjWffm3QX4J4VZpTF5xXUiblPdmdS) s
+5 599 M
+(         M08E4bV3LJZoVuUor5LjjzrCjzOBJrVSBebX+RhnGBcxQYSprcRy0cZUTfuzsRPa5Y7s) s
+5 588 M
+(         c7AYQ3mLGMsH6DdjstgaOjXHCEeW1WjwIolaioFCFT1KlMPfOjYpoZTpXBiHmlGUcBOG) s
+5 577 M
+(         lQlg==) s
+5 566 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 555 M
+(        d=1e100.net; s=20230601; t=1730368783; x=1730973583;) s
+5 544 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 533 M
+(         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;) s
+5 522 M
+(        bh=KcSwPGN7xS+KSkhlc12KUokQg9pqxwKtZgOU+3nE0XU=;) s
+5 511 M
+(        b=rC8Hydc3ennyqIiGntrua38Il8GGSnBaCVkBYO/TUh0B2NsAI17tzhvGQ1g6t2pR/2) s
+5 500 M
+(         3GtLXa69pmwEJzjaHVMYl+vIHDBHvMHjBS1oGNqJpZWpno8njlitsHdaoz5td3Mn9yR3) s
+5 489 M
+(         gfq8O7++zoYpXItyfZmiolD1BGEYw12pl/HCPWKxGrwmcfCcPQTSbjIaG07iQtqxZ/y+) s
+5 478 M
+(         nDn6bvolmsHmb7XRSSAK2rpSlWZUkE4v35PycFFL217svcKOp0uUmllLLZ2LyW7Oz/8Z) s
+5 467 M
+(         kheheeCzKDjOyt0eIFjT6l++x+hwlGC0JuavlvM+onZ7D8D7s9uMKa516reGFPAREdRf) s
+5 456 M
+(         DLcw==) s
+5 445 M
+(X-Gm-Message-State: AOJu0YwrXpnMHCB08OeUmDVck+uRPOs/ak2H/+ylTYZBcyS815g/0Zy5) s
+5 434 M
+(        ga6Kh14ZmBdYWel/qdey965UD0kTD4pvjEMCCew+DPzTHRO+1B1iEQWcdGzd+dLMpqRj/9kOxMk) s
+5 423 M
+(        QUDbfRkSIkS13qTezAN231kx468sgxg==) s
+5 412 M
+(X-Google-Smtp-Source: AGHT+IHHWehbxWGwGaYfFH/EDCZ0TU4Fm3dDjAHTBrUIxnYiB4h7JdwPWrrKtQdC5) s
+5 401 M
+(J2FU0mdSNqxW8IG2LvMgYJpgSA=) s
+5 390 M
+(X-Received: by 2002:a05:6402:440e:b0:5cb:6715:3498 with SMTP id) s
+5 379 M
+( 4fb4d7f45d1cf-5ceabee80f2mr2243298a12.3.1730368781517; Thu, 31 Oct 2024) s
+5 368 M
+( 02:59:41 -0700 \(PDT\)) s
+5 357 M
+(MIME-Version: 1.0) s
+5 346 M
+(References: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl> <CAF+kE=RVFV2p1qBq-tfMJU7_g) s
+5 335 M
+(5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>) s
+5 324 M
+(In-Reply-To: <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>) s
+5 313 M
+(From: Clebert Suconic <clebert.suconic@gmail.com>) s
+5 302 M
+(Date: Thu, 31 Oct 2024 05:59:29 -0400) s
+5 291 M
+(Message-ID: <CAKF+bspaGfFwx6bYGBdjZPu_2hZV9ejSVxneK2_nmfXcJ0CTKA@mail.gmail.com>) s
+5 280 M
+(Subject: Re: Question regarding problems with JDBC persistence) s
+5 269 M
+(To: users@activemq.apache.org) s
+5 258 M
+(Content-Type: multipart/alternative; boundary="0000000000008d944f0625c2e0cb") s
+5 236 M
+(--0000000000008d944f0625c2e0cb) s
+5 225 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 214 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 192 M
+(I remember an old issue where rescheduling deliveries were updated over and) s
+5 181 M
+(over.) s
+5 159 M
+(As of the latest version as far as I remember I only update it once.) s
+5 137 M
+(If you have an infinite redelivery without DLQ you might get into that) s
+5 126 M
+(situation.) s
+5 104 M
+(It would be difficult for me to find the exact JIRA now.  But I will try to) s
+5 93 M
+(look for it and will post it here if I find it.) s
+5 71 M
+(Clebert Suconic) s
+5 38 M
+(On Wed, Oct 23, 2024 at 4:28=E2=80=AFPM Justin Bertram <jbertram@apache.org=) s
+5 27 M
+(> wrote:) s
+5 5 M
+(> This sounds similar to an issue involving duplicate IDs proliferating in) s
+_R
+S
+%%Page: (14) 14
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 14 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (14) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> the journal. I can't find the specific Jira at the moment, but the issue) s
+5 676 M
+(> was something like a huge build-up of duplicate ID records. Can you inspe=) s
+5 665 M
+(ct) s
+5 654 M
+(> the "userRecordType" for the offending rows?) s
+5 643 M
+(>) s
+5 632 M
+(> Also, how are you sending your message exactly? Do you need duplicate) s
+5 621 M
+(> detection?) s
+5 610 M
+(>) s
+5 599 M
+(> Lastly, 2.16.0 is quite old at this point. There's been improvements to) s
+5 588 M
+(> JDBC since then which you'd almost certainly benefit from \(not to mention) s
+5 577 M
+(> all the other bug-fixes and features\). Are you open to upgrading?) s
+5 566 M
+(>) s
+5 555 M
+(>) s
+5 544 M
+(> Justin) s
+5 533 M
+(>) s
+5 522 M
+(> On Wed, Oct 23, 2024 at 4:32=E2=80=AFAM Bisil <bisil@idfix.nl> wrote:) s
+5 511 M
+(>) s
+5 500 M
+(> > Hello,) s
+5 489 M
+(> >) s
+5 478 M
+(> > Inside Wildfly 23.0.0 we are running ActiveMQ Artemis Message Broker) s
+5 467 M
+(> > 2.16.0 with JDBC persistence on SQLServer for ~25 message queues. In) s
+5 456 M
+(> > some production environments we have moderate-to-high message volumes) s
+5 445 M
+(> > and since processing can be relatively slow temporary message pileup is) s
+5 434 M
+(> > not uncommon.) s
+5 423 M
+(> >) s
+5 412 M
+(> > In one particular environment we are experiencing OutOfMemory issues) s
+5 401 M
+(> > during startup. There are about 60K messages in 2 of the queues while) s
+5 390 M
+(> > the message table contains over 350M records causing memory exhaustion) s
+5 379 M
+(> > during startup. Running in a controlled environment with ~60G heap) s
+5 368 M
+(> > startup succeeds and through JProfiler we observe that all message tabl=) s
+5 357 M
+(e) s
+5 346 M
+(> > records are selected and appear to be collected in memory. After that) s
+5 335 M
+(> > they are processed and discarded dropping memory usage down to a) s
+5 324 M
+(> > fraction of its peak. Using the JBoss CLI to inspect the queues then) s
+5 313 M
+(> > shows we have indeed 60K messages in 2 queues.) s
+5 302 M
+(> >) s
+5 291 M
+(> > Inspecting the contents of the message table we see limited counts of) s
+5 280 M
+(> > record types 13 \(ADD_RECORD_TX\) and 14 \(UPDATE_RECORD_TX\) roughly) s
+5 269 M
+(> > equivalent to the 60K message count. All remaining records are type 11) s
+5 258 M
+(> > \(ADD_RECORD\).) s
+5 247 M
+(> >) s
+5 236 M
+(> > When we removed all type 11 records restart was fast with limited memor=) s
+5 225 M
+(y) s
+5 214 M
+(> > load and we still see 60K messages in the 2 queues.) s
+5 203 M
+(> >) s
+5 192 M
+(> > In the past we have observed similar numbers and startup problems in) s
+5 181 M
+(> > other environments which lead us to truncate the AMQ persistence tables) s
+5 170 M
+(> > to be able to restart the server without an OutOfMemoryException. But w=) s
+5 159 M
+(e) s
+5 148 M
+(> > are looking for a way to prevent this situation from happening.) s
+5 137 M
+(> >) s
+5 126 M
+(> > So my questions are:) s
+5 115 M
+(> >) s
+5 104 M
+(> > - Is the large record count in the message table expected behavior?) s
+5 93 M
+(> >) s
+5 82 M
+(> > - Is there anything we can/should do to limit the number of records in) s
+5 71 M
+(> > the message table?) s
+5 60 M
+(> >) s
+5 49 M
+(> > - Is removing all type 11 records a valid workaround? If no, what would) s
+5 38 M
+(> > be the side-effect?) s
+5 27 M
+(> >) s
+5 16 M
+(> > Thanks for your help!) s
+5 5 M
+(> >) s
+_R
+S
+%%Page: (15) 15
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 15 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (15) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> > Silvio) s
+5 676 M
+(> >) s
+5 665 M
+(>) s
+5 643 M
+(--0000000000008d944f0625c2e0cb--) s
+5 632 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 621 M
+(Return-Path: <users-return-57570-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 610 M
+(rg>) s
+5 599 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 588 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 577 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 566 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 960803E724) s
+5 555 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 20:28:20 +0000 \(UT) s
+5 544 M
+(C\)) s
+5 533 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 522 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 511 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 500 M
+(        \(No client certificate requested\)) s
+5 489 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 478 M
+(MTPS id 7A3B8661A5) s
+5 467 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 20:28:20 +0000 \(UT) s
+5 456 M
+(C\)) s
+5 445 M
+(Received: \(qmail 3817918 invoked by uid 998\); 23 Oct 2024 20:28:19 -0000) s
+5 434 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 423 M
+(Precedence: bulk) s
+5 412 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 401 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 390 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 379 M
+(List-Id: <users.activemq.apache.org>) s
+5 368 M
+(Reply-To: users@activemq.apache.org) s
+5 357 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 346 M
+(Received: \(qmail 3817901 invoked by uid 116\); 23 Oct 2024 20:28:19 -0000) s
+5 335 M
+(Received: from ec2-52-204-25-47.compute-1.amazonaws.com \(HELO mailrelay1-ec2-va.apache.) s
+5 324 M
+(org\) \(52.204.25.47\)) s
+5 313 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Wed, 23 Oct 2024 20:28:19 +0000) s
+5 302 M
+(Authentication-Results: apache.org; auth=none) s
+5 291 M
+(Received: from mail-ed1-f51.google.com \(mail-ed1-f51.google.com [209.85.208.51]\)) s
+5 280 M
+(        by mailrelay1-ec2-va.apache.org \(ASF Mail Server at mailrelay1-ec2-va.apache.or) s
+5 269 M
+(g\) with ESMTPSA id AF0253F1F9) s
+5 258 M
+(        for <users@activemq.apache.org>; Wed, 23 Oct 2024 20:28:18 +0000 \(UTC\)) s
+5 247 M
+(Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c937b5169cso338143a12.) s
+5 236 M
+(1) s
+5 225 M
+(        for <users@activemq.apache.org>; Wed, 23 Oct 2024 13:28:18 -0700 \(PDT\)) s
+5 214 M
+(X-Gm-Message-State: AOJu0YyAvmc4Xja1wv2hJvMxHo4tbLOq+ZNuK2/swZ8+kLFV9XjtmB41) s
+5 203 M
+(        7ENG1Er8Q/ofkR3CCGUwXBVF3xcFQlTKNT5bD1FHiyJ99RNTo7lvkYi4OyxD4GItcuvEjTKSrrE) s
+5 192 M
+(        2RdfYnB1MKX3VwcqVDZ/foWleoCo5AaYlqI6cVA==) s
+5 181 M
+(X-Google-Smtp-Source: AGHT+IEm/szwFxz4XLQUmkzxdELvdDafT7gNTjBj06XPaKYKvmNSd11gjgNMEYmGo) s
+5 170 M
+(k34rjvZxY4zJwmcgeS2m8FEXMU=) s
+5 159 M
+(X-Received: by 2002:a05:6402:3489:b0:5cb:7388:816a with SMTP id) s
+5 148 M
+( 4fb4d7f45d1cf-5cb8b4e295amr4138326a12.1.1729715297823; Wed, 23 Oct 2024) s
+5 137 M
+( 13:28:17 -0700 \(PDT\)) s
+5 126 M
+(MIME-Version: 1.0) s
+5 115 M
+(References: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>) s
+5 104 M
+(In-Reply-To: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>) s
+5 93 M
+(From: Justin Bertram <jbertram@apache.org>) s
+5 82 M
+(Date: Wed, 23 Oct 2024 15:27:51 -0500) s
+5 71 M
+(X-Gmail-Original-Message-ID: <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.) s
+5 60 M
+(gmail.com>) s
+5 49 M
+(Message-ID: <CAF+kE=RVFV2p1qBq-tfMJU7_g5dZ+by9GeGVs1C7QTkOtU86Ag@mail.gmail.com>) s
+5 38 M
+(Subject: Re: Question regarding problems with JDBC persistence) s
+5 27 M
+(To: users@activemq.apache.org) s
+5 16 M
+(Content-Type: multipart/alternative; boundary="000000000000e3cff706252ab9f7") s
+_R
+S
+%%Page: (16) 16
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 16 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (16) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(--000000000000e3cff706252ab9f7) s
+5 676 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 665 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 643 M
+(This sounds similar to an issue involving duplicate IDs proliferating in) s
+5 632 M
+(the journal. I can't find the specific Jira at the moment, but the issue) s
+5 621 M
+(was something like a huge build-up of duplicate ID records. Can you inspect) s
+5 610 M
+(the "userRecordType" for the offending rows?) s
+5 588 M
+(Also, how are you sending your message exactly? Do you need duplicate) s
+5 577 M
+(detection?) s
+5 555 M
+(Lastly, 2.16.0 is quite old at this point. There's been improvements to) s
+5 544 M
+(JDBC since then which you'd almost certainly benefit from \(not to mention) s
+5 533 M
+(all the other bug-fixes and features\). Are you open to upgrading?) s
+5 500 M
+(Justin) s
+5 478 M
+(On Wed, Oct 23, 2024 at 4:32=E2=80=AFAM Bisil <bisil@idfix.nl> wrote:) s
+5 456 M
+(> Hello,) s
+5 445 M
+(>) s
+5 434 M
+(> Inside Wildfly 23.0.0 we are running ActiveMQ Artemis Message Broker) s
+5 423 M
+(> 2.16.0 with JDBC persistence on SQLServer for ~25 message queues. In) s
+5 412 M
+(> some production environments we have moderate-to-high message volumes) s
+5 401 M
+(> and since processing can be relatively slow temporary message pileup is) s
+5 390 M
+(> not uncommon.) s
+5 379 M
+(>) s
+5 368 M
+(> In one particular environment we are experiencing OutOfMemory issues) s
+5 357 M
+(> during startup. There are about 60K messages in 2 of the queues while) s
+5 346 M
+(> the message table contains over 350M records causing memory exhaustion) s
+5 335 M
+(> during startup. Running in a controlled environment with ~60G heap) s
+5 324 M
+(> startup succeeds and through JProfiler we observe that all message table) s
+5 313 M
+(> records are selected and appear to be collected in memory. After that) s
+5 302 M
+(> they are processed and discarded dropping memory usage down to a) s
+5 291 M
+(> fraction of its peak. Using the JBoss CLI to inspect the queues then) s
+5 280 M
+(> shows we have indeed 60K messages in 2 queues.) s
+5 269 M
+(>) s
+5 258 M
+(> Inspecting the contents of the message table we see limited counts of) s
+5 247 M
+(> record types 13 \(ADD_RECORD_TX\) and 14 \(UPDATE_RECORD_TX\) roughly) s
+5 236 M
+(> equivalent to the 60K message count. All remaining records are type 11) s
+5 225 M
+(> \(ADD_RECORD\).) s
+5 214 M
+(>) s
+5 203 M
+(> When we removed all type 11 records restart was fast with limited memory) s
+5 192 M
+(> load and we still see 60K messages in the 2 queues.) s
+5 181 M
+(>) s
+5 170 M
+(> In the past we have observed similar numbers and startup problems in) s
+5 159 M
+(> other environments which lead us to truncate the AMQ persistence tables) s
+5 148 M
+(> to be able to restart the server without an OutOfMemoryException. But we) s
+5 137 M
+(> are looking for a way to prevent this situation from happening.) s
+5 126 M
+(>) s
+5 115 M
+(> So my questions are:) s
+5 104 M
+(>) s
+5 93 M
+(> - Is the large record count in the message table expected behavior?) s
+5 82 M
+(>) s
+5 71 M
+(> - Is there anything we can/should do to limit the number of records in) s
+5 60 M
+(> the message table?) s
+5 49 M
+(>) s
+5 38 M
+(> - Is removing all type 11 records a valid workaround? If no, what would) s
+5 27 M
+(> be the side-effect?) s
+5 16 M
+(>) s
+5 5 M
+(> Thanks for your help!) s
+_R
+S
+%%Page: (17) 17
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 17 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (17) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(>) s
+5 676 M
+(> Silvio) s
+5 665 M
+(>) s
+5 643 M
+(--000000000000e3cff706252ab9f7--) s
+5 632 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 621 M
+(Return-Path: <users-return-57566-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 610 M
+(rg>) s
+5 599 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 588 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 577 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 566 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id B83013E680) s
+5 555 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 09:32:10 +0000 \(UT) s
+5 544 M
+(C\)) s
+5 533 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 522 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 511 M
+(        \(No client certificate requested\)) s
+5 500 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 489 M
+(ESMTPS id C565D4D131) s
+5 478 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Wed, 23 Oct 2024 09:32:09 +0000 \(UT) s
+5 467 M
+(C\)) s
+5 456 M
+(Received: \(qmail 2503298 invoked by uid 998\); 23 Oct 2024 09:32:08 -0000) s
+5 445 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 434 M
+(Precedence: bulk) s
+5 423 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 412 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 401 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 390 M
+(List-Id: <users.activemq.apache.org>) s
+5 379 M
+(Reply-To: users@activemq.apache.org) s
+5 368 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 357 M
+(Received: \(qmail 2503214 invoked by uid 116\); 23 Oct 2024 09:32:06 -0000) s
+5 346 M
+(Received: from spamproc1-he-fi.apache.org \(HELO spamproc1-he-fi.apache.org\) \(95.217.134) s
+5 335 M
+(.168\)) s
+5 324 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Wed, 23 Oct 2024 09:32:06 +0000) s
+5 313 M
+(Authentication-Results: apache.org; auth=none) s
+5 302 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 291 M
+(        by spamproc1-he-fi.apache.org \(ASF Mail Server at spamproc1-he-fi.apache.org\) w) s
+5 280 M
+(ith ESMTP id C0CA9C22DC) s
+5 269 M
+(        for <users@activemq.apache.org>; Wed, 23 Oct 2024 09:32:06 +0000 \(UTC\)) s
+5 258 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org) s
+5 247 M
+(X-Spam-Flag: NO) s
+5 236 M
+(X-Spam-Score: 0.201) s
+5 225 M
+(X-Spam-Level: ) s
+5 214 M
+(X-Spam-Status: No, score=0.201 tagged_above=-999 required=6.31) s
+5 203 M
+(        tests=[HTML_MESSAGE=0.2, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,) s
+5 192 M
+(        RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]) s
+5 181 M
+(        autolearn=disabled) s
+5 170 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 159 M
+(        by localhost \(spamproc1-he-fi.apache.org [95.217.134.168]\) \(amavisd-new, port 1) s
+5 148 M
+(0024\)) s
+5 137 M
+(        with ESMTP id GXsZ79VwHanl for <users@activemq.apache.org>;) s
+5 126 M
+(        Wed, 23 Oct 2024 09:32:05 +0000 \(UTC\)) s
+5 115 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=136.144.238.65; helo=jambo4.) s
+5 104 M
+(jambo-mobile.com; envelope-from=bisil@idfix.nl; receiver=<UNKNOWN> ) s
+5 93 M
+(Received: from jambo4.jambo-mobile.com \(jambo4.jambo-mobile.com [136.144.238.65]\)) s
+5 82 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 71 M
+(d D01DF816C9) s
+5 60 M
+(        for <users@activemq.apache.org>; Wed, 23 Oct 2024 09:32:05 +0000 \(UTC\)) s
+5 49 M
+(Received: from [192.168.1.106] \(86-95-102-82.fixed.kpn.net [86.95.102.82]\)) s
+5 38 M
+(        \(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 \(128/128 bits\)) s
+5 27 M
+(         key-exchange X25519 server-signature RSA-PSS \(2048 bits\) server-digest SHA256\)) s
+5 16 M
+(        \(No client certificate requested\)) s
+5 5 M
+(        by jambo4.jambo-mobile.com \(Postfix\) with ESMTPSA id 260926C0152) s
+_R
+S
+%%Page: (18) 18
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 18 def
+/fname (./CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_QM5u_icW7+diJOK9_8J1f0EOJXWZMEdboZu30TL-sFjg@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:13 2024) def
+/pagenumstr (18) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        for <users@activemq.apache.org>; Wed, 23 Oct 2024 11:32:05 +0200 \(CEST\)) s
+5 676 M
+(Content-Type: multipart/alternative;) s
+5 665 M
+( boundary="------------YzUlPTEl5gNZ2DCWOwswCX0F") s
+5 654 M
+(Message-ID: <5a6c796c-3717-4ef8-b850-f82f661d8da8@idfix.nl>) s
+5 643 M
+(Date: Wed, 23 Oct 2024 11:32:04 +0200) s
+5 632 M
+(MIME-Version: 1.0) s
+5 621 M
+(User-Agent: Mozilla Thunderbird) s
+5 610 M
+(To: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 599 M
+(Content-Language: en-US) s
+5 588 M
+(From: Bisil <bisil@idfix.nl>) s
+5 577 M
+(Subject: Question regarding problems with JDBC persistence) s
+5 555 M
+(--------------YzUlPTEl5gNZ2DCWOwswCX0F) s
+5 544 M
+(Content-Type: text/plain; charset=UTF-8; format=flowed) s
+5 533 M
+(Content-Transfer-Encoding: 7bit) s
+5 511 M
+(Hello,) s
+5 489 M
+(Inside Wildfly 23.0.0 we are running ActiveMQ Artemis Message Broker ) s
+5 478 M
+(2.16.0 with JDBC persistence on SQLServer for ~25 message queues. In ) s
+5 467 M
+(some production environments we have moderate-to-high message volumes ) s
+5 456 M
+(and since processing can be relatively slow temporary message pileup is ) s
+5 445 M
+(not uncommon.) s
+5 423 M
+(In one particular environment we are experiencing OutOfMemory issues ) s
+5 412 M
+(during startup. There are about 60K messages in 2 of the queues while ) s
+5 401 M
+(the message table contains over 350M records causing memory exhaustion ) s
+5 390 M
+(during startup. Running in a controlled environment with ~60G heap ) s
+5 379 M
+(startup succeeds and through JProfiler we observe that all message table ) s
+5 368 M
+(records are selected and appear to be collected in memory. After that ) s
+5 357 M
+(they are processed and discarded dropping memory usage down to a ) s
+5 346 M
+(fraction of its peak. Using the JBoss CLI to inspect the queues then ) s
+5 335 M
+(shows we have indeed 60K messages in 2 queues.) s
+5 313 M
+(Inspecting the contents of the message table we see limited counts of ) s
+5 302 M
+(record types 13 \(ADD_RECORD_TX\) and 14 \(UPDATE_RECORD_TX\) roughly ) s
+5 291 M
+(equivalent to the 60K message count. All remaining records are type 11 ) s
+5 280 M
+(\(ADD_RECORD\).) s
+5 258 M
+(When we removed all type 11 records restart was fast with limited memory ) s
+5 247 M
+(load and we still see 60K messages in the 2 queues.) s
+5 225 M
+(In the past we have observed similar numbers and startup problems in ) s
+5 214 M
+(other environments which lead us to truncate the AMQ persistence tables ) s
+5 203 M
+(to be able to restart the server without an OutOfMemoryException. But we ) s
+5 192 M
+(are looking for a way to prevent this situation from happening.) s
+5 170 M
+(So my questions are:) s
+5 148 M
+(- Is the large record count in the message table expected behavior?) s
+5 126 M
+(- Is there anything we can/should do to limit the number of records in ) s
+5 115 M
+(the message table?) s
+5 93 M
+(- Is removing all type 11 records a valid workaround? If no, what would ) s
+5 82 M
+(be the side-effect?) s
+5 60 M
+(Thanks for your help!) s
+5 38 M
+(Silvio) s
+5 16 M
+(--------------YzUlPTEl5gNZ2DCWOwswCX0F--) s
+_R
+S
+%%Trailer
+%%Pages: 18
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

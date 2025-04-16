@@ -1,0 +1,923 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57547-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 129583E680
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 18 Oct 2024 15:55:46 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id CC75B53854
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 18 Oct 2024 15:54:59 +0000 (UTC)
+Received: (qmail 532061 invoked by uid 998); 18 Oct 2024 15:54:58 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 531848 invoked by uid 116); 18 Oct 2024 15:54:52 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Fri, 18 Oct 2024 15:54:52 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 190F92000E1
+	for <users@activemq.apache.org>; Fri, 18 Oct 2024 15:54:52 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -0.199
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.199 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=cgi.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id eFVMcNzAe8CM for <users@activemq.apache.org>;
+	Fri, 18 Oct 2024 15:54:51 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2620:100:900c:1:67:231:158:130; helo=mx0c-00131701.pphosted.com; envelope-from=prvs=0021ece35e=erwin.dondorp@cgi.com; receiver=<UNKNOWN> 
+Received: from mx0c-00131701.pphosted.com (mx0c-00131701.pphosted.com [IPv6:2620:100:900c:1:67:231:158:130])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 6457382089
+	for <users@activemq.apache.org>; Fri, 18 Oct 2024 15:54:51 +0000 (UTC)
+Received: from pps.filterd (m0101452.ppops.net [127.0.0.1])
+	by -00131701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49IDimgI012582
+	for <users@activemq.apache.org>; Fri, 18 Oct 2024 15:54:44 GMT
+X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cgi.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	cgi-hosted-201911; bh=DqO5CEPkT51fq7ERl1McqefawsZGd5JmP2iQQseif3
+	c=; b=jttZX7HcyEqQSuaoumkQ8CPy8b8kDfxWg8/mtguz0aAzdsdL15JU0S+GXZ
+	m4CauXYQWF+4Ksx5oYLTmu0OwhA3c1L6hodTSajijJeDzTeWSGrFU/aPcbWyocsW
+	XuTcNcB9/DsaHQ/kANMMLnehvu+QJkk3q7mmj4moiJQfspTA9I5z5aDG5t5DF20g
+	B9G3nAFrVgYm9pPoPZkaz5+Z88MozsVB5/Qc3QCUlLL4f7y0hqdy7B8u50jvvDWD
+	dPFh5Nmy/5C0BUT/CSnfeuMDp3+H5UjVNIIvhWrqe0htRLb0glWZYJvN+UWv79u9
+	jnS7kh3/yvkyxZLZD2t2hFEyEf9g==
+Received: from globalmail.cgi.com (globalmail-eu.cgi.com [217.150.168.72])
+	by -00131701.pphosted.com (PPS) with ESMTPS id 427hw09b2s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <users@activemq.apache.org>; Fri, 18 Oct 2024 15:54:43 +0000 (GMT)
+Received: from SE-EX10114.groupinfra.com (142.101.45.153) by
+ SE-EX10115.groupinfra.com (142.101.45.154) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 18 Oct 2024 17:54:41 +0200
+Received: from SE-EX10114.groupinfra.com ([142.101.45.153]) by
+ SE-EX10114.groupinfra.com ([142.101.45.153]) with mapi id 15.02.1544.011;
+ Fri, 18 Oct 2024 17:54:41 +0200
+From: "Dondorp, Erwin" <erwin.dondorp@cgi.com.INVALID>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: RE: new Artemis Console question
+Thread-Topic: new Artemis Console question
+Thread-Index: Adsdq4nDa0jff2yfRRKk0znKMYb+uwAW/6oAAAUzkQAADDtR0ADH1tCA
+Date: Fri, 18 Oct 2024 15:54:41 +0000
+Message-ID: <814ef35a77554ce2ba61ff271bcd5f19@cgi.com>
+References: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com>
+ <CAA9ykMKAEw4ygXzUD9PPWX364dLpjs0fpM5Jbu4jp25KL3Ep3A@mail.gmail.com>
+ <CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com>
+ <ed108a145ab04954a0647850dfc7d95e@cgi.com>
+In-Reply-To: <ed108a145ab04954a0647850dfc7d95e@cgi.com>
+Accept-Language: nl-NL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Enabled=true;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SetDate=2024-10-18T15:54:39Z;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Method=Privileged;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Name=d9290083-bd2f-48a2-8ac5-09a524b17d15;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SiteId=b9fec68c-c92d-461e-9a97-3d03a0f18b82;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ActionId=8dc8412f-e691-4ef8-bc0a-890dd8d75efe;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ContentBits=1
+x-originating-ip: [142.101.28.247]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Proofpoint-GUID: V61ptvlgbKMD7OxEittkjd0FLFGee2_1
+X-Proofpoint-ORIG-GUID: V61ptvlgbKMD7OxEittkjd0FLFGee2_1
+
+Q2xhc3NpZmljYXRpb246IFB1YmxpYw0KDQpBbmR5LA0KDQpJIGZvdW5kIHRoZSBpc3N1ZS4NCkkn
+bSAoZm9yY2VkIHRvKSB1c2luZyBwb3J0IGZvcndhcmRpbmcgdG8gY29ubmVjdCB0byB0aGUgYXJ0
+ZW1pcyBzeXN0ZW0uDQpCdXQgSSdtIHVzaW5nIGFuIGFsaWFzIGZvciAxMjcuMC4wLjEgKGxpa2Ug
+ImNvbXB1dGVyLXh5eiIpIHNvIHRoYXQgY29va2llcyBhbmQgcGFzc3dvcmRzIGFyZSBwcm9wZXJs
+eSByZW1lbWJlcmVkIGJ5IHRoZSBicm93c2VyLg0KSW4gdGhlICJjb25uZWN0IiBzY3JlZW4sIEkg
+Y2FuIG9ubHkgZW50ZXIgaG9zdG5hbWVzIGFzICJsb2NhbGhvc3QiIGJlY2F1c2UgaXQgZG9lcyBu
+b3Qga25vdyBteSBsb2NhbCBhbGlhc2VzLg0KVGhhdCBjaGFuZ2UgaW4gaG9zdG5hbWUgY29uZnVz
+ZWQgdGhlIG5ldyBhcnRlbWlzLWNvbnNvbGUgaW50ZXJuYWxzIGVub3VnaCB0byBnaXZlIHRoZSBi
+ZWxvdyBlcnJvci4NClJldmVydGluZyBldmVyeXRoaW5nIHRvICJsb2NhbGhvc3QiIHNvbHZlZCBp
+dCAoYXQgbGVhc3QgZ29vZCBlbm91Z2ggZm9yIGRlbW9uc3RyYXRpb24gcHVycG9zZXMpLg0KDQpU
+aHghDQpFcndpbg0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogRG9uZG9ycCwg
+RXJ3aW4gDQpTZW50OiBUdWVzZGF5LCBPY3RvYmVyIDE1LCAyMDI0IDEyOjQxIEFNDQpUbzogJ3Vz
+ZXJzQGFjdGl2ZW1xLmFwYWNoZS5vcmcnIDx1c2Vyc0BhY3RpdmVtcS5hcGFjaGUub3JnPg0KU3Vi
+amVjdDogUkU6IG5ldyBBcnRlbWlzIENvbnNvbGUgcXVlc3Rpb24NCg0KQ2xhc3NpZmljYXRpb246
+IFB1YmxpYw0KDQpBbmR5LA0KDQpUaHggZm9yIHRoZSBhbnN3ZXJzIQ0KSSB3YXMgZmlyc3QgdXNp
+bmcgImxvY2FsaG9zdCIsIHRoZW4gIjEyNy4wLjAuMSIgYWZ0ZXIgSSBmb3VuZCB0aGUgSVB2NiB3
+YXJuaW5nIGluIHRoZSBkb2N1bWVudGF0aW9uLg0KSSB3aWxsIGV4cGVyaW1lbnQgZnVydGhlciBu
+b3cgdGhhdCBJIGtub3cgaXQgaXMgbm90IGEgdHJpdmlhbCBrbm93biBjYXVzZS4NCg0KVGh4IQ0K
+ZS4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IEFuZHkgVGF5bG9yIDxhbmR5
+LnRheWxzNjdAZ21haWwuY29tPiANClNlbnQ6IE1vbmRheSwgT2N0b2JlciAxNCwgMjAyNCAxOjM1
+IFBNDQpUbzogdXNlcnNAYWN0aXZlbXEuYXBhY2hlLm9yZw0KU3ViamVjdDogUmU6IG5ldyBBcnRl
+bWlzIENvbnNvbGUgcXVlc3Rpb24NCg0KDQpFWFRFUk5BTCBTRU5ERVI6ICAgRG8gbm90IGNsaWNr
+IGFueSBsaW5rcyBvciBvcGVuIGFueSBhdHRhY2htZW50cyB1bmxlc3MgeW91IHRydXN0IHRoZSBz
+ZW5kZXIgYW5kIGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZS4NCkVYUMOJRElURVVSIEVYVEVSTkU6
+ICAgIE5lIGNsaXF1ZXogc3VyIGF1Y3VuIGxpZW4gZXQgbuKAmW91dnJleiBhdWN1bmUgcGnDqGNl
+IGpvaW50ZSDDoCBtb2lucyBxdeKAmWlscyBuZSBwcm92aWVubmVudCBk4oCZdW4gZXhww6lkaXRl
+dXIgZmlhYmxlLCBvdSBxdWUgdm91cyBheWV6IGwnYXNzdXJhbmNlIHF1ZSBsZSBjb250ZW51IHBy
+b3ZpZW50IGQndW5lIHNvdXJjZSBzw7tyZS4NCg0KSSBoYXZlIHNwb2tlbiB0byBoYXd0SU8gZGV2
+IGFuZCBoZSBwb2ludGVkIG1lIGF0IGh0dHBzOi8vdXJsZGVmZW5zZS5jb20vdjMvX19odHRwczov
+L2RldmVsb3Blci5tb3ppbGxhLm9yZy9lbi1VUy9kb2NzL1dlYi9TZWN1cml0eS9TZWN1cmVfQ29u
+dGV4dHNfXzshIUFhSWh5dyFzakNXemV6aDE5UUp4S2NrZ196alZkQXBwS0QzVDVhaEtDanBrTGtT
+aV81SHcyX1JUOTVKSll6VWZwdUd6MllrQWpzZkpoejdVZVViVWcza2FVLTNJZ0kkIA0KDQpTbyBJ
+IGFtIGd1ZXNzaW5nIHRoZSBVUkwgeW91IGFyZSB1c2luZyBpcyBjYXVzaW5nIHRoaXMgdG8gaGFw
+cGVuLCBzYXlpbmcgdGhhdCBsb2NhbGhvc3QvMTI3LjAuMC4xIHNob3VsZCB3b3JrLCBhbnl0aGlu
+ZyBlbHNlIHlvdSBuZWVkIHRvIGNvbmZpZ3VyZSBodHRwcy4gTWF5YmUgeW91IGFyZSB1c2luZyBh
+IGRpZmZlcmVudCBob3N0bmFtZSBvciBsb2NhbGhvc3QgaXNudCBtYXBwZWQgY29ycmVjdGx5Pw0K
+DQoNCk9uIE1vbiwgMTQgT2N0IDIwMjQgYXQgMTA6MDYsIEFuZHkgVGF5bG9yIDxhbmR5LnRheWxz
+NjdAZ21haWwuY29tPiB3cm90ZToNCg0KPiBJIGhhdmVuJ3Qgc2VlbiB0aGF0IGJlZm9yZSwgY2Fu
+IHlvdSBzdXBwbHkgeW91ciBjb25uZWN0aW9uIGNvbmZpZyBmb3IgDQo+IGpvbG9raWEuIEFsc28g
+d2hhdCB2ZXJzaW9uIG9mIEFydGVtaXMgYXJlIHlvdSB1c2luZz8NCj4NCj4gT24gU3VuLCAxMyBP
+Y3QgMjAyNCBhdCAyMToyNywgRG9uZG9ycCwgRXJ3aW4gDQo+IDxlcndpbi5kb25kb3JwQGNnaS5j
+b20uaW52YWxpZD4NCj4gd3JvdGU6DQo+DQo+PiBDbGFzc2lmaWNhdGlvbjogUHVibGljDQo+Pg0K
+Pj4gSGVsbG8sDQo+Pg0KPj4gSSdtIHRyeWluZyB0aGUgbmV3IEFydGVtaXMgQ29uc29sZS4NCj4+
+IEluc3RhbGxpbmcgaXQgd2l0aCBqZXR0eS1ob21lLTEyLjAuMTQgYW5kIA0KPj4gYXBhY2hlLWFy
+dGVtaXMtY29uc29sZS0xLjAuMCB3YXMgZmluZS4gSSBmb2xsb3dlZCB0aGUgZGV0YWlscyBmcm9t
+IA0KPj4gaHR0cHM6Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0dHBzOi8vYWN0aXZlbXEuYXBhY2hl
+Lm9yZy9jb21wb25lbnRzL2FyDQo+PiB0ZW1pcy1jb25zb2xlL2RvY3VtZW50YXRpb24vX187ISFB
+YUloeXchc2pDV3plemgxOVFKeEtja2dfempWZEFwcEtEM1QNCj4+IDVhaEtDanBrTGtTaV81SHcy
+X1JUOTVKSll6VWZwdUd6MllrQWpzZkpoejdVZVViVWcza3JFR2ZwR00kDQo+PiBJIG9ubHkgbmVl
+ZGVkIHRvIHRlbGwgamV0dHkgdG8gdXNlIHBvcnQgODE2MiwgYXMgODA4MCBhbmQgODE2MSB3ZXJl
+IA0KPj4gYWxyZWFkeSBpbiB1c2UuDQo+PiBUaGUgY29ubmVjdGlvbiB0byB0aGUgYnJva2VyIGNv
+dWxkIGJlIGFkZGVkIGluIHRoZSBndWkuDQo+PiBXaGVuIHRoZSBjb25uZWN0aW9uIGlzIHVzZWQg
+d2l0aCBhIHdyb25nIHVzZXJuYW1lL3Bhc3N3b3JkLCB0aGUgZXJyb3IgDQo+PiBtZXNzYWdlICJJ
+bmNvcnJlY3QgdXNlcm5hbWUgb3IgcGFzc3dvcmQiIGFwcGVhcnMgYXMgZXhwZWN0ZWQuDQo+Pg0K
+Pj4gQnV0IHdpdGggdGhlIHJpZ2h0IHVzZXJuYW1lL3Bhc3N3b3JkLCBub3RoaW5nIHZpc2libHkg
+aGFwcGVucywgYW5kIA0KPj4gdGhlIGZvbGxvd2luZyBlcnJvciBhcHBlYXJzIGluIHRoZSB3ZWJi
+cm93c2VyIGNvbnNvbGUuDQo+PiBVbmNhdWdodCAoaW4gcHJvbWlzZSkgVHlwZUVycm9yOiB3aW5k
+b3cuY3J5cHRvLnN1YnRsZSBpcyB1bmRlZmluZWQNCj4+ICAgICBFcCBjcnlwdG8udHM6Ng0KPj4g
+ICAgIGIgZDAzMzlhMTAuY2h1bmsuanM6MS4yMzgNCj4+IFRoaXMgaGFwcGVucyBmb3IgRmlyZWZv
+eCBhbmQgRWRnZSB0byBydWxlIG91dCBzcGVjaWZpYyBicm93c2VyIGJlaGF2aW9yLg0KPj4NCj4+
+IERvZXMgdGhpcyBsb29rIGZhbWlsaWFyIHRvIGFueW9uZT8gQW55IGhpbnRzPw0KPj4NCj4+IHRo
+eCENCj4+IEVyd2luDQo+Pg0KPg0K
+DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0NClRvIHVuc3Vic2NyaWJlLCBlLW1haWw6IHVzZXJzLXVuc3Vi
+c2NyaWJlQGFjdGl2ZW1xLmFwYWNoZS5vcmcNCkZvciBhZGRpdGlvbmFsIGNvbW1hbmRzLCBl
+LW1haWw6IHVzZXJzLWhlbHBAYWN0aXZlbXEuYXBhY2hlLm9yZw0KRm9yIGZ1cnRoZXIgaW5m
+b3JtYXRpb24sIHZpc2l0OiBodHRwczovL2FjdGl2ZW1xLmFwYWNoZS5vcmcvY29udGFjdA0K
+DQoN
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57558-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 7092C3E6B5
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 08:25:54 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 72B3045492
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 08:25:53 +0000 (UTC)
+Received: (qmail 3443413 invoked by uid 998); 22 Oct 2024 08:25:51 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 3443387 invoked by uid 116); 22 Oct 2024 08:25:50 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Tue, 22 Oct 2024 08:25:50 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id B33B720019E
+	for <users@activemq.apache.org>; Tue, 22 Oct 2024 08:25:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.252
+X-Spam-Level: 
+X-Spam-Status: No, score=0.252 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,
+	NUMERIC_HTTP_ADDR=0.001, RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id Y-dko3XX_x3Z for <users@activemq.apache.org>;
+	Tue, 22 Oct 2024 08:25:50 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2607:f8b0:4864:20::236; helo=mail-oi1-x236.google.com; envelope-from=andy.tayls67@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id EC63E816B2
+	for <users@activemq.apache.org>; Tue, 22 Oct 2024 08:25:49 +0000 (UTC)
+Received: by mail-oi1-x236.google.com with SMTP id 5614622812f47-3e604425aa0so1542116b6e.0
+        for <users@activemq.apache.org>; Tue, 22 Oct 2024 01:25:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729585542; x=1730190342; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c0OrDuhfqXZrWPqiXPwanRDt632dYaC2oUGRmDfgrVc=;
+        b=DU+rVgzMjHSZTxq1uoems4P2yFjLFWYORACXWp8JGbAc/NSJGZaIUzBlzhzrefgMD7
+         dTA/+kLbsR3+1TV4pHROywKxCRWsK/P+38PSgXZxtZ8wNfChZ8ilJTdoIl/GG+4rX3Ve
+         5ZdRVtGuXpHFqMyGRDpWttTXR7DpRcb2ibpIu/kPPj87PLPDmpcRAJ/4L/OboEvFjwpZ
+         cWe7FAZLFiR+W4i+pyj7PXbFruOY7eeYBYTfDyFQjfB28K9Mfk0TKwqzFgW7y+L2wXId
+         SZx0Wfd6hbCpHO3leldBk53cw6n8LEAwIu/kjtWAim2XjWf7t4UcB+PrmnACPH6maqYK
+         cO5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729585542; x=1730190342;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c0OrDuhfqXZrWPqiXPwanRDt632dYaC2oUGRmDfgrVc=;
+        b=sIF0i7nJe84DpkUYnyiEDDd2597GgKTbIoYN6yrDJV/ZXAlOakkXzEBdOI57f3s8B5
+         NUWwPmxjbsDJX22rcHPoOYhit4oOmVtrPDJTyBbi3G7ugkZcf4Op+I9jElRWFZm0ShNb
+         FAsDWUSLr62btiXIy7ZN9R5GGEgVwcNPV6PoqjHRquWI/co4DYz011hptVJfHdnX4bTN
+         8s1R+SHJ7bbK/0hQFYjnvacwyuCFMmEmAs03zY8+gO3JdZSgKFrRxuDLnx/LTHRwh5PZ
+         R9k3dMh0+ur9IEgONcobMaRJJuzH6+Lhf9t6ShMQgeVL1EFalKXhTBu0NkKE0tA4fC8Z
+         i0fg==
+X-Gm-Message-State: AOJu0YzjyP5vCXkAWYf07sM47SHrxcR0ocK+4rRkVG5dYoGJUs6IHi5r
+	5cUVO1KFzG10IIKLGIi+PNgdluGB6+jM9/e4u4kwIcVll8FHP+Vrs4gE7xwgikpofLkPnEQD0bu
+	WkPhbhEBfEGm+KoBXuSnfDhEfHT1yInM=
+X-Google-Smtp-Source: AGHT+IH36wR8BBt3y5IbT94m4C/i29E/oyV1Wfxj0vcQ/9lMUFbnawvNJHLRHXDUOKZBhD8NGEOpf67dZ/hvSreOTVU=
+X-Received: by 2002:a05:6870:ac28:b0:260:f43e:7d89 with SMTP id
+ 586e51a60fabf-2892c29c666mr11328688fac.2.1729585542190; Tue, 22 Oct 2024
+ 01:25:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com> <CAA9ykMKAEw4ygXzUD9PPWX364dLpjs0fpM5Jbu4jp25KL3Ep3A@mail.gmail.com>
+ <CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com>
+ <ed108a145ab04954a0647850dfc7d95e@cgi.com> <814ef35a77554ce2ba61ff271bcd5f19@cgi.com>
+In-Reply-To: <814ef35a77554ce2ba61ff271bcd5f19@cgi.com>
+From: Andy Taylor <andy.tayls67@gmail.com>
+Date: Tue, 22 Oct 2024 09:25:31 +0100
+Message-ID: <CAA9ykMJBf=2n-J8vgMu-gHMLx=HNpJ=RaUe6HSmbRXqHMsLXNg@mail.gmail.com>
+Subject: Re: new Artemis Console question
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="000000000000d9dc5f06250c8393"
+
+--000000000000d9dc5f06250c8393
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+good to hear.
+
+On Fri, 18 Oct 2024 at 16:55, Dondorp, Erwin <erwin.dondorp@cgi.com.invalid=
+>
+wrote:
+
+> Classification: Public
+>
+> Andy,
+>
+> I found the issue.
+> I'm (forced to) using port forwarding to connect to the artemis system.
+> But I'm using an alias for 127.0.0.1 (like "computer-xyz") so that cookie=
+s
+> and passwords are properly remembered by the browser.
+> In the "connect" screen, I can only enter hostnames as "localhost" becaus=
+e
+> it does not know my local aliases.
+> That change in hostname confused the new artemis-console internals enough
+> to give the below error.
+> Reverting everything to "localhost" solved it (at least good enough for
+> demonstration purposes).
+>
+> Thx!
+> Erwin
+>
+> -----Original Message-----
+> From: Dondorp, Erwin
+> Sent: Tuesday, October 15, 2024 12:41 AM
+> To: 'users@activemq.apache.org' <users@activemq.apache.org>
+> Subject: RE: new Artemis Console question
+>
+> Classification: Public
+>
+> Andy,
+>
+> Thx for the answers!
+> I was first using "localhost", then "127.0.0.1" after I found the IPv6
+> warning in the documentation.
+> I will experiment further now that I know it is not a trivial known cause=
+.
+>
+> Thx!
+> e.
+>
+> -----Original Message-----
+> From: Andy Taylor <andy.tayls67@gmail.com>
+> Sent: Monday, October 14, 2024 1:35 PM
+> To: users@activemq.apache.org
+> Subject: Re: new Artemis Console question
+>
+>
+> EXTERNAL SENDER:   Do not click any links or open any attachments unless
+> you trust the sender and know the content is safe.
+> EXP=C3=89DITEUR EXTERNE:    Ne cliquez sur aucun lien et n=E2=80=99ouvrez=
+ aucune pi=C3=A8ce
+> jointe =C3=A0 moins qu=E2=80=99ils ne proviennent d=E2=80=99un exp=C3=A9d=
+iteur fiable, ou que vous
+> ayez l'assurance que le contenu provient d'une source s=C3=BBre.
+>
+> I have spoken to hawtIO dev and he pointed me at
+> https://urldefense.com/v3/__https://developer.mozilla.org/en-US/docs/Web/=
+Security/Secure_Contexts__;!!AaIhyw!sjCWzezh19QJxKckg_zjVdAppKD3T5ahKCjpkLk=
+Si_5Hw2_RT95JJYzUfpuGz2YkAjsfJhz7UeUbUg3kaU-3IgI$
+>
+> So I am guessing the URL you are using is causing this to happen, saying
+> that localhost/127.0.0.1 should work, anything else you need to configure
+> https. Maybe you are using a different hostname or localhost isnt mapped
+> correctly?
+>
+>
+> On Mon, 14 Oct 2024 at 10:06, Andy Taylor <andy.tayls67@gmail.com> wrote:
+>
+> > I haven't seen that before, can you supply your connection config for
+> > jolokia. Also what version of Artemis are you using?
+> >
+> > On Sun, 13 Oct 2024 at 21:27, Dondorp, Erwin
+> > <erwin.dondorp@cgi.com.invalid>
+> > wrote:
+> >
+> >> Classification: Public
+> >>
+> >> Hello,
+> >>
+> >> I'm trying the new Artemis Console.
+> >> Installing it with jetty-home-12.0.14 and
+> >> apache-artemis-console-1.0.0 was fine. I followed the details from
+> >> https://urldefense.com/v3/__https://activemq.apache.org/components/ar
+> >> temis-console/documentation/__;!!AaIhyw!sjCWzezh19QJxKckg_zjVdAppKD3T
+> >> 5ahKCjpkLkSi_5Hw2_RT95JJYzUfpuGz2YkAjsfJhz7UeUbUg3krEGfpGM$
+> >> I only needed to tell jetty to use port 8162, as 8080 and 8161 were
+> >> already in use.
+> >> The connection to the broker could be added in the gui.
+> >> When the connection is used with a wrong username/password, the error
+> >> message "Incorrect username or password" appears as expected.
+> >>
+> >> But with the right username/password, nothing visibly happens, and
+> >> the following error appears in the webbrowser console.
+> >> Uncaught (in promise) TypeError: window.crypto.subtle is undefined
+> >>     Ep crypto.ts:6
+> >>     b d0339a10.chunk.js:1.238
+> >> This happens for Firefox and Edge to rule out specific browser behavio=
+r.
+> >>
+> >> Does this look familiar to anyone? Any hints?
+> >>
+> >> thx!
+> >> Erwin
+> >>
+> >
+>
+> ---------------------------------------------------------------------
+> To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+> For additional commands, e-mail: users-help@activemq.apache.org
+> For further information, visit: https://activemq.apache.org/contact
+>
+>
+
+--000000000000d9dc5f06250c8393--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57541-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 9E2B53E689
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 22:41:58 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 999F049625
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 22:41:57 +0000 (UTC)
+Received: (qmail 1976799 invoked by uid 998); 14 Oct 2024 22:41:55 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1976705 invoked by uid 116); 14 Oct 2024 22:41:44 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 14 Oct 2024 22:41:44 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 227FD2001E9
+	for <users@activemq.apache.org>; Mon, 14 Oct 2024 22:41:44 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -0.199
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.199 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=cgi.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id kld6ZX3YMIyj for <users@activemq.apache.org>;
+	Mon, 14 Oct 2024 22:41:42 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2620:100:900c:1:67:231:158:130; helo=mx0c-00131701.pphosted.com; envelope-from=prvs=0017eee589=erwin.dondorp@cgi.com; receiver=<UNKNOWN> 
+Received: from mx0c-00131701.pphosted.com (mx0c-00131701.pphosted.com [IPv6:2620:100:900c:1:67:231:158:130])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 2BDC082053
+	for <users@activemq.apache.org>; Mon, 14 Oct 2024 22:41:11 +0000 (UTC)
+Received: from pps.filterd (m0088533.ppops.net [127.0.0.1])
+	by -00131701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EE3Cil032123
+	for <users@activemq.apache.org>; Mon, 14 Oct 2024 22:41:05 GMT
+X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cgi.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	cgi-hosted-201911; bh=MIaDYmZ347hqywtKMvfBHQ7mLS/r0fQFTOxIweKfHq
+	w=; b=akFs0srNMfKD3LETJYZTH30+BAg1HFlIgv8q6lE+6kRKTrEiE7dF1SSW2H
+	lTk1LjS+TYHxGD+4xjXmkuMiWOERroiV1viSWSA8D4+anPFbBAxWub7Utj4WtYYb
+	e5HAxqK1QQKfza5OhbMofj+ag122V1SIWJnoHCEGuldop4D44GZEai0D/DcsyskR
+	3vraX5PSgC9bnDSdHrjRJRhHLBq9WhsYYoNMDEmQ6v9dBj0vgjFxGsgn6YeHJsDy
+	gjas5sT3VZBGzSNQOMtswvWNGmQTqQuxa0+UHToMHBkdKpfNftfO/aNt2wdxn1Ze
+	02BsbLXGnM8TMgl/LkVVBEgccsAQ==
+Received: from globalmail.cgi.com (globalmail-eu.cgi.com [217.150.168.72])
+	by -00131701.pphosted.com (PPS) with ESMTPS id 427ftx3y78-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <users@activemq.apache.org>; Mon, 14 Oct 2024 22:41:04 +0000 (GMT)
+Received: from SE-EX10114.groupinfra.com (142.101.45.153) by
+ SE-EX10115.groupinfra.com (142.101.45.154) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 15 Oct 2024 00:41:02 +0200
+Received: from SE-EX10114.groupinfra.com ([142.101.45.153]) by
+ SE-EX10114.groupinfra.com ([142.101.45.153]) with mapi id 15.02.1544.011;
+ Tue, 15 Oct 2024 00:41:02 +0200
+From: "Dondorp, Erwin" <erwin.dondorp@cgi.com.INVALID>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: RE: new Artemis Console question
+Thread-Topic: new Artemis Console question
+Thread-Index: Adsdq4nDa0jff2yfRRKk0znKMYb+uwAW/6oAAAUzkQAADDtR0A==
+Date: Mon, 14 Oct 2024 22:41:02 +0000
+Message-ID: <ed108a145ab04954a0647850dfc7d95e@cgi.com>
+References: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com>
+ <CAA9ykMKAEw4ygXzUD9PPWX364dLpjs0fpM5Jbu4jp25KL3Ep3A@mail.gmail.com>
+ <CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com>
+In-Reply-To: <CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com>
+Accept-Language: nl-NL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Enabled=true;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SetDate=2024-10-14T22:41:00Z;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Method=Privileged;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Name=d9290083-bd2f-48a2-8ac5-09a524b17d15;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SiteId=b9fec68c-c92d-461e-9a97-3d03a0f18b82;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ActionId=7a9bb624-90c8-47fb-83b0-7a46500849ad;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ContentBits=1
+x-originating-ip: [142.101.45.246]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Proofpoint-ORIG-GUID: rwuReLSBAfXQ7-PigLSCBsz6SrLfMTKP
+X-Proofpoint-GUID: rwuReLSBAfXQ7-PigLSCBsz6SrLfMTKP
+
+Q2xhc3NpZmljYXRpb246IFB1YmxpYw0KDQpBbmR5LA0KDQpUaHggZm9yIHRoZSBhbnN3ZXJzIQ0K
+SSB3YXMgZmlyc3QgdXNpbmcgImxvY2FsaG9zdCIsIHRoZW4gIjEyNy4wLjAuMSIgYWZ0ZXIgSSBm
+b3VuZCB0aGUgSVB2NiB3YXJuaW5nIGluIHRoZSBkb2N1bWVudGF0aW9uLg0KSSB3aWxsIGV4cGVy
+aW1lbnQgZnVydGhlciBub3cgdGhhdCBJIGtub3cgaXQgaXMgbm90IGEgdHJpdmlhbCBrbm93biBj
+YXVzZS4NCg0KVGh4IQ0KZS4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IEFu
+ZHkgVGF5bG9yIDxhbmR5LnRheWxzNjdAZ21haWwuY29tPiANClNlbnQ6IE1vbmRheSwgT2N0b2Jl
+ciAxNCwgMjAyNCAxOjM1IFBNDQpUbzogdXNlcnNAYWN0aXZlbXEuYXBhY2hlLm9yZw0KU3ViamVj
+dDogUmU6IG5ldyBBcnRlbWlzIENvbnNvbGUgcXVlc3Rpb24NCg0KDQpFWFRFUk5BTCBTRU5ERVI6
+ICAgRG8gbm90IGNsaWNrIGFueSBsaW5rcyBvciBvcGVuIGFueSBhdHRhY2htZW50cyB1bmxlc3Mg
+eW91IHRydXN0IHRoZSBzZW5kZXIgYW5kIGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZS4NCkVYUMOJ
+RElURVVSIEVYVEVSTkU6ICAgIE5lIGNsaXF1ZXogc3VyIGF1Y3VuIGxpZW4gZXQgbuKAmW91dnJl
+eiBhdWN1bmUgcGnDqGNlIGpvaW50ZSDDoCBtb2lucyBxdeKAmWlscyBuZSBwcm92aWVubmVudCBk
+4oCZdW4gZXhww6lkaXRldXIgZmlhYmxlLCBvdSBxdWUgdm91cyBheWV6IGwnYXNzdXJhbmNlIHF1
+ZSBsZSBjb250ZW51IHByb3ZpZW50IGQndW5lIHNvdXJjZSBzw7tyZS4NCg0KSSBoYXZlIHNwb2tl
+biB0byBoYXd0SU8gZGV2IGFuZCBoZSBwb2ludGVkIG1lIGF0IGh0dHBzOi8vdXJsZGVmZW5zZS5j
+b20vdjMvX19odHRwczovL2RldmVsb3Blci5tb3ppbGxhLm9yZy9lbi1VUy9kb2NzL1dlYi9TZWN1
+cml0eS9TZWN1cmVfQ29udGV4dHNfXzshIUFhSWh5dyFzakNXemV6aDE5UUp4S2NrZ196alZkQXBw
+S0QzVDVhaEtDanBrTGtTaV81SHcyX1JUOTVKSll6VWZwdUd6MllrQWpzZkpoejdVZVViVWcza2FV
+LTNJZ0kkIA0KDQpTbyBJIGFtIGd1ZXNzaW5nIHRoZSBVUkwgeW91IGFyZSB1c2luZyBpcyBjYXVz
+aW5nIHRoaXMgdG8gaGFwcGVuLCBzYXlpbmcgdGhhdCBsb2NhbGhvc3QvMTI3LjAuMC4xIHNob3Vs
+ZCB3b3JrLCBhbnl0aGluZyBlbHNlIHlvdSBuZWVkIHRvIGNvbmZpZ3VyZSBodHRwcy4gTWF5YmUg
+eW91IGFyZSB1c2luZyBhIGRpZmZlcmVudCBob3N0bmFtZSBvciBsb2NhbGhvc3QgaXNudCBtYXBw
+ZWQgY29ycmVjdGx5Pw0KDQoNCk9uIE1vbiwgMTQgT2N0IDIwMjQgYXQgMTA6MDYsIEFuZHkgVGF5
+bG9yIDxhbmR5LnRheWxzNjdAZ21haWwuY29tPiB3cm90ZToNCg0KPiBJIGhhdmVuJ3Qgc2VlbiB0
+aGF0IGJlZm9yZSwgY2FuIHlvdSBzdXBwbHkgeW91ciBjb25uZWN0aW9uIGNvbmZpZyBmb3IgDQo+
+IGpvbG9raWEuIEFsc28gd2hhdCB2ZXJzaW9uIG9mIEFydGVtaXMgYXJlIHlvdSB1c2luZz8NCj4N
+Cj4gT24gU3VuLCAxMyBPY3QgMjAyNCBhdCAyMToyNywgRG9uZG9ycCwgRXJ3aW4gDQo+IDxlcndp
+bi5kb25kb3JwQGNnaS5jb20uaW52YWxpZD4NCj4gd3JvdGU6DQo+DQo+PiBDbGFzc2lmaWNhdGlv
+bjogUHVibGljDQo+Pg0KPj4gSGVsbG8sDQo+Pg0KPj4gSSdtIHRyeWluZyB0aGUgbmV3IEFydGVt
+aXMgQ29uc29sZS4NCj4+IEluc3RhbGxpbmcgaXQgd2l0aCBqZXR0eS1ob21lLTEyLjAuMTQgYW5k
+IA0KPj4gYXBhY2hlLWFydGVtaXMtY29uc29sZS0xLjAuMCB3YXMgZmluZS4gSSBmb2xsb3dlZCB0
+aGUgZGV0YWlscyBmcm9tIA0KPj4gaHR0cHM6Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0dHBzOi8v
+YWN0aXZlbXEuYXBhY2hlLm9yZy9jb21wb25lbnRzL2FyDQo+PiB0ZW1pcy1jb25zb2xlL2RvY3Vt
+ZW50YXRpb24vX187ISFBYUloeXchc2pDV3plemgxOVFKeEtja2dfempWZEFwcEtEM1QNCj4+IDVh
+aEtDanBrTGtTaV81SHcyX1JUOTVKSll6VWZwdUd6MllrQWpzZkpoejdVZVViVWcza3JFR2ZwR00k
+DQo+PiBJIG9ubHkgbmVlZGVkIHRvIHRlbGwgamV0dHkgdG8gdXNlIHBvcnQgODE2MiwgYXMgODA4
+MCBhbmQgODE2MSB3ZXJlIA0KPj4gYWxyZWFkeSBpbiB1c2UuDQo+PiBUaGUgY29ubmVjdGlvbiB0
+byB0aGUgYnJva2VyIGNvdWxkIGJlIGFkZGVkIGluIHRoZSBndWkuDQo+PiBXaGVuIHRoZSBjb25u
+ZWN0aW9uIGlzIHVzZWQgd2l0aCBhIHdyb25nIHVzZXJuYW1lL3Bhc3N3b3JkLCB0aGUgZXJyb3Ig
+DQo+PiBtZXNzYWdlICJJbmNvcnJlY3QgdXNlcm5hbWUgb3IgcGFzc3dvcmQiIGFwcGVhcnMgYXMg
+ZXhwZWN0ZWQuDQo+Pg0KPj4gQnV0IHdpdGggdGhlIHJpZ2h0IHVzZXJuYW1lL3Bhc3N3b3JkLCBu
+b3RoaW5nIHZpc2libHkgaGFwcGVucywgYW5kIA0KPj4gdGhlIGZvbGxvd2luZyBlcnJvciBhcHBl
+YXJzIGluIHRoZSB3ZWJicm93c2VyIGNvbnNvbGUuDQo+PiBVbmNhdWdodCAoaW4gcHJvbWlzZSkg
+VHlwZUVycm9yOiB3aW5kb3cuY3J5cHRvLnN1YnRsZSBpcyB1bmRlZmluZWQNCj4+ICAgICBFcCBj
+cnlwdG8udHM6Ng0KPj4gICAgIGIgZDAzMzlhMTAuY2h1bmsuanM6MS4yMzgNCj4+IFRoaXMgaGFw
+cGVucyBmb3IgRmlyZWZveCBhbmQgRWRnZSB0byBydWxlIG91dCBzcGVjaWZpYyBicm93c2VyIGJl
+aGF2aW9yLg0KPj4NCj4+IERvZXMgdGhpcyBsb29rIGZhbWlsaWFyIHRvIGFueW9uZT8gQW55IGhp
+bnRzPw0KPj4NCj4+IHRoeCENCj4+IEVyd2luDQo+Pg0KPg==
+DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0NClRvIHVuc3Vic2NyaWJlLCBlLW1haWw6IHVzZXJzLXVuc3Vi
+c2NyaWJlQGFjdGl2ZW1xLmFwYWNoZS5vcmcNCkZvciBhZGRpdGlvbmFsIGNvbW1hbmRzLCBl
+LW1haWw6IHVzZXJzLWhlbHBAYWN0aXZlbXEuYXBhY2hlLm9yZw0KRm9yIGZ1cnRoZXIgaW5m
+b3JtYXRpb24sIHZpc2l0OiBodHRwczovL2FjdGl2ZW1xLmFwYWNoZS5vcmcvY29udGFjdA0K
+DQoN
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57539-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 6FB7D3E682
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 11:35:32 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id D3DC461792
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 11:35:20 +0000 (UTC)
+Received: (qmail 560161 invoked by uid 998); 14 Oct 2024 11:35:19 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 560082 invoked by uid 116); 14 Oct 2024 11:35:18 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 14 Oct 2024 11:35:18 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 9E5B82001E8
+	for <users@activemq.apache.org>; Mon, 14 Oct 2024 11:35:18 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.252
+X-Spam-Level: 
+X-Spam-Status: No, score=0.252 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,
+	NUMERIC_HTTP_ADDR=0.001, RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id U30HgDywfnSD for <users@activemq.apache.org>;
+	Mon, 14 Oct 2024 11:35:18 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2001:4860:4864:20::2c; helo=mail-oa1-x2c.google.com; envelope-from=andy.tayls67@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 09BCE82055
+	for <users@activemq.apache.org>; Mon, 14 Oct 2024 11:35:17 +0000 (UTC)
+Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-2884e7fadb8so2143888fac.2
+        for <users@activemq.apache.org>; Mon, 14 Oct 2024 04:35:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728905711; x=1729510511; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JU4SNxbe2KJTPLBJH9OEFC7J0fyAqLgLqarBOAGhKXo=;
+        b=PAcuc7LIePFv+5EvuuCr+LTFrLiCrnG/llgErY8aVd0uG6zCF5O9QayeMfgVLHG7m0
+         uHGypuqkbCyWwEJ4Z1Mh6tjhPXyCJ0Gk3FT3MEiA5I4xS22YrOWF4VwsXtEIrji/1d5c
+         FGEV3cy1VXoR3XSggE/FpgxjZTHX0FnR/NyuDuXSe5cGGkcD8IOfVMBPErdgWvEkF9fW
+         nqbXBKelN4QYFG3Ocop7MjD4/fRy1BVHeGr4djslL/5PUI0lqyYn8L6L0Wt1GDU9IItu
+         0uyJurhndVH6ecDlVn8tkyMru5GYSACIekRDnQIjxv+a+F2SaNyDrYP/9VKJcL4881DJ
+         eLNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728905711; x=1729510511;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JU4SNxbe2KJTPLBJH9OEFC7J0fyAqLgLqarBOAGhKXo=;
+        b=uM+mT+ILVhLmBfhD7QNAP6hOIumnA0gOqFMYwbcEsFijwDrVbc/JtYZ55uysTHeKOV
+         +arsF74Drbm7Hf1d5s7iXEd/ED30zwWiPnzCat9ojkzbFkdu8BURDAA7FLeIhFk7ISGq
+         SX5GifVRxV7hpZILfDDQXC+uk21LlFGBIO3N1DOLmfH2+3UKHW9Lx+GpxYjUS5lrZX3G
+         aXl2bGVA1oXWLBmXwxkkZKAMaHyMoxGh2MsIfpfUPgvrnORiz0ayRqJU/Bhhwr9gLaZM
+         GxQm187vhXQuAAOxAlNVuWS1n7Us8qcEeHDJQtYG8Cy8VxVqOb3L3Ds2pUkcVKULhIYX
+         rZ+g==
+X-Gm-Message-State: AOJu0YwW375QGZZRDGq+2QPMq2uOaxPrsnNkiEu/Y8uWoA+srDdQa56d
+	gg2rNWeDdH4ho9WEaPjRTWqrIM3z7zVUOoSrcrB8AH8kMuQcUOFSNZDeJzHkx1AXvXtDRFlqmuN
+	Dg6qofo7+lA3BoGF7+zoNRCTkQI/HCtdlTQ==
+X-Google-Smtp-Source: AGHT+IEWKsyxvuN2I+YQalV/85A2b6nt7VAjBS/6DH/2u5XdGOIZjsnl6GpuAup3wYgr0J4pjWuw1yOmD9ZLHSWJtgw=
+X-Received: by 2002:a05:6871:294:b0:278:1d21:2b34 with SMTP id
+ 586e51a60fabf-28887391444mr4411488fac.27.1728905711033; Mon, 14 Oct 2024
+ 04:35:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com> <CAA9ykMKAEw4ygXzUD9PPWX364dLpjs0fpM5Jbu4jp25KL3Ep3A@mail.gmail.com>
+In-Reply-To: <CAA9ykMKAEw4ygXzUD9PPWX364dLpjs0fpM5Jbu4jp25KL3Ep3A@mail.gmail.com>
+From: Andy Taylor <andy.tayls67@gmail.com>
+Date: Mon, 14 Oct 2024 12:35:00 +0100
+Message-ID: <CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com>
+Subject: Re: new Artemis Console question
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="000000000000c1ac4f06246e3aac"
+
+--000000000000c1ac4f06246e3aac
+Content-Type: text/plain; charset="UTF-8"
+
+I have spoken to hawtIO dev and he pointed me at
+https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts
+
+So I am guessing the URL you are using is causing this to happen, saying
+that localhost/127.0.0.1 should work, anything else you need to configure
+https. Maybe you are using a different hostname or localhost isnt mapped
+correctly?
+
+
+On Mon, 14 Oct 2024 at 10:06, Andy Taylor <andy.tayls67@gmail.com> wrote:
+
+> I haven't seen that before, can you supply your connection config for
+> jolokia. Also what version of Artemis are you using?
+>
+> On Sun, 13 Oct 2024 at 21:27, Dondorp, Erwin <erwin.dondorp@cgi.com.invalid>
+> wrote:
+>
+>> Classification: Public
+>>
+>> Hello,
+>>
+>> I'm trying the new Artemis Console.
+>> Installing it with jetty-home-12.0.14 and apache-artemis-console-1.0.0
+>> was fine. I followed the details from
+>> https://activemq.apache.org/components/artemis-console/documentation/
+>> I only needed to tell jetty to use port 8162, as 8080 and 8161 were
+>> already in use.
+>> The connection to the broker could be added in the gui.
+>> When the connection is used with a wrong username/password, the error
+>> message "Incorrect username or password" appears as expected.
+>>
+>> But with the right username/password, nothing visibly happens, and the
+>> following error appears in the webbrowser console.
+>> Uncaught (in promise) TypeError: window.crypto.subtle is undefined
+>>     Ep crypto.ts:6
+>>     b d0339a10.chunk.js:1.238
+>> This happens for Firefox and Edge to rule out specific browser behavior.
+>>
+>> Does this look familiar to anyone? Any hints?
+>>
+>> thx!
+>> Erwin
+>>
+>
+
+--000000000000c1ac4f06246e3aac--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57538-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 38B273E682
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 09:06:56 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 242C560DD6
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 09:06:56 +0000 (UTC)
+Received: (qmail 147222 invoked by uid 998); 14 Oct 2024 09:06:55 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 147197 invoked by uid 116); 14 Oct 2024 09:06:54 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 14 Oct 2024 09:06:54 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id F29A3C2284
+	for <users@activemq.apache.org>; Mon, 14 Oct 2024 09:06:53 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.249
+X-Spam-Level: 
+X-Spam-Status: No, score=0.249 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,
+	SPF_PASS=-0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id sQ8BMzUuy14D for <users@activemq.apache.org>;
+	Mon, 14 Oct 2024 09:06:53 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2607:f8b0:4864:20::c33; helo=mail-oo1-xc33.google.com; envelope-from=andy.tayls67@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-oo1-xc33.google.com (mail-oo1-xc33.google.com [IPv6:2607:f8b0:4864:20::c33])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 3F8E182050
+	for <users@activemq.apache.org>; Mon, 14 Oct 2024 09:06:23 +0000 (UTC)
+Received: by mail-oo1-xc33.google.com with SMTP id 006d021491bc7-5e98821b12eso2195327eaf.0
+        for <users@activemq.apache.org>; Mon, 14 Oct 2024 02:06:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728896776; x=1729501576; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EZ6bZiMkBw4dgLA8IqeJGuUK/b3zreC0BA4ruafLAM0=;
+        b=QZU8+NcnXtCyQUc69z+vRJclJH19w1Xid8MG3JVhtRuIhYAu3reh2YKnYrovYzn8wl
+         s/4mIck24aiBFe0DMbRo77g3zK1faejJKH1bzPjeJUwzopglXjjRy5jcRtI74uqLqk6v
+         7RmeuaJRAiHDZ4HRrNc3Hc/tBPwV4j8td8uydXIYjevE7e5OfRsb0v3/XeMmrr7RT7vH
+         YGdubw0FjALfL8wOcjB3Q6zZEhDMriNjCZw8Nq2nOpV7U/RteApCJcF58LtEXUka5qm4
+         INFotWcC7TziWRre+GCRqgqxOLsMVk7961nYcCpQP6hPYKUEwwe4KrBVrR/Xn6qwnWmt
+         NbPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728896776; x=1729501576;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EZ6bZiMkBw4dgLA8IqeJGuUK/b3zreC0BA4ruafLAM0=;
+        b=fck2/abnS64RRbZu9+ce22rhOV3GOnfRey/H/npfPRbupRS8SK8EauqMlaYa6cTQKa
+         W2jdEFoGbVPE4ep+g/r53wZ0Gyj6+Zi9/guDB8svwCBgC7bKPGssicQECWYZdNdWo42h
+         4poVz5nH2Fz72NywICBh//9F33/Ht07NnR9GMcboRUWwiuEC0st+TmlQ9eEeOdBzVGGB
+         PlYrWloS3GKsjSpZNlBc6E9y6TDThzsVeMkgaeWeQU9cLlGOFtER3awEW3Llt8PJwRQy
+         8TRtEUn/Nc/sfKIy10G6wDZlKVNwtrAh24n+DtJg8qirDj7Iv6ULBehMvu0Ao9A1VDho
+         2e/g==
+X-Gm-Message-State: AOJu0YyJJKg+UDxiTLjXsN5nQ1GHDw5w5qVSAe+Y2qTECgJKuY2Va0VM
+	NSHxfG9Ktws8YzDvIs9pArq+m4gzavEDhfrfHbQW2xuYoTftWrntJCkWfj2Ugv2tgs7iFNFCKBf
+	uadDp3fPoN6qlsR1oERAfstCLf17+ig0=
+X-Google-Smtp-Source: AGHT+IFMGyBWwknE5/4Vko+xdBvZVbZbKCzq0RrLpgwVkhDUThflPUJ/ptwJAB6E9AQG/mnOboXqTOk370fY1Th4Izg=
+X-Received: by 2002:a05:6871:531a:b0:270:46be:9534 with SMTP id
+ 586e51a60fabf-2886dde7649mr6067034fac.24.1728896775791; Mon, 14 Oct 2024
+ 02:06:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com>
+In-Reply-To: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com>
+From: Andy Taylor <andy.tayls67@gmail.com>
+Date: Mon, 14 Oct 2024 10:06:04 +0100
+Message-ID: <CAA9ykMKAEw4ygXzUD9PPWX364dLpjs0fpM5Jbu4jp25KL3Ep3A@mail.gmail.com>
+Subject: Re: new Artemis Console question
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="0000000000002caca106246c26fa"
+
+--0000000000002caca106246c26fa
+Content-Type: text/plain; charset="UTF-8"
+
+I haven't seen that before, can you supply your connection config for
+jolokia. Also what version of Artemis are you using?
+
+On Sun, 13 Oct 2024 at 21:27, Dondorp, Erwin <erwin.dondorp@cgi.com.invalid>
+wrote:
+
+> Classification: Public
+>
+> Hello,
+>
+> I'm trying the new Artemis Console.
+> Installing it with jetty-home-12.0.14 and apache-artemis-console-1.0.0 was
+> fine. I followed the details from
+> https://activemq.apache.org/components/artemis-console/documentation/
+> I only needed to tell jetty to use port 8162, as 8080 and 8161 were
+> already in use.
+> The connection to the broker could be added in the gui.
+> When the connection is used with a wrong username/password, the error
+> message "Incorrect username or password" appears as expected.
+>
+> But with the right username/password, nothing visibly happens, and the
+> following error appears in the webbrowser console.
+> Uncaught (in promise) TypeError: window.crypto.subtle is undefined
+>     Ep crypto.ts:6
+>     b d0339a10.chunk.js:1.238
+> This happens for Firefox and Edge to rule out specific browser behavior.
+>
+> Does this look familiar to anyone? Any hints?
+>
+> thx!
+> Erwin
+>
+
+--0000000000002caca106246c26fa--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57537-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 6B3403E72B
+	for <archive-asf-public@cust-asf.ponee.io>; Sun, 13 Oct 2024 20:27:42 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 490396402D
+	for <archive-asf-public@cust-asf.ponee.io>; Sun, 13 Oct 2024 20:27:42 +0000 (UTC)
+Received: (qmail 3211897 invoked by uid 998); 13 Oct 2024 20:27:41 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 3211796 invoked by uid 116); 13 Oct 2024 20:27:35 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Sun, 13 Oct 2024 20:27:35 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id 00FBCC227C
+	for <users@activemq.apache.org>; Sun, 13 Oct 2024 20:27:35 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -0.001
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.001 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, SPF_PASS=-0.001]
+	autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=cgi.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id Q-qb7gmFWURA for <users@activemq.apache.org>;
+	Sun, 13 Oct 2024 20:27:34 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2620:100:900d:1:67:231:151:1; helo=mx0d-00131701.pphosted.com; envelope-from=prvs=0016a517da=erwin.dondorp@cgi.com; receiver=<UNKNOWN> 
+Received: from mx0d-00131701.pphosted.com (mx0d-00131701.pphosted.com [IPv6:2620:100:900d:1:67:231:151:1])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 1144882059
+	for <users@activemq.apache.org>; Sun, 13 Oct 2024 20:27:33 +0000 (UTC)
+Received: from pps.filterd (m0212685.ppops.net [127.0.0.1])
+	by -00131701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49D8eDC7003209
+	for <users@activemq.apache.org>; Sun, 13 Oct 2024 20:27:27 GMT
+X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cgi.com; h=
+	content-type:date:from:message-id:mime-version:subject:to; s=
+	cgi-hosted-201911; bh=Ce2d40DgRG9yE/6ZMrnpuSeMLfzOM+YyseLQcPQXzH
+	Y=; b=CkZhhD5qBnekIj0b7TJ/x+W7ikYRtfIzOeoZKb/uTxn7sXN8lp9CQfii9B
+	9+w8mfIQEikx4GDX27jZNf7EiaJ6+8CU/QyGqddEf//EOPt5TH3UPqnbSKtd42ZH
+	gT8cy1h43mjOZ/wIDEMJm8xBt/M7NWHyrvGJp6woGJcZKCX5Uiw6kLNezJWfZRNM
+	k4RIvqr+HvlnjFlfaTanlSS4SEUTexP89ajq6T+fFa/3yixWMFaeNRrDU+CfA+YQ
+	WdbU9D0AjyBu6chleaNQpI2YT1TJjZ14k6b0JItVFkbr+2iXZeO6gp8f8tWCEuLa
+	h1uTp+L5KhWM+pKNGgxFeSA+/NaA==
+Received: from globalmail.cgi.com (globalmail-eu.cgi.com [217.150.168.72])
+	by -00131701.pphosted.com (PPS) with ESMTPS id 427fvrn9vc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <users@activemq.apache.org>; Sun, 13 Oct 2024 20:27:26 +0000 (GMT)
+Received: from SE-EX10114.groupinfra.com (142.101.45.153) by
+ SE-EX10110.groupinfra.com (142.101.45.149) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sun, 13 Oct 2024 22:27:24 +0200
+Received: from SE-EX10114.groupinfra.com ([142.101.45.153]) by
+ SE-EX10114.groupinfra.com ([142.101.45.153]) with mapi id 15.02.1544.011;
+ Sun, 13 Oct 2024 22:27:24 +0200
+From: "Dondorp, Erwin" <erwin.dondorp@cgi.com.INVALID>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: new Artemis Console question
+Thread-Topic: new Artemis Console question
+Thread-Index: Adsdq4nDa0jff2yfRRKk0znKMYb+uw==
+Date: Sun, 13 Oct 2024 20:27:24 +0000
+Message-ID: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com>
+Accept-Language: nl-NL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Enabled=true;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SetDate=2024-10-13T20:27:22Z;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Method=Privileged;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Name=d9290083-bd2f-48a2-8ac5-09a524b17d15;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SiteId=b9fec68c-c92d-461e-9a97-3d03a0f18b82;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ActionId=c4ec8d00-7f62-48af-8521-d3e520476ee7;
+ MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ContentBits=1
+x-originating-ip: [142.101.28.247]
+Content-Type: multipart/alternative;
+	boundary="_000_c39ffabe5ec249b1a5a45a9216ca9ceecgicom_"
+MIME-Version: 1.0
+X-Proofpoint-GUID: kk1pi9xkpAGuK2X_oaStFFWdzCCg6g4a
+X-Proofpoint-ORIG-GUID: kk1pi9xkpAGuK2X_oaStFFWdzCCg6g4a
+
+--_000_c39ffabe5ec249b1a5a45a9216ca9ceecgicom_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+Classification: Public
+
+Hello,
+
+I'm trying the new Artemis Console.
+Installing it with jetty-home-12.0.14 and apache-artemis-console-1.0.0 was =
+fine. I followed the details from https://activemq.apache.org/components/ar=
+temis-console/documentation/
+I only needed to tell jetty to use port 8162, as 8080 and 8161 were already=
+ in use.
+The connection to the broker could be added in the gui.
+When the connection is used with a wrong username/password, the error messa=
+ge "Incorrect username or password" appears as expected.
+
+But with the right username/password, nothing visibly happens, and the foll=
+owing error appears in the webbrowser console.
+Uncaught (in promise) TypeError: window.crypto.subtle is undefined
+    Ep crypto.ts:6
+    b d0339a10.chunk.js:1.238
+This happens for Firefox and Edge to rule out specific browser behavior.
+
+Does this look familiar to anyone? Any hints?
+
+thx!
+Erwin
+
+--_000_c39ffabe5ec249b1a5a45a9216ca9ceecgicom_--

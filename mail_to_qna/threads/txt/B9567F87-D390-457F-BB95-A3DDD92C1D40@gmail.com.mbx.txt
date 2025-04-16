@@ -1,0 +1,576 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57532-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 234903E689
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 11 Oct 2024 13:58:00 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 2EAD95074D
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 11 Oct 2024 13:57:59 +0000 (UTC)
+Received: (qmail 3678688 invoked by uid 998); 11 Oct 2024 13:57:57 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 3678657 invoked by uid 116); 11 Oct 2024 13:57:56 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Fri, 11 Oct 2024 13:57:56 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 827BA2001C4
+	for <users@activemq.apache.org>; Fri, 11 Oct 2024 13:57:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: -0.2
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001]
+	autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id GU8OUY2ve1YR for <users@activemq.apache.org>;
+	Fri, 11 Oct 2024 13:57:56 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2607:f8b0:4864:20::22d; helo=mail-oi1-x22d.google.com; envelope-from=mattrpav@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 0485282036
+	for <users@activemq.apache.org>; Fri, 11 Oct 2024 13:57:55 +0000 (UTC)
+Received: by mail-oi1-x22d.google.com with SMTP id 5614622812f47-3e3e2687200so835034b6e.0
+        for <users@activemq.apache.org>; Fri, 11 Oct 2024 06:57:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728655069; x=1729259869; darn=activemq.apache.org;
+        h=message-id:in-reply-to:to:references:date:subject:mime-version
+         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nmefYAKjhfCwVtyHvG8xhlrcb0cC5pWcLnvUP3UMxF0=;
+        b=ShDBtD18tqIQP46/d3fnfAnnd+cBvtmVUH41jmFCD6f+NmxnnjzUXHt+4DFQ4GRD7u
+         HzXYHMEBo2SwwHzZ9J5hlMRKrrC1Y3oQbeW9Cl3Au0sZl1+HuT/OnDiGCygH0fFkUv2k
+         fOhzZOtLJ/fKwQyKownlhw/E49a4Xwu8BLICgpNitP6J3nVZVaIETDY+XUODlSGcCxV8
+         VB0/cQsGKgHkwuj6crz/qFs7y0cOisDz+p9QxfR8PLPY5vqVgMpnu8esMtrW6YWVklkc
+         0wCIvVwu8jjhDicVNwIXh/ymdwuIg70l4ifetJQp+TuUXa4ZnPfjnksc4MJGgrzzg5OL
+         On1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728655069; x=1729259869;
+        h=message-id:in-reply-to:to:references:date:subject:mime-version
+         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nmefYAKjhfCwVtyHvG8xhlrcb0cC5pWcLnvUP3UMxF0=;
+        b=NHQPmnlNDFSdi4GLcXTnlwMF3hXSY/RXb10648pCV5EZ7o8rVnjZrvrbTdWuYu3ya0
+         2wv1jAjf4wVKcEv6NW8NgSfbKPe2U2kcH27Hm/6bnkZcoWZ5zrrF5Ditz/JsIbhnKSJx
+         z33Nz1V7SFC/OS81Gk7ldq1ZoDbH9d5leNPiQkVcwOThonLy+BxtkUI+Kf/g+/1KnHTJ
+         gg1RA/6xwujkPayofb3ONKpNN+GURF7QyBVZSwlpkNPtvSYv0IXoZskcWd87jx5VxwqF
+         mwaEPlz0Ko8WDUsd9PKPtHf74ah8b7AW5fTohrcC2fb9gCeAs5QA8TwGwnKNgu7Bdkya
+         1SCg==
+X-Gm-Message-State: AOJu0Yx8FbUsNFU26tM2NJXBY+0PxedSN/HnS0ODOwnUX8MTw/2BnXRU
+	WzSRSUbnhKi7Yg/DEbbg1RjFswezp50d03w0Tll9NIxfMnxUvO6NJKcFhg==
+X-Google-Smtp-Source: AGHT+IHhzu9Jf+dTy0JOKpbrnVVmglE3EpCsybSnLuHB5QoUbOV5FJZ/tsBfSS3ZuDynkv+d1N+2+g==
+X-Received: by 2002:a05:6808:1141:b0:3e4:d852:246e with SMTP id 5614622812f47-3e5c91229abmr1954907b6e.42.1728655068744;
+        Fri, 11 Oct 2024 06:57:48 -0700 (PDT)
+Received: from smtpclient.apple (syn-070-121-071-254.res.spectrum.com. [70.121.71.254])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5eb11977ca7sm414814eaf.36.2024.10.11.06.57.47
+        for <users@activemq.apache.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 11 Oct 2024 06:57:48 -0700 (PDT)
+From: Matt Pavlovich <mattrpav@gmail.com>
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: How to upgrade ActiveMQ classic 5.13.x to 5.17.x ?
+Date: Fri, 11 Oct 2024 08:57:44 -0500
+References: <PAXPR02MB10344BCA26D1B9F41AF65745DF8792@PAXPR02MB10344.eurprd02.prod.outlook.com>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+In-Reply-To: <PAXPR02MB10344BCA26D1B9F41AF65745DF8792@PAXPR02MB10344.eurprd02.prod.outlook.com>
+Message-Id: <B9567F87-D390-457F-BB95-A3DDD92C1D40@gmail.com>
+X-Mailer: Apple Mail (2.3776.700.51)
+
+Hello Samuel-
+
+Upgrades are fairly straightforward. You can generally copy the same =
+configuration file from 5.13.x to 5.17.x without much headache to verify =
+the functionality is the same. If you have an advanced configuration or =
+use case, you may need to seek an expert for assistance.
+
+For the cutover, a couple of options:
+
+1. Turn both on and forward all messages from the 5.13.x to the 5.17.x =
+using a static network connector to do store-and-forward.
+
+2. Naturally drain the 5.13.x broker so it is empty, and simply start =
+the 5.17.x broker to handle new messages
+
+3. Copy kahadb data over from 5.13.x to 5.17.x
+
+#1 and #2 are generally the better options. #3 can get tricky if you do =
+advanced stuff like scheduling, etc.
+
+Thanks,
+Matt Pavlovich
+
+> On Oct 11, 2024, at 3:46=E2=80=AFAM, SAMUEL VISCAPI =
+<samuel.viscapi@atos.net.INVALID> wrote:
+>=20
+> Dear all,
+>=20
+> I have to upgrade ActiveMQ classic for one of our customers.
+>=20
+> The current version is 5.13.1 and I need to upgrade it to 5.17.6.
+>=20
+> I couldn=E2=80=99t find any documentation regarding the upgrade =
+process on the official website.
+>=20
+> Are there any steps I should be aware of before upgrading ActiveMQ =
+classic ?
+>=20
+> Best regards,
+>=20
+> Samuel
+> Ce message et toutes les pi=C3=A8ces jointes (ci-apr=C3=A8s le =
+"message") sont =C3=A9tablis =C3=A0 l=E2=80=99intention exclusive des =
+destinataires d=C3=A9sign=C3=A9s. Il contient des informations =
+confidentielles et pouvant =C3=AAtre prot=C3=A9g=C3=A9 par le secret =
+professionnel. Si vous recevez ce message par erreur, merci d'en avertir =
+imm=C3=A9diatement l'exp=C3=A9diteur et de d=C3=A9truire le message. =
+Toute utilisation de ce message non conforme =C3=A0 sa destination, =
+toute diffusion ou toute publication, totale ou partielle, est =
+interdite, sauf autorisation expresse de l=E2=80=99=C3=A9metteur. =
+L'internet ne garantissant pas l'int=C3=A9grit=C3=A9 de ce message lors =
+de son acheminement, Atos (et ses filiales) d=C3=A9cline(nt) toute =
+responsabilit=C3=A9 au titre de son contenu. Bien que ce message ait =
+fait l=E2=80=99objet d=E2=80=99un traitement anti-virus lors de son =
+envoi, l=E2=80=99=C3=A9metteur ne peut garantir l=E2=80=99absence totale =
+de logiciels malveillants dans son contenu et ne pourrait =C3=AAtre tenu =
+pour responsable des dommages engendr=C3=A9s par la transmission de =
+l=E2=80=99un d=E2=80=99eux.
+>=20
+> This message and any attachments (the "message") are intended solely =
+for the addressee(s). It contains confidential information, that may be =
+privileged. If you receive this message in error, please notify the =
+sender immediately and delete the message. Any use of the message in =
+violation of its purpose, any dissemination or disclosure, either wholly =
+or partially is strictly prohibited, unless it has been explicitly =
+authorized by the sender. As its integrity cannot be secured on the =
+internet, Atos and its subsidiaries decline any liability for the =
+content of this message. Although the sender endeavors to maintain a =
+computer virus-free network, the sender does not warrant that this =
+transmission is virus-free and will not be liable for any damages =
+resulting from any virus transmitted.
+
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57533-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 9C09F3E689
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 11 Oct 2024 14:22:58 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 40E624C452
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 11 Oct 2024 14:22:56 +0000 (UTC)
+Received: (qmail 3744558 invoked by uid 998); 11 Oct 2024 14:22:53 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 3744483 invoked by uid 116); 11 Oct 2024 14:22:49 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Fri, 11 Oct 2024 14:22:49 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id F1D222001E1
+	for <users@activemq.apache.org>; Fri, 11 Oct 2024 14:22:48 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 1.505
+X-Spam-Level: *
+X-Spam-Status: No, score=1.505 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,
+	RCVD_IN_HOSTKARMA_BL=1.5, RCVD_IN_MSPIKE_H3=0.001,
+	RCVD_IN_MSPIKE_WL=0.001, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=openobject.fr
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id P4wJI7t6fepB for <users@activemq.apache.org>;
+	Fri, 11 Oct 2024 14:22:48 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=212.227.126.134; helo=mout.kundenserver.de; envelope-from=francois.papon@openobject.fr; receiver=<UNKNOWN> 
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id F23A1C0C6D
+	for <users@activemq.apache.org>; Fri, 11 Oct 2024 14:22:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=openobject.fr;
+	s=s1-ionos; t=1728656560; x=1729261360;
+	i=francois.papon@openobject.fr;
+	bh=kTohw/J/BhLomiUHTbcAwbTWC0lxnDgN/LbdG9NxeIg=;
+	h=X-UI-Sender-Class:Content-Type:Message-ID:Date:MIME-Version:
+	 Subject:To:References:From:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=IQjt4/ozQHg1CXXcSiwsmzCXurE7gUMzzUK3geCTUpRLx1vsN+D8U+mBC+3R/wAv
+	 6JYR8f75Tkfsb09X7lJ/yzwvwvz69Iyxdm73fcj6PfSpRPXOmb6P5V0dniVbhtlJD
+	 tLTVA3jZZ6N/TmhPu/uQa5AjCTfchrRJc40gkxmxWR6Xr+r5n4EUQDGNctyw7v5ig
+	 J73MPSZDZG3Jl9vQQWnr5OK3YyVw/fogd91QFdoaAhWf0gEya8RwZeZk0uVzo/cmQ
+	 HtQtqubx8XtTGMEQUPfL2Q9JI5NeZeYxdC5ejsKVszFGzfWiRr9AtPeCvm9ncDtoH
+	 mMz2qg/HJzBZdScDqA==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.68.105] ([86.227.76.89]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MXop2-1tSzA345Qy-00REhv for <users@activemq.apache.org>; Fri, 11 Oct 2024
+ 16:22:40 +0200
+Content-Type: multipart/alternative;
+ boundary="------------6nv9W93C0JzsLuqY82pbRA0x"
+Message-ID: <249bac7e-a05b-4db3-a300-dc8564318c5b@openobject.fr>
+Date: Fri, 11 Oct 2024 16:22:39 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: How to upgrade ActiveMQ classic 5.13.x to 5.17.x ?
+To: users@activemq.apache.org
+References: <PAXPR02MB10344BCA26D1B9F41AF65745DF8792@PAXPR02MB10344.eurprd02.prod.outlook.com>
+ <B9567F87-D390-457F-BB95-A3DDD92C1D40@gmail.com>
+Content-Language: fr
+From: Francois Papon <francois.papon@openobject.fr>
+In-Reply-To: <B9567F87-D390-457F-BB95-A3DDD92C1D40@gmail.com>
+X-Provags-ID: V03:K1:p5QmPG+6Dhfa3Acu7g9h9fwFYALh8J/v3HskNgLGGbHNhdS41Yv
+ vQkX4mlf+mbvd9D5Ia2zFb85EX3bqmYcO3PUZHRq6glISHv2+l4x5tbNmG7bN/N6kBdX421
+ NcnVpTNUnaUyAqlUGxuodD9JkyO1ARqolaUuEwtGUNlVP76mAsxFQZUFpVo1u2SRTDz+zxK
+ iY8IIPqfzrdZHrpBOHkfA==
+UI-OutboundReport: notjunk:1;M01:P0:8f7TiI3Aq00=;bOsDBorOLTyt4W2TJXy9+pqIj5S
+ Fh4hOk/u0iNOcrwXETVZM0uI8x+KY2Kp1FxM7BwR2ubLnbHht+sKlVDGRBQlv71JYC7F2UTqp
+ gbBIjv7bqvnDhsNLxXB54VCIjAXMq3Sjzag4xMH0wgC7A089phf51+nBVLd65moRXcTEtbmFk
+ RV4Ie4+KQycn8bt514Cw1ZaxSrWNT3/UJjGsnDLcJl9rl8F9pZgYFtwBhh5GW67F2FSGHUdby
+ ij80APW88mTkoz+etGQl+hyMSRjEA0Nbkql+xtIw3GZus50aVZjUjXkaGuRaQsEaKX8g+V2qp
+ Fwkz/vWw5eXb5fO82MHYMZTkzVyLBd7ibuYHYjiTt44Pyre7FBDueictaozEbS7iexM7I+VlE
+ p5LSMCoKcymRxLsLBCRDuEtY2dhcFb2doJ2uc2M3441kCtzFuvDtzPmHZIR6JZEy9wGXDA2D4
+ IBUtJgQ7luyNiHGvRrsZi7hTG5+y+fpINuWgW0NMbYE1wPVdoIUgxDbxmUaue8SpV7BMCKYT7
+ 8vvcdPj1FHI9AfCw+FadTH70F9bhdz9AsYZE1SWFxo79deXekRaxX6KSVT+VIaOZLTnqUoHUr
+ VMfZcWpuK+NCsEF5VqygImrvPzY9jdJgTSeVUY59mYA2WfROq+fd2aNimAMb2RYJsWmA2j6nE
+ +nzfjF+VhIUvr17AHrEkccgd2zqQHUdLA9f9RSS5wdI6t0atpWtiIJDiwJBYwbWFKmSgcrZQN
+ SPr9jjK4khQdy8Ca2L1I61VJDcDHUbVIg==
+
+--------------6nv9W93C0JzsLuqY82pbRA0x
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+
+SGksDQoNCllvdSBhbHNvIG5lZWQgdG8gYmUgY2FyZWZ1bCBvZiB0aGUgYWN0aXZlbXEueG1s
+IGNvbmZpZ3VyYXRpb24sIHNvbWUgY29uZmlnIGNhbiBuZWVkIHVwZGF0ZXMuDQoNClJlZ2Fy
+ZHMsDQoNCkZyYW7Dp29pcw0KZnBhcG9uQGFwYWNoZS5vcmcNCmZyYW5jb2lzLnBhcG9uQG9w
+ZW5vYmplY3QuZnINCg0KTGUgMTEvMTAvMjAyNCDDoCAxNTo1NywgTWF0dCBQYXZsb3ZpY2gg
+YSDDqWNyaXTCoDoNCj4gSGVsbG8gU2FtdWVsLQ0KPg0KPiBVcGdyYWRlcyBhcmUgZmFpcmx5
+IHN0cmFpZ2h0Zm9yd2FyZC4gWW91IGNhbiBnZW5lcmFsbHkgY29weSB0aGUgc2FtZSBjb25m
+aWd1cmF0aW9uIGZpbGUgZnJvbSA1LjEzLnggdG8gNS4xNy54IHdpdGhvdXQgbXVjaCBoZWFk
+YWNoZSB0byB2ZXJpZnkgdGhlIGZ1bmN0aW9uYWxpdHkgaXMgdGhlIHNhbWUuIElmIHlvdSBo
+YXZlIGFuIGFkdmFuY2VkIGNvbmZpZ3VyYXRpb24gb3IgdXNlIGNhc2UsIHlvdSBtYXkgbmVl
+ZCB0byBzZWVrIGFuIGV4cGVydCBmb3IgYXNzaXN0YW5jZS4NCj4NCj4gRm9yIHRoZSBjdXRv
+dmVyLCBhIGNvdXBsZSBvZiBvcHRpb25zOg0KPg0KPiAxLiBUdXJuIGJvdGggb24gYW5kIGZv
+cndhcmQgYWxsIG1lc3NhZ2VzIGZyb20gdGhlIDUuMTMueCB0byB0aGUgNS4xNy54IHVzaW5n
+IGEgc3RhdGljIG5ldHdvcmsgY29ubmVjdG9yIHRvIGRvIHN0b3JlLWFuZC1mb3J3YXJkLg0K
+Pg0KPiAyLiBOYXR1cmFsbHkgZHJhaW4gdGhlIDUuMTMueCBicm9rZXIgc28gaXQgaXMgZW1w
+dHksIGFuZCBzaW1wbHkgc3RhcnQgdGhlIDUuMTcueCBicm9rZXIgdG8gaGFuZGxlIG5ldyBt
+ZXNzYWdlcw0KPg0KPiAzLiBDb3B5IGthaGFkYiBkYXRhIG92ZXIgZnJvbSA1LjEzLnggdG8g
+NS4xNy54DQo+DQo+ICMxIGFuZCAjMiBhcmUgZ2VuZXJhbGx5IHRoZSBiZXR0ZXIgb3B0aW9u
+cy4gIzMgY2FuIGdldCB0cmlja3kgaWYgeW91IGRvIGFkdmFuY2VkIHN0dWZmIGxpa2Ugc2No
+ZWR1bGluZywgZXRjLg0KPg0KPiBUaGFua3MsDQo+IE1hdHQgUGF2bG92aWNoDQo+DQo+PiBP
+biBPY3QgMTEsIDIwMjQsIGF0IDM6NDbigK9BTSwgU0FNVUVMIFZJU0NBUEk8c2FtdWVsLnZp
+c2NhcGlAYXRvcy5uZXQuSU5WQUxJRD4gd3JvdGU6DQo+Pg0KPj4gRGVhciBhbGwsDQo+Pg0K
+Pj4gSSBoYXZlIHRvIHVwZ3JhZGUgQWN0aXZlTVEgY2xhc3NpYyBmb3Igb25lIG9mIG91ciBj
+dXN0b21lcnMuDQo+Pg0KPj4gVGhlIGN1cnJlbnQgdmVyc2lvbiBpcyA1LjEzLjEgYW5kIEkg
+bmVlZCB0byB1cGdyYWRlIGl0IHRvIDUuMTcuNi4NCj4+DQo+PiBJIGNvdWxkbuKAmXQgZmlu
+ZCBhbnkgZG9jdW1lbnRhdGlvbiByZWdhcmRpbmcgdGhlIHVwZ3JhZGUgcHJvY2VzcyBvbiB0
+aGUgb2ZmaWNpYWwgd2Vic2l0ZS4NCj4+DQo+PiBBcmUgdGhlcmUgYW55IHN0ZXBzIEkgc2hv
+dWxkIGJlIGF3YXJlIG9mIGJlZm9yZSB1cGdyYWRpbmcgQWN0aXZlTVEgY2xhc3NpYyA/DQo+
+Pg0KPj4gQmVzdCByZWdhcmRzLA0KPj4NCj4+IFNhbXVlbA0KPj4gQ2UgbWVzc2FnZSBldCB0
+b3V0ZXMgbGVzIHBpw6hjZXMgam9pbnRlcyAoY2ktYXByw6hzIGxlICJtZXNzYWdlIikgc29u
+dCDDqXRhYmxpcyDDoCBs4oCZaW50ZW50aW9uIGV4Y2x1c2l2ZSBkZXMgZGVzdGluYXRhaXJl
+cyBkw6lzaWduw6lzLiBJbCBjb250aWVudCBkZXMgaW5mb3JtYXRpb25zIGNvbmZpZGVudGll
+bGxlcyBldCBwb3V2YW50IMOqdHJlIHByb3TDqWfDqSBwYXIgbGUgc2VjcmV0IHByb2Zlc3Np
+b25uZWwuIFNpIHZvdXMgcmVjZXZleiBjZSBtZXNzYWdlIHBhciBlcnJldXIsIG1lcmNpIGQn
+ZW4gYXZlcnRpciBpbW3DqWRpYXRlbWVudCBsJ2V4cMOpZGl0ZXVyIGV0IGRlIGTDqXRydWly
+ZSBsZSBtZXNzYWdlLiBUb3V0ZSB1dGlsaXNhdGlvbiBkZSBjZSBtZXNzYWdlIG5vbiBjb25m
+b3JtZSDDoCBzYSBkZXN0aW5hdGlvbiwgdG91dGUgZGlmZnVzaW9uIG91IHRvdXRlIHB1Ymxp
+Y2F0aW9uLCB0b3RhbGUgb3UgcGFydGllbGxlLCBlc3QgaW50ZXJkaXRlLCBzYXVmIGF1dG9y
+aXNhdGlvbiBleHByZXNzZSBkZSBs4oCZw6ltZXR0ZXVyLiBMJ2ludGVybmV0IG5lIGdhcmFu
+dGlzc2FudCBwYXMgbCdpbnTDqWdyaXTDqSBkZSBjZSBtZXNzYWdlIGxvcnMgZGUgc29uIGFj
+aGVtaW5lbWVudCwgQXRvcyAoZXQgc2VzIGZpbGlhbGVzKSBkw6ljbGluZShudCkgdG91dGUg
+cmVzcG9uc2FiaWxpdMOpIGF1IHRpdHJlIGRlIHNvbiBjb250ZW51LiBCaWVuIHF1ZSBjZSBt
+ZXNzYWdlIGFpdCBmYWl0IGzigJlvYmpldCBk4oCZdW4gdHJhaXRlbWVudCBhbnRpLXZpcnVz
+IGxvcnMgZGUgc29uIGVudm9pLCBs4oCZw6ltZXR0ZXVyIG5lIHBldXQgZ2FyYW50aXIgbOKA
+mWFic2VuY2UgdG90YWxlIGRlIGxvZ2ljaWVscyBtYWx2ZWlsbGFudHMgZGFucyBzb24gY29u
+dGVudSBldCBuZSBwb3VycmFpdCDDqnRyZSB0ZW51IHBvdXIgcmVzcG9uc2FibGUgZGVzIGRv
+bW1hZ2VzIGVuZ2VuZHLDqXMgcGFyIGxhIHRyYW5zbWlzc2lvbiBkZSBs4oCZdW4gZOKAmWV1
+eC4NCj4+DQo+PiBUaGlzIG1lc3NhZ2UgYW5kIGFueSBhdHRhY2htZW50cyAodGhlICJtZXNz
+YWdlIikgYXJlIGludGVuZGVkIHNvbGVseSBmb3IgdGhlIGFkZHJlc3NlZShzKS4gSXQgY29u
+dGFpbnMgY29uZmlkZW50aWFsIGluZm9ybWF0aW9uLCB0aGF0IG1heSBiZSBwcml2aWxlZ2Vk
+LiBJZiB5b3UgcmVjZWl2ZSB0aGlzIG1lc3NhZ2UgaW4gZXJyb3IsIHBsZWFzZSBub3RpZnkg
+dGhlIHNlbmRlciBpbW1lZGlhdGVseSBhbmQgZGVsZXRlIHRoZSBtZXNzYWdlLiBBbnkgdXNl
+IG9mIHRoZSBtZXNzYWdlIGluIHZpb2xhdGlvbiBvZiBpdHMgcHVycG9zZSwgYW55IGRpc3Nl
+bWluYXRpb24gb3IgZGlzY2xvc3VyZSwgZWl0aGVyIHdob2xseSBvciBwYXJ0aWFsbHkgaXMg
+c3RyaWN0bHkgcHJvaGliaXRlZCwgdW5sZXNzIGl0IGhhcyBiZWVuIGV4cGxpY2l0bHkgYXV0
+aG9yaXplZCBieSB0aGUgc2VuZGVyLiBBcyBpdHMgaW50ZWdyaXR5IGNhbm5vdCBiZSBzZWN1
+cmVkIG9uIHRoZSBpbnRlcm5ldCwgQXRvcyBhbmQgaXRzIHN1YnNpZGlhcmllcyBkZWNsaW5l
+IGFueSBsaWFiaWxpdHkgZm9yIHRoZSBjb250ZW50IG9mIHRoaXMgbWVzc2FnZS4gQWx0aG91
+Z2ggdGhlIHNlbmRlciBlbmRlYXZvcnMgdG8gbWFpbnRhaW4gYSBjb21wdXRlciB2aXJ1cy1m
+cmVlIG5ldHdvcmssIHRoZSBzZW5kZXIgZG9lcyBub3Qgd2FycmFudCB0aGF0IHRoaXMgdHJh
+bnNtaXNzaW9uIGlzIHZpcnVzLWZyZWUgYW5kIHdpbGwgbm90IGJlIGxpYWJsZSBmb3IgYW55
+IGRhbWFnZXMgcmVzdWx0aW5nIGZyb20gYW55IHZpcnVzIHRyYW5zbWl0dGVkLg0KPg0KPiAt
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0NCj4gVG8gdW5zdWJzY3JpYmUsIGUtbWFpbDp1c2Vycy11bnN1YnNj
+cmliZUBhY3RpdmVtcS5hcGFjaGUub3JnDQo+IEZvciBhZGRpdGlvbmFsIGNvbW1hbmRzLCBl
+LW1haWw6dXNlcnMtaGVscEBhY3RpdmVtcS5hcGFjaGUub3JnDQo+IEZvciBmdXJ0aGVyIGlu
+Zm9ybWF0aW9uLCB2aXNpdDpodHRwczovL2FjdGl2ZW1xLmFwYWNoZS5vcmcvY29udGFjdA0K
+Pg0KPg0K
+--------------6nv9W93C0JzsLuqY82pbRA0x--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57531-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 55C583E71B
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 11 Oct 2024 08:46:53 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id BD4FD525CD
+	for <archive-asf-public@cust-asf.ponee.io>; Fri, 11 Oct 2024 08:46:21 +0000 (UTC)
+Received: (qmail 2971163 invoked by uid 998); 11 Oct 2024 08:46:19 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 2971119 invoked by uid 116); 11 Oct 2024 08:46:18 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Fri, 11 Oct 2024 08:46:18 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id A9195C224D
+	for <users@activemq.apache.org>; Fri, 11 Oct 2024 08:46:18 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.004
+X-Spam-Level: 
+X-Spam-Status: No, score=0.004 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_MSPIKE_H4=0.001,
+	RCVD_IN_MSPIKE_WL=0.001, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=atos.net
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id 3PCnFsM2UKZn for <users@activemq.apache.org>;
+	Fri, 11 Oct 2024 08:46:17 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=193.56.114.177; helo=smarthost4.atos.net; envelope-from=samuel.viscapi@atos.net; receiver=<UNKNOWN> 
+Received: from smarthost4.atos.net (smtppost.atos.net [193.56.114.177])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 993A48203C
+	for <users@activemq.apache.org>; Fri, 11 Oct 2024 08:46:17 +0000 (UTC)
+X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=atos.net; i=@atos.net; q=dns/txt; s=mail2022;
+  t=1728636377; x=1760172377;
+  h=from:to:subject:date:message-id:mime-version;
+  bh=KzaJnHIR+duSE9A4v8sEIkFh1Q1RWwGj+sWfW3OKkcg=;
+  b=XJjD8YWsH7d08PC6pOxtw6MBnEkpNTqqeJfSpmddS5j/0nr/L33HJtD5
+   SK/LCBHgAJFDCFfy3BljFR0tVJAEjrfEFDFTvs46kZXhhOsW5RtErRjQI
+   lELDHOvY9kjYeWizH0776DJbae3wmxgT+DXLqYd5+iabCcc4g9IKChsxW
+   4Lo1yEhkb6nlV81dRMG6qriOqNSORS0D7BsixWfqFkANgsqIkqhcLyaWd
+   vBPqA3hdrW1uS5YC65pDxCm2FWdPSQV84qk2vZITvllA9Ywro7ns99fVq
+   rSJU+h1/1YycCT03N01SFNTNeSnleRxVWEzk0NxLBelG3HA+2a1JTB46W
+   Q==;
+X-IronPort-AV: E=Sophos;i="6.11,195,1725314400"; 
+   d="scan'208,217";a="695011932"
+X-MGA-submission: =?us-ascii?q?MDEvza21FQFsrMqrMaREa6ua4ljn3pNOQgpf2v?=
+ =?us-ascii?q?IhubL6if6WxRuJXM4mw8QG1DZ4TTIa3Nt9CO50LwP7o+PDaOkRIt0aoJ?=
+ =?us-ascii?q?RFqK68ZMCTGdJ5eedMutIYp/6RkEiwaSdjkPiQMhyg3fjQxoxvrNQb3X?=
+ =?us-ascii?q?R2?=
+Received: from mail.sis.atos.net (HELO GITEXCPRDMB11.ww931.my-it-solutions.net) ([10.89.28.141])
+  by smarthost4.atos.net with ESMTP/TLS/AES256-GCM-SHA384; 11 Oct 2024 10:46:13 +0200
+Received: from GITEXCPRDMB11.ww931.my-it-solutions.net (10.89.28.141) by
+ GITEXCPRDMB11.ww931.my-it-solutions.net (10.89.28.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.34; Fri, 11 Oct 2024 10:46:13 +0200
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (172.16.214.172)
+ by GITEXCPRDMB11.ww931.my-it-solutions.net (10.89.28.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.34 via Frontend Transport; Fri, 11 Oct 2024 10:46:12 +0200
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QY03SrAdeo1uYbdPJ2lqAR0qGAnhFd/zv9s6MpEM75TxTslhy71YmnrsZD8EHv0OIt7KSGrDxxvjA5Pdu+K4XX+qmEfJfpzKM7YAbg5Z0L3eBaDQkPGT/U21nzBRRKK28Tsq5O4pHaCw749qMpm0QxudNyA5hKbQIMi5E1ctBYF2v0w3VBF8Q9C6ow5YH2X7xxNaGOOYAzYYpJyJZZ5t1BenmBQ8IJmmWg+IX7TwaRjZ/NpngEQSOgRIft1F5AwCNCBNwQ8z6edT8jcLfewl44sGgUr5qoV5FbcrBJvP7jPD05f4PEjPYwJ4j7FDV+pKwbIp5JjagrzpMG4zvnxdmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=V/cBS63XORxWB+Ahu0lM9yIm1XwgSyVpS+FKMXA+nBM=;
+ b=AzEuAhxn7u8aWVNLyw+KXGB7yUDV0MEwOX4aGLtgce9C8ksWOkwD7HNx4wjE6mQMOp0XmcAFdTYOR8vkHEfqgq2yLWB+1wF/ODO+wV3Dcw1A8Qj+thBiQtmlzTn4Jv4TRE5KDQnWUYHoBstY9C6+OYfR4Od/4AfGuJDJq8/pQ7gvTztL2J3MRU/gIfw62Ak4jEAWJU5AVnc3SLoUNXx6gUeqRFcYTp0KlmTt2jg8AhXNTRe9dCLm13/I2ZG9dRuAQx8hm13JaTXN6A5d700JJ/yqjL0v1z+Wc/f1ILQhZmcVWHpDaRThqW6P8gj8XLtiFmVAG/AEy7CV1acjtdy92A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=atos.net; dmarc=pass action=none header.from=atos.net;
+ dkim=pass header.d=atos.net; arc=none
+Received: from PAXPR02MB10344.eurprd02.prod.outlook.com (2603:10a6:102:24a::5)
+ by AS2PR02MB10156.eurprd02.prod.outlook.com (2603:10a6:20b:648::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Fri, 11 Oct
+ 2024 08:46:11 +0000
+Received: from PAXPR02MB10344.eurprd02.prod.outlook.com
+ ([fe80::1e9d:3110:3e6a:3c69]) by PAXPR02MB10344.eurprd02.prod.outlook.com
+ ([fe80::1e9d:3110:3e6a:3c69%4]) with mapi id 15.20.8048.017; Fri, 11 Oct 2024
+ 08:46:09 +0000
+From: SAMUEL VISCAPI <samuel.viscapi@atos.net.INVALID>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: How to upgrade ActiveMQ classic 5.13.x to 5.17.x ?
+Thread-Topic: How to upgrade ActiveMQ classic 5.13.x to 5.17.x ?
+Thread-Index: AdsbuUnC6PJQfnQET+2F0pM58WwQ4Q==
+Date: Fri, 11 Oct 2024 08:46:09 +0000
+Message-ID: <PAXPR02MB10344BCA26D1B9F41AF65745DF8792@PAXPR02MB10344.eurprd02.prod.outlook.com>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_e463cba9-5f6c-478d-9329-7b2295e4e8ed_ActionId=3ba4eebe-aad4-4bcb-85e8-5c055e9004e3;MSIP_Label_e463cba9-5f6c-478d-9329-7b2295e4e8ed_ContentBits=0;MSIP_Label_e463cba9-5f6c-478d-9329-7b2295e4e8ed_Enabled=true;MSIP_Label_e463cba9-5f6c-478d-9329-7b2295e4e8ed_Method=Standard;MSIP_Label_e463cba9-5f6c-478d-9329-7b2295e4e8ed_Name=All
+ Employees_2;MSIP_Label_e463cba9-5f6c-478d-9329-7b2295e4e8ed_SetDate=2024-10-11T08:40:04Z;MSIP_Label_e463cba9-5f6c-478d-9329-7b2295e4e8ed_SiteId=33440fc6-b7c7-412c-bb73-0e70b0198d5a;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR02MB10344:EE_|AS2PR02MB10156:EE_
+x-ms-office365-filtering-correlation-id: 71581bb2-4f75-4972-1af6-08dce9d1276c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?FdSOBZPZ2OBZHQnl7u5dJNR8XkE6Dj3eqx0RrNlyQM4Jwj1428zmBAXTuWrL?=
+ =?us-ascii?Q?WAncKKa2ROHEtU2RU8f4DxkLXRwD2RvoKxdvQpof8k1f3tytYYr81mHdXlfk?=
+ =?us-ascii?Q?uipxj4A2qx5/rSUxG78FpukBz+RecDNM5aJj47zO1JLnImIKDCFCTSI/Urk9?=
+ =?us-ascii?Q?pUnqYh7qm0BCGtTkn08ZGfuvCDq12phf2TVFApxB2brNsxdhir93r8LL3eVv?=
+ =?us-ascii?Q?mxT4xXOxQ428zPW7iFF6OJYG6c7htVvVtXaeF9yH+PWFNEL5QlvR7sq/R0bu?=
+ =?us-ascii?Q?rJly9ANdiVDgdIiVb2nYKZ6Plyxb/VLRERnj3B4rbEXysYo24PMJ9FQCj6aa?=
+ =?us-ascii?Q?no4+2pFYs2Jxw+dztHv3Xu1kNMVCkHvZTVssfd3+OfXnofKqoODFTgC2yBt7?=
+ =?us-ascii?Q?Bvve95U3YtxkxbtnZnN5sbCUm5LNbZZjjx7X5YwMjQtmapNPjoUFPalbLLeC?=
+ =?us-ascii?Q?Kjy/omETWiZqDGW8vHXE9BFyZL56e9zp8q7hLP7yyJv4LFG+qUmnSJk40M30?=
+ =?us-ascii?Q?zNCadOnrV6Fvw0jkWo/79UPRW6zYUYOih3Rm66CD6OjA0yNftEaI9gDXy6Qq?=
+ =?us-ascii?Q?eAFMxHguidhR2gCGozUJ4zeelzca7XwidvG+tF2pR4y9Tnr4gyogx0wz7Gv/?=
+ =?us-ascii?Q?ceBOnNsE8axBniD9dCd78DsKo9kl2y4XYtJcQTiHWjaCQpP3M5kJoi/sfWRO?=
+ =?us-ascii?Q?twjKRE+vf5TxLrKCybFr51GhgX1VAxG+4dUCT6/ivHC09uqLmFaVH2cUSK0O?=
+ =?us-ascii?Q?vlD3jCasAcB1bsXoMFuECH7t2F0UxbMwtMgOGEsEO65B8HFOXodcKsWkHZ7R?=
+ =?us-ascii?Q?52rUfQiuJZGKpSEejnozsZiL3fb0VGUug3jTuo/eyMjogqSDr/Y9NCGfs5bx?=
+ =?us-ascii?Q?NzukK/fPxej5sX/0fo6I7WX0u8beTh3eRhPfAJfeetEykXJvpripjeUD7HDr?=
+ =?us-ascii?Q?PmizvhmC4EeoVYPNGYrI3SM27AKXm2WVew9qx6ND2KQtDw4rmYPxo1QXJ8wD?=
+ =?us-ascii?Q?9PoaHfQjzzYTakIyWKX9UXJMqqyiTIZZ9iudz+UjZDkDTWms/rlKt7CQTzAC?=
+ =?us-ascii?Q?DPUPwy/ZiJLarUYqy73uVbwEKPVRSMO1AruWZKgTw/Z8nchHkGRVlCHV8YQv?=
+ =?us-ascii?Q?4aFOWdo1dHc1whZNAOuCK56SYERH9xVZbyTo39iT5PxtpDhcZHkHFRxNpztt?=
+ =?us-ascii?Q?OFgVBmDhKIlt5VKKzIa63wBhb23JMIO1rsKtsFi5VoHIvBOMsg470o2+Nep5?=
+ =?us-ascii?Q?e1BzlXOsPKwGXj0Gnop/NN3CyhqfKsu/AdzBuSEus/9xs/T4Rm3QebzQRjHq?=
+ =?us-ascii?Q?2vszZC8/ixDLtpM4Qc9TNEDaOba1/iybCF+wLcU9oojJRg=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR02MB10344.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?zpLh5b2FXuyn2/e+RVvwO0SGP/1vLuzUZlzlbbUCSVWXQczy/GD11OALixTF?=
+ =?us-ascii?Q?FKZDh4WPe1S1+cXvBEt9hcnH+v7bkvfwzRW4gYp8ILrfcQb/922AM0rK1hhR?=
+ =?us-ascii?Q?K/Fv9zBL7COLyjbd3mp+Q1y9MGndq1ajCOOIiIEkMZDW0l9lhMifiiELxyI0?=
+ =?us-ascii?Q?fbbzlNQKmLvWUnpYO/aswMHG+w1Afr9Ow1jYrQq9gweIYKhZmeoEiEv8ygWa?=
+ =?us-ascii?Q?QD6IVkoGDfjDb3QyC6dubdP0tT7Ua3/s2WW9NzFSolJXI19tsB38dr0eKqck?=
+ =?us-ascii?Q?N21YzMtYnnDsrc7lgU7K/lOTuJ4yDqfrpTwATJsgy11+IzogxS38eKHDBTv2?=
+ =?us-ascii?Q?lU+Ryp39zV9ALFWrcbHSLcYdiDY7ac6nMvKqkxS13KDPOp++ybPbBM+mIw1u?=
+ =?us-ascii?Q?+BMVsb4mnK6bnHgljQX0z9xxpk6HRb1O+O7lwRIBjeVmyhzEEuKcfXTiOOIL?=
+ =?us-ascii?Q?Resij0x6NwoUcqSze7xJq9ahq59W22LZE1w7NklyB1IskZdlAkxVwUBhxnXu?=
+ =?us-ascii?Q?KhQPcwQBGLKwpyaSpF52KaxjZDvCJ5zH/jczVR03pZl/s4n74Y5hjUvZJVIN?=
+ =?us-ascii?Q?ESTyY+GE9wv53VUZpkkoMojReliIOa4yWsnmUM2UwOs1fPJgwa0e3IPhnk2z?=
+ =?us-ascii?Q?2OemLVkeapimxQ52huslfnQMIWI8llI+CqBlfX/qU7Zz3qqZjLlCMkfCmsF2?=
+ =?us-ascii?Q?u+7wFLeGbNho7LI1HMasHbciTVVi/d+teoBkQWV2+BLHyuhJgVac7X+GldLA?=
+ =?us-ascii?Q?wP/WGimex615msxbCF69BOt3ZgIaHChhHNvafaH8i3b1ZrIRle7O6wW+Caz+?=
+ =?us-ascii?Q?3wFW9AZ95z7wHeJpwrtTJ/MeEQUae1E2jLK0pM8hE4bDOIXhNlnpJrqGnfhP?=
+ =?us-ascii?Q?tcfpACgDq63ookwYxfhggqGLTPV893/qcTfxI5VEMQRr1QAXUv8Qyzk0k2as?=
+ =?us-ascii?Q?0iY7qdJBxtvyeyIkkoZyv6ENHOCxTtQYypEO5TRmRO7omeFJPNUZg7Mis17r?=
+ =?us-ascii?Q?y8KxDl87vxz29mSeBrzxqDFO1pIz7mgav8HwWEVwtNJtAjn7+xYlEDwS41ph?=
+ =?us-ascii?Q?hNdmWiWuTXnT8HM2XkYs3kX4lnq0VOMCTrf0cBXmZtJZ4xccg/Y4rY27KjNt?=
+ =?us-ascii?Q?t8rQB4F27i8D7uqmGzvyBPrMfAu5v2R6fqOuxDDbrjXoEIeD6A4UGL/I4YRb?=
+ =?us-ascii?Q?gl7IkWxwDxU1TRSLPLEDcNWZZZCO/RtSbvUkmH3qDPojSpYrsq9xtbaDTZQL?=
+ =?us-ascii?Q?CDgZGib8Z9iAPwmQ0HHcxlMNgRXMNnMk2xLEYtg+ITL6Sw5moF4RURiCirpU?=
+ =?us-ascii?Q?r1OJl33Z9S8DtkXwuT/orn2ODn9QYwahFufRh4pLe9bqNtLtZhEmeiz1KwIl?=
+ =?us-ascii?Q?I8lhhXRfui5bvTa+2/iCWjpcctZMv9I+muEA63bZdtakIkR4jemzq2tcspxv?=
+ =?us-ascii?Q?ZcEde7+giqFa/5tHVuuLH74Cl4WOvd8b6LkSknR+CmTqbBGSWZZiMjnM9DuT?=
+ =?us-ascii?Q?k3G5CW4pIw+CmE8FRL5nOaI4jp/aMBrhLIb2XEKl6BQBxZeDNT2DbdaDXTx4?=
+ =?us-ascii?Q?pq55CLa2EwqE3NF4WROJpLZ4N8Ue4gojESnOPqqu?=
+Content-Type: multipart/alternative;
+	boundary="_000_PAXPR02MB10344BCA26D1B9F41AF65745DF8792PAXPR02MB10344eu_"
+MIME-Version: 1.0
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: vH8Vba+Vn9Yj84UqPla4U6O4iUBPEcWu8ct08RsCO2KEpBosDK0g1rlar4s+q8k02DRyTxHaXFL6ZqyBdjSdFpaFtAn0mZuJt9hj3Idv6Rif3mvMfmucn3oAZ+0Ba4xlNLLY3R8HQnYgBR00VaB+9rAJ6k6Q1iuFynBf3ZfGbCZxLromSur8FFGgz+l+Y5K00f3QmYKR3bilXlK3rBWQtQLsOS6dUP3LQZDsUuORVXLtJ3r25x4yhVr7VfjXET5K32urehqBJN6yxRu6EzqlNh+be5A2raRxNbzl2+aE4uzV6PjiLjSfHlueZ8/6e4TTekRrz67KH8lIC4CiX/UO36l1WEB2m468N+nJ+YmJqO3ldGdTBUSJ4Dlnehd1mp6tCZl0WGxdrdC0T5rKye+e770W8n9tAvtKwqxPvSxCgyjpXoMxaIqRszrTISeVGxiaEidRusnAJScSdQpowiUXl67fwLrfYf5nCEr5HlQx7kKxV+4q8hGrr4rA6CkcYhlAL5e954uGkNfNCBy+rTkmmAvqQEvAT/oaD9BjLR1j1W+I2vtDQxMOIgM9FESOTWgCyL63uoy92Pv+Jb4peXjivX7XiPcb8C3GIstrQ6hJ0kV/wGkCFz96nBqaQHrgYNi3m2xbBMQ1A+FYkJdi7AjpFzWENSjEStR5iuQBgzDeZDEc/s0v8W2te6NTxwX99vEJ
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR02MB10344.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71581bb2-4f75-4972-1af6-08dce9d1276c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2024 08:46:09.8268
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 33440fc6-b7c7-412c-bb73-0e70b0198d5a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: EEhwsUZ5NAaWcKum3drNYau9/Os6AIFW3MRxSCKCbgD4Me6s3bWv8S/rxv54baoY6RpP0i77mlY5OebtVQde5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR02MB10156
+X-OriginatorOrg: atos.net
+
+--_000_PAXPR02MB10344BCA26D1B9F41AF65745DF8792PAXPR02MB10344eu_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Dear all,
+
+I have to upgrade ActiveMQ classic for one of our customers.
+
+The current version is 5.13.1 and I need to upgrade it to 5.17.6.
+
+I couldn=E2=80=99t find any documentation regarding the upgrade process on =
+the official website.
+
+Are there any steps I should be aware of before upgrading ActiveMQ classic =
+?
+
+Best regards,
+
+Samuel
+Ce message et toutes les pi=C3=A8ces jointes (ci-apr=C3=A8s le "message") s=
+ont =C3=A9tablis =C3=A0 l=E2=80=99intention exclusive des destinataires d=
+=C3=A9sign=C3=A9s. Il contient des informations confidentielles et pouvant =
+=C3=AAtre prot=C3=A9g=C3=A9 par le secret professionnel. Si vous recevez ce=
+ message par erreur, merci d'en avertir imm=C3=A9diatement l'exp=C3=A9diteu=
+r et de d=C3=A9truire le message. Toute utilisation de ce message non confo=
+rme =C3=A0 sa destination, toute diffusion ou toute publication, totale ou =
+partielle, est interdite, sauf autorisation expresse de l=E2=80=99=C3=A9met=
+teur. L'internet ne garantissant pas l'int=C3=A9grit=C3=A9 de ce message lo=
+rs de son acheminement, Atos (et ses filiales) d=C3=A9cline(nt) toute respo=
+nsabilit=C3=A9 au titre de son contenu. Bien que ce message ait fait l=E2=
+=80=99objet d=E2=80=99un traitement anti-virus lors de son envoi, l=E2=80=
+=99=C3=A9metteur ne peut garantir l=E2=80=99absence totale de logiciels mal=
+veillants dans son contenu et ne pourrait =C3=AAtre tenu pour responsable d=
+es dommages engendr=C3=A9s par la transmission de l=E2=80=99un d=E2=80=99eu=
+x.
+
+This message and any attachments (the "message") are intended solely for th=
+e addressee(s). It contains confidential information, that may be privilege=
+d. If you receive this message in error, please notify the sender immediate=
+ly and delete the message. Any use of the message in violation of its purpo=
+se, any dissemination or disclosure, either wholly or partially is strictly=
+ prohibited, unless it has been explicitly authorized by the sender. As its=
+ integrity cannot be secured on the internet, Atos and its subsidiaries dec=
+line any liability for the content of this message. Although the sender end=
+eavors to maintain a computer virus-free network, the sender does not warra=
+nt that this transmission is virus-free and will not be liable for any dama=
+ges resulting from any virus transmitted.
+
+--_000_PAXPR02MB10344BCA26D1B9F41AF65745DF8792PAXPR02MB10344eu_--

@@ -1,0 +1,909 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57552-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 22B573E680
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 14:57:15 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 0DC9F61DE1
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 14:57:15 +0000 (UTC)
+Received: (qmail 1506042 invoked by uid 998); 21 Oct 2024 14:57:14 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1506022 invoked by uid 116); 21 Oct 2024 14:57:13 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 21 Oct 2024 14:57:13 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 0923220023A
+	for <users@activemq.apache.org>; Mon, 21 Oct 2024 14:57:13 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 5.2
+X-Spam-Level: *****
+X-Spam-Status: No, score=5.2 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, ENA_SUBJ_LONG_WORD=2.2, ENA_SUBJ_ODD_CASE=3.2,
+	RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id vK7ZcAf5YOiP for <users@activemq.apache.org>;
+	Mon, 21 Oct 2024 14:57:12 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2607:f8b0:4864:20::32f; helo=mail-ot1-x32f.google.com; envelope-from=mattrpav@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 755C1816AC
+	for <users@activemq.apache.org>; Mon, 21 Oct 2024 14:57:12 +0000 (UTC)
+Received: by mail-ot1-x32f.google.com with SMTP id 46e09a7af769-7181285c7c4so1968499a34.0
+        for <users@activemq.apache.org>; Mon, 21 Oct 2024 07:57:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729522631; x=1730127431; darn=activemq.apache.org;
+        h=message-id:in-reply-to:to:references:date:subject:mime-version
+         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XcyAo+yaLq9cd0UeT+yOOs/VTknl93GGqen7wJ5wtHc=;
+        b=Lrl3YZTGo5bOjKz++FyyZsUR49xje1JC6+2BkrdxqIjDPN9Flz47Al7WAcBuKfUtnh
+         jWyd3DUPA3P4su67J2KPlWl+pjPs7dUE7IeEYSMoHhnkpbH0cgR5j3LgLFqS5s/P7eE6
+         Sys450ZbZjaX7PTNJLRucQokV08jIn4svyTSIvBZk43Fzw912tmsJs4dnjkcyAyR5/3f
+         gIGiX62oBRnwgYRhCsmzoQJ+nvHG8qmSBymMh0KukQ3pK2Ep9DXzRAMLD/0wQRCCkfqg
+         sF1IYy8ZQ6vPHDu8jeEcZd+TOz3l9JHKjgfPB1AH8n2Y6D14lFvVkk1ydoYFKaeDv0zK
+         i9KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729522631; x=1730127431;
+        h=message-id:in-reply-to:to:references:date:subject:mime-version
+         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XcyAo+yaLq9cd0UeT+yOOs/VTknl93GGqen7wJ5wtHc=;
+        b=uXu37ggEgPak9AMoHZu5tjqVjMX3AUj8VfLZJeqYjiCaBukLFM1C/lvj4mc9trIt+P
+         GHPxk05k84iGPM1vtb7Ru3+hs3ReM51NKEzAgQU5OL2lp7OLgGUJeEct+jmcI44TROa8
+         ccfiBbuhpMG0WLtaRARsQ5OP9PyYMLyRGXLy1yLIwqO172k6xuKPjsS/lco2mO8CJ3pb
+         lKPIbNZBeyp9xUrnQdM4MJSNMiPncLHcjU+5M9tvmhwOWo+rqMDnxBflYYn2itFFSlop
+         O+zEn/u5aJzPGph6RaZuxQ5YSXSsycDr5yN7Z8qrwrp7o8V5IK/WESEFfdqwEISfWF5n
+         6dyA==
+X-Gm-Message-State: AOJu0YyoyFUOUcCVIRwkcDEykL8DK1qmmE9/GZYG5Al2OxwRYcGx3ijg
+	kWufaPcjuiLgNewJiv5Y9O+xUJRbtbWhJkDQAK6+EdAlWaO93LHm40Mrxg==
+X-Google-Smtp-Source: AGHT+IEAFPLEOTjoi8qA7izLaTqzGQhrJasejkpzaJqCkH0bz8khmG3CC2pnm9VD+B7vclkeEjUS1A==
+X-Received: by 2002:a05:6830:6a98:b0:718:10eb:1eab with SMTP id 46e09a7af769-7181a6eddd2mr10123080a34.11.1729522630749;
+        Mon, 21 Oct 2024 07:57:10 -0700 (PDT)
+Received: from smtpclient.apple (syn-068-203-012-010.res.spectrum.com. [68.203.12.10])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7182ec03211sm773739a34.67.2024.10.21.07.57.10
+        for <users@activemq.apache.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Oct 2024 07:57:10 -0700 (PDT)
+From: Matt Pavlovich <mattrpav@gmail.com>
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?
+Date: Mon, 21 Oct 2024 09:56:59 -0500
+References: <DB9PR07MB8474EAAEBF2DDD37D248DEF494432@DB9PR07MB8474.eurprd07.prod.outlook.com>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+In-Reply-To: <DB9PR07MB8474EAAEBF2DDD37D248DEF494432@DB9PR07MB8474.eurprd07.prod.outlook.com>
+Message-Id: <D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+
+Hi Nicolas-
+
+The selector is cached from first consumer registration until it is =
+replaced by a new consumer registration. The selector is also written to =
+disk so it will become active on broker restart, so there is no loss =
+between broker startup and consume connecting.
+
+The selector will be active the entire time it is registered with the =
+broker up until a new selector is provided by a new consumer=E2=80=94 in =
+your example, that would be step #3 when the second selector would =
+become active and the first selector is deactivated.
+
+Thanks,
+Matt Pavlovich
+
+> On Oct 21, 2024, at 4:58=E2=80=AFAM, CASAUX Nicolas =
+<nicolas.casaux@soprasteria.com> wrote:
+>=20
+>=20
+> Hello !
+>=20
+> I have a question regarding the VirtualSelectorCacheBrokerPlugin =
+mentioned here : =
+https://activemq.apache.org/components/classic/documentation/virtual-desti=
+nations
+>=20
+> If a consumer follows those actions in order:
+>=20
+>  1.  subscribes to a queue "Consumer.consumer01.VirtualTopic.invoices" =
+with selector "k1=3Dv1"
+>  2.  disconnects
+>  3.  reconnects and subscribes to the same queue =
+"Consumer.consumer01.VirtualTopic.invoices" with a new selector "k2=3Dv2"
+>=20
+> How long will the "k1=3Dv1" condition will be used to forward message =
+from the topic to the queue ? Will it be forever ?
+> I could not find such info in the docs, and I was not able to find it =
+in the code. (I saw the 10 mn scheduler to persist selectors, but it's =
+another topic)
+>=20
+> Thanks in advance!
+>=20
+> Regards,
+> Nicolas
+>=20
+>=20
+> C2 - Usage restreint
+
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org
+For additional commands, e-mail: users-help@activemq.apache.org
+For further information, visit: https://activemq.apache.org/contact
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57554-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id B8AE93E680
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 15:26:58 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id A820E49402
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 15:26:57 +0000 (UTC)
+Received: (qmail 1609486 invoked by uid 998); 21 Oct 2024 15:26:56 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1609419 invoked by uid 116); 21 Oct 2024 15:26:53 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 21 Oct 2024 15:26:53 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id E48882001E1
+	for <users@activemq.apache.org>; Mon, 21 Oct 2024 15:26:53 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 5.202
+X-Spam-Level: *****
+X-Spam-Status: No, score=5.202 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, ENA_SUBJ_LONG_WORD=2.2, ENA_SUBJ_ODD_CASE=3.2,
+	RCVD_IN_DNSWL_BLOCKED=0.001, RCVD_IN_MSPIKE_H2=-0.001,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (1024-bit key) header.d=soprasteria.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id iqKbFac9ntFm for <users@activemq.apache.org>;
+	Mon, 21 Oct 2024 15:26:53 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=40.107.21.60; helo=eur05-vi1-obe.outbound.protection.outlook.com; envelope-from=nicolas.casaux@soprasteria.com; receiver=<UNKNOWN> 
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2060.outbound.protection.outlook.com [40.107.21.60])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 63725816AC
+	for <users@activemq.apache.org>; Mon, 21 Oct 2024 15:26:53 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Kh7jLGaotOlAL1I7CndcOAoSb7M30SAU3p6YriSZ8gtOc7kz6dYhO3nKWzLDz0Uk+FENYFw4gQWj97JzyLn7J1zlVonT/UaJxzWi5hnnkn4fc9KNARh2jFfztVf3nvJsUUIS68vEQwpVuFMzGF4pKtGrKU5VINGAeJtRlRk8z+4bzEH375r5+MmGpqhMN4dUyUT4aBAMzCsjzcmrgfEo54JLRbI5OFbCyA5POoG+xwd738mby52JmuCNNkUMAad8saoUTIZNQkc9F1HELOdKQ8vUjvonG2ohQzul1NvM4dn1UzHYUAYvFOv4lZL5MxGJ4HhbjoiduF6CH70HzUbmLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N2HQ1bSb5+OMaGdIR7y5HBw5q7HSkTDMIBxMYzU2rMA=;
+ b=LYhLMS+eOODdXK5uFRribLI906cYl8gtq4h3Ec1ISnmxHdCbdRWOQSYMjwDsJq1BBn1iwzmx9lH88KWJ0SyWvlJVEDjcJab1xQOfPSxTEZDeBZj2FK5VZBMNCuWVwtU7p9vKIjq7K/3Pn9mlqq/bg5D78gDH5meirWFFe9yUI+yH3Pk5sjKbHwebimRSUiJ174OFbc6VCcEIA6Zt0vCz7FuSjY3kyVwsyYVWSAUQcBRY8P2Fx8IC7M9cZgS/04STrBRO2AmnYl0QQzrCDgwSUhzTB4ngPjwuAjI5Gx2GR2TpOqHSj0tSfTQ6CuoHvN+MY2RXdaouXdYutcosKfGv6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=soprasteria.com; dmarc=pass action=none
+ header.from=soprasteria.com; dkim=pass header.d=soprasteria.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=soprasteria.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N2HQ1bSb5+OMaGdIR7y5HBw5q7HSkTDMIBxMYzU2rMA=;
+ b=UERDcrty7wtMy2szMobkHnwx+RwKohpQ2Px+8azJkweuODUyCy8PeiTRkCsjYdnKD8nvossQmNN00FYeE7MEOYVDj4nML8uknwMMlp2LYIADfN/CHZgerszML8J52nngZI/CQ8TtFfnPOGit+gbl4bU7XJz4936zA51Rwaqt93E=
+Received: from DB9PR07MB8474.eurprd07.prod.outlook.com (2603:10a6:10:36e::13)
+ by DB9PR07MB7931.eurprd07.prod.outlook.com (2603:10a6:10:2aa::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
+ 2024 15:26:46 +0000
+Received: from DB9PR07MB8474.eurprd07.prod.outlook.com
+ ([fe80::9d81:2fdd:7f92:c1f4]) by DB9PR07MB8474.eurprd07.prod.outlook.com
+ ([fe80::9d81:2fdd:7f92:c1f4%6]) with mapi id 15.20.8069.024; Mon, 21 Oct 2024
+ 15:26:46 +0000
+From: CASAUX Nicolas <nicolas.casaux@soprasteria.com>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: RE: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?
+Thread-Topic: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?
+Thread-Index: Adsjn7lq+Cu097wxR3mLx7s5XmXukgAKcEyAAACnPcA=
+Date: Mon, 21 Oct 2024 15:26:46 +0000
+Message-ID: 
+ <DB9PR07MB84745473EE97F3CFC8C78DB994432@DB9PR07MB8474.eurprd07.prod.outlook.com>
+References: 
+ <DB9PR07MB8474EAAEBF2DDD37D248DEF494432@DB9PR07MB8474.eurprd07.prod.outlook.com>
+ <D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com>
+In-Reply-To: <D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+ MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_ActionId=8e0b99cf-2b00-42a8-b4d3-f7edf41bcbcb;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_ContentBits=0;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_Enabled=true;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_Method=Standard;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_Name=FR
+ Usage
+ restreint;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_SetDate=2024-10-21T15:15:41Z;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_SiteId=8b87af7d-8647-4dc7-8df4-5f69a2011bb5;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=soprasteria.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DB9PR07MB8474:EE_|DB9PR07MB7931:EE_
+x-ms-office365-filtering-correlation-id: 5da2581d-c415-49f5-59ac-08dcf1e4c651
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|4022899009|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: 
+ =?utf-8?B?eXBtTDErSGYvQmJCSmVPVUUrQ0NqVXQ5RVQ0a1dRME4rS3N2RmdpZG45dmZi?=
+ =?utf-8?B?eWR1dzczMkU5MGFabmFmQWVuZDZ2d08wQm5WYXRWNk1VcDA2RVc3bmpXWTNR?=
+ =?utf-8?B?NzBJNXNVY3VDYVhxUE5xSzJON3BKY0pJSEdjM3ZYNlVyWmFlSDBqcWx1NU5m?=
+ =?utf-8?B?eGNjaUhSY2NrYXhhMHJIOWlJU0hxNXcreTl2U2Z3V3JaVExyaTNGL3VmUlp2?=
+ =?utf-8?B?ZkttWFVyVzVPcER4SFVadWtMWDJzNlBZakIzbDJicjVTeXVPTVFHVngxcEdp?=
+ =?utf-8?B?ZStZam0rWmFFRmpsNWhTSDdZT3FETGw5VVc5NUNqNDhVWEc3dEtKaGl2UzRP?=
+ =?utf-8?B?dkJod1RtUk5IRmFoZGdJUzJHYmtIL0orMWFZMlNQTVhTUVFSWTFGSFc5WHVW?=
+ =?utf-8?B?V0RpVExJblFlbUx1QnhPbVh6UlQxbktGUGkzVG81ejBvd3pVdTNpZ09Uc1ho?=
+ =?utf-8?B?QUNQbjc2WXdvZTRnYnZOeGgyUmNiS3JibWxBMWp5N3RjRFAvSlVmakpNU2tP?=
+ =?utf-8?B?aFN3cm5zTHFST0NnbFVaUXRKb3FSeWdaZWtPRVNFZC9Odmx5Kzk0VmUxRWxW?=
+ =?utf-8?B?d28yckVteDN0UlF3NUVkR014QVhwSk9MR0NteC83NCtTTk1BQ01YUVZwcEly?=
+ =?utf-8?B?dVVOZGNrdTMrRFlQOE12dVJRRWV2NXRoc25ESjhKMGtUNHBmUE4remlwYnBl?=
+ =?utf-8?B?SlpVeDBTWWdYQU1tcmhWNFJmMitXRHI5QXl5QVpOcnZIakM3cFhSS3hXbmVn?=
+ =?utf-8?B?ZXQ3UHByZG5uUk9JV2RKdmZ5V1FxVUFENERHRExBT3MyZExJdklCTU9TUGRJ?=
+ =?utf-8?B?QkppWnU2U2VEN1VYZU1MS0Vobnlpakxwb2JoTSt6bEFocWZKNVh3OWFQQ05v?=
+ =?utf-8?B?QVhxNHlNckxnZVArUzZ4QW5iOGU0cmJPNU9pbUo3a1FGRXU4aHFOc2g5ZGoy?=
+ =?utf-8?B?cVdMYUdQTVdsMm1TRTYybGlSMitiemlibEo3aG9sVENUeVBrb2wwaHRtNXE2?=
+ =?utf-8?B?dDVNNE42OUNrdWFETkU3aTJtalF0OGxjQ0tVZzY2dk5FV2xibjdqRlpMWmNa?=
+ =?utf-8?B?dGpkbnVKQkhFL3F5RU1hdFdLK2kxWGRpQnlDTnJncitUU3pKUTMxOUZra3pq?=
+ =?utf-8?B?K2dUazM4RU4wcWc4U1c2NmR3SkdoV04zU25TSU1JTlE5cVlJOS84bWs2djhM?=
+ =?utf-8?B?cDBvL2ZjeFM0dGJNWW5pQy96WUNSV29WcStTMzJyUEhrOFFkTnpydVlqMmNi?=
+ =?utf-8?B?WVZ3Znk4aDZMNUkzT1hVRDVyTHI1dUJ5VGNycW5KbTkwKzRIRFU0SUxtNlJs?=
+ =?utf-8?B?NW9MQ3RvamUrWXFpMzZaWk82YlNVMUFCZHdReEZkdjRtS0pmb21PVHpWV0R0?=
+ =?utf-8?B?SjFNSys1ajBUeTlPblduQlkrSU45bFF6dXk5MitLbzJYVVdmUzArWnlDRThv?=
+ =?utf-8?B?TzhJWGFpcCtwaDdMeE5uZDVESTA4OFFINDdEM0wzanpXaERrWk9hNUJZNVdM?=
+ =?utf-8?B?aEhrQnpod1RPenJoSFNNYytndXpubGNWbmpDeDQ1VmtqTVhOSklDYjZ1MGR6?=
+ =?utf-8?B?VldKTnI0ZDk1VjZJMVZ4QktzMy9qaXk1ZHFCRXVhcVpZN2ZYTXAvMmJla0w0?=
+ =?utf-8?B?ME44eHllV2E5RjhBMUFIeDlQVndLb0hudFVMdU9RZEVRTFUxbDRoVDNWRTBD?=
+ =?utf-8?B?R3JVVnFES1F5L0pDNnRlWjZEcXhoa0tvY2l1NWQ3dWZNZGRTOU43SVR3TE9s?=
+ =?utf-8?B?NzlwaldPd1ZZektGNkRvSjVpSlFYU0pLRGp2SjV3STdjRWhaRytGb3FmK0FW?=
+ =?utf-8?B?YzE1NnIxb2NjQ3ZpVlJHMXBzVi95cVVaNzRUNFhIV05ySVhRQk8zRGhDc0pD?=
+ =?utf-8?Q?LbnU/mn7Pjfp4?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR07MB8474.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(4022899009)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?Rm94eHVBbWg2MkxhbERrZlQvc1huazZKeFB3NXZwbjg4YjV2aUxieUJJeVlK?=
+ =?utf-8?B?eVFXeTdrZWhWUDl3UE9xdE1iYzVzL3JtUUlwRldBN01MNVB6YVZVTjdndkVL?=
+ =?utf-8?B?V2FsRnQ4MVE2cnkxUUl1LzZ3dEQwbVhrUXo4UTAvVEJ1d2dNNkVoeGtiN2JU?=
+ =?utf-8?B?bGYvaXg5RkN0MVpxMC9NZk5Cc2VuelVFWEZNU1lHb1NxNjh6T24wM09PUjNq?=
+ =?utf-8?B?dHFaVEpaR3B4U05QVGlEOW1yR3ljMWxUeUVLZGRac3RRMFk4RTY0TGZ4d0hw?=
+ =?utf-8?B?V3AzLzZBYThTdnd3Z1VFRzJBSHdmTHViK1pqaVk2cTVadlorZm56bjRGZm80?=
+ =?utf-8?B?YVVncGZDaFBYT2ErK1A3MXhNcFNwbkJIaE8raDIvR0hXNGhxbXpvVWkyTG5n?=
+ =?utf-8?B?aXhWazVzeHQzR0FnT0JyQlVJSlVBVW1oRVhYQW5OZVlXR3ZKaGNUR1ptQ0tP?=
+ =?utf-8?B?MGhiYWRBTldIUlUvV0lVS2l1Vi9NTHgxS3B4cEJ6QWFSZ05zWjJPbmZCMFFK?=
+ =?utf-8?B?cTRjOURlMlA0RlNDcnBpdG0wSE1EbmMwMkMwYVVudFN3RURjc1IzSC9paWFT?=
+ =?utf-8?B?SEVOOVRnSGZuUVVPVEhGWTNxTk9iOExsUkJHQmlmQ2VjT1ZnTWgyWUZqNldp?=
+ =?utf-8?B?NEt2aDB2UGY0Y1p0MzBVNDRlaGxQbU1lTDMyd29YR0J2R2NOUFFNemM3YjdF?=
+ =?utf-8?B?SXJLSllUai9QQndwWllHOWFQS2o1SEZEN1FiTURTd2FmYjhWeDZLS1BsTGdv?=
+ =?utf-8?B?UlVTZXduRnZ5Tm0vd2M0MTliYjkxcmN1ejV2SHZaOXQ3bm5idXFILytwUkdS?=
+ =?utf-8?B?SE1jVnFVdVlndTkxdFEwWFpkb2hWTm5qUndRZzBWa2F3VFNXNENFK3hyQWk2?=
+ =?utf-8?B?d3YxUlFJU2pQYnloTDhhaUtOMFFxZDV0QWJMbUlMeHV0WUlqYnV3Mm95alI4?=
+ =?utf-8?B?M2k2a094RTZFSUdHaStkTitvU2graE1mN2phTWJ4cFl3RmJXeWQyODkwOWhp?=
+ =?utf-8?B?WTk1KzlYUGJ1V2x4TS9lalhOZERPbW5HaFE5UVdkcDRsczdtblVQY0EzRmdI?=
+ =?utf-8?B?QUhOdHNRRzY2dlE1eEJ5R0ljS2lxWGNKSWlSdFlKMTd2c1RFa3RDeFdjWTh3?=
+ =?utf-8?B?eEltVktpRHVxZno2N1IrMmlnOFZJWHlyMTM1bzlCb25XZkhMaENndXM5QTNU?=
+ =?utf-8?B?c2JZNjVHZFYveDJDR0EvSVNJdGxrak42VXVBcmJrUUdYNU5DTHVzM0RTeCtq?=
+ =?utf-8?B?dnJDa1VsTnNVQmY1QXUwRnVYQWtwRVlobmdqeTN1VU9ZZFoyYmFRWVh0emFD?=
+ =?utf-8?B?UHdvTkFoYXg5emNyd1JJa20rSzN5ODdGVXpnV2FiSnNhaFZxclYyTFFQRUgy?=
+ =?utf-8?B?TFpoaEYwYSs2dStVWDFZT285WFpHSnNxbWJMQnZKVEtNaS9GcENJelJvcDhj?=
+ =?utf-8?B?K1NjNlF1OWR0cFVCSTVFYmc4UnBCaEJmODRkT2Y2V1h0eEFWQWZoL2lkQ2hL?=
+ =?utf-8?B?anlLOHQwSEZIYzcvM2lsQkZ2ZFpMbU0xQS9FU2g3cTZ6a2QvMzgvTkpTMDUy?=
+ =?utf-8?B?SG5qY2RqVTR0NmVNM2FHQlNPODByOHZQNFRVYnJJcXZ5czRoYi9PdzFBcjRL?=
+ =?utf-8?B?ZnRpVWhybFhGd0Q0VStiUDkrVk81R2V3UE5UVndEOEFNQWN0cktsVTViNnha?=
+ =?utf-8?B?Ly9SQmcrY2tHMWtYZHMrbUpaV2wyMThib0xXeXlONTNuVTFPNGdzN29wZzBx?=
+ =?utf-8?B?dS9uU2N5cWo2R1MwMHNYMklsNmJ6VGZyR21WMFpJMUhWeWE5cTNNSnZuNkFQ?=
+ =?utf-8?B?TjVzQUw4QkJXOG4xa001MjYxaUQ2akxzUXVUWHR2QjBsd1hVVXFnRVBCOGc1?=
+ =?utf-8?B?OFFCVUlOa2VLMk8vUjVKMytrL202cENDS1BGVERLcUF2UFhrejR1TjNDTWFp?=
+ =?utf-8?B?TkZnMzc1M2VOS0IxKzBGMG9CdGNGR2M0VmRXMXVpNTF2K2kyWml2TXA4ZUZv?=
+ =?utf-8?B?T3VTWkJSKzM5cGZxU01pQmxjSzdnMDU5YytaY3lBa2Y5NmJpaGlZZCtTZ0RH?=
+ =?utf-8?B?QzloOWlEdlBwMmR3QVZ2bjhJUDZSdGoxQlIxMGNwVmVaWTN0eXlLeDZ3bzl1?=
+ =?utf-8?B?ZFRJenF6eEdEd0ZKMmIvQ1BjN0kyMHovdHY0cG13aUNtTTJQd0tQRS9xbFhT?=
+ =?utf-8?B?N3c9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: soprasteria.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR07MB8474.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5da2581d-c415-49f5-59ac-08dcf1e4c651
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2024 15:26:46.1264
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8b87af7d-8647-4dc7-8df4-5f69a2011bb5
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: MU/zpkCW6Tf7mSd6iPy/h9ecKkkapdV+ovVwsA/clfVnXGupuv+PS1AGMaqhw63TMpK4s9sew27wu5IvqSgtR6O207AA3eLrwkVmzle6zHU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR07MB7931
+X-MS-Exchange-CrossPremises-AuthAs: Internal
+X-MS-Exchange-CrossPremises-AuthMechanism: 04
+X-MS-Exchange-CrossPremises-AuthSource: DB9PR07MB8474.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossPremises-TransportTrafficType: Email
+X-MS-Exchange-CrossPremises-SCL: 1
+X-MS-Exchange-CrossPremises-messagesource: StoreDriver
+X-MS-Exchange-CrossPremises-BCC: 
+X-MS-Exchange-CrossPremises-originalclientipaddress: 81.66.135.116
+X-MS-Exchange-CrossPremises-transporttraffictype: Email
+X-MS-Exchange-CrossPremises-disclaimer-hash: 0a291ef45dbeaddd3c2a8ba60f43906764fc4f3e495eff2ecd40117e05115c44
+X-MS-Exchange-CrossPremises-antispam-scancontext: DIR:Originating;SFV:NSPM;SKIP:0;
+X-MS-Exchange-CrossPremises-processed-by-journaling: Journal Agent
+X-OrganizationHeadersPreserved: DB9PR07MB7931.eurprd07.prod.outlook.com
+
+DQoNCkhlbGxvIE1hdHQsDQoNClRoYW5rcyBmb3IgeW91ciBhbnN3ZXIuIEhvd2V2ZXIsIEknbSBu
+b3QgYWJsZSB0byByZXByb2R1Y2Ugd2hhdCB5b3Ugc3VnZ2VzdHMgb3IgSSBtYXliZSBtaXN1bmRl
+cnN0b29kIHNvbWV0aGluZy4gSGVyZSBpcyBteSB0ZXN0IHByb2NlZHVyZToNCg0KSWYgYSBjb25z
+dW1lcjoNCjEuIHN1YnNjcmliZXMgdG8gdGhlIHF1ZXVlICJDb25zdW1lci5jb25zdW1lcjAxLlZp
+cnR1YWxUb3BpYy5pbnZvaWNlcyIgd2l0aCBzZWxlY3RvciAiazE9djEiIGFuZCBDbGllbnRJRCAi
+bXlDbGllbnQiDQoyLiBkaXNjb25uZWN0cw0KMy4gcmVjb25uZWN0cyBhbmQgc3Vic2NyaWJlcyB0
+byB0aGUgcXVldWUgIkNvbnN1bWVyLmNvbnN1bWVyMDEuVmlydHVhbFRvcGljLmludm9pY2VzIiB3
+aXRoIHNlbGVjdG9yICJrMT12MiIgYW5kIENsaWVudElEICJteUNsaWVudCINCg0KVGhlbiwgdGhl
+IHNlbGVjdG9ycyBpbiBjYWNoZSBmcm9tIHRoZSBsb2dzIGFyZToNCiBERUJVRyB8IGN1cnJlbnQg
+c2VsZWN0b3JzIGluIGNhY2hlOiBbazE9J3YxJywgazE9J3YyJ10NCg0KU28sIHRoZSBmaXJzdCBz
+ZWxlY3RvciBpcyBuZXZlciByZXBsYWNlZCBvciByZW1vdmVkIGZyb20gdGhlIGNhY2hlLCBhbmQg
+dGhvc2UgdW53YW50ZWQgbWVzc2FnZSBhcmUgc3RpbGwgYmVpbmcgY29waWVkIHRvIHRoZSBxdWV1
+ZS4NCklzIHRoYXQgdGhlIGV4cGVjdGVkIGJlaGF2aW9yIG9yIGFtIEkgZG9pbmcgc29tZXRoaW5n
+IGluY29ycmVjdCA/DQoNClRoYW5rcyBpbiBhZHZhbmNlDQoNClJlZ2FyZHMsDQpOaWNvbGFzDQoN
+Ci0tLS0tTWVzc2FnZSBkJ29yaWdpbmUtLS0tLQ0KRGUgOiBNYXR0IFBhdmxvdmljaCA8bWF0dHJw
+YXZAZ21haWwuY29tPg0KRW52b3nDqSA6IGx1bmRpIDIxIG9jdG9icmUgMjAyNCAxNjo1Nw0Kw4Ag
+OiB1c2Vyc0BhY3RpdmVtcS5hcGFjaGUub3JnDQpPYmpldCA6IFJlOiBWaXJ0dWFsU2VsZWN0b3JD
+YWNoZUJyb2tlclBsdWdpbiAtIGV4cGlyYXRpb24gb2Ygc2VsZWN0b3JzID8NCg0KSGkgTmljb2xh
+cy0NCg0KVGhlIHNlbGVjdG9yIGlzIGNhY2hlZCBmcm9tIGZpcnN0IGNvbnN1bWVyIHJlZ2lzdHJh
+dGlvbiB1bnRpbCBpdCBpcyByZXBsYWNlZCBieSBhIG5ldyBjb25zdW1lciByZWdpc3RyYXRpb24u
+IFRoZSBzZWxlY3RvciBpcyBhbHNvIHdyaXR0ZW4gdG8gZGlzayBzbyBpdCB3aWxsIGJlY29tZSBh
+Y3RpdmUgb24gYnJva2VyIHJlc3RhcnQsIHNvIHRoZXJlIGlzIG5vIGxvc3MgYmV0d2VlbiBicm9r
+ZXIgc3RhcnR1cCBhbmQgY29uc3VtZSBjb25uZWN0aW5nLg0KDQpUaGUgc2VsZWN0b3Igd2lsbCBi
+ZSBhY3RpdmUgdGhlIGVudGlyZSB0aW1lIGl0IGlzIHJlZ2lzdGVyZWQgd2l0aCB0aGUgYnJva2Vy
+IHVwIHVudGlsIGEgbmV3IHNlbGVjdG9yIGlzIHByb3ZpZGVkIGJ5IGEgbmV3IGNvbnN1bWVy4oCU
+IGluIHlvdXIgZXhhbXBsZSwgdGhhdCB3b3VsZCBiZSBzdGVwICMzIHdoZW4gdGhlIHNlY29uZCBz
+ZWxlY3RvciB3b3VsZCBiZWNvbWUgYWN0aXZlIGFuZCB0aGUgZmlyc3Qgc2VsZWN0b3IgaXMgZGVh
+Y3RpdmF0ZWQuDQoNClRoYW5rcywNCk1hdHQgUGF2bG92aWNoDQoNCj4gT24gT2N0IDIxLCAyMDI0
+LCBhdCA0OjU44oCvQU0sIENBU0FVWCBOaWNvbGFzIDxuaWNvbGFzLmNhc2F1eEBzb3ByYXN0ZXJp
+YS5jb20+IHdyb3RlOg0KPg0KPg0KPiBIZWxsbyAhDQo+DQo+IEkgaGF2ZSBhIHF1ZXN0aW9uIHJl
+Z2FyZGluZyB0aGUgVmlydHVhbFNlbGVjdG9yQ2FjaGVCcm9rZXJQbHVnaW4NCj4gbWVudGlvbmVk
+IGhlcmUgOg0KPiBodHRwczovL2FjdGkvDQo+IHZlbXEuYXBhY2hlLm9yZyUyRmNvbXBvbmVudHMl
+MkZjbGFzc2ljJTJGZG9jdW1lbnRhdGlvbiUyRnZpcnR1YWwtZGVzdGkNCj4gbmF0aW9ucyZkYXRh
+PTA1JTdDMDIlN0NuaWNvbGFzLmNhc2F1eCU0MHNvcHJhc3RlcmlhLmNvbSU3QzY4OTYwZTFjYTdh
+Mw0KPiA0NWRkNTJlYzA4ZGNmMWUwYThmMSU3QzhiODdhZjdkODY0NzRkYzc4ZGY0NWY2OWEyMDEx
+YmI1JTdDMCU3QzAlN0M2Mzg2DQo+IDUxMTk0NDEzMjE5MDczJTdDVW5rbm93biU3Q1RXRnBiR1pz
+YjNkOGV5SldJam9pTUM0d0xqQXdNREFpTENKUUlqb2lWMmwNCj4gdU16SWlMQ0pCVGlJNklrMWhh
+V3dpTENKWFZDSTZNbjAlM0QlN0MwJTdDJTdDJTdDJnNkYXRhPXNHZXdwalp5R0NyJTJCbA0KPiBm
+SUNJOGxxQWZiSGh3WHFOVHdiYjUlMkZleEtqcERjSSUzRCZyZXNlcnZlZD0wDQo+DQo+IElmIGEg
+Y29uc3VtZXIgZm9sbG93cyB0aG9zZSBhY3Rpb25zIGluIG9yZGVyOg0KPg0KPiAgMS4gIHN1YnNj
+cmliZXMgdG8gYSBxdWV1ZSAiQ29uc3VtZXIuY29uc3VtZXIwMS5WaXJ0dWFsVG9waWMuaW52b2lj
+ZXMiIHdpdGggc2VsZWN0b3IgImsxPXYxIg0KPiAgMi4gIGRpc2Nvbm5lY3RzDQo+ICAzLiAgcmVj
+b25uZWN0cyBhbmQgc3Vic2NyaWJlcyB0byB0aGUgc2FtZSBxdWV1ZSAiQ29uc3VtZXIuY29uc3Vt
+ZXIwMS5WaXJ0dWFsVG9waWMuaW52b2ljZXMiIHdpdGggYSBuZXcgc2VsZWN0b3IgImsyPXYyIg0K
+Pg0KPiBIb3cgbG9uZyB3aWxsIHRoZSAiazE9djEiIGNvbmRpdGlvbiB3aWxsIGJlIHVzZWQgdG8g
+Zm9yd2FyZCBtZXNzYWdlIGZyb20gdGhlIHRvcGljIHRvIHRoZSBxdWV1ZSA/IFdpbGwgaXQgYmUg
+Zm9yZXZlciA/DQo+IEkgY291bGQgbm90IGZpbmQgc3VjaCBpbmZvIGluIHRoZSBkb2NzLCBhbmQg
+SSB3YXMgbm90IGFibGUgdG8gZmluZCBpdA0KPiBpbiB0aGUgY29kZS4gKEkgc2F3IHRoZSAxMCBt
+biBzY2hlZHVsZXIgdG8gcGVyc2lzdCBzZWxlY3RvcnMsIGJ1dCBpdCdzDQo+IGFub3RoZXIgdG9w
+aWMpDQo+DQo+IFRoYW5rcyBpbiBhZHZhbmNlIQ0KPg0KPiBSZWdhcmRzLA0KPiBOaWNvbGFzDQo+
+DQo+DQo+IEMyIC0gVXNhZ2UgcmVzdHJlaW50DQoNCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpUbyB1bnN1YnNj
+cmliZSwgZS1tYWlsOiB1c2Vycy11bnN1YnNjcmliZUBhY3RpdmVtcS5hcGFjaGUub3JnDQpGb3Ig
+YWRkaXRpb25hbCBjb21tYW5kcywgZS1tYWlsOiB1c2Vycy1oZWxwQGFjdGl2ZW1xLmFwYWNoZS5v
+cmcgRm9yIGZ1cnRoZXIgaW5mb3JtYXRpb24sIHZpc2l0OiBodHRwczovL2FjdGl2ZW1xLmFwYWNo
+ZS5vcmcvY29udGFjdA0KDQoNCg0KQzIg4oCTIFVzYWdlIHJlc3RyZWludA0K
+DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0NClRvIHVuc3Vic2NyaWJlLCBlLW1haWw6IHVzZXJzLXVuc3Vi
+c2NyaWJlQGFjdGl2ZW1xLmFwYWNoZS5vcmcNCkZvciBhZGRpdGlvbmFsIGNvbW1hbmRzLCBl
+LW1haWw6IHVzZXJzLWhlbHBAYWN0aXZlbXEuYXBhY2hlLm9yZw0KRm9yIGZ1cnRoZXIgaW5m
+b3JtYXRpb24sIHZpc2l0OiBodHRwczovL2FjdGl2ZW1xLmFwYWNoZS5vcmcvY29udGFjdA0K
+DQoN
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57590-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 377123E6E9
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 28 Oct 2024 13:46:01 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id C621044EF4
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 28 Oct 2024 13:45:58 +0000 (UTC)
+Received: (qmail 1428991 invoked by uid 998); 28 Oct 2024 13:45:56 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 1428755 invoked by uid 116); 28 Oct 2024 13:45:50 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 28 Oct 2024 13:45:50 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id D50C7200206
+	for <users@activemq.apache.org>; Mon, 28 Oct 2024 13:45:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 5.202
+X-Spam-Level: *****
+X-Spam-Status: No, score=5.202 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, ENA_SUBJ_LONG_WORD=2.2, ENA_SUBJ_ODD_CASE=3.2,
+	RCVD_IN_DNSWL_BLOCKED=0.001, RCVD_IN_MSPIKE_H2=-0.001,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (1024-bit key) header.d=soprasteria.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id 1zJoRniIUfqR for <users@activemq.apache.org>;
+	Mon, 28 Oct 2024 13:45:50 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=40.107.103.72; helo=eur03-vi1-obe.outbound.protection.outlook.com; envelope-from=nicolas.casaux@soprasteria.com; receiver=<UNKNOWN> 
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2072.outbound.protection.outlook.com [40.107.103.72])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 58F2F8211D
+	for <users@activemq.apache.org>; Mon, 28 Oct 2024 13:45:50 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kg1shZKJ5T0/4cZ4FenmfjiDes1rrsy8OGMeIQaCKIiJOXZ2N/l1jLDik+cQV/M9qJOOC7k3gN9jb1WcW/Nxmqgd9xQHxT7Ie7JJzZAuPamOAuiLprt9Ski9zp94q9ywuCvNMdFB+lIqMaoJqh691tp1E8hWKZiKFHXc4GLZZZcMfd5Xx21pPnyHur6z3jtolv5V6WCSLbwdxWYeCngxA/lX9iozcwgJYLZFxwoOTPzxzUh/WA2K72yR/aZJndy2q4fRS+pPihhte1douUsZNiwhA3VJYgTu4kGGOAa6GOtRq6C1qtEovzM06Rl+z6wHzTizrO+2o29cKnu1BiKi7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mjXVXx1FrZnUwwZbE//HRIsJFjU8uQYZF0Hny3ZGoCE=;
+ b=FI5K/Cr/UaGylSR1oRotOLvEDx5+wS1wTHN4hMQGL0xv0k+uIVSQtDgH/QDyXTuInZYAA8mP5Mm32eOnSXuUnP7psy9fCGdXYsmJsTwvtm/mc+brkplZFjNR/qb3BcmxqWrMUHsQ66DWKVDJvcedQ8vfAemQyboP9Sf2bX3eMx6tghtLZ3lzx4/n45dNpnZPtRm3oXXotxclvooU6MXahyhvzZG3hDnMGU4tQJAQO1W402BwEJwJ8kkmgOLUgevwC0p0ji5mOd+elymA+w42dUJ+hPmKgx4K633KEo/bD3pMvnkWhZjYuu4jkjCBdltMZ0YyrOHnhg/8m4aqoRFQpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=soprasteria.com; dmarc=pass action=none
+ header.from=soprasteria.com; dkim=pass header.d=soprasteria.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=soprasteria.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mjXVXx1FrZnUwwZbE//HRIsJFjU8uQYZF0Hny3ZGoCE=;
+ b=E1bxl0tIxRVoNfdrTVKyRxIeFkzRrrUu0rzIkVjFJFGNSj79tdrGTgoN9Vvr/ulH59iyCXAlC0OEnBmYTlUUZ4+xcQMc5SgmIuS6/7sbyIIMwCdw5NFsqW06Q3wwSN8BEjyyteEWvPdv5xmxsTkT2ohYlm1odGMY+4uimboMjcA=
+Received: from DB9PR07MB8474.eurprd07.prod.outlook.com (2603:10a6:10:36e::13)
+ by DB9PR07MB7948.eurprd07.prod.outlook.com (2603:10a6:10:26f::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Mon, 28 Oct
+ 2024 13:45:42 +0000
+Received: from DB9PR07MB8474.eurprd07.prod.outlook.com
+ ([fe80::9d81:2fdd:7f92:c1f4]) by DB9PR07MB8474.eurprd07.prod.outlook.com
+ ([fe80::9d81:2fdd:7f92:c1f4%6]) with mapi id 15.20.8093.021; Mon, 28 Oct 2024
+ 13:45:42 +0000
+From: CASAUX Nicolas <nicolas.casaux@soprasteria.com>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: RE: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?
+Thread-Topic: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?
+Thread-Index: Adsjn7lq+Cu097wxR3mLx7s5XmXukgAKcEyAAACnPcABXNrigA==
+Date: Mon, 28 Oct 2024 13:45:42 +0000
+Message-ID: 
+ <DB9PR07MB84741E15D7F9C891058E6B81944A2@DB9PR07MB8474.eurprd07.prod.outlook.com>
+References: 
+ <DB9PR07MB8474EAAEBF2DDD37D248DEF494432@DB9PR07MB8474.eurprd07.prod.outlook.com>
+ <D7346770-FEDF-4561-B4D6-D6BB3B0B36C0@gmail.com>
+ <DB9PR07MB84745473EE97F3CFC8C78DB994432@DB9PR07MB8474.eurprd07.prod.outlook.com>
+In-Reply-To: 
+ <DB9PR07MB84745473EE97F3CFC8C78DB994432@DB9PR07MB8474.eurprd07.prod.outlook.com>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+ MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_ActionId=8e0b99cf-2b00-42a8-b4d3-f7edf41bcbcb;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_ContentBits=0;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_Enabled=true;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_Method=Standard;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_Name=FR
+ Usage
+ restreint;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_SetDate=2024-10-21T15:15:41Z;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_SiteId=8b87af7d-8647-4dc7-8df4-5f69a2011bb5;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=soprasteria.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DB9PR07MB8474:EE_|DB9PR07MB7948:EE_
+x-ms-office365-filtering-correlation-id: a9486aea-ee08-4d89-76d4-08dcf756d122
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|1800799024|376014|366016|4022899009|38070700018;
+x-microsoft-antispam-message-info: 
+ =?utf-8?B?eU45cUJsTTE2K2J3UzBxUjlkU1BoVndTYWNMbm42WGR5Rjh3N2RYVXNVTDdR?=
+ =?utf-8?B?L0ZyRE13eW0yQmpwWXB1dldzOHFObkpualIvLzc0WjlDT0dTN2RRUWZlQzY0?=
+ =?utf-8?B?NkRQYWhJVGVUVVN3RlVmemhyYzdmc0haVDNOY3lrQ2hyU3F6L1NrNHU1STR3?=
+ =?utf-8?B?aXcyLy95VkFaTVNhZGlTTzIwZXA4UzAzVTBYVTdGR2xlNEY0SkpmKzlJQTRB?=
+ =?utf-8?B?ZENZS3U1eTVzUkVnRm5ncnRLOXFMR1Q3cWdLQW1QVWd6NnJNUnpPSUxkakZr?=
+ =?utf-8?B?d1AxeG53TnpIR3RSTy8vVWlwWkVUUk5PVkhFcGFSYSs0Tk5ZV2dENUJJUzZL?=
+ =?utf-8?B?LzNqb2lsMHR4alI5Zjl6eGJFZXZrbjhlbVlyTHJOa3M3enlnMGtkazIvYThu?=
+ =?utf-8?B?R0V5ek9BYnppYzVzM0RqcnN5UklkRVdhVkFrMWdFR3N5aUlJdjJqcEwyL2hw?=
+ =?utf-8?B?VVFadm43ZnpYeWJwRzhnNkxHcjJoTWc0NjF2R2w5Q2ZlcHBjM25UR0NOVFo4?=
+ =?utf-8?B?cDVTMHpNcGRralVnclJ4WHpGdG82ZW8zT3hsSHNyaXpZQk93MzJrbTdCUG9u?=
+ =?utf-8?B?RWUrUWxRTDJDaWp0UjFXME9NTGd1M3kzRUEyOVpZb3UxNG52TjNJakdNMUxK?=
+ =?utf-8?B?WHFpRVJyc0RVUncxWTduV2xOZzFYaVdzcnl6d25CWmJCc1RhTnhlalFkU0gw?=
+ =?utf-8?B?bVpkb0M2LzdoSFV4Z3lEZHdPZ3JZTXFQVWQyT2FkNmJiMU1oNTNEZlQybCt5?=
+ =?utf-8?B?WE9EM3dKSXRJZVpnRUs1TEwwdDR2d3k4UTUxcHZuRjlad0hrb3lFcFBvbzBN?=
+ =?utf-8?B?b1BMR3lzSlVyMjMxTmxXbitEYnpxOVlUTXhVbUtPZFJGTHk1WFc3OTJNa3Jq?=
+ =?utf-8?B?cHZtNVpJZVdKb21lQ3VvNTVjRkdUbnJnNW9tVGRtandjL2EwbXJ6c25vb3o3?=
+ =?utf-8?B?eTdtN2c4b2d3WjdZazBwcy9xT1dKa0J5NWNwcmRxWUw4MVJGUjJpTFdrTnpP?=
+ =?utf-8?B?blJybnBZcUhVTzArL29NSlJod1RmUlN0NFVVeG40dFpvS2tPeG5RN1lhMzUz?=
+ =?utf-8?B?Rm1ZbUdpVDJ4ZDFqTC9RV1FqbnZ5emwwa0JqQkZBNFgwMldMdHBlUUg5OE1h?=
+ =?utf-8?B?NGVTZFY5WUtqbFVCb3JuUDdDUkUwVjlUY2VXVEJYQU53Mk40dEs4WHRQeE81?=
+ =?utf-8?B?YWdlMGhkcHdqWFZ0MkJ1M3ZKdVJsNCsxakJsU2syemYyb3pIZkZ4Z3AwUFdI?=
+ =?utf-8?B?M01iKzhEK0pPNlVKWHdQN01qZjA2U01IbXJrTUFSYVhWTk5JVW1vOVhyKzNW?=
+ =?utf-8?B?ZkM3S3BpbTJjeFNTUENZZktOaThmbHBKejlUTWdQZnJoWVhzKzB3VTg1WFRH?=
+ =?utf-8?B?blNXQWZWVlVLKzJiQkNwNGhwaGRieDdPODk3VHdWVXk4eE84L0pSNmhMVG1q?=
+ =?utf-8?B?V2ZMUTVTZHVuVlRVdWgvUXErbkJpa1QvWEpaWXg4VHNNR1lQWnE2N2FiYisw?=
+ =?utf-8?B?aVhiN0J5VHFyMXk1S21SZS9wTHRBV2pjSkVCY2xmMEFjV3Z0ME16TXBHMTNM?=
+ =?utf-8?B?S2g2L1BlT1BTWm9hbkh2dzlzdDBPY1NWTXVMaHhQeS9CTXBia0lYbVJ6cThp?=
+ =?utf-8?B?TEFMVk4xb09BeE9iRklXa0xLbUhjdDJqWTBJYlBkN2hpblVUNldvOTMyMnpL?=
+ =?utf-8?B?eTZxSmxoT0oxME5wQVY3YWFGQ3JJQ2R4MDI2UzJMcXFGWFZvM2Njc2d5WVhW?=
+ =?utf-8?B?eTZiWmZqSEFpNnZQNi9yQi9RcjY5OWFpdndqeXRMZE1teGZaSkFCVDQwaHdw?=
+ =?utf-8?B?T2pUZWZrT1FZSDFMbHgzTFZ5WFlQQzNDSnhoQnlWTGxiNjN5Sjgxak0ydU54?=
+ =?utf-8?Q?ZJsK+5wmTnbd8?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR07MB8474.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(4022899009)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?Z2o2UkdjSTF4dWxTZFcrZmtuVm0zSEhxUTZEMDM1TXBFMUw0ZW5zZ3RuZXRl?=
+ =?utf-8?B?a1ViMFFVOE9SZXZqdWJGLzVzaFhPRmh0MEdDVGJjTUQ4bXFkMXNROVpROGpK?=
+ =?utf-8?B?eC9QbGVDbm9IZmRlK285eW9DZ3RnNk1ML2l0NDJpSnFNTlVSMFpGZHVyY1FV?=
+ =?utf-8?B?ZHpKaWRYR3FPTkJsYks3bVA2emhTY0ZHSWR4M1pocHJONzZJRUZhcFJVMmwr?=
+ =?utf-8?B?RUpRd25uTlhMSEV6K0RuZVlaQUdkblM3b0JzaTFON2pPbldrUU92am5YTjlw?=
+ =?utf-8?B?YmRtM3FxUkJWWjdlOVlCbW12TEV6dzN0OXFROVJEUCthdmZDL1lYM09VMllZ?=
+ =?utf-8?B?VTlyRWN3ZFlIVGVUUXZPMXl0eE5wdG5neXRtYXVYemlJMWxiaWFtTGhMeUps?=
+ =?utf-8?B?OGVHTlVzSVNNRlFRYTBDVjM4TlhENzQ5ZFUyV2FmQ1FvYzVpdk54MWxTZkRx?=
+ =?utf-8?B?MVVjWWlmRWwzbE1WbWhXdXB6eFlZN2xpd3NjS1FocnlRMVA1L0J1MHRDR0Fw?=
+ =?utf-8?B?dmZtZTFVQ1V3R3ZPYStLL21BWDBOVURFcXRaYzZvelF2WVhyZUhlYktLSU5s?=
+ =?utf-8?B?RWZ6c3JrUG5iMGhQVVY0clVuV0ZrVnRUSGZtSmpJeDVyLzJMK3lpR09zRmJj?=
+ =?utf-8?B?T0dEK1RUNkNZZGpGSVVnc2E2Z3JScytSSmkxRzNtamNrSmZXU1hxMjludmtw?=
+ =?utf-8?B?WW1MQkJSemNZNmhIVnB4dmM3V0FVQ2FCdEpORHgzMkdmRXNrSjJVWVRjNHh0?=
+ =?utf-8?B?dEVJSm9OalRWUXVyNmFmRE9pK3ovTy94WDBIN1kxdXFYdEtybDZ4cjBNeVJv?=
+ =?utf-8?B?d2NvZkhBUUY2VmtmclUvQ3ZQTFJUWUgvRTBocHp5NzhUUFBIT2Q2Uy9qa1F5?=
+ =?utf-8?B?OTBRaVpZN3V0KzdnRjZGS3Zka0pxUG80ankxbE5iWGNjRWxHR0NwUGhobVVk?=
+ =?utf-8?B?dTcyOUtaUTBjc0gvNDhWdEZQS1JzM1BWOVNOYW9OK2I3ZjQ2VG9CU0NURmRQ?=
+ =?utf-8?B?MVRTd0NwejhwTEdsVjl6TldwbmQ5K0JxMlp1cjVaVy9vbFVFWkVGZDhoYnlG?=
+ =?utf-8?B?WDJYOVJxN1ZtemFFMDJoZWQzNklwdHlaQ3FtNlZSbnBYQmVKMjBmZjFtS05V?=
+ =?utf-8?B?akJ5QWQxT3FkUWNvMkVXUzhHUHZtVTJJclhGTlRKTDdWQlJFMGUrYWpoMHlN?=
+ =?utf-8?B?Z1RDdE13WmU1Tkltb3dpUXZYQnZZanFsVlA5V1BYZHdwRnRMUDY5aFE3dFRo?=
+ =?utf-8?B?L2FaSFJkZDdkRXk5T2RoOGFVSWJWQThveUkwbEJRQ1lqcmNZbFBEL1ZvRytD?=
+ =?utf-8?B?LzFIeDR4OXVIVkwzc0YrdlJlSUFrb3lQQjdlMzFRSk9teFEwVUdGa01IOXdk?=
+ =?utf-8?B?c1liN0k0LytMbG9xZ1FyWmlmN0lrRmJQdjgxdTNORzQzaStwZlVBRk44ZTE0?=
+ =?utf-8?B?N0FldlBRUy9GaEpxS0dXQUV0bmJycVE1dXlpSGRhQjFmdWR6aFJBUkVSK1NG?=
+ =?utf-8?B?QVZwSFZrMXpROCsyOGg4L1B6TWhiV3B1aVRRaC84c282NUFXOUFYdk05WS9z?=
+ =?utf-8?B?NHRoeFNITjVXdEhpK2MybXNTaHVCbjVVNUYvYWI0dDJFeXhLZUIwVHhhYWFq?=
+ =?utf-8?B?emNadnZFZVpDSmM0NmFJenNaQjNhODBtaXo2eDF1LzFLL0xEYWVDKzZ5b0xG?=
+ =?utf-8?B?VDQyc2VuNy9CdTJ0V2VuZ1QybVVMYmpmbktxSG5rSWc4ZjVHZ3dma2hvUmFy?=
+ =?utf-8?B?NmxRaE4xOHcveVJNakJTajdiU2RhVDRIQ1Z3MS9VaElZOXVDbGFBYVJibGdP?=
+ =?utf-8?B?UnM5NmYwdndQNzdQb0V0ZDZsckkvK0d2OFY2Z2VqN1pGTnJGS2ZYQ0FJWk8x?=
+ =?utf-8?B?OHJhZVRSaHBpelhxbmpxZ1RvUURSbFozai9hVG1kNzVtZXkyUVBjdVY1RTRK?=
+ =?utf-8?B?dG9tbzZZT3k5MEMvdStHeE5xb2gxcnFvc2xSL2ZpdE9MNWJ5TmFIcXdKTWMw?=
+ =?utf-8?B?NERaNGpQSHVpU0xCaEpnUFFobzZaVnFpYWhKZlZGanpoVjkxbStyNkcwTkFk?=
+ =?utf-8?B?UDQvUGhKSHNDdU02bUZrNVN6U2JjNDJBcVFvUkszZ1ZUQ3JqTXNacnVjRkp5?=
+ =?utf-8?B?T2RUaEh5cDAvV2RtUUhjVmVXbXBuK0pvMGNucHFIWitCY3d4WHJWSU96eEha?=
+ =?utf-8?B?Y3c9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: soprasteria.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR07MB8474.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9486aea-ee08-4d89-76d4-08dcf756d122
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Oct 2024 13:45:42.7517
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8b87af7d-8647-4dc7-8df4-5f69a2011bb5
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ESbmQooKjIAUyAdNB6ASQLHlNthdihfsoBj5Tg/C0AkxVwaysaJcS3OnYdiyI6mYPwGue7boiuuemX5gQveVaBsYRXhWeJDiLw01An0BUQU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR07MB7948
+X-MS-Exchange-CrossPremises-AuthAs: Internal
+X-MS-Exchange-CrossPremises-AuthMechanism: 04
+X-MS-Exchange-CrossPremises-AuthSource: DB9PR07MB8474.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossPremises-TransportTrafficType: Email
+X-MS-Exchange-CrossPremises-SCL: 1
+X-MS-Exchange-CrossPremises-messagesource: StoreDriver
+X-MS-Exchange-CrossPremises-BCC: 
+X-MS-Exchange-CrossPremises-originalclientipaddress: 81.66.135.116
+X-MS-Exchange-CrossPremises-transporttraffictype: Email
+X-MS-Exchange-CrossPremises-disclaimer-hash: 0a291ef45dbeaddd3c2a8ba60f43906764fc4f3e495eff2ecd40117e05115c44
+X-MS-Exchange-CrossPremises-antispam-scancontext: DIR:Originating;SFV:NSPM;SKIP:0;
+X-MS-Exchange-CrossPremises-processed-by-journaling: Journal Agent
+X-OrganizationHeadersPreserved: DB9PR07MB7948.eurprd07.prod.outlook.com
+
+DQoNCkhlbGxvLA0KDQpDb3VsZCBhbnlvbmUgY29uZmlybSBteSBhbmFseXNpcyBvciBpbmRpY2F0
+ZSBpZiBJJ20gZG9pbmcgc29tZXRoaW5nIHdyb25nIGhlcmUgPw0KVGhhbmtzIQ0KDQpOaWNvbGFz
+DQoNCi0tLS0tTWVzc2FnZSBkJ29yaWdpbmUtLS0tLQ0KRGUgOiBDQVNBVVggTmljb2xhcw0KRW52
+b3nDqSA6IGx1bmRpIDIxIG9jdG9icmUgMjAyNCAxNzoyNw0Kw4AgOiB1c2Vyc0BhY3RpdmVtcS5h
+cGFjaGUub3JnDQpPYmpldCA6IFJFOiBWaXJ0dWFsU2VsZWN0b3JDYWNoZUJyb2tlclBsdWdpbiAt
+IGV4cGlyYXRpb24gb2Ygc2VsZWN0b3JzID8NCg0KSGVsbG8gTWF0dCwNCg0KVGhhbmtzIGZvciB5
+b3VyIGFuc3dlci4gSG93ZXZlciwgSSdtIG5vdCBhYmxlIHRvIHJlcHJvZHVjZSB3aGF0IHlvdSBz
+dWdnZXN0cyBvciBJIG1heWJlIG1pc3VuZGVyc3Rvb2Qgc29tZXRoaW5nLiBIZXJlIGlzIG15IHRl
+c3QgcHJvY2VkdXJlOg0KDQpJZiBhIGNvbnN1bWVyOg0KMS4gc3Vic2NyaWJlcyB0byB0aGUgcXVl
+dWUgIkNvbnN1bWVyLmNvbnN1bWVyMDEuVmlydHVhbFRvcGljLmludm9pY2VzIiB3aXRoIHNlbGVj
+dG9yICJrMT12MSIgYW5kIENsaWVudElEICJteUNsaWVudCINCjIuIGRpc2Nvbm5lY3RzDQozLiBy
+ZWNvbm5lY3RzIGFuZCBzdWJzY3JpYmVzIHRvIHRoZSBxdWV1ZSAiQ29uc3VtZXIuY29uc3VtZXIw
+MS5WaXJ0dWFsVG9waWMuaW52b2ljZXMiIHdpdGggc2VsZWN0b3IgImsxPXYyIiBhbmQgQ2xpZW50
+SUQgIm15Q2xpZW50Ig0KDQpUaGVuLCB0aGUgc2VsZWN0b3JzIGluIGNhY2hlIGZyb20gdGhlIGxv
+Z3MgYXJlOg0KIERFQlVHIHwgY3VycmVudCBzZWxlY3RvcnMgaW4gY2FjaGU6IFtrMT0ndjEnLCBr
+MT0ndjInXQ0KDQpTbywgdGhlIGZpcnN0IHNlbGVjdG9yIGlzIG5ldmVyIHJlcGxhY2VkIG9yIHJl
+bW92ZWQgZnJvbSB0aGUgY2FjaGUsIGFuZCB0aG9zZSB1bndhbnRlZCBtZXNzYWdlIGFyZSBzdGls
+bCBiZWluZyBjb3BpZWQgdG8gdGhlIHF1ZXVlLg0KSXMgdGhhdCB0aGUgZXhwZWN0ZWQgYmVoYXZp
+b3Igb3IgYW0gSSBkb2luZyBzb21ldGhpbmcgaW5jb3JyZWN0ID8NCg0KVGhhbmtzIGluIGFkdmFu
+Y2UNCg0KUmVnYXJkcywNCk5pY29sYXMNCg0KLS0tLS1NZXNzYWdlIGQnb3JpZ2luZS0tLS0tDQpE
+ZSA6IE1hdHQgUGF2bG92aWNoIDxtYXR0cnBhdkBnbWFpbC5jb20+IEVudm95w6kgOiBsdW5kaSAy
+MSBvY3RvYnJlIDIwMjQgMTY6NTcgw4AgOiB1c2Vyc0BhY3RpdmVtcS5hcGFjaGUub3JnIE9iamV0
+IDogUmU6IFZpcnR1YWxTZWxlY3RvckNhY2hlQnJva2VyUGx1Z2luIC0gZXhwaXJhdGlvbiBvZiBz
+ZWxlY3RvcnMgPw0KDQpIaSBOaWNvbGFzLQ0KDQpUaGUgc2VsZWN0b3IgaXMgY2FjaGVkIGZyb20g
+Zmlyc3QgY29uc3VtZXIgcmVnaXN0cmF0aW9uIHVudGlsIGl0IGlzIHJlcGxhY2VkIGJ5IGEgbmV3
+IGNvbnN1bWVyIHJlZ2lzdHJhdGlvbi4gVGhlIHNlbGVjdG9yIGlzIGFsc28gd3JpdHRlbiB0byBk
+aXNrIHNvIGl0IHdpbGwgYmVjb21lIGFjdGl2ZSBvbiBicm9rZXIgcmVzdGFydCwgc28gdGhlcmUg
+aXMgbm8gbG9zcyBiZXR3ZWVuIGJyb2tlciBzdGFydHVwIGFuZCBjb25zdW1lIGNvbm5lY3Rpbmcu
+DQoNClRoZSBzZWxlY3RvciB3aWxsIGJlIGFjdGl2ZSB0aGUgZW50aXJlIHRpbWUgaXQgaXMgcmVn
+aXN0ZXJlZCB3aXRoIHRoZSBicm9rZXIgdXAgdW50aWwgYSBuZXcgc2VsZWN0b3IgaXMgcHJvdmlk
+ZWQgYnkgYSBuZXcgY29uc3VtZXLigJQgaW4geW91ciBleGFtcGxlLCB0aGF0IHdvdWxkIGJlIHN0
+ZXAgIzMgd2hlbiB0aGUgc2Vjb25kIHNlbGVjdG9yIHdvdWxkIGJlY29tZSBhY3RpdmUgYW5kIHRo
+ZSBmaXJzdCBzZWxlY3RvciBpcyBkZWFjdGl2YXRlZC4NCg0KVGhhbmtzLA0KTWF0dCBQYXZsb3Zp
+Y2gNCg0KPiBPbiBPY3QgMjEsIDIwMjQsIGF0IDQ6NTjigK9BTSwgQ0FTQVVYIE5pY29sYXMgPG5p
+Y29sYXMuY2FzYXV4QHNvcHJhc3RlcmlhLmNvbT4gd3JvdGU6DQo+DQo+DQo+IEhlbGxvICENCj4N
+Cj4gSSBoYXZlIGEgcXVlc3Rpb24gcmVnYXJkaW5nIHRoZSBWaXJ0dWFsU2VsZWN0b3JDYWNoZUJy
+b2tlclBsdWdpbg0KPiBtZW50aW9uZWQgaGVyZSA6DQo+IGh0dHBzOi8vYWN0aS8NCj4gdmVtcS5h
+cGFjaGUub3JnJTJGY29tcG9uZW50cyUyRmNsYXNzaWMlMkZkb2N1bWVudGF0aW9uJTJGdmlydHVh
+bC1kZXN0aQ0KPiBuYXRpb25zJmRhdGE9MDUlN0MwMiU3Q25pY29sYXMuY2FzYXV4JTQwc29wcmFz
+dGVyaWEuY29tJTdDNjg5NjBlMWNhN2EzDQo+IDQ1ZGQ1MmVjMDhkY2YxZTBhOGYxJTdDOGI4N2Fm
+N2Q4NjQ3NGRjNzhkZjQ1ZjY5YTIwMTFiYjUlN0MwJTdDMCU3QzYzODYNCj4gNTExOTQ0MTMyMTkw
+NzMlN0NVbmtub3duJTdDVFdGcGJHWnNiM2Q4ZXlKV0lqb2lNQzR3TGpBd01EQWlMQ0pRSWpvaVYy
+bA0KPiB1TXpJaUxDSkJUaUk2SWsxaGFXd2lMQ0pYVkNJNk1uMCUzRCU3QzAlN0MlN0MlN0Mmc2Rh
+dGE9c0dld3BqWnlHQ3IlMkJsDQo+IGZJQ0k4bHFBZmJIaHdYcU5Ud2JiNSUyRmV4S2pwRGNJJTNE
+JnJlc2VydmVkPTANCj4NCj4gSWYgYSBjb25zdW1lciBmb2xsb3dzIHRob3NlIGFjdGlvbnMgaW4g
+b3JkZXI6DQo+DQo+ICAxLiAgc3Vic2NyaWJlcyB0byBhIHF1ZXVlICJDb25zdW1lci5jb25zdW1l
+cjAxLlZpcnR1YWxUb3BpYy5pbnZvaWNlcyIgd2l0aCBzZWxlY3RvciAiazE9djEiDQo+ICAyLiAg
+ZGlzY29ubmVjdHMNCj4gIDMuICByZWNvbm5lY3RzIGFuZCBzdWJzY3JpYmVzIHRvIHRoZSBzYW1l
+IHF1ZXVlICJDb25zdW1lci5jb25zdW1lcjAxLlZpcnR1YWxUb3BpYy5pbnZvaWNlcyIgd2l0aCBh
+IG5ldyBzZWxlY3RvciAiazI9djIiDQo+DQo+IEhvdyBsb25nIHdpbGwgdGhlICJrMT12MSIgY29u
+ZGl0aW9uIHdpbGwgYmUgdXNlZCB0byBmb3J3YXJkIG1lc3NhZ2UgZnJvbSB0aGUgdG9waWMgdG8g
+dGhlIHF1ZXVlID8gV2lsbCBpdCBiZSBmb3JldmVyID8NCj4gSSBjb3VsZCBub3QgZmluZCBzdWNo
+IGluZm8gaW4gdGhlIGRvY3MsIGFuZCBJIHdhcyBub3QgYWJsZSB0byBmaW5kIGl0DQo+IGluIHRo
+ZSBjb2RlLiAoSSBzYXcgdGhlIDEwIG1uIHNjaGVkdWxlciB0byBwZXJzaXN0IHNlbGVjdG9ycywg
+YnV0IGl0J3MNCj4gYW5vdGhlciB0b3BpYykNCj4NCj4gVGhhbmtzIGluIGFkdmFuY2UhDQo+DQo+
+IFJlZ2FyZHMsDQo+IE5pY29sYXMNCj4NCj4NCj4gQzIgLSBVc2FnZSByZXN0cmVpbnQNCg0KDQot
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0NClRvIHVuc3Vic2NyaWJlLCBlLW1haWw6IHVzZXJzLXVuc3Vic2NyaWJlQGFj
+dGl2ZW1xLmFwYWNoZS5vcmcNCkZvciBhZGRpdGlvbmFsIGNvbW1hbmRzLCBlLW1haWw6IHVzZXJz
+LWhlbHBAYWN0aXZlbXEuYXBhY2hlLm9yZyBGb3IgZnVydGhlciBpbmZvcm1hdGlvbiwgdmlzaXQ6
+IGh0dHBzOi8vYWN0aXZlbXEuYXBhY2hlLm9yZy9jb250YWN0DQoNCg0KDQpDMiDigJMgVXNhZ2Ug
+cmVzdHJlaW50DQo=
+DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0NClRvIHVuc3Vic2NyaWJlLCBlLW1haWw6IHVzZXJzLXVuc3Vi
+c2NyaWJlQGFjdGl2ZW1xLmFwYWNoZS5vcmcNCkZvciBhZGRpdGlvbmFsIGNvbW1hbmRzLCBl
+LW1haWw6IHVzZXJzLWhlbHBAYWN0aXZlbXEuYXBhY2hlLm9yZw0KRm9yIGZ1cnRoZXIgaW5m
+b3JtYXRpb24sIHZpc2l0OiBodHRwczovL2FjdGl2ZW1xLmFwYWNoZS5vcmcvY29udGFjdA0K
+DQoN
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57550-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 6C3933E680
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 09:59:07 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 02F2861C14
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 09:58:46 +0000 (UTC)
+Received: (qmail 845512 invoked by uid 998); 21 Oct 2024 09:58:46 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 845485 invoked by uid 116); 21 Oct 2024 09:58:45 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 21 Oct 2024 09:58:45 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id EA1D1200228
+	for <users@activemq.apache.org>; Mon, 21 Oct 2024 09:58:44 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 5.402
+X-Spam-Level: *****
+X-Spam-Status: No, score=5.402 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, ENA_SUBJ_LONG_WORD=2.2, ENA_SUBJ_ODD_CASE=3.2,
+	HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,
+	RCVD_IN_MSPIKE_H2=-0.001, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (1024-bit key) header.d=soprasteria.com
+Received: from mx1-ec2-va.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id LAzV6Qh3DwGm for <users@activemq.apache.org>;
+	Mon, 21 Oct 2024 09:58:40 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=40.107.105.77; helo=eur03-am7-obe.outbound.protection.outlook.com; envelope-from=nicolas.casaux@soprasteria.com; receiver=<UNKNOWN> 
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2077.outbound.protection.outlook.com [40.107.105.77])
+	by mx1-ec2-va.apache.org (ASF Mail Server at mx1-ec2-va.apache.org) with ESMTPS id 572A5BFF7D
+	for <users@activemq.apache.org>; Mon, 21 Oct 2024 09:58:40 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QThjvESMCqcqoxm6KQ+UDsdr8kLf81JgA7GFhMgeafx7195y+u0cRToxRSeDFkIuSqCZBCxVzMVospYrTZ1RQ6ZKRkO8r39Q0GzFje4/I9ZERc0ZG8angD2SUkRvOvheDcORXd/82E2akyCQ2jGZEGosWjUnhYLhMfaKq539ABISaFs+joh3K8l8ypwcjxCzHooXZgD+mfPFUCPtqBgM5txtEFMK+oxcdULvAW3bnCo7qij91Ka1uLX/l+8c124WTEqv1vnKL+tNycm3VpyUZYQk3Uh+JyVnMTaQkZkwTiVVR02HrkIUEkr1OzFcwr3+ATwHFs5h+O2gayqF9Wi8hg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nx1OSw5zg7xbxHm5KGoRdyJt184BSCY6SN3v2x64CUM=;
+ b=j38Kx/04f+pIVoiBN+6EhLHity9PGbg3evrDu8C20CIW0xWFXyze18xTNtqP+okP6WgLKA2l7/9cxSyWc9o1UfGNn32fKxsbAEts+PF+s3GcsC75PReXwMwHEAxq8b0GfWhRR9SQDnVz+WSannrWtblgCHFIZlu718jyPSYaIkfsNJ6I9NTg5hUJH5Z0f1/AzP7YRlISJ4X8WT1phUjBo32ucSRjXp9EiO1GT8PHyrttrf3mtX+xSqczP9jZ73MjtcFSG6XHR2oTlpKrQvKBZrJnURIrkXqK9Rv50sbtEyUWMc87waVCGiy4KzJ6QL0xmegP8dfilOYPS6nluBK5xw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=soprasteria.com; dmarc=pass action=none
+ header.from=soprasteria.com; dkim=pass header.d=soprasteria.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=soprasteria.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nx1OSw5zg7xbxHm5KGoRdyJt184BSCY6SN3v2x64CUM=;
+ b=n8kHc4cJs4NERXzc5zsmWx377GOEhJRdjwsZ7oqa+sSsjPhbu8GP03ce1Mi0I0qNwl/eEUAd/1Qky33fmcn+2sVt3YXFD2ieY4shGESJ3sdA9KDflpd0GeDNULhPLxrvYWFrOLIyyKsebCPhoGqzq9cYC6Tmh9Qph+pYIGL+uq0=
+Received: from DB9PR07MB8474.eurprd07.prod.outlook.com (2603:10a6:10:36e::13)
+ by AS8PR07MB7813.eurprd07.prod.outlook.com (2603:10a6:20b:38e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
+ 2024 09:58:31 +0000
+Received: from DB9PR07MB8474.eurprd07.prod.outlook.com
+ ([fe80::9d81:2fdd:7f92:c1f4]) by DB9PR07MB8474.eurprd07.prod.outlook.com
+ ([fe80::9d81:2fdd:7f92:c1f4%6]) with mapi id 15.20.8069.024; Mon, 21 Oct 2024
+ 09:58:25 +0000
+From: CASAUX Nicolas <nicolas.casaux@soprasteria.com>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?
+Thread-Topic: VirtualSelectorCacheBrokerPlugin - expiration of selectors ?
+Thread-Index: Adsjn7lq+Cu097wxR3mLx7s5XmXukg==
+Date: Mon, 21 Oct 2024 09:58:25 +0000
+Message-ID: 
+ <DB9PR07MB8474EAAEBF2DDD37D248DEF494432@DB9PR07MB8474.eurprd07.prod.outlook.com>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+ MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_ActionId=02a117c1-adfd-4bfa-9f9f-83e676346a24;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_ContentBits=0;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_Enabled=true;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_Method=Standard;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_Name=FR
+ Usage
+ restreint;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_SetDate=2024-10-21T09:45:55Z;MSIP_Label_7bd1f144-26ac-4410-8fdb-05c7de218e82_SiteId=8b87af7d-8647-4dc7-8df4-5f69a2011bb5;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=soprasteria.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DB9PR07MB8474:EE_|AS8PR07MB7813:EE_
+x-ms-office365-filtering-correlation-id: f0aec40c-ab5d-4da1-d1c0-08dcf1b6e78f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|366016|376014|1800799024|38070700018|8096899003;
+x-microsoft-antispam-message-info: 
+ =?us-ascii?Q?LdH4JsuAd5xia00buieY1suSO0W3R/8M9BMP2fie4DLZ4vKjXP+ldxmdbIFo?=
+ =?us-ascii?Q?ka+Xhy/S5iA3ZQ9oQCaADYzPq/TyAbxPBQS3HuyYWJqGalCFeXvEC7bstsia?=
+ =?us-ascii?Q?BMfTHMsjbUlup/EE/4btrUgunkqoE5HrkTU78oXvi6rQ+ykKGaV9vzd0jlhY?=
+ =?us-ascii?Q?YmTWFKFLgMKC5prU3boGh8DQyAzUdf1Xl0ixrAqo8pzKl8sx3aoQqOfAiSrV?=
+ =?us-ascii?Q?x+evuz33jQnS4u5JLM6w9S0R4UNkP6jNQ778pvDPvmY6sWIvgpSeY/rfJKrG?=
+ =?us-ascii?Q?1LMJnavLFfO7wr/yYmsL4aubS1tHm9fpVein+IGLHvWEYY2PXF45tLkZ27Fi?=
+ =?us-ascii?Q?//vPazPnlE5lQxe74MGR6C++FX9+fd5xWNCNZdDp6mOpCBNQHFeUsmO2ygZH?=
+ =?us-ascii?Q?6bZOzTelBUAwVWpe6gajZEVJWfhYuvPUhtEm5jP7+x+1Jl0E5vUdBkq5W+u1?=
+ =?us-ascii?Q?kPZFYLOZWLEH+kQXT+WqFEwV2YMgbzpzYMDlO/H0nej79RFGLCOoLEwB7oVu?=
+ =?us-ascii?Q?lITdl4caZhKikrBUtlEAhxN1mi8D0nSrQ6rGqvqmJHuHxNy9YK9t42aDkVJ+?=
+ =?us-ascii?Q?yDWl4AOpLc+WB2EqZK9uWRolLsOLw3VSjWbu9EJO3k+BYnVYsKsI0Tpz9fp6?=
+ =?us-ascii?Q?V2wWob73D+JhVlUfkPrF9w+196FsNVPmRptzDinSvkGTbxxgqowF6bDQ/TjE?=
+ =?us-ascii?Q?TtLpVqiUM8okyU8QU0bafwOqjfZxJUUs+ZkAx30oDNHooFgGR8epsLfFeUAe?=
+ =?us-ascii?Q?wY4WCnIRp4g7xlrARaBHyE2FNWo1zuUy3jF/HTzygu3hlJ8R/shFTXAFgIdj?=
+ =?us-ascii?Q?Y5cLmPIJ57PPFGnv5j0xOOlchTq1PxVYGNwbiLIIvW4Qh7FYDIG5dehd73vK?=
+ =?us-ascii?Q?VD9EojeqoDumID6bXJ8ZPfpQ5kBFr7AH6Uyn5Av+ya6WA+9dCwOB1Sqj9RqM?=
+ =?us-ascii?Q?y7r8C9MOxJzzNgUTABrQTy9vcodADvB9fkAksASjXkwkoAPP0SlfyQw1jfUZ?=
+ =?us-ascii?Q?CejPhWT590ohnCPpnQWZCXPV54tT56u2yu3updRehfYDrWl5ZZLAdJTScZRM?=
+ =?us-ascii?Q?16R4yMgQGyynZMRbE1aHDlBilw8DnR7xkAYhDlYQN1VcdFW3uNh4+4OwPlJx?=
+ =?us-ascii?Q?QDS6gf9Jf2eXG2YK8sLjGoSABDNBC0lX42ubKnnCP2zh62O7m1PPdlrMcfen?=
+ =?us-ascii?Q?9qCduOxn3wrx261q26ypXOlRaREKbeN88qrA0OkxRUrOlFKhhvhasvNUU+cm?=
+ =?us-ascii?Q?s1B0k2hmSk5IUO65zH46ptG/P/rgXAOdXk0SekJWHBVV0XF7EM3FsK0PZ8PK?=
+ =?us-ascii?Q?EIelvoUeHtCPf7TRhp67vMtp2UVX7++Os+IW5Yi1BQcmVOWlAKkD+QWN4MCq?=
+ =?us-ascii?Q?3sE3RiHCV5Zvcc4Kzjx+hIqlPo9Y?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR07MB8474.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018)(8096899003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?GX+QXDJaOxA2zjVtoghKlMA9ODnsD9JBpYchAXEI+/uziI6vifAek8ATW3Hm?=
+ =?us-ascii?Q?9RZIlBetO5TO1+3c5EVLgTqzx8Oj86e2LOtWehANID+pq4w44Iw7Zw3p+8mX?=
+ =?us-ascii?Q?K6pzVxlTVsEnpncS0Jf2c9HxqCmryjtUFxPgl+cF8VRv3fb1I8oTyNSGI8YE?=
+ =?us-ascii?Q?8YFxiWIcK44meTjWELZgtUugN0HBMR+ZeKiyZyDIeoIEk2WXwihEPSMZxsiB?=
+ =?us-ascii?Q?q45cB9B0vKwjxmOVJDXDB0NH6Y7OVJfOZ2DDv0mleChW1nm5ofuZSIlY4t5I?=
+ =?us-ascii?Q?P3g3rw3pzblV6cRacSCkrkE84luLU9AKY7SFZn7cagCCrV1zRJMHYgIW2Sy8?=
+ =?us-ascii?Q?x1W9UmCEXf3fwMn7MozccLgiXhSfom56vrlq8hOXNpCkdyn8vuz8lZzLbopd?=
+ =?us-ascii?Q?sOpN/6OWuBc74z7Q5W+uEatktAw84LpyThqfjEG/QwDOMXn9fgHHpJ9o5tru?=
+ =?us-ascii?Q?qIwQNZazcVOQwRFOhSftBeGF/Q4U60cbcseFY09Ye8U71yQCTBavjtZKVU20?=
+ =?us-ascii?Q?CamLS8ncQTrN3p5eycBG/AJtycSOE28wcOk6qXbLIzm46OU8hbycHOcL60Lm?=
+ =?us-ascii?Q?yD+mYeUPevaQQlEvYOrtiDJfp/sdeslsRzIBJmLxhIQXLGcmgIRk41o6cA3n?=
+ =?us-ascii?Q?bUVDeL3agWGqUeXDBEufDr7SSi8T6Is0EBJKh6vC96ra00X7oX78TpGexwUA?=
+ =?us-ascii?Q?MT+QgxIKRx/Ko3SlG0YFSGC/Mil4CUYFJ5hKM5L+iitBv2wEdpvExoZXKtpR?=
+ =?us-ascii?Q?ExWVcLNRs24hKzQk1wdIaynFtaThTkyFPPHVOclAVV68rjmdrQ1FpvYXWDbU?=
+ =?us-ascii?Q?PwRhdhBsLtNussGiJjdb1EtH0MIm8i2a+aND6Bv8EEmFvan6yr70eQZQPPV/?=
+ =?us-ascii?Q?FJXBrjrvq1hu/NRBOyBN+ulktfjoBuwYLvYxvgQPg5lfq+nljiL47S34LKHo?=
+ =?us-ascii?Q?pegw7Qc4RYWKccOnHNXh0QAKYPMu0DlsjN5OiP4KCzYlAn4UMG8l0kd2dBVJ?=
+ =?us-ascii?Q?gSd8hJ3JAwNq7syBgI+5DygIJaHPpAwoo0DLjnj0ge8pp2oLve2Z4i+xcPZe?=
+ =?us-ascii?Q?sUuHyMEtPbq8vzCnX0Qcd/EX+kxxaZnhlpIfxxu6znViqR/HyAIZLW5Bljbl?=
+ =?us-ascii?Q?wWeu8cK9cybdiI/tA800Wb6r/YasfcvAr/dMZ2QvgIV5n17EvjQG1clVdUMn?=
+ =?us-ascii?Q?GqBfl0oXKrfF/lOjGJoVMd+fZc8vmmnAWNdZ/ipUwy/FNlmPREFxkW9bKOyF?=
+ =?us-ascii?Q?KMA8OJYvOiyJS34cwYuMEV4SMVHz/kachBS1tmfMmGHz9RAHsq6E/bWOi3uJ?=
+ =?us-ascii?Q?QtEgL7rEVs6z/yoMgd+ePg9P3ZNSFXCIf+k6NSsMhCGtzBbeGAKD1aR5t6VY?=
+ =?us-ascii?Q?2QXnjIiK4FZcvKA1fzXwvT0wMQcDFno+c5TNwg+MdekfM8MBJ59OLsZlMOBA?=
+ =?us-ascii?Q?naN0181732rG9CfWz8jYegE4H1PQ7mgDIcko3ncg/iJKlIlREPahrJ3dorbr?=
+ =?us-ascii?Q?ULYdgSlSb46kcaKo5Bl2dmCXys6KcFJA+pIYj2nXhv+UngfO8MGQbGFFBESM?=
+ =?us-ascii?Q?Zd0tDA89mSvi/3sT/aOX5JlOLvhOsVDJZWeWjJxGxjfMLx+CJ+DQKxbuy6V8?=
+ =?us-ascii?Q?/A=3D=3D?=
+Content-Type: multipart/alternative;
+	boundary="_000_DB9PR07MB8474EAAEBF2DDD37D248DEF494432DB9PR07MB8474eurp_"
+MIME-Version: 1.0
+X-OriginatorOrg: soprasteria.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR07MB8474.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0aec40c-ab5d-4da1-d1c0-08dcf1b6e78f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2024 09:58:25.0559
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8b87af7d-8647-4dc7-8df4-5f69a2011bb5
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: SK0Re92G0ayJJ5Oie88rROGuoT4PzeP6EXJd/Xks1gvxeQOODf7AwiDXO/mZQrXgysE9l9Id0zEo3nTqrJFmhjrtIgYudrOUUyOZmDi86XU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR07MB7813
+X-MS-Exchange-CrossPremises-AuthAs: Internal
+X-MS-Exchange-CrossPremises-AuthMechanism: 04
+X-MS-Exchange-CrossPremises-AuthSource: DB9PR07MB8474.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossPremises-TransportTrafficType: Email
+X-MS-Exchange-CrossPremises-SCL: 1
+X-MS-Exchange-CrossPremises-messagesource: StoreDriver
+X-MS-Exchange-CrossPremises-BCC: 
+X-MS-Exchange-CrossPremises-originalclientipaddress: 81.66.135.116
+X-MS-Exchange-CrossPremises-transporttraffictype: Email
+X-MS-Exchange-CrossPremises-disclaimer-hash: 0a291ef45dbeaddd3c2a8ba60f43906764fc4f3e495eff2ecd40117e05115c44
+X-MS-Exchange-CrossPremises-antispam-scancontext: DIR:Originating;SFV:NSPM;SKIP:0;
+X-MS-Exchange-CrossPremises-processed-by-journaling: Journal Agent
+X-OrganizationHeadersPreserved: AS8PR07MB7813.eurprd07.prod.outlook.com
+
+--_000_DB9PR07MB8474EAAEBF2DDD37D248DEF494432DB9PR07MB8474eurp_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+
+Hello !
+
+I have a question regarding the VirtualSelectorCacheBrokerPlugin mentioned =
+here : https://activemq.apache.org/components/classic/documentation/virtual=
+-destinations
+
+If a consumer follows those actions in order:
+
+  1.  subscribes to a queue "Consumer.consumer01.VirtualTopic.invoices" wit=
+h selector "k1=3Dv1"
+  2.  disconnects
+  3.  reconnects and subscribes to the same queue "Consumer.consumer01.Virt=
+ualTopic.invoices" with a new selector "k2=3Dv2"
+
+How long will the "k1=3Dv1" condition will be used to forward message from =
+the topic to the queue ? Will it be forever ?
+I could not find such info in the docs, and I was not able to find it in th=
+e code. (I saw the 10 mn scheduler to persist selectors, but it's another t=
+opic)
+
+Thanks in advance!
+
+Regards,
+Nicolas
+
+
+C2 - Usage restreint
+
+--_000_DB9PR07MB8474EAAEBF2DDD37D248DEF494432DB9PR07MB8474eurp_--

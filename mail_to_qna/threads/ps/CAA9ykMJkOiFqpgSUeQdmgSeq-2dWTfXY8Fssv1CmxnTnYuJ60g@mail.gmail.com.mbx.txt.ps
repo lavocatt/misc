@@ -1,0 +1,2690 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 38 24 574 768
+%%Title: Enscript Output
+%%For: Thomas Lavocat
+%%Creator: GNU Enscript 1.6.6
+%%CreationDate: Tue Apr  1 15:59:19 2025
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 6
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 6
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 6
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      fname length fmodstr length add pagenumstr length add 95 6 idiv add d_header_w 6 idiv le{
+        5 0 moveto fname show
+        45 0 rmoveto fmodstr show
+        45 0 rmoveto pagenumstr show
+      } {
+        5 0 moveto fmodstr show
+        45 0 rmoveto pagenumstr show
+        fname length d_header_w 6 idiv idiv 1 add 10 mul 5 exch moveto
+        1 1 fname length d_header_w 6 idiv idiv
+        {
+          dup fname exch 1 sub d_header_w 6 idiv mul d_header_w 6 idiv getinterval show
+          5 exch 10 mul fname length d_header_w 6 idiv idiv 1 add 10 mul exch sub moveto
+        } for
+        5 10 moveto
+        fname fname length d_header_w 6 idiv idiv d_header_w 6 idiv mul dup fname length exch sub getinterval show
+      }ifelse
+    }ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 536 def
+/d_page_h 744 def
+/d_header_x 0 def
+/d_header_y 700 def
+/d_header_w 536 def
+/d_header_h 44 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 536 def
+/d_footer_h 0 def
+/d_output_w 536 def
+/d_output_h 700 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 676 M
+(Return-Path: <users-return-57539-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 665 M
+(rg>) s
+5 654 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 643 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 632 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 621 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 6FB7D3E682) s
+5 610 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 11:35:32 +0000 \(UT) s
+5 599 M
+(C\)) s
+5 588 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 577 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 566 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 555 M
+(        \(No client certificate requested\)) s
+5 544 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 533 M
+(MTPS id D3DC461792) s
+5 522 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 11:35:20 +0000 \(UT) s
+5 511 M
+(C\)) s
+5 500 M
+(Received: \(qmail 560161 invoked by uid 998\); 14 Oct 2024 11:35:19 -0000) s
+5 489 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 478 M
+(Precedence: bulk) s
+5 467 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 456 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 445 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 434 M
+(List-Id: <users.activemq.apache.org>) s
+5 423 M
+(Reply-To: users@activemq.apache.org) s
+5 412 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 401 M
+(Received: \(qmail 560082 invoked by uid 116\); 14 Oct 2024 11:35:18 -0000) s
+5 390 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 379 M
+(6.100\)) s
+5 368 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Mon, 14 Oct 2024 11:35:18 +0000) s
+5 357 M
+(Authentication-Results: apache.org; auth=none) s
+5 346 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 335 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 324 M
+(ith ESMTP id 9E5B82001E8) s
+5 313 M
+(        for <users@activemq.apache.org>; Mon, 14 Oct 2024 11:35:18 +0000 \(UTC\)) s
+5 302 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 291 M
+(X-Spam-Flag: NO) s
+5 280 M
+(X-Spam-Score: 0.252) s
+5 269 M
+(X-Spam-Level: ) s
+5 258 M
+(X-Spam-Status: No, score=0.252 tagged_above=-999 required=6.31) s
+5 247 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 236 M
+(        DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,) s
+5 225 M
+(        NUMERIC_HTTP_ADDR=0.001, RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001,) s
+5 214 M
+(        URIBL_BLOCKED=0.001] autolearn=disabled) s
+5 203 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 192 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 181 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 170 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 159 M
+(10024\)) s
+5 148 M
+(        with ESMTP id U30HgDywfnSD for <users@activemq.apache.org>;) s
+5 137 M
+(        Mon, 14 Oct 2024 11:35:18 +0000 \(UTC\)) s
+5 126 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2001:4860:4864:20::2c; helo=) s
+5 115 M
+(mail-oa1-x2c.google.com; envelope-from=andy.tayls67@gmail.com; receiver=<UNKNOWN> ) s
+5 104 M
+(Received: from mail-oa1-x2c.google.com \(mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20) s
+5 93 M
+(::2c]\)) s
+5 82 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 71 M
+(d 09BCE82055) s
+5 60 M
+(        for <users@activemq.apache.org>; Mon, 14 Oct 2024 11:35:17 +0000 \(UTC\)) s
+5 49 M
+(Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-2884e7fadb8so2143888fac) s
+5 38 M
+(.2) s
+5 27 M
+(        for <users@activemq.apache.org>; Mon, 14 Oct 2024 04:35:17 -0700 \(PDT\)) s
+5 16 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 5 M
+(        d=gmail.com; s=20230601; t=1728905711; x=1729510511; darn=activemq.apache.org;) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 676 M
+(         :from:to:cc:subject:date:message-id:reply-to;) s
+5 665 M
+(        bh=JU4SNxbe2KJTPLBJH9OEFC7J0fyAqLgLqarBOAGhKXo=;) s
+5 654 M
+(        b=PAcuc7LIePFv+5EvuuCr+LTFrLiCrnG/llgErY8aVd0uG6zCF5O9QayeMfgVLHG7m0) s
+5 643 M
+(         uHGypuqkbCyWwEJ4Z1Mh6tjhPXyCJ0Gk3FT3MEiA5I4xS22YrOWF4VwsXtEIrji/1d5c) s
+5 632 M
+(         FGEV3cy1VXoR3XSggE/FpgxjZTHX0FnR/NyuDuXSe5cGGkcD8IOfVMBPErdgWvEkF9fW) s
+5 621 M
+(         nqbXBKelN4QYFG3Ocop7MjD4/fRy1BVHeGr4djslL/5PUI0lqyYn8L6L0Wt1GDU9IItu) s
+5 610 M
+(         0uyJurhndVH6ecDlVn8tkyMru5GYSACIekRDnQIjxv+a+F2SaNyDrYP/9VKJcL4881DJ) s
+5 599 M
+(         eLNw==) s
+5 588 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 577 M
+(        d=1e100.net; s=20230601; t=1728905711; x=1729510511;) s
+5 566 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 555 M
+(         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;) s
+5 544 M
+(        bh=JU4SNxbe2KJTPLBJH9OEFC7J0fyAqLgLqarBOAGhKXo=;) s
+5 533 M
+(        b=uM+mT+ILVhLmBfhD7QNAP6hOIumnA0gOqFMYwbcEsFijwDrVbc/JtYZ55uysTHeKOV) s
+5 522 M
+(         +arsF74Drbm7Hf1d5s7iXEd/ED30zwWiPnzCat9ojkzbFkdu8BURDAA7FLeIhFk7ISGq) s
+5 511 M
+(         SX5GifVRxV7hpZILfDDQXC+uk21LlFGBIO3N1DOLmfH2+3UKHW9Lx+GpxYjUS5lrZX3G) s
+5 500 M
+(         aXl2bGVA1oXWLBmXwxkkZKAMaHyMoxGh2MsIfpfUPgvrnORiz0ayRqJU/Bhhwr9gLaZM) s
+5 489 M
+(         GxQm187vhXQuAAOxAlNVuWS1n7Us8qcEeHDJQtYG8Cy8VxVqOb3L3Ds2pUkcVKULhIYX) s
+5 478 M
+(         rZ+g==) s
+5 467 M
+(X-Gm-Message-State: AOJu0YwW375QGZZRDGq+2QPMq2uOaxPrsnNkiEu/Y8uWoA+srDdQa56d) s
+5 456 M
+(        gg2rNWeDdH4ho9WEaPjRTWqrIM3z7zVUOoSrcrB8AH8kMuQcUOFSNZDeJzHkx1AXvXtDRFlqmuN) s
+5 445 M
+(        Dg6qofo7+lA3BoGF7+zoNRCTkQI/HCtdlTQ==) s
+5 434 M
+(X-Google-Smtp-Source: AGHT+IEWKsyxvuN2I+YQalV/85A2b6nt7VAjBS/6DH/2u5XdGOIZjsnl6GpuAup3w) s
+5 423 M
+(Ygr0J4pjWuw1yOmD9ZLHSWJtgw=) s
+5 412 M
+(X-Received: by 2002:a05:6871:294:b0:278:1d21:2b34 with SMTP id) s
+5 401 M
+( 586e51a60fabf-28887391444mr4411488fac.27.1728905711033; Mon, 14 Oct 2024) s
+5 390 M
+( 04:35:11 -0700 \(PDT\)) s
+5 379 M
+(MIME-Version: 1.0) s
+5 368 M
+(References: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com> <CAA9ykMKAEw4ygXzUD9PPWX364dLpjs) s
+5 357 M
+(0fpM5Jbu4jp25KL3Ep3A@mail.gmail.com>) s
+5 346 M
+(In-Reply-To: <CAA9ykMKAEw4ygXzUD9PPWX364dLpjs0fpM5Jbu4jp25KL3Ep3A@mail.gmail.com>) s
+5 335 M
+(From: Andy Taylor <andy.tayls67@gmail.com>) s
+5 324 M
+(Date: Mon, 14 Oct 2024 12:35:00 +0100) s
+5 313 M
+(Message-ID: <CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com>) s
+5 302 M
+(Subject: Re: new Artemis Console question) s
+5 291 M
+(To: users@activemq.apache.org) s
+5 280 M
+(Content-Type: multipart/alternative; boundary="000000000000c1ac4f06246e3aac") s
+5 258 M
+(--000000000000c1ac4f06246e3aac) s
+5 247 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 225 M
+(I have spoken to hawtIO dev and he pointed me at) s
+5 214 M
+(https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts) s
+5 192 M
+(So I am guessing the URL you are using is causing this to happen, saying) s
+5 181 M
+(that localhost/127.0.0.1 should work, anything else you need to configure) s
+5 170 M
+(https. Maybe you are using a different hostname or localhost isnt mapped) s
+5 159 M
+(correctly?) s
+5 126 M
+(On Mon, 14 Oct 2024 at 10:06, Andy Taylor <andy.tayls67@gmail.com> wrote:) s
+5 104 M
+(> I haven't seen that before, can you supply your connection config for) s
+5 93 M
+(> jolokia. Also what version of Artemis are you using?) s
+5 82 M
+(>) s
+5 71 M
+(> On Sun, 13 Oct 2024 at 21:27, Dondorp, Erwin <erwin.dondorp@cgi.com.invalid>) s
+5 60 M
+(> wrote:) s
+5 49 M
+(>) s
+5 38 M
+(>> Classification: Public) s
+5 27 M
+(>>) s
+5 16 M
+(>> Hello,) s
+5 5 M
+(>>) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 3 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(>> I'm trying the new Artemis Console.) s
+5 676 M
+(>> Installing it with jetty-home-12.0.14 and apache-artemis-console-1.0.0) s
+5 665 M
+(>> was fine. I followed the details from) s
+5 654 M
+(>> https://activemq.apache.org/components/artemis-console/documentation/) s
+5 643 M
+(>> I only needed to tell jetty to use port 8162, as 8080 and 8161 were) s
+5 632 M
+(>> already in use.) s
+5 621 M
+(>> The connection to the broker could be added in the gui.) s
+5 610 M
+(>> When the connection is used with a wrong username/password, the error) s
+5 599 M
+(>> message "Incorrect username or password" appears as expected.) s
+5 588 M
+(>>) s
+5 577 M
+(>> But with the right username/password, nothing visibly happens, and the) s
+5 566 M
+(>> following error appears in the webbrowser console.) s
+5 555 M
+(>> Uncaught \(in promise\) TypeError: window.crypto.subtle is undefined) s
+5 544 M
+(>>     Ep crypto.ts:6) s
+5 533 M
+(>>     b d0339a10.chunk.js:1.238) s
+5 522 M
+(>> This happens for Firefox and Edge to rule out specific browser behavior.) s
+5 511 M
+(>>) s
+5 500 M
+(>> Does this look familiar to anyone? Any hints?) s
+5 489 M
+(>>) s
+5 478 M
+(>> thx!) s
+5 467 M
+(>> Erwin) s
+5 456 M
+(>>) s
+5 445 M
+(>) s
+5 423 M
+(--000000000000c1ac4f06246e3aac--) s
+5 412 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 401 M
+(Return-Path: <users-return-57541-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 390 M
+(rg>) s
+5 379 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 368 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 357 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 346 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 9E2B53E689) s
+5 335 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 22:41:58 +0000 \(UT) s
+5 324 M
+(C\)) s
+5 313 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 302 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 291 M
+(        \(No client certificate requested\)) s
+5 280 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 269 M
+(ESMTPS id 999F049625) s
+5 258 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 22:41:57 +0000 \(UT) s
+5 247 M
+(C\)) s
+5 236 M
+(Received: \(qmail 1976799 invoked by uid 998\); 14 Oct 2024 22:41:55 -0000) s
+5 225 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 214 M
+(Precedence: bulk) s
+5 203 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 192 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 181 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 170 M
+(List-Id: <users.activemq.apache.org>) s
+5 159 M
+(Reply-To: users@activemq.apache.org) s
+5 148 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 137 M
+(Received: \(qmail 1976705 invoked by uid 116\); 14 Oct 2024 22:41:44 -0000) s
+5 126 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 115 M
+(6.100\)) s
+5 104 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Mon, 14 Oct 2024 22:41:44 +0000) s
+5 93 M
+(Authentication-Results: apache.org; auth=none) s
+5 82 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 71 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 60 M
+(ith ESMTP id 227FD2001E9) s
+5 49 M
+(        for <users@activemq.apache.org>; Mon, 14 Oct 2024 22:41:44 +0000 \(UTC\)) s
+5 38 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 27 M
+(X-Spam-Flag: NO) s
+5 16 M
+(X-Spam-Score: -0.199) s
+5 5 M
+(X-Spam-Level: ) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 4 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(X-Spam-Status: No, score=-0.199 tagged_above=-999 required=6.31) s
+5 676 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 665 M
+(        DKIM_VALID_EF=-0.1, RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001,) s
+5 654 M
+(        URIBL_BLOCKED=0.001] autolearn=disabled) s
+5 643 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 632 M
+(        dkim=pass \(2048-bit key\) header.d=cgi.com) s
+5 621 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 610 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 599 M
+(10024\)) s
+5 588 M
+(        with ESMTP id kld6ZX3YMIyj for <users@activemq.apache.org>;) s
+5 577 M
+(        Mon, 14 Oct 2024 22:41:42 +0000 \(UTC\)) s
+5 566 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2620:100:900c:1:67:231:158:1) s
+5 555 M
+(30; helo=mx0c-00131701.pphosted.com; envelope-from=prvs=0017eee589=erwin.dondorp@cgi.co) s
+5 544 M
+(m; receiver=<UNKNOWN> ) s
+5 533 M
+(Received: from mx0c-00131701.pphosted.com \(mx0c-00131701.pphosted.com [IPv6:2620:100:90) s
+5 522 M
+(0c:1:67:231:158:130]\)) s
+5 511 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 500 M
+(d 2BDC082053) s
+5 489 M
+(        for <users@activemq.apache.org>; Mon, 14 Oct 2024 22:41:11 +0000 \(UTC\)) s
+5 478 M
+(Received: from pps.filterd \(m0088533.ppops.net [127.0.0.1]\)) s
+5 467 M
+(        by -00131701.pphosted.com \(8.18.1.2/8.18.1.2\) with ESMTP id 49EE3Cil032123) s
+5 456 M
+(        for <users@activemq.apache.org>; Mon, 14 Oct 2024 22:41:05 GMT) s
+5 445 M
+(X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cgi.com; h=) s
+5 434 M
+(        content-transfer-encoding:content-type:date:from:in-reply-to) s
+5 423 M
+(        :message-id:mime-version:references:subject:to; s=) s
+5 412 M
+(        cgi-hosted-201911; bh=MIaDYmZ347hqywtKMvfBHQ7mLS/r0fQFTOxIweKfHq) s
+5 401 M
+(        w=; b=akFs0srNMfKD3LETJYZTH30+BAg1HFlIgv8q6lE+6kRKTrEiE7dF1SSW2H) s
+5 390 M
+(        lTk1LjS+TYHxGD+4xjXmkuMiWOERroiV1viSWSA8D4+anPFbBAxWub7Utj4WtYYb) s
+5 379 M
+(        e5HAxqK1QQKfza5OhbMofj+ag122V1SIWJnoHCEGuldop4D44GZEai0D/DcsyskR) s
+5 368 M
+(        3vraX5PSgC9bnDSdHrjRJRhHLBq9WhsYYoNMDEmQ6v9dBj0vgjFxGsgn6YeHJsDy) s
+5 357 M
+(        gjas5sT3VZBGzSNQOMtswvWNGmQTqQuxa0+UHToMHBkdKpfNftfO/aNt2wdxn1Ze) s
+5 346 M
+(        02BsbLXGnM8TMgl/LkVVBEgccsAQ==) s
+5 335 M
+(Received: from globalmail.cgi.com \(globalmail-eu.cgi.com [217.150.168.72]\)) s
+5 324 M
+(        by -00131701.pphosted.com \(PPS\) with ESMTPS id 427ftx3y78-1) s
+5 313 M
+(        \(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK\)) s
+5 302 M
+(        for <users@activemq.apache.org>; Mon, 14 Oct 2024 22:41:04 +0000 \(GMT\)) s
+5 291 M
+(Received: from SE-EX10114.groupinfra.com \(142.101.45.153\) by) s
+5 280 M
+( SE-EX10115.groupinfra.com \(142.101.45.154\) with Microsoft SMTP Server) s
+5 269 M
+( \(version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\) id) s
+5 258 M
+( 15.2.1544.11; Tue, 15 Oct 2024 00:41:02 +0200) s
+5 247 M
+(Received: from SE-EX10114.groupinfra.com \([142.101.45.153]\) by) s
+5 236 M
+( SE-EX10114.groupinfra.com \([142.101.45.153]\) with mapi id 15.02.1544.011;) s
+5 225 M
+( Tue, 15 Oct 2024 00:41:02 +0200) s
+5 214 M
+(From: "Dondorp, Erwin" <erwin.dondorp@cgi.com.INVALID>) s
+5 203 M
+(To: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 192 M
+(Subject: RE: new Artemis Console question) s
+5 181 M
+(Thread-Topic: new Artemis Console question) s
+5 170 M
+(Thread-Index: Adsdq4nDa0jff2yfRRKk0znKMYb+uwAW/6oAAAUzkQAADDtR0A==) s
+5 159 M
+(Date: Mon, 14 Oct 2024 22:41:02 +0000) s
+5 148 M
+(Message-ID: <ed108a145ab04954a0647850dfc7d95e@cgi.com>) s
+5 137 M
+(References: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com>) s
+5 126 M
+( <CAA9ykMKAEw4ygXzUD9PPWX364dLpjs0fpM5Jbu4jp25KL3Ep3A@mail.gmail.com>) s
+5 115 M
+( <CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com>) s
+5 104 M
+(In-Reply-To: <CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com>) s
+5 93 M
+(Accept-Language: nl-NL, en-US) s
+5 82 M
+(Content-Language: en-US) s
+5 71 M
+(X-MS-Has-Attach: ) s
+5 60 M
+(X-MS-TNEF-Correlator: ) s
+5 49 M
+(msip_labels: MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Enabled=true;) s
+5 38 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SetDate=2024-10-14T22:41:00Z;) s
+5 27 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Method=Privileged;) s
+5 16 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Name=d9290083-bd2f-48a2-8ac5-09a524b17) s
+5 5 M
+(d15;) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 5 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SiteId=b9fec68c-c92d-461e-9a97-3d03a0f) s
+5 676 M
+(18b82;) s
+5 665 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ActionId=7a9bb624-90c8-47fb-83b0-7a465) s
+5 654 M
+(00849ad;) s
+5 643 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ContentBits=1) s
+5 632 M
+(x-originating-ip: [142.101.45.246]) s
+5 621 M
+(Content-Type: text/plain; charset="utf-8") s
+5 610 M
+(Content-Transfer-Encoding: base64) s
+5 599 M
+(MIME-Version: 1.0) s
+5 588 M
+(X-Proofpoint-ORIG-GUID: rwuReLSBAfXQ7-PigLSCBsz6SrLfMTKP) s
+5 577 M
+(X-Proofpoint-GUID: rwuReLSBAfXQ7-PigLSCBsz6SrLfMTKP) s
+5 555 M
+(Q2xhc3NpZmljYXRpb246IFB1YmxpYw0KDQpBbmR5LA0KDQpUaHggZm9yIHRoZSBhbnN3ZXJzIQ0K) s
+5 544 M
+(SSB3YXMgZmlyc3QgdXNpbmcgImxvY2FsaG9zdCIsIHRoZW4gIjEyNy4wLjAuMSIgYWZ0ZXIgSSBm) s
+5 533 M
+(b3VuZCB0aGUgSVB2NiB3YXJuaW5nIGluIHRoZSBkb2N1bWVudGF0aW9uLg0KSSB3aWxsIGV4cGVy) s
+5 522 M
+(aW1lbnQgZnVydGhlciBub3cgdGhhdCBJIGtub3cgaXQgaXMgbm90IGEgdHJpdmlhbCBrbm93biBj) s
+5 511 M
+(YXVzZS4NCg0KVGh4IQ0KZS4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IEFu) s
+5 500 M
+(ZHkgVGF5bG9yIDxhbmR5LnRheWxzNjdAZ21haWwuY29tPiANClNlbnQ6IE1vbmRheSwgT2N0b2Jl) s
+5 489 M
+(ciAxNCwgMjAyNCAxOjM1IFBNDQpUbzogdXNlcnNAYWN0aXZlbXEuYXBhY2hlLm9yZw0KU3ViamVj) s
+5 478 M
+(dDogUmU6IG5ldyBBcnRlbWlzIENvbnNvbGUgcXVlc3Rpb24NCg0KDQpFWFRFUk5BTCBTRU5ERVI6) s
+5 467 M
+(ICAgRG8gbm90IGNsaWNrIGFueSBsaW5rcyBvciBvcGVuIGFueSBhdHRhY2htZW50cyB1bmxlc3Mg) s
+5 456 M
+(eW91IHRydXN0IHRoZSBzZW5kZXIgYW5kIGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZS4NCkVYUMOJ) s
+5 445 M
+(RElURVVSIEVYVEVSTkU6ICAgIE5lIGNsaXF1ZXogc3VyIGF1Y3VuIGxpZW4gZXQgbuKAmW91dnJl) s
+5 434 M
+(eiBhdWN1bmUgcGnDqGNlIGpvaW50ZSDDoCBtb2lucyBxdeKAmWlscyBuZSBwcm92aWVubmVudCBk) s
+5 423 M
+(4oCZdW4gZXhww6lkaXRldXIgZmlhYmxlLCBvdSBxdWUgdm91cyBheWV6IGwnYXNzdXJhbmNlIHF1) s
+5 412 M
+(ZSBsZSBjb250ZW51IHByb3ZpZW50IGQndW5lIHNvdXJjZSBzw7tyZS4NCg0KSSBoYXZlIHNwb2tl) s
+5 401 M
+(biB0byBoYXd0SU8gZGV2IGFuZCBoZSBwb2ludGVkIG1lIGF0IGh0dHBzOi8vdXJsZGVmZW5zZS5j) s
+5 390 M
+(b20vdjMvX19odHRwczovL2RldmVsb3Blci5tb3ppbGxhLm9yZy9lbi1VUy9kb2NzL1dlYi9TZWN1) s
+5 379 M
+(cml0eS9TZWN1cmVfQ29udGV4dHNfXzshIUFhSWh5dyFzakNXemV6aDE5UUp4S2NrZ196alZkQXBw) s
+5 368 M
+(S0QzVDVhaEtDanBrTGtTaV81SHcyX1JUOTVKSll6VWZwdUd6MllrQWpzZkpoejdVZVViVWcza2FV) s
+5 357 M
+(LTNJZ0kkIA0KDQpTbyBJIGFtIGd1ZXNzaW5nIHRoZSBVUkwgeW91IGFyZSB1c2luZyBpcyBjYXVz) s
+5 346 M
+(aW5nIHRoaXMgdG8gaGFwcGVuLCBzYXlpbmcgdGhhdCBsb2NhbGhvc3QvMTI3LjAuMC4xIHNob3Vs) s
+5 335 M
+(ZCB3b3JrLCBhbnl0aGluZyBlbHNlIHlvdSBuZWVkIHRvIGNvbmZpZ3VyZSBodHRwcy4gTWF5YmUg) s
+5 324 M
+(eW91IGFyZSB1c2luZyBhIGRpZmZlcmVudCBob3N0bmFtZSBvciBsb2NhbGhvc3QgaXNudCBtYXBw) s
+5 313 M
+(ZWQgY29ycmVjdGx5Pw0KDQoNCk9uIE1vbiwgMTQgT2N0IDIwMjQgYXQgMTA6MDYsIEFuZHkgVGF5) s
+5 302 M
+(bG9yIDxhbmR5LnRheWxzNjdAZ21haWwuY29tPiB3cm90ZToNCg0KPiBJIGhhdmVuJ3Qgc2VlbiB0) s
+5 291 M
+(aGF0IGJlZm9yZSwgY2FuIHlvdSBzdXBwbHkgeW91ciBjb25uZWN0aW9uIGNvbmZpZyBmb3IgDQo+) s
+5 280 M
+(IGpvbG9raWEuIEFsc28gd2hhdCB2ZXJzaW9uIG9mIEFydGVtaXMgYXJlIHlvdSB1c2luZz8NCj4N) s
+5 269 M
+(Cj4gT24gU3VuLCAxMyBPY3QgMjAyNCBhdCAyMToyNywgRG9uZG9ycCwgRXJ3aW4gDQo+IDxlcndp) s
+5 258 M
+(bi5kb25kb3JwQGNnaS5jb20uaW52YWxpZD4NCj4gd3JvdGU6DQo+DQo+PiBDbGFzc2lmaWNhdGlv) s
+5 247 M
+(bjogUHVibGljDQo+Pg0KPj4gSGVsbG8sDQo+Pg0KPj4gSSdtIHRyeWluZyB0aGUgbmV3IEFydGVt) s
+5 236 M
+(aXMgQ29uc29sZS4NCj4+IEluc3RhbGxpbmcgaXQgd2l0aCBqZXR0eS1ob21lLTEyLjAuMTQgYW5k) s
+5 225 M
+(IA0KPj4gYXBhY2hlLWFydGVtaXMtY29uc29sZS0xLjAuMCB3YXMgZmluZS4gSSBmb2xsb3dlZCB0) s
+5 214 M
+(aGUgZGV0YWlscyBmcm9tIA0KPj4gaHR0cHM6Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0dHBzOi8v) s
+5 203 M
+(YWN0aXZlbXEuYXBhY2hlLm9yZy9jb21wb25lbnRzL2FyDQo+PiB0ZW1pcy1jb25zb2xlL2RvY3Vt) s
+5 192 M
+(ZW50YXRpb24vX187ISFBYUloeXchc2pDV3plemgxOVFKeEtja2dfempWZEFwcEtEM1QNCj4+IDVh) s
+5 181 M
+(aEtDanBrTGtTaV81SHcyX1JUOTVKSll6VWZwdUd6MllrQWpzZkpoejdVZVViVWcza3JFR2ZwR00k) s
+5 170 M
+(DQo+PiBJIG9ubHkgbmVlZGVkIHRvIHRlbGwgamV0dHkgdG8gdXNlIHBvcnQgODE2MiwgYXMgODA4) s
+5 159 M
+(MCBhbmQgODE2MSB3ZXJlIA0KPj4gYWxyZWFkeSBpbiB1c2UuDQo+PiBUaGUgY29ubmVjdGlvbiB0) s
+5 148 M
+(byB0aGUgYnJva2VyIGNvdWxkIGJlIGFkZGVkIGluIHRoZSBndWkuDQo+PiBXaGVuIHRoZSBjb25u) s
+5 137 M
+(ZWN0aW9uIGlzIHVzZWQgd2l0aCBhIHdyb25nIHVzZXJuYW1lL3Bhc3N3b3JkLCB0aGUgZXJyb3Ig) s
+5 126 M
+(DQo+PiBtZXNzYWdlICJJbmNvcnJlY3QgdXNlcm5hbWUgb3IgcGFzc3dvcmQiIGFwcGVhcnMgYXMg) s
+5 115 M
+(ZXhwZWN0ZWQuDQo+Pg0KPj4gQnV0IHdpdGggdGhlIHJpZ2h0IHVzZXJuYW1lL3Bhc3N3b3JkLCBu) s
+5 104 M
+(b3RoaW5nIHZpc2libHkgaGFwcGVucywgYW5kIA0KPj4gdGhlIGZvbGxvd2luZyBlcnJvciBhcHBl) s
+5 93 M
+(YXJzIGluIHRoZSB3ZWJicm93c2VyIGNvbnNvbGUuDQo+PiBVbmNhdWdodCAoaW4gcHJvbWlzZSkg) s
+5 82 M
+(VHlwZUVycm9yOiB3aW5kb3cuY3J5cHRvLnN1YnRsZSBpcyB1bmRlZmluZWQNCj4+ICAgICBFcCBj) s
+5 71 M
+(cnlwdG8udHM6Ng0KPj4gICAgIGIgZDAzMzlhMTAuY2h1bmsuanM6MS4yMzgNCj4+IFRoaXMgaGFw) s
+5 60 M
+(cGVucyBmb3IgRmlyZWZveCBhbmQgRWRnZSB0byBydWxlIG91dCBzcGVjaWZpYyBicm93c2VyIGJl) s
+5 49 M
+(aGF2aW9yLg0KPj4NCj4+IERvZXMgdGhpcyBsb29rIGZhbWlsaWFyIHRvIGFueW9uZT8gQW55IGhp) s
+5 38 M
+(bnRzPw0KPj4NCj4+IHRoeCENCj4+IEVyd2luDQo+Pg0KPg==) s
+5 27 M
+(DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t) s
+5 16 M
+(LS0tLS0tLS0tLS0tLS0tLS0NClRvIHVuc3Vic2NyaWJlLCBlLW1haWw6IHVzZXJzLXVuc3Vi) s
+5 5 M
+(c2NyaWJlQGFjdGl2ZW1xLmFwYWNoZS5vcmcNCkZvciBhZGRpdGlvbmFsIGNvbW1hbmRzLCBl) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 6 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(LW1haWw6IHVzZXJzLWhlbHBAYWN0aXZlbXEuYXBhY2hlLm9yZw0KRm9yIGZ1cnRoZXIgaW5m) s
+5 676 M
+(b3JtYXRpb24sIHZpc2l0OiBodHRwczovL2FjdGl2ZW1xLmFwYWNoZS5vcmcvY29udGFjdA0K) s
+5 665 M
+(DQoN) s
+5 654 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 643 M
+(Return-Path: <users-return-57547-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 632 M
+(rg>) s
+5 621 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 610 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 599 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 588 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 129583E680) s
+5 577 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Fri, 18 Oct 2024 15:55:46 +0000 \(UT) s
+5 566 M
+(C\)) s
+5 555 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 544 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 533 M
+(        \(No client certificate requested\)) s
+5 522 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 511 M
+(ESMTPS id CC75B53854) s
+5 500 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Fri, 18 Oct 2024 15:54:59 +0000 \(UT) s
+5 489 M
+(C\)) s
+5 478 M
+(Received: \(qmail 532061 invoked by uid 998\); 18 Oct 2024 15:54:58 -0000) s
+5 467 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 456 M
+(Precedence: bulk) s
+5 445 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 434 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 423 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 412 M
+(List-Id: <users.activemq.apache.org>) s
+5 401 M
+(Reply-To: users@activemq.apache.org) s
+5 390 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 379 M
+(Received: \(qmail 531848 invoked by uid 116\); 18 Oct 2024 15:54:52 -0000) s
+5 368 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 357 M
+(6.100\)) s
+5 346 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Fri, 18 Oct 2024 15:54:52 +0000) s
+5 335 M
+(Authentication-Results: apache.org; auth=none) s
+5 324 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 313 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 302 M
+(ith ESMTP id 190F92000E1) s
+5 291 M
+(        for <users@activemq.apache.org>; Fri, 18 Oct 2024 15:54:52 +0000 \(UTC\)) s
+5 280 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 269 M
+(X-Spam-Flag: NO) s
+5 258 M
+(X-Spam-Score: -0.199) s
+5 247 M
+(X-Spam-Level: ) s
+5 236 M
+(X-Spam-Status: No, score=-0.199 tagged_above=-999 required=6.31) s
+5 225 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 214 M
+(        DKIM_VALID_EF=-0.1, RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001,) s
+5 203 M
+(        URIBL_BLOCKED=0.001] autolearn=disabled) s
+5 192 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 181 M
+(        dkim=pass \(2048-bit key\) header.d=cgi.com) s
+5 170 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 159 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 148 M
+(10024\)) s
+5 137 M
+(        with ESMTP id eFVMcNzAe8CM for <users@activemq.apache.org>;) s
+5 126 M
+(        Fri, 18 Oct 2024 15:54:51 +0000 \(UTC\)) s
+5 115 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2620:100:900c:1:67:231:158:1) s
+5 104 M
+(30; helo=mx0c-00131701.pphosted.com; envelope-from=prvs=0021ece35e=erwin.dondorp@cgi.co) s
+5 93 M
+(m; receiver=<UNKNOWN> ) s
+5 82 M
+(Received: from mx0c-00131701.pphosted.com \(mx0c-00131701.pphosted.com [IPv6:2620:100:90) s
+5 71 M
+(0c:1:67:231:158:130]\)) s
+5 60 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 49 M
+(d 6457382089) s
+5 38 M
+(        for <users@activemq.apache.org>; Fri, 18 Oct 2024 15:54:51 +0000 \(UTC\)) s
+5 27 M
+(Received: from pps.filterd \(m0101452.ppops.net [127.0.0.1]\)) s
+5 16 M
+(        by -00131701.pphosted.com \(8.18.1.2/8.18.1.2\) with ESMTP id 49IDimgI012582) s
+5 5 M
+(        for <users@activemq.apache.org>; Fri, 18 Oct 2024 15:54:44 GMT) s
+_R
+S
+%%Page: (7) 7
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 7 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (7) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cgi.com; h=) s
+5 676 M
+(        content-transfer-encoding:content-type:date:from:in-reply-to) s
+5 665 M
+(        :message-id:mime-version:references:subject:to; s=) s
+5 654 M
+(        cgi-hosted-201911; bh=DqO5CEPkT51fq7ERl1McqefawsZGd5JmP2iQQseif3) s
+5 643 M
+(        c=; b=jttZX7HcyEqQSuaoumkQ8CPy8b8kDfxWg8/mtguz0aAzdsdL15JU0S+GXZ) s
+5 632 M
+(        m4CauXYQWF+4Ksx5oYLTmu0OwhA3c1L6hodTSajijJeDzTeWSGrFU/aPcbWyocsW) s
+5 621 M
+(        XuTcNcB9/DsaHQ/kANMMLnehvu+QJkk3q7mmj4moiJQfspTA9I5z5aDG5t5DF20g) s
+5 610 M
+(        B9G3nAFrVgYm9pPoPZkaz5+Z88MozsVB5/Qc3QCUlLL4f7y0hqdy7B8u50jvvDWD) s
+5 599 M
+(        dPFh5Nmy/5C0BUT/CSnfeuMDp3+H5UjVNIIvhWrqe0htRLb0glWZYJvN+UWv79u9) s
+5 588 M
+(        jnS7kh3/yvkyxZLZD2t2hFEyEf9g==) s
+5 577 M
+(Received: from globalmail.cgi.com \(globalmail-eu.cgi.com [217.150.168.72]\)) s
+5 566 M
+(        by -00131701.pphosted.com \(PPS\) with ESMTPS id 427hw09b2s-1) s
+5 555 M
+(        \(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK\)) s
+5 544 M
+(        for <users@activemq.apache.org>; Fri, 18 Oct 2024 15:54:43 +0000 \(GMT\)) s
+5 533 M
+(Received: from SE-EX10114.groupinfra.com \(142.101.45.153\) by) s
+5 522 M
+( SE-EX10115.groupinfra.com \(142.101.45.154\) with Microsoft SMTP Server) s
+5 511 M
+( \(version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\) id) s
+5 500 M
+( 15.2.1544.11; Fri, 18 Oct 2024 17:54:41 +0200) s
+5 489 M
+(Received: from SE-EX10114.groupinfra.com \([142.101.45.153]\) by) s
+5 478 M
+( SE-EX10114.groupinfra.com \([142.101.45.153]\) with mapi id 15.02.1544.011;) s
+5 467 M
+( Fri, 18 Oct 2024 17:54:41 +0200) s
+5 456 M
+(From: "Dondorp, Erwin" <erwin.dondorp@cgi.com.INVALID>) s
+5 445 M
+(To: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 434 M
+(Subject: RE: new Artemis Console question) s
+5 423 M
+(Thread-Topic: new Artemis Console question) s
+5 412 M
+(Thread-Index: Adsdq4nDa0jff2yfRRKk0znKMYb+uwAW/6oAAAUzkQAADDtR0ADH1tCA) s
+5 401 M
+(Date: Fri, 18 Oct 2024 15:54:41 +0000) s
+5 390 M
+(Message-ID: <814ef35a77554ce2ba61ff271bcd5f19@cgi.com>) s
+5 379 M
+(References: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com>) s
+5 368 M
+( <CAA9ykMKAEw4ygXzUD9PPWX364dLpjs0fpM5Jbu4jp25KL3Ep3A@mail.gmail.com>) s
+5 357 M
+( <CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com>) s
+5 346 M
+( <ed108a145ab04954a0647850dfc7d95e@cgi.com>) s
+5 335 M
+(In-Reply-To: <ed108a145ab04954a0647850dfc7d95e@cgi.com>) s
+5 324 M
+(Accept-Language: nl-NL, en-US) s
+5 313 M
+(Content-Language: en-US) s
+5 302 M
+(X-MS-Has-Attach: ) s
+5 291 M
+(X-MS-TNEF-Correlator: ) s
+5 280 M
+(msip_labels: MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Enabled=true;) s
+5 269 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SetDate=2024-10-18T15:54:39Z;) s
+5 258 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Method=Privileged;) s
+5 247 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Name=d9290083-bd2f-48a2-8ac5-09a524b17) s
+5 236 M
+(d15;) s
+5 225 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SiteId=b9fec68c-c92d-461e-9a97-3d03a0f) s
+5 214 M
+(18b82;) s
+5 203 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ActionId=8dc8412f-e691-4ef8-bc0a-890dd) s
+5 192 M
+(8d75efe;) s
+5 181 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ContentBits=1) s
+5 170 M
+(x-originating-ip: [142.101.28.247]) s
+5 159 M
+(Content-Type: text/plain; charset="utf-8") s
+5 148 M
+(Content-Transfer-Encoding: base64) s
+5 137 M
+(MIME-Version: 1.0) s
+5 126 M
+(X-Proofpoint-GUID: V61ptvlgbKMD7OxEittkjd0FLFGee2_1) s
+5 115 M
+(X-Proofpoint-ORIG-GUID: V61ptvlgbKMD7OxEittkjd0FLFGee2_1) s
+5 93 M
+(Q2xhc3NpZmljYXRpb246IFB1YmxpYw0KDQpBbmR5LA0KDQpJIGZvdW5kIHRoZSBpc3N1ZS4NCkkn) s
+5 82 M
+(bSAoZm9yY2VkIHRvKSB1c2luZyBwb3J0IGZvcndhcmRpbmcgdG8gY29ubmVjdCB0byB0aGUgYXJ0) s
+5 71 M
+(ZW1pcyBzeXN0ZW0uDQpCdXQgSSdtIHVzaW5nIGFuIGFsaWFzIGZvciAxMjcuMC4wLjEgKGxpa2Ug) s
+5 60 M
+(ImNvbXB1dGVyLXh5eiIpIHNvIHRoYXQgY29va2llcyBhbmQgcGFzc3dvcmRzIGFyZSBwcm9wZXJs) s
+5 49 M
+(eSByZW1lbWJlcmVkIGJ5IHRoZSBicm93c2VyLg0KSW4gdGhlICJjb25uZWN0IiBzY3JlZW4sIEkg) s
+5 38 M
+(Y2FuIG9ubHkgZW50ZXIgaG9zdG5hbWVzIGFzICJsb2NhbGhvc3QiIGJlY2F1c2UgaXQgZG9lcyBu) s
+5 27 M
+(b3Qga25vdyBteSBsb2NhbCBhbGlhc2VzLg0KVGhhdCBjaGFuZ2UgaW4gaG9zdG5hbWUgY29uZnVz) s
+5 16 M
+(ZWQgdGhlIG5ldyBhcnRlbWlzLWNvbnNvbGUgaW50ZXJuYWxzIGVub3VnaCB0byBnaXZlIHRoZSBi) s
+5 5 M
+(ZWxvdyBlcnJvci4NClJldmVydGluZyBldmVyeXRoaW5nIHRvICJsb2NhbGhvc3QiIHNvbHZlZCBp) s
+_R
+S
+%%Page: (8) 8
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 8 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (8) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(dCAoYXQgbGVhc3QgZ29vZCBlbm91Z2ggZm9yIGRlbW9uc3RyYXRpb24gcHVycG9zZXMpLg0KDQpU) s
+5 676 M
+(aHghDQpFcndpbg0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogRG9uZG9ycCwg) s
+5 665 M
+(RXJ3aW4gDQpTZW50OiBUdWVzZGF5LCBPY3RvYmVyIDE1LCAyMDI0IDEyOjQxIEFNDQpUbzogJ3Vz) s
+5 654 M
+(ZXJzQGFjdGl2ZW1xLmFwYWNoZS5vcmcnIDx1c2Vyc0BhY3RpdmVtcS5hcGFjaGUub3JnPg0KU3Vi) s
+5 643 M
+(amVjdDogUkU6IG5ldyBBcnRlbWlzIENvbnNvbGUgcXVlc3Rpb24NCg0KQ2xhc3NpZmljYXRpb246) s
+5 632 M
+(IFB1YmxpYw0KDQpBbmR5LA0KDQpUaHggZm9yIHRoZSBhbnN3ZXJzIQ0KSSB3YXMgZmlyc3QgdXNp) s
+5 621 M
+(bmcgImxvY2FsaG9zdCIsIHRoZW4gIjEyNy4wLjAuMSIgYWZ0ZXIgSSBmb3VuZCB0aGUgSVB2NiB3) s
+5 610 M
+(YXJuaW5nIGluIHRoZSBkb2N1bWVudGF0aW9uLg0KSSB3aWxsIGV4cGVyaW1lbnQgZnVydGhlciBu) s
+5 599 M
+(b3cgdGhhdCBJIGtub3cgaXQgaXMgbm90IGEgdHJpdmlhbCBrbm93biBjYXVzZS4NCg0KVGh4IQ0K) s
+5 588 M
+(ZS4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IEFuZHkgVGF5bG9yIDxhbmR5) s
+5 577 M
+(LnRheWxzNjdAZ21haWwuY29tPiANClNlbnQ6IE1vbmRheSwgT2N0b2JlciAxNCwgMjAyNCAxOjM1) s
+5 566 M
+(IFBNDQpUbzogdXNlcnNAYWN0aXZlbXEuYXBhY2hlLm9yZw0KU3ViamVjdDogUmU6IG5ldyBBcnRl) s
+5 555 M
+(bWlzIENvbnNvbGUgcXVlc3Rpb24NCg0KDQpFWFRFUk5BTCBTRU5ERVI6ICAgRG8gbm90IGNsaWNr) s
+5 544 M
+(IGFueSBsaW5rcyBvciBvcGVuIGFueSBhdHRhY2htZW50cyB1bmxlc3MgeW91IHRydXN0IHRoZSBz) s
+5 533 M
+(ZW5kZXIgYW5kIGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZS4NCkVYUMOJRElURVVSIEVYVEVSTkU6) s
+5 522 M
+(ICAgIE5lIGNsaXF1ZXogc3VyIGF1Y3VuIGxpZW4gZXQgbuKAmW91dnJleiBhdWN1bmUgcGnDqGNl) s
+5 511 M
+(IGpvaW50ZSDDoCBtb2lucyBxdeKAmWlscyBuZSBwcm92aWVubmVudCBk4oCZdW4gZXhww6lkaXRl) s
+5 500 M
+(dXIgZmlhYmxlLCBvdSBxdWUgdm91cyBheWV6IGwnYXNzdXJhbmNlIHF1ZSBsZSBjb250ZW51IHBy) s
+5 489 M
+(b3ZpZW50IGQndW5lIHNvdXJjZSBzw7tyZS4NCg0KSSBoYXZlIHNwb2tlbiB0byBoYXd0SU8gZGV2) s
+5 478 M
+(IGFuZCBoZSBwb2ludGVkIG1lIGF0IGh0dHBzOi8vdXJsZGVmZW5zZS5jb20vdjMvX19odHRwczov) s
+5 467 M
+(L2RldmVsb3Blci5tb3ppbGxhLm9yZy9lbi1VUy9kb2NzL1dlYi9TZWN1cml0eS9TZWN1cmVfQ29u) s
+5 456 M
+(dGV4dHNfXzshIUFhSWh5dyFzakNXemV6aDE5UUp4S2NrZ196alZkQXBwS0QzVDVhaEtDanBrTGtT) s
+5 445 M
+(aV81SHcyX1JUOTVKSll6VWZwdUd6MllrQWpzZkpoejdVZVViVWcza2FVLTNJZ0kkIA0KDQpTbyBJ) s
+5 434 M
+(IGFtIGd1ZXNzaW5nIHRoZSBVUkwgeW91IGFyZSB1c2luZyBpcyBjYXVzaW5nIHRoaXMgdG8gaGFw) s
+5 423 M
+(cGVuLCBzYXlpbmcgdGhhdCBsb2NhbGhvc3QvMTI3LjAuMC4xIHNob3VsZCB3b3JrLCBhbnl0aGlu) s
+5 412 M
+(ZyBlbHNlIHlvdSBuZWVkIHRvIGNvbmZpZ3VyZSBodHRwcy4gTWF5YmUgeW91IGFyZSB1c2luZyBh) s
+5 401 M
+(IGRpZmZlcmVudCBob3N0bmFtZSBvciBsb2NhbGhvc3QgaXNudCBtYXBwZWQgY29ycmVjdGx5Pw0K) s
+5 390 M
+(DQoNCk9uIE1vbiwgMTQgT2N0IDIwMjQgYXQgMTA6MDYsIEFuZHkgVGF5bG9yIDxhbmR5LnRheWxz) s
+5 379 M
+(NjdAZ21haWwuY29tPiB3cm90ZToNCg0KPiBJIGhhdmVuJ3Qgc2VlbiB0aGF0IGJlZm9yZSwgY2Fu) s
+5 368 M
+(IHlvdSBzdXBwbHkgeW91ciBjb25uZWN0aW9uIGNvbmZpZyBmb3IgDQo+IGpvbG9raWEuIEFsc28g) s
+5 357 M
+(d2hhdCB2ZXJzaW9uIG9mIEFydGVtaXMgYXJlIHlvdSB1c2luZz8NCj4NCj4gT24gU3VuLCAxMyBP) s
+5 346 M
+(Y3QgMjAyNCBhdCAyMToyNywgRG9uZG9ycCwgRXJ3aW4gDQo+IDxlcndpbi5kb25kb3JwQGNnaS5j) s
+5 335 M
+(b20uaW52YWxpZD4NCj4gd3JvdGU6DQo+DQo+PiBDbGFzc2lmaWNhdGlvbjogUHVibGljDQo+Pg0K) s
+5 324 M
+(Pj4gSGVsbG8sDQo+Pg0KPj4gSSdtIHRyeWluZyB0aGUgbmV3IEFydGVtaXMgQ29uc29sZS4NCj4+) s
+5 313 M
+(IEluc3RhbGxpbmcgaXQgd2l0aCBqZXR0eS1ob21lLTEyLjAuMTQgYW5kIA0KPj4gYXBhY2hlLWFy) s
+5 302 M
+(dGVtaXMtY29uc29sZS0xLjAuMCB3YXMgZmluZS4gSSBmb2xsb3dlZCB0aGUgZGV0YWlscyBmcm9t) s
+5 291 M
+(IA0KPj4gaHR0cHM6Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0dHBzOi8vYWN0aXZlbXEuYXBhY2hl) s
+5 280 M
+(Lm9yZy9jb21wb25lbnRzL2FyDQo+PiB0ZW1pcy1jb25zb2xlL2RvY3VtZW50YXRpb24vX187ISFB) s
+5 269 M
+(YUloeXchc2pDV3plemgxOVFKeEtja2dfempWZEFwcEtEM1QNCj4+IDVhaEtDanBrTGtTaV81SHcy) s
+5 258 M
+(X1JUOTVKSll6VWZwdUd6MllrQWpzZkpoejdVZVViVWcza3JFR2ZwR00kDQo+PiBJIG9ubHkgbmVl) s
+5 247 M
+(ZGVkIHRvIHRlbGwgamV0dHkgdG8gdXNlIHBvcnQgODE2MiwgYXMgODA4MCBhbmQgODE2MSB3ZXJl) s
+5 236 M
+(IA0KPj4gYWxyZWFkeSBpbiB1c2UuDQo+PiBUaGUgY29ubmVjdGlvbiB0byB0aGUgYnJva2VyIGNv) s
+5 225 M
+(dWxkIGJlIGFkZGVkIGluIHRoZSBndWkuDQo+PiBXaGVuIHRoZSBjb25uZWN0aW9uIGlzIHVzZWQg) s
+5 214 M
+(d2l0aCBhIHdyb25nIHVzZXJuYW1lL3Bhc3N3b3JkLCB0aGUgZXJyb3IgDQo+PiBtZXNzYWdlICJJ) s
+5 203 M
+(bmNvcnJlY3QgdXNlcm5hbWUgb3IgcGFzc3dvcmQiIGFwcGVhcnMgYXMgZXhwZWN0ZWQuDQo+Pg0K) s
+5 192 M
+(Pj4gQnV0IHdpdGggdGhlIHJpZ2h0IHVzZXJuYW1lL3Bhc3N3b3JkLCBub3RoaW5nIHZpc2libHkg) s
+5 181 M
+(aGFwcGVucywgYW5kIA0KPj4gdGhlIGZvbGxvd2luZyBlcnJvciBhcHBlYXJzIGluIHRoZSB3ZWJi) s
+5 170 M
+(cm93c2VyIGNvbnNvbGUuDQo+PiBVbmNhdWdodCAoaW4gcHJvbWlzZSkgVHlwZUVycm9yOiB3aW5k) s
+5 159 M
+(b3cuY3J5cHRvLnN1YnRsZSBpcyB1bmRlZmluZWQNCj4+ICAgICBFcCBjcnlwdG8udHM6Ng0KPj4g) s
+5 148 M
+(ICAgIGIgZDAzMzlhMTAuY2h1bmsuanM6MS4yMzgNCj4+IFRoaXMgaGFwcGVucyBmb3IgRmlyZWZv) s
+5 137 M
+(eCBhbmQgRWRnZSB0byBydWxlIG91dCBzcGVjaWZpYyBicm93c2VyIGJlaGF2aW9yLg0KPj4NCj4+) s
+5 126 M
+(IERvZXMgdGhpcyBsb29rIGZhbWlsaWFyIHRvIGFueW9uZT8gQW55IGhpbnRzPw0KPj4NCj4+IHRo) s
+5 115 M
+(eCENCj4+IEVyd2luDQo+Pg0KPg0K) s
+5 104 M
+(DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t) s
+5 93 M
+(LS0tLS0tLS0tLS0tLS0tLS0NClRvIHVuc3Vic2NyaWJlLCBlLW1haWw6IHVzZXJzLXVuc3Vi) s
+5 82 M
+(c2NyaWJlQGFjdGl2ZW1xLmFwYWNoZS5vcmcNCkZvciBhZGRpdGlvbmFsIGNvbW1hbmRzLCBl) s
+5 71 M
+(LW1haWw6IHVzZXJzLWhlbHBAYWN0aXZlbXEuYXBhY2hlLm9yZw0KRm9yIGZ1cnRoZXIgaW5m) s
+5 60 M
+(b3JtYXRpb24sIHZpc2l0OiBodHRwczovL2FjdGl2ZW1xLmFwYWNoZS5vcmcvY29udGFjdA0K) s
+5 49 M
+(DQoN) s
+5 38 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 27 M
+(Return-Path: <users-return-57558-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 16 M
+(rg>) s
+5 5 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+_R
+S
+%%Page: (9) 9
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 9 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (9) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 676 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 665 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 7092C3E6B5) s
+5 654 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 08:25:54 +0000 \(UT) s
+5 643 M
+(C\)) s
+5 632 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 621 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 610 M
+(        \(No client certificate requested\)) s
+5 599 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 588 M
+(ESMTPS id 72B3045492) s
+5 577 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 08:25:53 +0000 \(UT) s
+5 566 M
+(C\)) s
+5 555 M
+(Received: \(qmail 3443413 invoked by uid 998\); 22 Oct 2024 08:25:51 -0000) s
+5 544 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 533 M
+(Precedence: bulk) s
+5 522 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 511 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 500 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 489 M
+(List-Id: <users.activemq.apache.org>) s
+5 478 M
+(Reply-To: users@activemq.apache.org) s
+5 467 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 456 M
+(Received: \(qmail 3443387 invoked by uid 116\); 22 Oct 2024 08:25:50 -0000) s
+5 445 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 434 M
+(6.100\)) s
+5 423 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Tue, 22 Oct 2024 08:25:50 +0000) s
+5 412 M
+(Authentication-Results: apache.org; auth=none) s
+5 401 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 390 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 379 M
+(ith ESMTP id B33B720019E) s
+5 368 M
+(        for <users@activemq.apache.org>; Tue, 22 Oct 2024 08:25:50 +0000 \(UTC\)) s
+5 357 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 346 M
+(X-Spam-Flag: NO) s
+5 335 M
+(X-Spam-Score: 0.252) s
+5 324 M
+(X-Spam-Level: ) s
+5 313 M
+(X-Spam-Status: No, score=0.252 tagged_above=-999 required=6.31) s
+5 302 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 291 M
+(        DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,) s
+5 280 M
+(        NUMERIC_HTTP_ADDR=0.001, RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001,) s
+5 269 M
+(        URIBL_BLOCKED=0.001] autolearn=disabled) s
+5 258 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 247 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 236 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 225 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 214 M
+(10024\)) s
+5 203 M
+(        with ESMTP id Y-dko3XX_x3Z for <users@activemq.apache.org>;) s
+5 192 M
+(        Tue, 22 Oct 2024 08:25:50 +0000 \(UTC\)) s
+5 181 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2607:f8b0:4864:20::236; helo) s
+5 170 M
+(=mail-oi1-x236.google.com; envelope-from=andy.tayls67@gmail.com; receiver=<UNKNOWN> ) s
+5 159 M
+(Received: from mail-oi1-x236.google.com \(mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:) s
+5 148 M
+(20::236]\)) s
+5 137 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 126 M
+(d EC63E816B2) s
+5 115 M
+(        for <users@activemq.apache.org>; Tue, 22 Oct 2024 08:25:49 +0000 \(UTC\)) s
+5 104 M
+(Received: by mail-oi1-x236.google.com with SMTP id 5614622812f47-3e604425aa0so1542116b6) s
+5 93 M
+(e.0) s
+5 82 M
+(        for <users@activemq.apache.org>; Tue, 22 Oct 2024 01:25:49 -0700 \(PDT\)) s
+5 71 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 60 M
+(        d=gmail.com; s=20230601; t=1729585542; x=1730190342; darn=activemq.apache.org;) s
+5 49 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 38 M
+(         :from:to:cc:subject:date:message-id:reply-to;) s
+5 27 M
+(        bh=c0OrDuhfqXZrWPqiXPwanRDt632dYaC2oUGRmDfgrVc=;) s
+5 16 M
+(        b=DU+rVgzMjHSZTxq1uoems4P2yFjLFWYORACXWp8JGbAc/NSJGZaIUzBlzhzrefgMD7) s
+5 5 M
+(         dTA/+kLbsR3+1TV4pHROywKxCRWsK/P+38PSgXZxtZ8wNfChZ8ilJTdoIl/GG+4rX3Ve) s
+_R
+S
+%%Page: (10) 10
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 10 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (10) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(         5ZdRVtGuXpHFqMyGRDpWttTXR7DpRcb2ibpIu/kPPj87PLPDmpcRAJ/4L/OboEvFjwpZ) s
+5 676 M
+(         cWe7FAZLFiR+W4i+pyj7PXbFruOY7eeYBYTfDyFQjfB28K9Mfk0TKwqzFgW7y+L2wXId) s
+5 665 M
+(         SZx0Wfd6hbCpHO3leldBk53cw6n8LEAwIu/kjtWAim2XjWf7t4UcB+PrmnACPH6maqYK) s
+5 654 M
+(         cO5g==) s
+5 643 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 632 M
+(        d=1e100.net; s=20230601; t=1729585542; x=1730190342;) s
+5 621 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 610 M
+(         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;) s
+5 599 M
+(        bh=c0OrDuhfqXZrWPqiXPwanRDt632dYaC2oUGRmDfgrVc=;) s
+5 588 M
+(        b=sIF0i7nJe84DpkUYnyiEDDd2597GgKTbIoYN6yrDJV/ZXAlOakkXzEBdOI57f3s8B5) s
+5 577 M
+(         NUWwPmxjbsDJX22rcHPoOYhit4oOmVtrPDJTyBbi3G7ugkZcf4Op+I9jElRWFZm0ShNb) s
+5 566 M
+(         FAsDWUSLr62btiXIy7ZN9R5GGEgVwcNPV6PoqjHRquWI/co4DYz011hptVJfHdnX4bTN) s
+5 555 M
+(         8s1R+SHJ7bbK/0hQFYjnvacwyuCFMmEmAs03zY8+gO3JdZSgKFrRxuDLnx/LTHRwh5PZ) s
+5 544 M
+(         R9k3dMh0+ur9IEgONcobMaRJJuzH6+Lhf9t6ShMQgeVL1EFalKXhTBu0NkKE0tA4fC8Z) s
+5 533 M
+(         i0fg==) s
+5 522 M
+(X-Gm-Message-State: AOJu0YzjyP5vCXkAWYf07sM47SHrxcR0ocK+4rRkVG5dYoGJUs6IHi5r) s
+5 511 M
+(        5cUVO1KFzG10IIKLGIi+PNgdluGB6+jM9/e4u4kwIcVll8FHP+Vrs4gE7xwgikpofLkPnEQD0bu) s
+5 500 M
+(        WkPhbhEBfEGm+KoBXuSnfDhEfHT1yInM=) s
+5 489 M
+(X-Google-Smtp-Source: AGHT+IH36wR8BBt3y5IbT94m4C/i29E/oyV1Wfxj0vcQ/9lMUFbnawvNJHLRHXDUO) s
+5 478 M
+(KZBhD8NGEOpf67dZ/hvSreOTVU=) s
+5 467 M
+(X-Received: by 2002:a05:6870:ac28:b0:260:f43e:7d89 with SMTP id) s
+5 456 M
+( 586e51a60fabf-2892c29c666mr11328688fac.2.1729585542190; Tue, 22 Oct 2024) s
+5 445 M
+( 01:25:42 -0700 \(PDT\)) s
+5 434 M
+(MIME-Version: 1.0) s
+5 423 M
+(References: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com> <CAA9ykMKAEw4ygXzUD9PPWX364dLpjs) s
+5 412 M
+(0fpM5Jbu4jp25KL3Ep3A@mail.gmail.com>) s
+5 401 M
+( <CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com>) s
+5 390 M
+( <ed108a145ab04954a0647850dfc7d95e@cgi.com> <814ef35a77554ce2ba61ff271bcd5f19@cgi.com>) s
+5 379 M
+(In-Reply-To: <814ef35a77554ce2ba61ff271bcd5f19@cgi.com>) s
+5 368 M
+(From: Andy Taylor <andy.tayls67@gmail.com>) s
+5 357 M
+(Date: Tue, 22 Oct 2024 09:25:31 +0100) s
+5 346 M
+(Message-ID: <CAA9ykMJBf=2n-J8vgMu-gHMLx=HNpJ=RaUe6HSmbRXqHMsLXNg@mail.gmail.com>) s
+5 335 M
+(Subject: Re: new Artemis Console question) s
+5 324 M
+(To: users@activemq.apache.org) s
+5 313 M
+(Content-Type: multipart/alternative; boundary="000000000000d9dc5f06250c8393") s
+5 291 M
+(--000000000000d9dc5f06250c8393) s
+5 280 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 269 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 247 M
+(good to hear.) s
+5 225 M
+(On Fri, 18 Oct 2024 at 16:55, Dondorp, Erwin <erwin.dondorp@cgi.com.invalid=) s
+5 214 M
+(>) s
+5 203 M
+(wrote:) s
+5 181 M
+(> Classification: Public) s
+5 170 M
+(>) s
+5 159 M
+(> Andy,) s
+5 148 M
+(>) s
+5 137 M
+(> I found the issue.) s
+5 126 M
+(> I'm \(forced to\) using port forwarding to connect to the artemis system.) s
+5 115 M
+(> But I'm using an alias for 127.0.0.1 \(like "computer-xyz"\) so that cookie=) s
+5 104 M
+(s) s
+5 93 M
+(> and passwords are properly remembered by the browser.) s
+5 82 M
+(> In the "connect" screen, I can only enter hostnames as "localhost" becaus=) s
+5 71 M
+(e) s
+5 60 M
+(> it does not know my local aliases.) s
+5 49 M
+(> That change in hostname confused the new artemis-console internals enough) s
+5 38 M
+(> to give the below error.) s
+5 27 M
+(> Reverting everything to "localhost" solved it \(at least good enough for) s
+5 16 M
+(> demonstration purposes\).) s
+5 5 M
+(>) s
+_R
+S
+%%Page: (11) 11
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 11 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (11) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> Thx!) s
+5 676 M
+(> Erwin) s
+5 665 M
+(>) s
+5 654 M
+(> -----Original Message-----) s
+5 643 M
+(> From: Dondorp, Erwin) s
+5 632 M
+(> Sent: Tuesday, October 15, 2024 12:41 AM) s
+5 621 M
+(> To: 'users@activemq.apache.org' <users@activemq.apache.org>) s
+5 610 M
+(> Subject: RE: new Artemis Console question) s
+5 599 M
+(>) s
+5 588 M
+(> Classification: Public) s
+5 577 M
+(>) s
+5 566 M
+(> Andy,) s
+5 555 M
+(>) s
+5 544 M
+(> Thx for the answers!) s
+5 533 M
+(> I was first using "localhost", then "127.0.0.1" after I found the IPv6) s
+5 522 M
+(> warning in the documentation.) s
+5 511 M
+(> I will experiment further now that I know it is not a trivial known cause=) s
+5 500 M
+(.) s
+5 489 M
+(>) s
+5 478 M
+(> Thx!) s
+5 467 M
+(> e.) s
+5 456 M
+(>) s
+5 445 M
+(> -----Original Message-----) s
+5 434 M
+(> From: Andy Taylor <andy.tayls67@gmail.com>) s
+5 423 M
+(> Sent: Monday, October 14, 2024 1:35 PM) s
+5 412 M
+(> To: users@activemq.apache.org) s
+5 401 M
+(> Subject: Re: new Artemis Console question) s
+5 390 M
+(>) s
+5 379 M
+(>) s
+5 368 M
+(> EXTERNAL SENDER:   Do not click any links or open any attachments unless) s
+5 357 M
+(> you trust the sender and know the content is safe.) s
+5 346 M
+(> EXP=C3=89DITEUR EXTERNE:    Ne cliquez sur aucun lien et n=E2=80=99ouvrez=) s
+5 335 M
+( aucune pi=C3=A8ce) s
+5 324 M
+(> jointe =C3=A0 moins qu=E2=80=99ils ne proviennent d=E2=80=99un exp=C3=A9d=) s
+5 313 M
+(iteur fiable, ou que vous) s
+5 302 M
+(> ayez l'assurance que le contenu provient d'une source s=C3=BBre.) s
+5 291 M
+(>) s
+5 280 M
+(> I have spoken to hawtIO dev and he pointed me at) s
+5 269 M
+(> https://urldefense.com/v3/__https://developer.mozilla.org/en-US/docs/Web/=) s
+5 258 M
+(Security/Secure_Contexts__;!!AaIhyw!sjCWzezh19QJxKckg_zjVdAppKD3T5ahKCjpkLk=) s
+5 247 M
+(Si_5Hw2_RT95JJYzUfpuGz2YkAjsfJhz7UeUbUg3kaU-3IgI$) s
+5 236 M
+(>) s
+5 225 M
+(> So I am guessing the URL you are using is causing this to happen, saying) s
+5 214 M
+(> that localhost/127.0.0.1 should work, anything else you need to configure) s
+5 203 M
+(> https. Maybe you are using a different hostname or localhost isnt mapped) s
+5 192 M
+(> correctly?) s
+5 181 M
+(>) s
+5 170 M
+(>) s
+5 159 M
+(> On Mon, 14 Oct 2024 at 10:06, Andy Taylor <andy.tayls67@gmail.com> wrote:) s
+5 148 M
+(>) s
+5 137 M
+(> > I haven't seen that before, can you supply your connection config for) s
+5 126 M
+(> > jolokia. Also what version of Artemis are you using?) s
+5 115 M
+(> >) s
+5 104 M
+(> > On Sun, 13 Oct 2024 at 21:27, Dondorp, Erwin) s
+5 93 M
+(> > <erwin.dondorp@cgi.com.invalid>) s
+5 82 M
+(> > wrote:) s
+5 71 M
+(> >) s
+5 60 M
+(> >> Classification: Public) s
+5 49 M
+(> >>) s
+5 38 M
+(> >> Hello,) s
+5 27 M
+(> >>) s
+5 16 M
+(> >> I'm trying the new Artemis Console.) s
+5 5 M
+(> >> Installing it with jetty-home-12.0.14 and) s
+_R
+S
+%%Page: (12) 12
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 12 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (12) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> >> apache-artemis-console-1.0.0 was fine. I followed the details from) s
+5 676 M
+(> >> https://urldefense.com/v3/__https://activemq.apache.org/components/ar) s
+5 665 M
+(> >> temis-console/documentation/__;!!AaIhyw!sjCWzezh19QJxKckg_zjVdAppKD3T) s
+5 654 M
+(> >> 5ahKCjpkLkSi_5Hw2_RT95JJYzUfpuGz2YkAjsfJhz7UeUbUg3krEGfpGM$) s
+5 643 M
+(> >> I only needed to tell jetty to use port 8162, as 8080 and 8161 were) s
+5 632 M
+(> >> already in use.) s
+5 621 M
+(> >> The connection to the broker could be added in the gui.) s
+5 610 M
+(> >> When the connection is used with a wrong username/password, the error) s
+5 599 M
+(> >> message "Incorrect username or password" appears as expected.) s
+5 588 M
+(> >>) s
+5 577 M
+(> >> But with the right username/password, nothing visibly happens, and) s
+5 566 M
+(> >> the following error appears in the webbrowser console.) s
+5 555 M
+(> >> Uncaught \(in promise\) TypeError: window.crypto.subtle is undefined) s
+5 544 M
+(> >>     Ep crypto.ts:6) s
+5 533 M
+(> >>     b d0339a10.chunk.js:1.238) s
+5 522 M
+(> >> This happens for Firefox and Edge to rule out specific browser behavio=) s
+5 511 M
+(r.) s
+5 500 M
+(> >>) s
+5 489 M
+(> >> Does this look familiar to anyone? Any hints?) s
+5 478 M
+(> >>) s
+5 467 M
+(> >> thx!) s
+5 456 M
+(> >> Erwin) s
+5 445 M
+(> >>) s
+5 434 M
+(> >) s
+5 423 M
+(>) s
+5 412 M
+(> ---------------------------------------------------------------------) s
+5 401 M
+(> To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org) s
+5 390 M
+(> For additional commands, e-mail: users-help@activemq.apache.org) s
+5 379 M
+(> For further information, visit: https://activemq.apache.org/contact) s
+5 368 M
+(>) s
+5 357 M
+(>) s
+5 335 M
+(--000000000000d9dc5f06250c8393--) s
+5 324 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 313 M
+(Return-Path: <users-return-57538-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 302 M
+(rg>) s
+5 291 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 280 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 269 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 258 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 38B273E682) s
+5 247 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 09:06:56 +0000 \(UT) s
+5 236 M
+(C\)) s
+5 225 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 214 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 203 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 192 M
+(        \(No client certificate requested\)) s
+5 181 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 170 M
+(MTPS id 242C560DD6) s
+5 159 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon, 14 Oct 2024 09:06:56 +0000 \(UT) s
+5 148 M
+(C\)) s
+5 137 M
+(Received: \(qmail 147222 invoked by uid 998\); 14 Oct 2024 09:06:55 -0000) s
+5 126 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 115 M
+(Precedence: bulk) s
+5 104 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 93 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 82 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 71 M
+(List-Id: <users.activemq.apache.org>) s
+5 60 M
+(Reply-To: users@activemq.apache.org) s
+5 49 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 38 M
+(Received: \(qmail 147197 invoked by uid 116\); 14 Oct 2024 09:06:54 -0000) s
+5 27 M
+(Received: from spamproc1-he-fi.apache.org \(HELO spamproc1-he-fi.apache.org\) \(95.217.134) s
+5 16 M
+(.168\)) s
+5 5 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Mon, 14 Oct 2024 09:06:54 +0000) s
+_R
+S
+%%Page: (13) 13
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 13 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (13) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Authentication-Results: apache.org; auth=none) s
+5 676 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 665 M
+(        by spamproc1-he-fi.apache.org \(ASF Mail Server at spamproc1-he-fi.apache.org\) w) s
+5 654 M
+(ith ESMTP id F29A3C2284) s
+5 643 M
+(        for <users@activemq.apache.org>; Mon, 14 Oct 2024 09:06:53 +0000 \(UTC\)) s
+5 632 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org) s
+5 621 M
+(X-Spam-Flag: NO) s
+5 610 M
+(X-Spam-Score: 0.249) s
+5 599 M
+(X-Spam-Level: ) s
+5 588 M
+(X-Spam-Status: No, score=0.249 tagged_above=-999 required=6.31) s
+5 577 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 566 M
+(        DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,) s
+5 555 M
+(        SPF_PASS=-0.001] autolearn=disabled) s
+5 544 M
+(Authentication-Results: spamproc1-he-fi.apache.org \(amavisd-new\);) s
+5 533 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 522 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 511 M
+(        by localhost \(spamproc1-he-fi.apache.org [95.217.134.168]\) \(amavisd-new, port 1) s
+5 500 M
+(0024\)) s
+5 489 M
+(        with ESMTP id sQ8BMzUuy14D for <users@activemq.apache.org>;) s
+5 478 M
+(        Mon, 14 Oct 2024 09:06:53 +0000 \(UTC\)) s
+5 467 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2607:f8b0:4864:20::c33; helo) s
+5 456 M
+(=mail-oo1-xc33.google.com; envelope-from=andy.tayls67@gmail.com; receiver=<UNKNOWN> ) s
+5 445 M
+(Received: from mail-oo1-xc33.google.com \(mail-oo1-xc33.google.com [IPv6:2607:f8b0:4864:) s
+5 434 M
+(20::c33]\)) s
+5 423 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 412 M
+(d 3F8E182050) s
+5 401 M
+(        for <users@activemq.apache.org>; Mon, 14 Oct 2024 09:06:23 +0000 \(UTC\)) s
+5 390 M
+(Received: by mail-oo1-xc33.google.com with SMTP id 006d021491bc7-5e98821b12eso2195327ea) s
+5 379 M
+(f.0) s
+5 368 M
+(        for <users@activemq.apache.org>; Mon, 14 Oct 2024 02:06:23 -0700 \(PDT\)) s
+5 357 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 346 M
+(        d=gmail.com; s=20230601; t=1728896776; x=1729501576; darn=activemq.apache.org;) s
+5 335 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 324 M
+(         :from:to:cc:subject:date:message-id:reply-to;) s
+5 313 M
+(        bh=EZ6bZiMkBw4dgLA8IqeJGuUK/b3zreC0BA4ruafLAM0=;) s
+5 302 M
+(        b=QZU8+NcnXtCyQUc69z+vRJclJH19w1Xid8MG3JVhtRuIhYAu3reh2YKnYrovYzn8wl) s
+5 291 M
+(         s/4mIck24aiBFe0DMbRo77g3zK1faejJKH1bzPjeJUwzopglXjjRy5jcRtI74uqLqk6v) s
+5 280 M
+(         7RmeuaJRAiHDZ4HRrNc3Hc/tBPwV4j8td8uydXIYjevE7e5OfRsb0v3/XeMmrr7RT7vH) s
+5 269 M
+(         YGdubw0FjALfL8wOcjB3Q6zZEhDMriNjCZw8Nq2nOpV7U/RteApCJcF58LtEXUka5qm4) s
+5 258 M
+(         INFotWcC7TziWRre+GCRqgqxOLsMVk7961nYcCpQP6hPYKUEwwe4KrBVrR/Xn6qwnWmt) s
+5 247 M
+(         NbPw==) s
+5 236 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 225 M
+(        d=1e100.net; s=20230601; t=1728896776; x=1729501576;) s
+5 214 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 203 M
+(         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;) s
+5 192 M
+(        bh=EZ6bZiMkBw4dgLA8IqeJGuUK/b3zreC0BA4ruafLAM0=;) s
+5 181 M
+(        b=fck2/abnS64RRbZu9+ce22rhOV3GOnfRey/H/npfPRbupRS8SK8EauqMlaYa6cTQKa) s
+5 170 M
+(         W2jdEFoGbVPE4ep+g/r53wZ0Gyj6+Zi9/guDB8svwCBgC7bKPGssicQECWYZdNdWo42h) s
+5 159 M
+(         4poVz5nH2Fz72NywICBh//9F33/Ht07NnR9GMcboRUWwiuEC0st+TmlQ9eEeOdBzVGGB) s
+5 148 M
+(         PlYrWloS3GKsjSpZNlBc6E9y6TDThzsVeMkgaeWeQU9cLlGOFtER3awEW3Llt8PJwRQy) s
+5 137 M
+(         8TRtEUn/Nc/sfKIy10G6wDZlKVNwtrAh24n+DtJg8qirDj7Iv6ULBehMvu0Ao9A1VDho) s
+5 126 M
+(         2e/g==) s
+5 115 M
+(X-Gm-Message-State: AOJu0YyJJKg+UDxiTLjXsN5nQ1GHDw5w5qVSAe+Y2qTECgJKuY2Va0VM) s
+5 104 M
+(        NSHxfG9Ktws8YzDvIs9pArq+m4gzavEDhfrfHbQW2xuYoTftWrntJCkWfj2Ugv2tgs7iFNFCKBf) s
+5 93 M
+(        uadDp3fPoN6qlsR1oERAfstCLf17+ig0=) s
+5 82 M
+(X-Google-Smtp-Source: AGHT+IFMGyBWwknE5/4Vko+xdBvZVbZbKCzq0RrLpgwVkhDUThflPUJ/ptwJAB6E9) s
+5 71 M
+(AQG/mnOboXqTOk370fY1Th4Izg=) s
+5 60 M
+(X-Received: by 2002:a05:6871:531a:b0:270:46be:9534 with SMTP id) s
+5 49 M
+( 586e51a60fabf-2886dde7649mr6067034fac.24.1728896775791; Mon, 14 Oct 2024) s
+5 38 M
+( 02:06:15 -0700 \(PDT\)) s
+5 27 M
+(MIME-Version: 1.0) s
+5 16 M
+(References: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com>) s
+5 5 M
+(In-Reply-To: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com>) s
+_R
+S
+%%Page: (14) 14
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 14 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (14) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(From: Andy Taylor <andy.tayls67@gmail.com>) s
+5 676 M
+(Date: Mon, 14 Oct 2024 10:06:04 +0100) s
+5 665 M
+(Message-ID: <CAA9ykMKAEw4ygXzUD9PPWX364dLpjs0fpM5Jbu4jp25KL3Ep3A@mail.gmail.com>) s
+5 654 M
+(Subject: Re: new Artemis Console question) s
+5 643 M
+(To: users@activemq.apache.org) s
+5 632 M
+(Content-Type: multipart/alternative; boundary="0000000000002caca106246c26fa") s
+5 610 M
+(--0000000000002caca106246c26fa) s
+5 599 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 577 M
+(I haven't seen that before, can you supply your connection config for) s
+5 566 M
+(jolokia. Also what version of Artemis are you using?) s
+5 544 M
+(On Sun, 13 Oct 2024 at 21:27, Dondorp, Erwin <erwin.dondorp@cgi.com.invalid>) s
+5 533 M
+(wrote:) s
+5 511 M
+(> Classification: Public) s
+5 500 M
+(>) s
+5 489 M
+(> Hello,) s
+5 478 M
+(>) s
+5 467 M
+(> I'm trying the new Artemis Console.) s
+5 456 M
+(> Installing it with jetty-home-12.0.14 and apache-artemis-console-1.0.0 was) s
+5 445 M
+(> fine. I followed the details from) s
+5 434 M
+(> https://activemq.apache.org/components/artemis-console/documentation/) s
+5 423 M
+(> I only needed to tell jetty to use port 8162, as 8080 and 8161 were) s
+5 412 M
+(> already in use.) s
+5 401 M
+(> The connection to the broker could be added in the gui.) s
+5 390 M
+(> When the connection is used with a wrong username/password, the error) s
+5 379 M
+(> message "Incorrect username or password" appears as expected.) s
+5 368 M
+(>) s
+5 357 M
+(> But with the right username/password, nothing visibly happens, and the) s
+5 346 M
+(> following error appears in the webbrowser console.) s
+5 335 M
+(> Uncaught \(in promise\) TypeError: window.crypto.subtle is undefined) s
+5 324 M
+(>     Ep crypto.ts:6) s
+5 313 M
+(>     b d0339a10.chunk.js:1.238) s
+5 302 M
+(> This happens for Firefox and Edge to rule out specific browser behavior.) s
+5 291 M
+(>) s
+5 280 M
+(> Does this look familiar to anyone? Any hints?) s
+5 269 M
+(>) s
+5 258 M
+(> thx!) s
+5 247 M
+(> Erwin) s
+5 236 M
+(>) s
+5 214 M
+(--0000000000002caca106246c26fa--) s
+5 203 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 192 M
+(Return-Path: <users-return-57537-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 181 M
+(rg>) s
+5 170 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 159 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 148 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 137 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 6B3403E72B) s
+5 126 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Sun, 13 Oct 2024 20:27:42 +0000 \(UT) s
+5 115 M
+(C\)) s
+5 104 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 93 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 82 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 71 M
+(        \(No client certificate requested\)) s
+5 60 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 49 M
+(MTPS id 490396402D) s
+5 38 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Sun, 13 Oct 2024 20:27:42 +0000 \(UT) s
+5 27 M
+(C\)) s
+5 16 M
+(Received: \(qmail 3211897 invoked by uid 998\); 13 Oct 2024 20:27:41 -0000) s
+5 5 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+_R
+S
+%%Page: (15) 15
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 15 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (15) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Precedence: bulk) s
+5 676 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 665 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 654 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 643 M
+(List-Id: <users.activemq.apache.org>) s
+5 632 M
+(Reply-To: users@activemq.apache.org) s
+5 621 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 610 M
+(Received: \(qmail 3211796 invoked by uid 116\); 13 Oct 2024 20:27:35 -0000) s
+5 599 M
+(Received: from spamproc1-he-fi.apache.org \(HELO spamproc1-he-fi.apache.org\) \(95.217.134) s
+5 588 M
+(.168\)) s
+5 577 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Sun, 13 Oct 2024 20:27:35 +0000) s
+5 566 M
+(Authentication-Results: apache.org; auth=none) s
+5 555 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 544 M
+(        by spamproc1-he-fi.apache.org \(ASF Mail Server at spamproc1-he-fi.apache.org\) w) s
+5 533 M
+(ith ESMTP id 00FBCC227C) s
+5 522 M
+(        for <users@activemq.apache.org>; Sun, 13 Oct 2024 20:27:35 +0000 \(UTC\)) s
+5 511 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org) s
+5 500 M
+(X-Spam-Flag: NO) s
+5 489 M
+(X-Spam-Score: -0.001) s
+5 478 M
+(X-Spam-Level: ) s
+5 467 M
+(X-Spam-Status: No, score=-0.001 tagged_above=-999 required=6.31) s
+5 456 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 445 M
+(        DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, SPF_PASS=-0.001]) s
+5 434 M
+(        autolearn=disabled) s
+5 423 M
+(Authentication-Results: spamproc1-he-fi.apache.org \(amavisd-new\);) s
+5 412 M
+(        dkim=pass \(2048-bit key\) header.d=cgi.com) s
+5 401 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 390 M
+(        by localhost \(spamproc1-he-fi.apache.org [95.217.134.168]\) \(amavisd-new, port 1) s
+5 379 M
+(0024\)) s
+5 368 M
+(        with ESMTP id Q-qb7gmFWURA for <users@activemq.apache.org>;) s
+5 357 M
+(        Sun, 13 Oct 2024 20:27:34 +0000 \(UTC\)) s
+5 346 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2620:100:900d:1:67:231:151:1) s
+5 335 M
+(; helo=mx0d-00131701.pphosted.com; envelope-from=prvs=0016a517da=erwin.dondorp@cgi.com;) s
+5 324 M
+( receiver=<UNKNOWN> ) s
+5 313 M
+(Received: from mx0d-00131701.pphosted.com \(mx0d-00131701.pphosted.com [IPv6:2620:100:90) s
+5 302 M
+(0d:1:67:231:151:1]\)) s
+5 291 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 280 M
+(d 1144882059) s
+5 269 M
+(        for <users@activemq.apache.org>; Sun, 13 Oct 2024 20:27:33 +0000 \(UTC\)) s
+5 258 M
+(Received: from pps.filterd \(m0212685.ppops.net [127.0.0.1]\)) s
+5 247 M
+(        by -00131701.pphosted.com \(8.18.1.2/8.18.1.2\) with ESMTP id 49D8eDC7003209) s
+5 236 M
+(        for <users@activemq.apache.org>; Sun, 13 Oct 2024 20:27:27 GMT) s
+5 225 M
+(X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cgi.com; h=) s
+5 214 M
+(        content-type:date:from:message-id:mime-version:subject:to; s=) s
+5 203 M
+(        cgi-hosted-201911; bh=Ce2d40DgRG9yE/6ZMrnpuSeMLfzOM+YyseLQcPQXzH) s
+5 192 M
+(        Y=; b=CkZhhD5qBnekIj0b7TJ/x+W7ikYRtfIzOeoZKb/uTxn7sXN8lp9CQfii9B) s
+5 181 M
+(        9+w8mfIQEikx4GDX27jZNf7EiaJ6+8CU/QyGqddEf//EOPt5TH3UPqnbSKtd42ZH) s
+5 170 M
+(        gT8cy1h43mjOZ/wIDEMJm8xBt/M7NWHyrvGJp6woGJcZKCX5Uiw6kLNezJWfZRNM) s
+5 159 M
+(        k4RIvqr+HvlnjFlfaTanlSS4SEUTexP89ajq6T+fFa/3yixWMFaeNRrDU+CfA+YQ) s
+5 148 M
+(        WdbU9D0AjyBu6chleaNQpI2YT1TJjZ14k6b0JItVFkbr+2iXZeO6gp8f8tWCEuLa) s
+5 137 M
+(        h1uTp+L5KhWM+pKNGgxFeSA+/NaA==) s
+5 126 M
+(Received: from globalmail.cgi.com \(globalmail-eu.cgi.com [217.150.168.72]\)) s
+5 115 M
+(        by -00131701.pphosted.com \(PPS\) with ESMTPS id 427fvrn9vc-1) s
+5 104 M
+(        \(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK\)) s
+5 93 M
+(        for <users@activemq.apache.org>; Sun, 13 Oct 2024 20:27:26 +0000 \(GMT\)) s
+5 82 M
+(Received: from SE-EX10114.groupinfra.com \(142.101.45.153\) by) s
+5 71 M
+( SE-EX10110.groupinfra.com \(142.101.45.149\) with Microsoft SMTP Server) s
+5 60 M
+( \(version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\) id) s
+5 49 M
+( 15.2.1544.11; Sun, 13 Oct 2024 22:27:24 +0200) s
+5 38 M
+(Received: from SE-EX10114.groupinfra.com \([142.101.45.153]\) by) s
+5 27 M
+( SE-EX10114.groupinfra.com \([142.101.45.153]\) with mapi id 15.02.1544.011;) s
+5 16 M
+( Sun, 13 Oct 2024 22:27:24 +0200) s
+5 5 M
+(From: "Dondorp, Erwin" <erwin.dondorp@cgi.com.INVALID>) s
+_R
+S
+%%Page: (16) 16
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 16 def
+/fname (./CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAA9ykMJkOiFqpgSUeQdmgSeq-2dWTfXY8Fssv1CmxnTnYuJ60g@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:04 2024) def
+/pagenumstr (16) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(To: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 676 M
+(Subject: new Artemis Console question) s
+5 665 M
+(Thread-Topic: new Artemis Console question) s
+5 654 M
+(Thread-Index: Adsdq4nDa0jff2yfRRKk0znKMYb+uw==) s
+5 643 M
+(Date: Sun, 13 Oct 2024 20:27:24 +0000) s
+5 632 M
+(Message-ID: <c39ffabe5ec249b1a5a45a9216ca9cee@cgi.com>) s
+5 621 M
+(Accept-Language: nl-NL, en-US) s
+5 610 M
+(Content-Language: en-US) s
+5 599 M
+(X-MS-Has-Attach: ) s
+5 588 M
+(X-MS-TNEF-Correlator: ) s
+5 577 M
+(msip_labels: MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Enabled=true;) s
+5 566 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SetDate=2024-10-13T20:27:22Z;) s
+5 555 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Method=Privileged;) s
+5 544 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_Name=d9290083-bd2f-48a2-8ac5-09a524b17) s
+5 533 M
+(d15;) s
+5 522 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_SiteId=b9fec68c-c92d-461e-9a97-3d03a0f) s
+5 511 M
+(18b82;) s
+5 500 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ActionId=c4ec8d00-7f62-48af-8521-d3e52) s
+5 489 M
+(0476ee7;) s
+5 478 M
+( MSIP_Label_d9290083-bd2f-48a2-8ac5-09a524b17d15_ContentBits=1) s
+5 467 M
+(x-originating-ip: [142.101.28.247]) s
+5 456 M
+(Content-Type: multipart/alternative;) s
+5 445 M
+(        boundary="_000_c39ffabe5ec249b1a5a45a9216ca9ceecgicom_") s
+5 434 M
+(MIME-Version: 1.0) s
+5 423 M
+(X-Proofpoint-GUID: kk1pi9xkpAGuK2X_oaStFFWdzCCg6g4a) s
+5 412 M
+(X-Proofpoint-ORIG-GUID: kk1pi9xkpAGuK2X_oaStFFWdzCCg6g4a) s
+5 390 M
+(--_000_c39ffabe5ec249b1a5a45a9216ca9ceecgicom_) s
+5 379 M
+(Content-Type: text/plain; charset="us-ascii") s
+5 368 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 346 M
+(Classification: Public) s
+5 324 M
+(Hello,) s
+5 302 M
+(I'm trying the new Artemis Console.) s
+5 291 M
+(Installing it with jetty-home-12.0.14 and apache-artemis-console-1.0.0 was =) s
+5 280 M
+(fine. I followed the details from https://activemq.apache.org/components/ar=) s
+5 269 M
+(temis-console/documentation/) s
+5 258 M
+(I only needed to tell jetty to use port 8162, as 8080 and 8161 were already=) s
+5 247 M
+( in use.) s
+5 236 M
+(The connection to the broker could be added in the gui.) s
+5 225 M
+(When the connection is used with a wrong username/password, the error messa=) s
+5 214 M
+(ge "Incorrect username or password" appears as expected.) s
+5 192 M
+(But with the right username/password, nothing visibly happens, and the foll=) s
+5 181 M
+(owing error appears in the webbrowser console.) s
+5 170 M
+(Uncaught \(in promise\) TypeError: window.crypto.subtle is undefined) s
+5 159 M
+(    Ep crypto.ts:6) s
+5 148 M
+(    b d0339a10.chunk.js:1.238) s
+5 137 M
+(This happens for Firefox and Edge to rule out specific browser behavior.) s
+5 115 M
+(Does this look familiar to anyone? Any hints?) s
+5 93 M
+(thx!) s
+5 82 M
+(Erwin) s
+5 60 M
+(--_000_c39ffabe5ec249b1a5a45a9216ca9ceecgicom_--) s
+_R
+S
+%%Trailer
+%%Pages: 16
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

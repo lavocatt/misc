@@ -1,0 +1,5019 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 38 24 574 768
+%%Title: Enscript Output
+%%For: Thomas Lavocat
+%%Creator: GNU Enscript 1.6.6
+%%CreationDate: Tue Apr  1 15:59:19 2025
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 6
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 6
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 6
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      fname length fmodstr length add pagenumstr length add 95 6 idiv add d_header_w 6 idiv le{
+        5 0 moveto fname show
+        45 0 rmoveto fmodstr show
+        45 0 rmoveto pagenumstr show
+      } {
+        5 0 moveto fmodstr show
+        45 0 rmoveto pagenumstr show
+        fname length d_header_w 6 idiv idiv 1 add 10 mul 5 exch moveto
+        1 1 fname length d_header_w 6 idiv idiv
+        {
+          dup fname exch 1 sub d_header_w 6 idiv mul d_header_w 6 idiv getinterval show
+          5 exch 10 mul fname length d_header_w 6 idiv idiv 1 add 10 mul exch sub moveto
+        } for
+        5 10 moveto
+        fname fname length d_header_w 6 idiv idiv d_header_w 6 idiv mul dup fname length exch sub getinterval show
+      }ifelse
+    }ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 536 def
+/d_page_h 744 def
+/d_header_x 0 def
+/d_header_y 700 def
+/d_header_w 536 def
+/d_header_h 44 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 536 def
+/d_footer_h 0 def
+/d_output_w 536 def
+/d_output_h 700 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 676 M
+(Return-Path: <users-return-57516-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 665 M
+(rg>) s
+5 654 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 643 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 632 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 621 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 802123E69C) s
+5 610 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Fri,  4 Oct 2024 01:56:03 +0000 \(UT) s
+5 599 M
+(C\)) s
+5 588 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 577 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 566 M
+(        \(No client certificate requested\)) s
+5 555 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 544 M
+(ESMTPS id C328B469CF) s
+5 533 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Fri,  4 Oct 2024 01:55:43 +0000 \(UT) s
+5 522 M
+(C\)) s
+5 511 M
+(Received: \(qmail 1987649 invoked by uid 998\); 4 Oct 2024 01:55:41 -0000) s
+5 500 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 489 M
+(Precedence: bulk) s
+5 478 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 467 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 456 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 445 M
+(List-Id: <users.activemq.apache.org>) s
+5 434 M
+(Reply-To: users@activemq.apache.org) s
+5 423 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 412 M
+(Received: \(qmail 1987623 invoked by uid 116\); 4 Oct 2024 01:55:39 -0000) s
+5 401 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 390 M
+(6.100\)) s
+5 379 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Fri, 04 Oct 2024 01:55:39 +0000) s
+5 368 M
+(Authentication-Results: apache.org; auth=none) s
+5 357 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 346 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 335 M
+(ith ESMTP id A984A2001C6) s
+5 324 M
+(        for <users@activemq.apache.org>; Fri,  4 Oct 2024 01:55:39 +0000 \(UTC\)) s
+5 313 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 302 M
+(X-Spam-Flag: NO) s
+5 291 M
+(X-Spam-Score: 2.057) s
+5 280 M
+(X-Spam-Level: **) s
+5 269 M
+(X-Spam-Status: No, score=2.057 tagged_above=-999 required=6.31) s
+5 258 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 247 M
+(        DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, MANY_SUBDOM=3.099,) s
+5 236 M
+(        NORMAL_HTTP_TO_IP=0.001, NUMERIC_HTTP_ADDR=0.001,) s
+5 225 M
+(        RCVD_IN_DNSWL_BLOCKED=0.001, RCVD_IN_MSPIKE_H2=-1.048,) s
+5 214 M
+(        RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,) s
+5 203 M
+(        RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,) s
+5 192 M
+(        URIBL_BLOCKED=0.001, WEIRD_PORT=0.001] autolearn=disabled) s
+5 181 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 170 M
+(        dkim=pass \(1024-bit key\) header.d=mechination.com.au) s
+5 159 M
+(Received: from mx1-ec2-va.apache.org \([116.203.227.195]\)) s
+5 148 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 137 M
+(10024\)) s
+5 126 M
+(        with ESMTP id lX-YuSC8o7OF for <users@activemq.apache.org>;) s
+5 115 M
+(        Fri,  4 Oct 2024 01:55:38 +0000 \(UTC\)) s
+5 104 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=209.85.128.177; helo=mail-yw) s
+5 93 M
+(1-f177.google.com; envelope-from=kunal@mechination.com.au; receiver=<UNKNOWN> ) s
+5 82 M
+(Received: from mail-yw1-f177.google.com \(mail-yw1-f177.google.com [209.85.128.177]\)) s
+5 71 M
+(        by mx1-ec2-va.apache.org \(ASF Mail Server at mx1-ec2-va.apache.org\) with ESMTPS) s
+5 60 M
+( id 5BB4EC0C42) s
+5 49 M
+(        for <users@activemq.apache.org>; Fri,  4 Oct 2024 01:55:38 +0000 \(UTC\)) s
+5 38 M
+(Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6e214c3d045so13319637b) s
+5 27 M
+(3.0) s
+5 16 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 18:55:38 -0700 \(PDT\)) s
+5 5 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        d=mechination.com.au; s=google; t=1728006932; x=1728611732; darn=activemq.apach) s
+5 676 M
+(e.org;) s
+5 665 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 654 M
+(         :from:to:cc:subject:date:message-id:reply-to;) s
+5 643 M
+(        bh=6DqxGUxy8gfTgph9XDCWTivdD6E2P79ObHDYQWEJrws=;) s
+5 632 M
+(        b=fblJnPJF45V5Acp7xnkVLRoZJt94SVt8kSSvfUFscv0XEnhBMGC+F+xPnkJq7w2url) s
+5 621 M
+(         4idLzUkGlFpP8u4oTGnV2UL3z6htEFbMqTTell3g7xiq4NpndwXs7w86HZg9Q1h8csHa) s
+5 610 M
+(         7ZcPKe4al3cx8WTauAjJS9WNJG0cqWLEkNiNs=) s
+5 599 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 588 M
+(        d=1e100.net; s=20230601; t=1728006932; x=1728611732;) s
+5 577 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 566 M
+(         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;) s
+5 555 M
+(        bh=6DqxGUxy8gfTgph9XDCWTivdD6E2P79ObHDYQWEJrws=;) s
+5 544 M
+(        b=Dx8U4J5AqdkRkxzlHlwZ8f2OwnMuKIYA5axkvCp+hYrO/2QA8Bi2uXYJ0hkhlqk4RQ) s
+5 533 M
+(         5yYT4nTmsq0vjuiRrfIAtz268WtpRC4DCf4G4CO7SW6PFbZzG89a1MSgbv0BxFlTUh6Z) s
+5 522 M
+(         Uyxs7VpPo2HmUT1nB5iXy9qXQNYugxns9+UiqtecmezYcyQp0n2RcOybdNqv0LKTNMTq) s
+5 511 M
+(         kB7FOSHXO7s7SspQoCOTxRbo+JnZfM4iEwq7qawPNjnTAbSeeR6S+Kgh6Gu8yh8vA0Lf) s
+5 500 M
+(         lIEg901lunyJ5B+z7enm10LgBN5CyCVFqwp5tUTx8kIeTTSA3xOwcEB/Qs2a/suXGSBy) s
+5 489 M
+(         ADLw==) s
+5 478 M
+(X-Gm-Message-State: AOJu0YwBfCWjcNe+aRmHwNLAkQ4lxrKjuzu7u2Zrjw6UoTlgkj2t3vLp) s
+5 467 M
+(        YK9Y82zui44iTodcntc80H+Ge+Zf3JMoUMKIqtRdiD0eJ9CmDqX7FsyOVgtJdRroROvjCV7D8Tz) s
+5 456 M
+(        g9EkeOqSB896O1b2O1etYW2LogInByR+/AyVCaIUBAkkMED3q) s
+5 445 M
+(X-Google-Smtp-Source: AGHT+IE3w5UvsW1DfIgr1zvsDcoWuWvi0K7ZzAq1RZFowya3eM+MRu4vKto9+tG+X) s
+5 434 M
+(o1AL4TsdtywkzVwubaVUzoN8yc=) s
+5 423 M
+(X-Received: by 2002:a05:690c:7009:b0:6e0:12e:e470 with SMTP id) s
+5 412 M
+( 00721157ae682-6e2c7238be0mr12370367b3.25.1728006931714; Thu, 03 Oct 2024) s
+5 401 M
+( 18:55:31 -0700 \(PDT\)) s
+5 390 M
+(MIME-Version: 1.0) s
+5 379 M
+(References: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>) s
+5 368 M
+( <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com> <CAF+kE=QPgjc0TTX) s
+5 357 M
+(o48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.gmail.com>) s
+5 346 M
+(In-Reply-To: <CAF+kE=QPgjc0TTXo48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.gmail.com>) s
+5 335 M
+(From: Kunal Rao <kunal@mechination.com.au>) s
+5 324 M
+(Date: Fri, 4 Oct 2024 09:55:20 +0800) s
+5 313 M
+(Message-ID: <CAOOFvV_fzb8pdW_y8=8g=XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com>) s
+5 302 M
+(Subject: Re: Bridging Artemis with classic) s
+5 291 M
+(To: users@activemq.apache.org) s
+5 280 M
+(Content-Type: multipart/alternative; boundary="00000000000055c92806239cf752") s
+5 258 M
+(--00000000000055c92806239cf752) s
+5 247 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 236 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 214 M
+(Thanks Justin.) s
+5 203 M
+(I am planning to use Amazon MQ \(only supports classic\) as a central broker) s
+5 192 M
+(and Artemis as satellite brokers with the assumption that artemis is a more) s
+5 181 M
+(supported product and classic is treated as legacy with regards to) s
+5 170 M
+(development and support.) s
+5 159 M
+(Firstly, Is my assumption correct?) s
+5 137 M
+(We are considering three options:) s
+5 126 M
+(1. Use "classic" everywhere. Amazon MQ can be used as a central broker.) s
+5 115 M
+(2. Use "artemis" everywhere. benefits of Artemis outweigh "classic" and the) s
+5 104 M
+(use of managed service in Amazon MQ.) s
+5 93 M
+(3. Hybrid approach. Use Amazon MQ centrally \( hoping artemis is on their) s
+5 82 M
+(roadmap\) and Artemis on all satellite brokers.) s
+5 60 M
+(I would love to hear your thoughts on this please.) s
+5 38 M
+(Once again thanks for the prompt response.) s
+5 16 M
+(Kunal) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 3 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(On Fri, 4 Oct 2024 at 00:51, Justin Bertram <jbertram@apache.org> wrote:) s
+5 665 M
+(> Just to clarify...ActiveMQ Classic doesn't support the Core protocol so) s
+5 654 M
+(> that is why you can't use a Core bridge to integrate.) s
+5 643 M
+(>) s
+5 632 M
+(>) s
+5 621 M
+(> Justin) s
+5 610 M
+(>) s
+5 599 M
+(> On Thu, Oct 3, 2024 at 8:29=E2=80=AFAM Justin Bertram <jbertram@apache.or=) s
+5 588 M
+(g> wrote:) s
+5 577 M
+(>) s
+5 566 M
+(> > Yes. You can bridge messages from Artemis to Classic and vice versa.) s
+5 555 M
+(> > However, you can't use a Core bridge to do it. Core bridges, as the nam=) s
+5 544 M
+(e) s
+5 533 M
+(> > suggests, use the Core protocol. A Core bridge can't use the AMQP) s
+5 522 M
+(> protocol.) s
+5 511 M
+(> >) s
+5 500 M
+(> > I recommend Camel since it's mature, powerful, and ubiquitous. You can) s
+5 489 M
+(> set) s
+5 478 M
+(> > up Camel routes on either Artemis or Classic. Here's [1] an example of) s
+5 467 M
+(> how) s
+5 456 M
+(> > to do it on Artemis.) s
+5 445 M
+(> >) s
+5 434 M
+(> > It's also possible to use the JMS bridge that ships with Artemis [2].) s
+5 423 M
+(> >) s
+5 412 M
+(> >) s
+5 401 M
+(> > Justin) s
+5 390 M
+(> >) s
+5 379 M
+(> > [1]) s
+5 368 M
+(> >) s
+5 357 M
+(> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=) s
+5 346 M
+(atures/standard/camel) s
+5 335 M
+(> > [2]) s
+5 324 M
+(> >) s
+5 313 M
+(> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=) s
+5 302 M
+(atures/sub-modules/inter-broker-bridge/artemis-jms-bridge) s
+5 291 M
+(> >) s
+5 280 M
+(> > On Thu, Oct 3, 2024 at 2:38=E2=80=AFAM Kunal Rao <kunal@mechination.com=) s
+5 269 M
+(.au>) s
+5 258 M
+(> wrote:) s
+5 247 M
+(> >) s
+5 236 M
+(> >> Hi,) s
+5 225 M
+(> >>) s
+5 214 M
+(> >> Is it possible to bridge artemis with classic broker?) s
+5 203 M
+(> >> I am trying with AMQP protocol.) s
+5 192 M
+(> >>) s
+5 181 M
+(> >> I am getting this error) s
+5 170 M
+(> >>) s
+5 159 M
+(> >> p1broker-1       | 2024-10-03 07:34:50,270 WARN) s
+5 148 M
+(> >>  [org.apache.activemq.artemis.core.server] AMQ224091: Bridge) s
+5 137 M
+(> >> BridgeImpl@6a3012f8 [name=3Damqp-bridge,) s
+5 126 M
+(> queue=3DQueueImpl[name=3Dp1broker.out,) s
+5 115 M
+(> >> postOffice=3DPostOfficeImpl [server=3DActiveMQServerImpl::name=3D0.0.0=) s
+5 104 M
+(.0],) s
+5 93 M
+(> >> temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl \(identity=) s
+5 82 M
+(=3DBridge) s
+5 71 M
+(> >> amqp-bridge\)) s
+5 60 M
+(> >> [initialConnectors=3D[TransportConfiguration\(name=3Dactivemq-classic-a=) s
+5 49 M
+(mqp,) s
+5 38 M
+(> >>) s
+5 27 M
+(> >>) s
+5 16 M
+(> factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConne=) s
+5 5 M
+(ctorFactory\)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 4 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> >> discoveryGroupConfiguration=3Dnull]] is unable to connect to destinati=) s
+5 676 M
+(on.) s
+5 665 M
+(> >> Retrying) s
+5 654 M
+(> >> centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0 clien=) s
+5 643 M
+(t.) s
+5 632 M
+(> >> ARTEMIS,0) s
+5 621 M
+(> >> centralbroker-1  |  WARN | Transport Connection to: tcp://) s
+5 610 M
+(> >> 172.19.0.3:33778) s
+5 599 M
+(> >> failed: Connection from client using unsupported AMQP attempted) s
+5 588 M
+(> >>) s
+5 577 M
+(> >> broker.xml) s
+5 566 M
+(> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 555 M
+(> >>) s
+5 544 M
+(> >> <acceptors>) s
+5 533 M
+(> >>) s
+5 522 M
+(> >> <acceptor name=3D"artemis">) s
+5 511 M
+(> >> tcp://) s
+5 500 M
+(> >>) s
+5 489 M
+(> >>) s
+5 478 M
+(> 0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=) s
+5 467 M
+(amqpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,O=) s
+5 456 M
+(PENWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplica=) s
+5 445 M
+(teDetection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObject=) s
+5 434 M
+(s=3Dfalse) s
+5 423 M
+(> >> </acceptor>) s
+5 412 M
+(> >>) s
+5 401 M
+(> >> <!-- AMQP Acceptor. Listens on default AMQP port for AMQP traffic.-->) s
+5 390 M
+(> >> <acceptor name=3D"amqp">) s
+5 379 M
+(> >> tcp://) s
+5 368 M
+(> >>) s
+5 357 M
+(> >>) s
+5 346 M
+(> 0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=) s
+5 335 M
+(rotocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amq=) s
+5 324 M
+(pMinLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-timeo=) s
+5 313 M
+(ut=3D0) s
+5 302 M
+(> >> </acceptor>) s
+5 291 M
+(> >>) s
+5 280 M
+(> >> <!-- STOMP Acceptor. -->) s
+5 269 M
+(> >> <acceptor name=3D"stomp">) s
+5 258 M
+(> >> tcp://) s
+5 247 M
+(> >>) s
+5 236 M
+(> >>) s
+5 225 M
+(> 0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=) s
+5 214 M
+(protocols=3DSTOMP;useEpoll=3Dtrue) s
+5 203 M
+(> >> </acceptor>) s
+5 192 M
+(> >>) s
+5 181 M
+(> >> <!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and STOMP fo=) s
+5 170 M
+(r) s
+5 159 M
+(> >> legacy HornetQ) s
+5 148 M
+(> >> clients. -->) s
+5 137 M
+(> >> <acceptor name=3D"hornetq">) s
+5 126 M
+(> >> tcp://) s
+5 115 M
+(> >>) s
+5 104 M
+(> >>) s
+5 93 M
+(> 0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;prot=) s
+5 82 M
+(ocols=3DHORNETQ,STOMP;useEpoll=3Dtrue) s
+5 71 M
+(> >> </acceptor>) s
+5 60 M
+(> >>) s
+5 49 M
+(> >> <!-- MQTT Acceptor -->) s
+5 38 M
+(> >> <acceptor name=3D"mqtt">) s
+5 27 M
+(> >> tcp://) s
+5 16 M
+(> >>) s
+5 5 M
+(> >>) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 5 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> 0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=) s
+5 676 M
+(rotocols=3DMQTT;useEpoll=3Dtrue) s
+5 665 M
+(> >> </acceptor>) s
+5 654 M
+(> >>) s
+5 643 M
+(> >> </acceptors>) s
+5 632 M
+(> >>) s
+5 621 M
+(> >> <bridges>) s
+5 610 M
+(> >> <bridge name=3D"amqp-bridge">) s
+5 599 M
+(> >> <queue-name>p1broker.out</queue-name>) s
+5 588 M
+(> >> <forwarding-address>centralbroker.in</forwarding-address>) s
+5 577 M
+(> >> <user>admin</user>) s
+5 566 M
+(> >> <password>admin</password>) s
+5 555 M
+(> >> <static-connectors>) s
+5 544 M
+(> >> <connector-ref>activemq-classic-amqp</connector-ref>) s
+5 533 M
+(> >> </static-connectors>) s
+5 522 M
+(> >> </bridge>) s
+5 511 M
+(> >> </bridges>) s
+5 500 M
+(> >>) s
+5 489 M
+(> >>) s
+5 478 M
+(> >> <connectors>) s
+5 467 M
+(> >> <connector name=3D"activemq-classic-amqp">) s
+5 456 M
+(> >> tcp://centralbroker:5672?protocols=3DAMQP</connector>) s
+5 445 M
+(> >> </connectors>) s
+5 434 M
+(> >>) s
+5 423 M
+(> >>) s
+5 412 M
+(> >> activemq.xml) s
+5 401 M
+(> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 390 M
+(> >>) s
+5 379 M
+(> >> <transportConnectors>) s
+5 368 M
+(> >> <!-- DOS protection, limit concurrent connections to 1000 and frame si=) s
+5 357 M
+(ze) s
+5 346 M
+(> >> to) s
+5 335 M
+(> >> 100MB -->) s
+5 324 M
+(> >> <transportConnector name=3D"openwire") s
+5 313 M
+(> >> uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;) s
+5 302 M
+(> >> wireFormat.maxFrameSize=3D104857600000" />) s
+5 291 M
+(> >> <transportConnector name=3D"amqp") s
+5 280 M
+(> >> uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;) s
+5 269 M
+(> >> wireFormat.maxFrameSize=3D104857600" />) s
+5 258 M
+(> >> <transportConnector name=3D"stomp") s
+5 247 M
+(> >> uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;) s
+5 236 M
+(> >> wireFormat.maxFrameSize=3D104857600" />) s
+5 225 M
+(> >> <transportConnector name=3D"mqtt") s
+5 214 M
+(> >> uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;) s
+5 203 M
+(> >> wireFormat.maxFrameSize=3D104857600" />) s
+5 192 M
+(> >> <transportConnector name=3D"ws") s
+5 181 M
+(> >> uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;) s
+5 170 M
+(> >> wireFormat.maxFrameSize=3D104857600" />) s
+5 159 M
+(> >> </transportConnectors>) s
+5 148 M
+(> >>) s
+5 137 M
+(> >>) s
+5 126 M
+(> >> what am i doing wrong?) s
+5 115 M
+(> >>) s
+5 104 M
+(> >> Cheers) s
+5 93 M
+(> >> Kunal) s
+5 82 M
+(> >>) s
+5 71 M
+(> >) s
+5 60 M
+(>) s
+5 38 M
+(--00000000000055c92806239cf752--) s
+5 27 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 16 M
+(Return-Path: <users-return-57517-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 5 M
+(rg>) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 6 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 676 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 665 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 654 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 053583E69C) s
+5 643 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Fri,  4 Oct 2024 06:22:36 +0000 \(UT) s
+5 632 M
+(C\)) s
+5 621 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 610 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 599 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 588 M
+(        \(No client certificate requested\)) s
+5 577 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 566 M
+(MTPS id C7B7564127) s
+5 555 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Fri,  4 Oct 2024 06:22:35 +0000 \(UT) s
+5 544 M
+(C\)) s
+5 533 M
+(Received: \(qmail 2260028 invoked by uid 998\); 4 Oct 2024 06:22:34 -0000) s
+5 522 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 511 M
+(Precedence: bulk) s
+5 500 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 489 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 478 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 467 M
+(List-Id: <users.activemq.apache.org>) s
+5 456 M
+(Reply-To: users@activemq.apache.org) s
+5 445 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 434 M
+(Received: \(qmail 2260009 invoked by uid 116\); 4 Oct 2024 06:22:33 -0000) s
+5 423 M
+(Received: from spamproc1-he-fi.apache.org \(HELO spamproc1-he-fi.apache.org\) \(95.217.134) s
+5 412 M
+(.168\)) s
+5 401 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Fri, 04 Oct 2024 06:22:33 +0000) s
+5 390 M
+(Authentication-Results: apache.org; auth=none) s
+5 379 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 368 M
+(        by spamproc1-he-fi.apache.org \(ASF Mail Server at spamproc1-he-fi.apache.org\) w) s
+5 357 M
+(ith ESMTP id 6ECC4C2206) s
+5 346 M
+(        for <users@activemq.apache.org>; Fri,  4 Oct 2024 06:22:33 +0000 \(UTC\)) s
+5 335 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org) s
+5 324 M
+(X-Spam-Flag: NO) s
+5 313 M
+(X-Spam-Score: 2.548) s
+5 302 M
+(X-Spam-Level: **) s
+5 291 M
+(X-Spam-Status: No, score=2.548 tagged_above=-999 required=6.31) s
+5 280 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 269 M
+(        DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,) s
+5 258 M
+(        MANY_SUBDOM=3.199, NORMAL_HTTP_TO_IP=0.001, NUMERIC_HTTP_ADDR=0.001,) s
+5 247 M
+(        RCVD_IN_MSPIKE_H2=-0.906, RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,) s
+5 236 M
+(        RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,) s
+5 225 M
+(        URIBL_BLOCKED=0.001, WEIRD_PORT=0.001] autolearn=disabled) s
+5 214 M
+(Authentication-Results: spamproc1-he-fi.apache.org \(amavisd-new\);) s
+5 203 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 192 M
+(Received: from mx1-ec2-va.apache.org \([116.203.227.195]\)) s
+5 181 M
+(        by localhost \(spamproc1-he-fi.apache.org [95.217.134.168]\) \(amavisd-new, port 1) s
+5 170 M
+(0024\)) s
+5 159 M
+(        with ESMTP id 8HVd4XNDBSZj for <users@activemq.apache.org>;) s
+5 148 M
+(        Fri,  4 Oct 2024 06:22:32 +0000 \(UTC\)) s
+5 137 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=209.85.208.182; helo=mail-lj) s
+5 126 M
+(1-f182.google.com; envelope-from=kenliao94@gmail.com; receiver=<UNKNOWN> ) s
+5 115 M
+(Received: from mail-lj1-f182.google.com \(mail-lj1-f182.google.com [209.85.208.182]\)) s
+5 104 M
+(        by mx1-ec2-va.apache.org \(ASF Mail Server at mx1-ec2-va.apache.org\) with ESMTPS) s
+5 93 M
+( id A6F0DC0C55) s
+5 82 M
+(        for <users@activemq.apache.org>; Fri,  4 Oct 2024 06:22:31 +0000 \(UTC\)) s
+5 71 M
+(Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fad100dd9fso27101431f) s
+5 60 M
+(a.3) s
+5 49 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 23:22:31 -0700 \(PDT\)) s
+5 38 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 27 M
+(        d=gmail.com; s=20230601; t=1728022950; x=1728627750; darn=activemq.apache.org;) s
+5 16 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 5 M
+(         :from:to:cc:subject:date:message-id:reply-to;) s
+_R
+S
+%%Page: (7) 7
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 7 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (7) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        bh=2FwVX8BRyRal9NJSxg4YZCapjPHqmD2hsWyEbtAmTvI=;) s
+5 676 M
+(        b=i3j2my10opAvM3XcY4DPr4f+Ueci2UC0NR6iNW5xMcITD0gOEcD1dIxtc4RkqAxv20) s
+5 665 M
+(         XY2sB4Q4Qtrib9N82TZK6OrNnVmjGRs0n0venR1uZGI+c0e94CnbU1OKNFdo7HqXDJh+) s
+5 654 M
+(         Tu4sf5X6gF2H0WdpncB55W44uW4bZeRvcmPUBiUzqprzsXkBbTvAMEsXLIZmgmnrJmrF) s
+5 643 M
+(         b6YTnpYBOKZiF78suWMw4c9wzCMviTm2EkNu0F9LF83akSgC1hBLmT3tePSOE15UBZRo) s
+5 632 M
+(         +eylVNVViB1hsnaqvnDJtJ6oGjVGSfVvZaPjpex3Yg1iXVUw38SH5W/gBYcWCVP7+BWp) s
+5 621 M
+(         QFOg==) s
+5 610 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 599 M
+(        d=1e100.net; s=20230601; t=1728022950; x=1728627750;) s
+5 588 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 577 M
+(         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;) s
+5 566 M
+(        bh=2FwVX8BRyRal9NJSxg4YZCapjPHqmD2hsWyEbtAmTvI=;) s
+5 555 M
+(        b=iWY8jxNqSxJEfcjde0rTfgPsodaS4PcVuZGWtEgqs1RYPdvYUcKD2nAn89W7sd97E/) s
+5 544 M
+(         M7GSbBBQLYKpuZmjNaOw7qtHB+UL9EcYFagkS/F1OW6lGVHgTwFF3hmciPqgzOsVxWer) s
+5 533 M
+(         jCRtE54fKhmTqw16pHscIZD5IiHBVv0k5EdrQBPG4boWWf4/Vc102AV5qcG/q9DT6pvF) s
+5 522 M
+(         L283JWeEl4Q8k1K721y91lkAGTP+riHftR069IPgbIO04q1n9Pg9o5MDXR9kMrK3EX52) s
+5 511 M
+(         Qife9azkoumrpkQvZqYGgbPRObqrahczJOCsSeSGWUxsg+W16gsc5HnBKhM5034Y26/r) s
+5 500 M
+(         8ENg==) s
+5 489 M
+(X-Gm-Message-State: AOJu0YzGqMc4ls5C0MaCUe3sCNd1fadGZ+rQskW8Y65cIw0VqMi1nt7t) s
+5 478 M
+(        fIVkO/suMWAQvTnpwA1Mp5eWR7q5Agw50YzACrIZ+eEXGIjfrZwpAqJmEfCfWgG52oN/eKLj4r+) s
+5 467 M
+(        TARuAscDmRKqHkflF9cwdo1iuWu2wbFhDumE=) s
+5 456 M
+(X-Google-Smtp-Source: AGHT+IGtFQkyFXCrLAdJt/EgGsQvL/eIXFgPDaGEN6gWArTEWjVMGJ22FCmUh4d9Z) s
+5 445 M
+(rvrVN3jn+p5tvMrHXKbAA3yGYE=) s
+5 434 M
+(X-Received: by 2002:a2e:e01:0:b0:2fa:cdac:8732 with SMTP id) s
+5 423 M
+( 38308e7fff4ca-2faf3d70720mr8953431fa.30.1728022949518; Thu, 03 Oct 2024) s
+5 412 M
+( 23:22:29 -0700 \(PDT\)) s
+5 401 M
+(MIME-Version: 1.0) s
+5 390 M
+(References: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>) s
+5 379 M
+( <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com>) s
+5 368 M
+( <CAF+kE=QPgjc0TTXo48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.gmail.com> <CAOOFvV_fzb8pdW_) s
+5 357 M
+(y8=8g=XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com>) s
+5 346 M
+(In-Reply-To: <CAOOFvV_fzb8pdW_y8=8g=XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com>) s
+5 335 M
+(From: Ken Liao <kenliao94@gmail.com>) s
+5 324 M
+(Date: Thu, 3 Oct 2024 23:22:17 -0700) s
+5 313 M
+(Message-ID: <CA+i58o0ZAaqgHKMQqN_KRk5ZgtX3EDuH5Ec_vGdS1n_LQTHVRA@mail.gmail.com>) s
+5 302 M
+(Subject: Re: Bridging Artemis with classic) s
+5 291 M
+(To: users@activemq.apache.org) s
+5 280 M
+(Content-Type: multipart/alternative; boundary="00000000000011eae20623a0b287") s
+5 258 M
+(--00000000000011eae20623a0b287) s
+5 247 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 236 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 214 M
+(Hi Kunal,) s
+5 192 M
+(What kind of workload is your broker cluster designed for? I don't think) s
+5 181 M
+(there is an easy answer here as these two brokers have different sets of) s
+5 170 M
+(features implemented. It really depends on your requirements on supported) s
+5 159 M
+(features and performance. For instance, if your application requires JMS) s
+5 148 M
+(2.0, then Artemis provides full support and ActiveMQ only provides partial) s
+5 137 M
+(support.) s
+5 115 M
+(That being said, I believe there is still a community of active) s
+5 104 M
+(contributors for ActiveMQ Classic out there adding and planning to add new) s
+5 93 M
+(features. You can browse its Jira tickets) s
+5 82 M
+(<https://issues.apache.org/jira/projects/AMQ/issues/AMQ-9590?filter=3Dallis=) s
+5 71 M
+(sues>) s
+5 60 M
+(to get a sense of what activities are happening.) s
+5 38 M
+(Thanks,) s
+5 27 M
+(Ken) s
+5 5 M
+(On Thu, Oct 3, 2024 at 6:56=E2=80=AFPM Kunal Rao <kunal@mechination.com.au>=) s
+_R
+S
+%%Page: (8) 8
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 8 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (8) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+( wrote:) s
+5 665 M
+(> Thanks Justin.) s
+5 654 M
+(> I am planning to use Amazon MQ \(only supports classic\) as a central broke=) s
+5 643 M
+(r) s
+5 632 M
+(> and Artemis as satellite brokers with the assumption that artemis is a mo=) s
+5 621 M
+(re) s
+5 610 M
+(> supported product and classic is treated as legacy with regards to) s
+5 599 M
+(> development and support.) s
+5 588 M
+(> Firstly, Is my assumption correct?) s
+5 577 M
+(>) s
+5 566 M
+(> We are considering three options:) s
+5 555 M
+(> 1. Use "classic" everywhere. Amazon MQ can be used as a central broker.) s
+5 544 M
+(> 2. Use "artemis" everywhere. benefits of Artemis outweigh "classic" and t=) s
+5 533 M
+(he) s
+5 522 M
+(> use of managed service in Amazon MQ.) s
+5 511 M
+(> 3. Hybrid approach. Use Amazon MQ centrally \( hoping artemis is on their) s
+5 500 M
+(> roadmap\) and Artemis on all satellite brokers.) s
+5 489 M
+(>) s
+5 478 M
+(> I would love to hear your thoughts on this please.) s
+5 467 M
+(>) s
+5 456 M
+(> Once again thanks for the prompt response.) s
+5 445 M
+(>) s
+5 434 M
+(> Kunal) s
+5 423 M
+(>) s
+5 412 M
+(> On Fri, 4 Oct 2024 at 00:51, Justin Bertram <jbertram@apache.org> wrote:) s
+5 401 M
+(>) s
+5 390 M
+(> > Just to clarify...ActiveMQ Classic doesn't support the Core protocol so) s
+5 379 M
+(> > that is why you can't use a Core bridge to integrate.) s
+5 368 M
+(> >) s
+5 357 M
+(> >) s
+5 346 M
+(> > Justin) s
+5 335 M
+(> >) s
+5 324 M
+(> > On Thu, Oct 3, 2024 at 8:29=E2=80=AFAM Justin Bertram <jbertram@apache.=) s
+5 313 M
+(org>) s
+5 302 M
+(> wrote:) s
+5 291 M
+(> >) s
+5 280 M
+(> > > Yes. You can bridge messages from Artemis to Classic and vice versa.) s
+5 269 M
+(> > > However, you can't use a Core bridge to do it. Core bridges, as the) s
+5 258 M
+(> name) s
+5 247 M
+(> > > suggests, use the Core protocol. A Core bridge can't use the AMQP) s
+5 236 M
+(> > protocol.) s
+5 225 M
+(> > >) s
+5 214 M
+(> > > I recommend Camel since it's mature, powerful, and ubiquitous. You ca=) s
+5 203 M
+(n) s
+5 192 M
+(> > set) s
+5 181 M
+(> > > up Camel routes on either Artemis or Classic. Here's [1] an example o=) s
+5 170 M
+(f) s
+5 159 M
+(> > how) s
+5 148 M
+(> > > to do it on Artemis.) s
+5 137 M
+(> > >) s
+5 126 M
+(> > > It's also possible to use the JMS bridge that ships with Artemis [2].) s
+5 115 M
+(> > >) s
+5 104 M
+(> > >) s
+5 93 M
+(> > > Justin) s
+5 82 M
+(> > >) s
+5 71 M
+(> > > [1]) s
+5 60 M
+(> > >) s
+5 49 M
+(> >) s
+5 38 M
+(> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=) s
+5 27 M
+(atures/standard/camel) s
+5 16 M
+(> > > [2]) s
+5 5 M
+(> > >) s
+_R
+S
+%%Page: (9) 9
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 9 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (9) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> >) s
+5 676 M
+(> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=) s
+5 665 M
+(atures/sub-modules/inter-broker-bridge/artemis-jms-bridge) s
+5 654 M
+(> > >) s
+5 643 M
+(> > > On Thu, Oct 3, 2024 at 2:38=E2=80=AFAM Kunal Rao <kunal@mechination.c=) s
+5 632 M
+(om.au>) s
+5 621 M
+(> > wrote:) s
+5 610 M
+(> > >) s
+5 599 M
+(> > >> Hi,) s
+5 588 M
+(> > >>) s
+5 577 M
+(> > >> Is it possible to bridge artemis with classic broker?) s
+5 566 M
+(> > >> I am trying with AMQP protocol.) s
+5 555 M
+(> > >>) s
+5 544 M
+(> > >> I am getting this error) s
+5 533 M
+(> > >>) s
+5 522 M
+(> > >> p1broker-1       | 2024-10-03 07:34:50,270 WARN) s
+5 511 M
+(> > >>  [org.apache.activemq.artemis.core.server] AMQ224091: Bridge) s
+5 500 M
+(> > >> BridgeImpl@6a3012f8 [name=3Damqp-bridge,) s
+5 489 M
+(> > queue=3DQueueImpl[name=3Dp1broker.out,) s
+5 478 M
+(> > >> postOffice=3DPostOfficeImpl [server=3DActiveMQServerImpl::name=3D0.0=) s
+5 467 M
+(.0.0],) s
+5 456 M
+(> > >> temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl) s
+5 445 M
+(> \(identity=3DBridge) s
+5 434 M
+(> > >> amqp-bridge\)) s
+5 423 M
+(> > >> [initialConnectors=3D[TransportConfiguration\(name=3Dactivemq-classic=) s
+5 412 M
+(-amqp,) s
+5 401 M
+(> > >>) s
+5 390 M
+(> > >>) s
+5 379 M
+(> >) s
+5 368 M
+(> factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConne=) s
+5 357 M
+(ctorFactory\)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],) s
+5 346 M
+(> > >> discoveryGroupConfiguration=3Dnull]] is unable to connect to) s
+5 335 M
+(> destination.) s
+5 324 M
+(> > >> Retrying) s
+5 313 M
+(> > >> centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0) s
+5 302 M
+(> client.) s
+5 291 M
+(> > >> ARTEMIS,0) s
+5 280 M
+(> > >> centralbroker-1  |  WARN | Transport Connection to: tcp://) s
+5 269 M
+(> > >> 172.19.0.3:33778) s
+5 258 M
+(> > >> failed: Connection from client using unsupported AMQP attempted) s
+5 247 M
+(> > >>) s
+5 236 M
+(> > >> broker.xml) s
+5 225 M
+(> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 214 M
+(> > >>) s
+5 203 M
+(> > >> <acceptors>) s
+5 192 M
+(> > >>) s
+5 181 M
+(> > >> <acceptor name=3D"artemis">) s
+5 170 M
+(> > >> tcp://) s
+5 159 M
+(> > >>) s
+5 148 M
+(> > >>) s
+5 137 M
+(> >) s
+5 126 M
+(> 0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=) s
+5 115 M
+(amqpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,O=) s
+5 104 M
+(PENWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplica=) s
+5 93 M
+(teDetection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObject=) s
+5 82 M
+(s=3Dfalse) s
+5 71 M
+(> > >> </acceptor>) s
+5 60 M
+(> > >>) s
+5 49 M
+(> > >> <!-- AMQP Acceptor. Listens on default AMQP port for AMQP traffic.--=) s
+5 38 M
+(>) s
+5 27 M
+(> > >> <acceptor name=3D"amqp">) s
+5 16 M
+(> > >> tcp://) s
+5 5 M
+(> > >>) s
+_R
+S
+%%Page: (10) 10
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 10 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (10) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> > >>) s
+5 676 M
+(> >) s
+5 665 M
+(> 0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=) s
+5 654 M
+(rotocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amq=) s
+5 643 M
+(pMinLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-timeo=) s
+5 632 M
+(ut=3D0) s
+5 621 M
+(> > >> </acceptor>) s
+5 610 M
+(> > >>) s
+5 599 M
+(> > >> <!-- STOMP Acceptor. -->) s
+5 588 M
+(> > >> <acceptor name=3D"stomp">) s
+5 577 M
+(> > >> tcp://) s
+5 566 M
+(> > >>) s
+5 555 M
+(> > >>) s
+5 544 M
+(> >) s
+5 533 M
+(> 0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=) s
+5 522 M
+(protocols=3DSTOMP;useEpoll=3Dtrue) s
+5 511 M
+(> > >> </acceptor>) s
+5 500 M
+(> > >>) s
+5 489 M
+(> > >> <!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and STOMP) s
+5 478 M
+(> for) s
+5 467 M
+(> > >> legacy HornetQ) s
+5 456 M
+(> > >> clients. -->) s
+5 445 M
+(> > >> <acceptor name=3D"hornetq">) s
+5 434 M
+(> > >> tcp://) s
+5 423 M
+(> > >>) s
+5 412 M
+(> > >>) s
+5 401 M
+(> >) s
+5 390 M
+(> 0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;prot=) s
+5 379 M
+(ocols=3DHORNETQ,STOMP;useEpoll=3Dtrue) s
+5 368 M
+(> > >> </acceptor>) s
+5 357 M
+(> > >>) s
+5 346 M
+(> > >> <!-- MQTT Acceptor -->) s
+5 335 M
+(> > >> <acceptor name=3D"mqtt">) s
+5 324 M
+(> > >> tcp://) s
+5 313 M
+(> > >>) s
+5 302 M
+(> > >>) s
+5 291 M
+(> >) s
+5 280 M
+(> 0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=) s
+5 269 M
+(rotocols=3DMQTT;useEpoll=3Dtrue) s
+5 258 M
+(> > >> </acceptor>) s
+5 247 M
+(> > >>) s
+5 236 M
+(> > >> </acceptors>) s
+5 225 M
+(> > >>) s
+5 214 M
+(> > >> <bridges>) s
+5 203 M
+(> > >> <bridge name=3D"amqp-bridge">) s
+5 192 M
+(> > >> <queue-name>p1broker.out</queue-name>) s
+5 181 M
+(> > >> <forwarding-address>centralbroker.in</forwarding-address>) s
+5 170 M
+(> > >> <user>admin</user>) s
+5 159 M
+(> > >> <password>admin</password>) s
+5 148 M
+(> > >> <static-connectors>) s
+5 137 M
+(> > >> <connector-ref>activemq-classic-amqp</connector-ref>) s
+5 126 M
+(> > >> </static-connectors>) s
+5 115 M
+(> > >> </bridge>) s
+5 104 M
+(> > >> </bridges>) s
+5 93 M
+(> > >>) s
+5 82 M
+(> > >>) s
+5 71 M
+(> > >> <connectors>) s
+5 60 M
+(> > >> <connector name=3D"activemq-classic-amqp">) s
+5 49 M
+(> > >> tcp://centralbroker:5672?protocols=3DAMQP</connector>) s
+5 38 M
+(> > >> </connectors>) s
+5 27 M
+(> > >>) s
+5 16 M
+(> > >>) s
+5 5 M
+(> > >> activemq.xml) s
+_R
+S
+%%Page: (11) 11
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 11 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (11) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 676 M
+(> > >>) s
+5 665 M
+(> > >> <transportConnectors>) s
+5 654 M
+(> > >> <!-- DOS protection, limit concurrent connections to 1000 and frame) s
+5 643 M
+(> size) s
+5 632 M
+(> > >> to) s
+5 621 M
+(> > >> 100MB -->) s
+5 610 M
+(> > >> <transportConnector name=3D"openwire") s
+5 599 M
+(> > >> uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;) s
+5 588 M
+(> > >> wireFormat.maxFrameSize=3D104857600000" />) s
+5 577 M
+(> > >> <transportConnector name=3D"amqp") s
+5 566 M
+(> > >> uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;) s
+5 555 M
+(> > >> wireFormat.maxFrameSize=3D104857600" />) s
+5 544 M
+(> > >> <transportConnector name=3D"stomp") s
+5 533 M
+(> > >> uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;) s
+5 522 M
+(> > >> wireFormat.maxFrameSize=3D104857600" />) s
+5 511 M
+(> > >> <transportConnector name=3D"mqtt") s
+5 500 M
+(> > >> uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;) s
+5 489 M
+(> > >> wireFormat.maxFrameSize=3D104857600" />) s
+5 478 M
+(> > >> <transportConnector name=3D"ws") s
+5 467 M
+(> > >> uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;) s
+5 456 M
+(> > >> wireFormat.maxFrameSize=3D104857600" />) s
+5 445 M
+(> > >> </transportConnectors>) s
+5 434 M
+(> > >>) s
+5 423 M
+(> > >>) s
+5 412 M
+(> > >> what am i doing wrong?) s
+5 401 M
+(> > >>) s
+5 390 M
+(> > >> Cheers) s
+5 379 M
+(> > >> Kunal) s
+5 368 M
+(> > >>) s
+5 357 M
+(> > >) s
+5 346 M
+(> >) s
+5 335 M
+(>) s
+5 313 M
+(--00000000000011eae20623a0b287--) s
+5 302 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 291 M
+(Return-Path: <users-return-57519-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 280 M
+(rg>) s
+5 269 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 258 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 247 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 236 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 612663E80C) s
+5 225 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Sat,  5 Oct 2024 04:07:37 +0000 \(UT) s
+5 214 M
+(C\)) s
+5 203 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 192 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 181 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 170 M
+(        \(No client certificate requested\)) s
+5 159 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 148 M
+(MTPS id C42A4626BE) s
+5 137 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Sat,  5 Oct 2024 04:07:36 +0000 \(UT) s
+5 126 M
+(C\)) s
+5 115 M
+(Received: \(qmail 4112071 invoked by uid 998\); 5 Oct 2024 04:07:35 -0000) s
+5 104 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 93 M
+(Precedence: bulk) s
+5 82 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 71 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 60 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 49 M
+(List-Id: <users.activemq.apache.org>) s
+5 38 M
+(Reply-To: users@activemq.apache.org) s
+5 27 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 16 M
+(Received: \(qmail 4112051 invoked by uid 116\); 5 Oct 2024 04:07:35 -0000) s
+5 5 M
+(Received: from ec2-52-204-25-47.compute-1.amazonaws.com \(HELO mailrelay1-ec2-va.apache.) s
+_R
+S
+%%Page: (12) 12
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 12 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (12) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(org\) \(52.204.25.47\)) s
+5 676 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Sat, 05 Oct 2024 04:07:35 +0000) s
+5 665 M
+(Authentication-Results: apache.org; auth=none) s
+5 654 M
+(Received: from mail-ed1-f54.google.com \(mail-ed1-f54.google.com [209.85.208.54]\)) s
+5 643 M
+(        by mailrelay1-ec2-va.apache.org \(ASF Mail Server at mailrelay1-ec2-va.apache.or) s
+5 632 M
+(g\) with ESMTPSA id CABAB4006F) s
+5 621 M
+(        for <users@activemq.apache.org>; Sat,  5 Oct 2024 04:07:31 +0000 \(UTC\)) s
+5 610 M
+(Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c88e4a7c53so3033969a12) s
+5 599 M
+(.0) s
+5 588 M
+(        for <users@activemq.apache.org>; Fri, 04 Oct 2024 21:07:31 -0700 \(PDT\)) s
+5 577 M
+(X-Gm-Message-State: AOJu0YzXJ5VN3XSQiCwid6pUdTq/SCNB7gMfYixivBMgLsH101FQwbFW) s
+5 566 M
+(        bn2QiOhjTejj5U/OZb+2kYY9bio0drTfpjvBu2UC3T/dsynjk6cplw1r+3BcsOHoesHRFnNV7Ns) s
+5 555 M
+(        CzHzLUiTZs264xoRZkmYZx0xSmMmUNvMBe2eVPw==) s
+5 544 M
+(X-Google-Smtp-Source: AGHT+IFvw9QkLFPvDL5E3q1JfK/7nQY34KXI1mzw82KLGCxqvOnGhgsWrptckDie0) s
+5 533 M
+(xEdF+fHSNzpMPF8bNkmkzg/E3M=) s
+5 522 M
+(X-Received: by 2002:a05:6402:358f:b0:5c8:77a5:d480 with SMTP id) s
+5 511 M
+( 4fb4d7f45d1cf-5c8d2cff6e1mr2928440a12.1.1728101250940; Fri, 04 Oct 2024) s
+5 500 M
+( 21:07:30 -0700 \(PDT\)) s
+5 489 M
+(MIME-Version: 1.0) s
+5 478 M
+(References: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>) s
+5 467 M
+( <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com>) s
+5 456 M
+( <CAF+kE=QPgjc0TTXo48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.gmail.com> <CAOOFvV_fzb8pdW_) s
+5 445 M
+(y8=8g=XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com>) s
+5 434 M
+(In-Reply-To: <CAOOFvV_fzb8pdW_y8=8g=XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com>) s
+5 423 M
+(From: Justin Bertram <jbertram@apache.org>) s
+5 412 M
+(Date: Fri, 4 Oct 2024 23:07:04 -0500) s
+5 401 M
+(X-Gmail-Original-Message-ID: <CAF+kE=Qn3jBr_hBhr-18aKKc8xoE+YtaMBDVJyQ+6hqRHa1+BQ@mail.) s
+5 390 M
+(gmail.com>) s
+5 379 M
+(Message-ID: <CAF+kE=Qn3jBr_hBhr-18aKKc8xoE+YtaMBDVJyQ+6hqRHa1+BQ@mail.gmail.com>) s
+5 368 M
+(Subject: Re: Bridging Artemis with classic) s
+5 357 M
+(To: users@activemq.apache.org) s
+5 346 M
+(Content-Type: multipart/alternative; boundary="00000000000032e0c00623b2ed97") s
+5 324 M
+(--00000000000032e0c00623b2ed97) s
+5 313 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 302 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 280 M
+(Development on Classic has slowed considerably since focus has shifted to) s
+5 269 M
+(Artemis. Most of the folks who've contributed the most code to Classic) s
+5 258 M
+(historically have either left the project or moved over to Artemis. The) s
+5 247 M
+(Artemis repo has almost 100 more total committers and almost as many) s
+5 236 M
+(commits as the Classic repo despite being roughly half its age. That said,) s
+5 225 M
+(Classic has a dedicated following of folks who are either unable to migrate) s
+5 214 M
+(\(e.g. due to constraints in a legacy environment\) or simply don't need to.) s
+5 203 M
+(For these folks there are regular releases which mainly consist of) s
+5 192 M
+(dependency upgrades \(e.g. to deal with security issues\) and bug fixes.) s
+5 170 M
+(Ken mentioned that both Artemis and Classic have different feature sets,) s
+5 159 M
+(and while that's technically true there is, of course, a tremendous amount) s
+5 148 M
+(of overlap. Pretty much every feature in Classic now has an exact or) s
+5 137 M
+(functionally equivalent feature in Artemis.) s
+5 115 M
+(You'd need to get in touch with Amazon to get more details about what might) s
+5 104 M
+(or might not be on their roadmap. Generally speaking, we have no visibility) s
+5 93 M
+(into that as Apache community members.) s
+5 60 M
+(Justin) s
+5 38 M
+(On Thu, Oct 3, 2024 at 8:56=E2=80=AFPM Kunal Rao <kunal@mechination.com.au>=) s
+5 27 M
+( wrote:) s
+5 5 M
+(> Thanks Justin.) s
+_R
+S
+%%Page: (13) 13
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 13 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (13) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> I am planning to use Amazon MQ \(only supports classic\) as a central broke=) s
+5 676 M
+(r) s
+5 665 M
+(> and Artemis as satellite brokers with the assumption that artemis is a mo=) s
+5 654 M
+(re) s
+5 643 M
+(> supported product and classic is treated as legacy with regards to) s
+5 632 M
+(> development and support.) s
+5 621 M
+(> Firstly, Is my assumption correct?) s
+5 610 M
+(>) s
+5 599 M
+(> We are considering three options:) s
+5 588 M
+(> 1. Use "classic" everywhere. Amazon MQ can be used as a central broker.) s
+5 577 M
+(> 2. Use "artemis" everywhere. benefits of Artemis outweigh "classic" and t=) s
+5 566 M
+(he) s
+5 555 M
+(> use of managed service in Amazon MQ.) s
+5 544 M
+(> 3. Hybrid approach. Use Amazon MQ centrally \( hoping artemis is on their) s
+5 533 M
+(> roadmap\) and Artemis on all satellite brokers.) s
+5 522 M
+(>) s
+5 511 M
+(> I would love to hear your thoughts on this please.) s
+5 500 M
+(>) s
+5 489 M
+(> Once again thanks for the prompt response.) s
+5 478 M
+(>) s
+5 467 M
+(> Kunal) s
+5 456 M
+(>) s
+5 445 M
+(> On Fri, 4 Oct 2024 at 00:51, Justin Bertram <jbertram@apache.org> wrote:) s
+5 434 M
+(>) s
+5 423 M
+(> > Just to clarify...ActiveMQ Classic doesn't support the Core protocol so) s
+5 412 M
+(> > that is why you can't use a Core bridge to integrate.) s
+5 401 M
+(> >) s
+5 390 M
+(> >) s
+5 379 M
+(> > Justin) s
+5 368 M
+(> >) s
+5 357 M
+(> > On Thu, Oct 3, 2024 at 8:29=E2=80=AFAM Justin Bertram <jbertram@apache.=) s
+5 346 M
+(org>) s
+5 335 M
+(> wrote:) s
+5 324 M
+(> >) s
+5 313 M
+(> > > Yes. You can bridge messages from Artemis to Classic and vice versa.) s
+5 302 M
+(> > > However, you can't use a Core bridge to do it. Core bridges, as the) s
+5 291 M
+(> name) s
+5 280 M
+(> > > suggests, use the Core protocol. A Core bridge can't use the AMQP) s
+5 269 M
+(> > protocol.) s
+5 258 M
+(> > >) s
+5 247 M
+(> > > I recommend Camel since it's mature, powerful, and ubiquitous. You ca=) s
+5 236 M
+(n) s
+5 225 M
+(> > set) s
+5 214 M
+(> > > up Camel routes on either Artemis or Classic. Here's [1] an example o=) s
+5 203 M
+(f) s
+5 192 M
+(> > how) s
+5 181 M
+(> > > to do it on Artemis.) s
+5 170 M
+(> > >) s
+5 159 M
+(> > > It's also possible to use the JMS bridge that ships with Artemis [2].) s
+5 148 M
+(> > >) s
+5 137 M
+(> > >) s
+5 126 M
+(> > > Justin) s
+5 115 M
+(> > >) s
+5 104 M
+(> > > [1]) s
+5 93 M
+(> > >) s
+5 82 M
+(> >) s
+5 71 M
+(> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=) s
+5 60 M
+(atures/standard/camel) s
+5 49 M
+(> > > [2]) s
+5 38 M
+(> > >) s
+5 27 M
+(> >) s
+5 16 M
+(> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=) s
+5 5 M
+(atures/sub-modules/inter-broker-bridge/artemis-jms-bridge) s
+_R
+S
+%%Page: (14) 14
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 14 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (14) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> > >) s
+5 676 M
+(> > > On Thu, Oct 3, 2024 at 2:38=E2=80=AFAM Kunal Rao <kunal@mechination.c=) s
+5 665 M
+(om.au>) s
+5 654 M
+(> > wrote:) s
+5 643 M
+(> > >) s
+5 632 M
+(> > >> Hi,) s
+5 621 M
+(> > >>) s
+5 610 M
+(> > >> Is it possible to bridge artemis with classic broker?) s
+5 599 M
+(> > >> I am trying with AMQP protocol.) s
+5 588 M
+(> > >>) s
+5 577 M
+(> > >> I am getting this error) s
+5 566 M
+(> > >>) s
+5 555 M
+(> > >> p1broker-1       | 2024-10-03 07:34:50,270 WARN) s
+5 544 M
+(> > >>  [org.apache.activemq.artemis.core.server] AMQ224091: Bridge) s
+5 533 M
+(> > >> BridgeImpl@6a3012f8 [name=3Damqp-bridge,) s
+5 522 M
+(> > queue=3DQueueImpl[name=3Dp1broker.out,) s
+5 511 M
+(> > >> postOffice=3DPostOfficeImpl [server=3DActiveMQServerImpl::name=3D0.0=) s
+5 500 M
+(.0.0],) s
+5 489 M
+(> > >> temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl) s
+5 478 M
+(> \(identity=3DBridge) s
+5 467 M
+(> > >> amqp-bridge\)) s
+5 456 M
+(> > >> [initialConnectors=3D[TransportConfiguration\(name=3Dactivemq-classic=) s
+5 445 M
+(-amqp,) s
+5 434 M
+(> > >>) s
+5 423 M
+(> > >>) s
+5 412 M
+(> >) s
+5 401 M
+(> factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConne=) s
+5 390 M
+(ctorFactory\)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],) s
+5 379 M
+(> > >> discoveryGroupConfiguration=3Dnull]] is unable to connect to) s
+5 368 M
+(> destination.) s
+5 357 M
+(> > >> Retrying) s
+5 346 M
+(> > >> centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0) s
+5 335 M
+(> client.) s
+5 324 M
+(> > >> ARTEMIS,0) s
+5 313 M
+(> > >> centralbroker-1  |  WARN | Transport Connection to: tcp://) s
+5 302 M
+(> > >> 172.19.0.3:33778) s
+5 291 M
+(> > >> failed: Connection from client using unsupported AMQP attempted) s
+5 280 M
+(> > >>) s
+5 269 M
+(> > >> broker.xml) s
+5 258 M
+(> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 247 M
+(> > >>) s
+5 236 M
+(> > >> <acceptors>) s
+5 225 M
+(> > >>) s
+5 214 M
+(> > >> <acceptor name=3D"artemis">) s
+5 203 M
+(> > >> tcp://) s
+5 192 M
+(> > >>) s
+5 181 M
+(> > >>) s
+5 170 M
+(> >) s
+5 159 M
+(> 0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=) s
+5 148 M
+(amqpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,O=) s
+5 137 M
+(PENWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplica=) s
+5 126 M
+(teDetection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObject=) s
+5 115 M
+(s=3Dfalse) s
+5 104 M
+(> > >> </acceptor>) s
+5 93 M
+(> > >>) s
+5 82 M
+(> > >> <!-- AMQP Acceptor. Listens on default AMQP port for AMQP traffic.--=) s
+5 71 M
+(>) s
+5 60 M
+(> > >> <acceptor name=3D"amqp">) s
+5 49 M
+(> > >> tcp://) s
+5 38 M
+(> > >>) s
+5 27 M
+(> > >>) s
+5 16 M
+(> >) s
+5 5 M
+(> 0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=) s
+_R
+S
+%%Page: (15) 15
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 15 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (15) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(rotocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amq=) s
+5 676 M
+(pMinLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-timeo=) s
+5 665 M
+(ut=3D0) s
+5 654 M
+(> > >> </acceptor>) s
+5 643 M
+(> > >>) s
+5 632 M
+(> > >> <!-- STOMP Acceptor. -->) s
+5 621 M
+(> > >> <acceptor name=3D"stomp">) s
+5 610 M
+(> > >> tcp://) s
+5 599 M
+(> > >>) s
+5 588 M
+(> > >>) s
+5 577 M
+(> >) s
+5 566 M
+(> 0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=) s
+5 555 M
+(protocols=3DSTOMP;useEpoll=3Dtrue) s
+5 544 M
+(> > >> </acceptor>) s
+5 533 M
+(> > >>) s
+5 522 M
+(> > >> <!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and STOMP) s
+5 511 M
+(> for) s
+5 500 M
+(> > >> legacy HornetQ) s
+5 489 M
+(> > >> clients. -->) s
+5 478 M
+(> > >> <acceptor name=3D"hornetq">) s
+5 467 M
+(> > >> tcp://) s
+5 456 M
+(> > >>) s
+5 445 M
+(> > >>) s
+5 434 M
+(> >) s
+5 423 M
+(> 0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;prot=) s
+5 412 M
+(ocols=3DHORNETQ,STOMP;useEpoll=3Dtrue) s
+5 401 M
+(> > >> </acceptor>) s
+5 390 M
+(> > >>) s
+5 379 M
+(> > >> <!-- MQTT Acceptor -->) s
+5 368 M
+(> > >> <acceptor name=3D"mqtt">) s
+5 357 M
+(> > >> tcp://) s
+5 346 M
+(> > >>) s
+5 335 M
+(> > >>) s
+5 324 M
+(> >) s
+5 313 M
+(> 0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=) s
+5 302 M
+(rotocols=3DMQTT;useEpoll=3Dtrue) s
+5 291 M
+(> > >> </acceptor>) s
+5 280 M
+(> > >>) s
+5 269 M
+(> > >> </acceptors>) s
+5 258 M
+(> > >>) s
+5 247 M
+(> > >> <bridges>) s
+5 236 M
+(> > >> <bridge name=3D"amqp-bridge">) s
+5 225 M
+(> > >> <queue-name>p1broker.out</queue-name>) s
+5 214 M
+(> > >> <forwarding-address>centralbroker.in</forwarding-address>) s
+5 203 M
+(> > >> <user>admin</user>) s
+5 192 M
+(> > >> <password>admin</password>) s
+5 181 M
+(> > >> <static-connectors>) s
+5 170 M
+(> > >> <connector-ref>activemq-classic-amqp</connector-ref>) s
+5 159 M
+(> > >> </static-connectors>) s
+5 148 M
+(> > >> </bridge>) s
+5 137 M
+(> > >> </bridges>) s
+5 126 M
+(> > >>) s
+5 115 M
+(> > >>) s
+5 104 M
+(> > >> <connectors>) s
+5 93 M
+(> > >> <connector name=3D"activemq-classic-amqp">) s
+5 82 M
+(> > >> tcp://centralbroker:5672?protocols=3DAMQP</connector>) s
+5 71 M
+(> > >> </connectors>) s
+5 60 M
+(> > >>) s
+5 49 M
+(> > >>) s
+5 38 M
+(> > >> activemq.xml) s
+5 27 M
+(> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 16 M
+(> > >>) s
+5 5 M
+(> > >> <transportConnectors>) s
+_R
+S
+%%Page: (16) 16
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 16 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (16) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> > >> <!-- DOS protection, limit concurrent connections to 1000 and frame) s
+5 676 M
+(> size) s
+5 665 M
+(> > >> to) s
+5 654 M
+(> > >> 100MB -->) s
+5 643 M
+(> > >> <transportConnector name=3D"openwire") s
+5 632 M
+(> > >> uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;) s
+5 621 M
+(> > >> wireFormat.maxFrameSize=3D104857600000" />) s
+5 610 M
+(> > >> <transportConnector name=3D"amqp") s
+5 599 M
+(> > >> uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;) s
+5 588 M
+(> > >> wireFormat.maxFrameSize=3D104857600" />) s
+5 577 M
+(> > >> <transportConnector name=3D"stomp") s
+5 566 M
+(> > >> uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;) s
+5 555 M
+(> > >> wireFormat.maxFrameSize=3D104857600" />) s
+5 544 M
+(> > >> <transportConnector name=3D"mqtt") s
+5 533 M
+(> > >> uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;) s
+5 522 M
+(> > >> wireFormat.maxFrameSize=3D104857600" />) s
+5 511 M
+(> > >> <transportConnector name=3D"ws") s
+5 500 M
+(> > >> uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;) s
+5 489 M
+(> > >> wireFormat.maxFrameSize=3D104857600" />) s
+5 478 M
+(> > >> </transportConnectors>) s
+5 467 M
+(> > >>) s
+5 456 M
+(> > >>) s
+5 445 M
+(> > >> what am i doing wrong?) s
+5 434 M
+(> > >>) s
+5 423 M
+(> > >> Cheers) s
+5 412 M
+(> > >> Kunal) s
+5 401 M
+(> > >>) s
+5 390 M
+(> > >) s
+5 379 M
+(> >) s
+5 368 M
+(>) s
+5 346 M
+(--00000000000032e0c00623b2ed97--) s
+5 335 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 324 M
+(Return-Path: <users-return-57524-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 313 M
+(rg>) s
+5 302 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 291 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 280 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 269 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 0E0623E697) s
+5 258 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon,  7 Oct 2024 17:39:42 +0000 \(UT) s
+5 247 M
+(C\)) s
+5 236 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 225 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 214 M
+(        \(No client certificate requested\)) s
+5 203 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 192 M
+(ESMTPS id E2A9745867) s
+5 181 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Mon,  7 Oct 2024 17:39:40 +0000 \(UT) s
+5 170 M
+(C\)) s
+5 159 M
+(Received: \(qmail 3584615 invoked by uid 998\); 7 Oct 2024 17:39:39 -0000) s
+5 148 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 137 M
+(Precedence: bulk) s
+5 126 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 115 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 104 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 93 M
+(List-Id: <users.activemq.apache.org>) s
+5 82 M
+(Reply-To: users@activemq.apache.org) s
+5 71 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 60 M
+(Received: \(qmail 3584569 invoked by uid 116\); 7 Oct 2024 17:39:38 -0000) s
+5 49 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 38 M
+(6.100\)) s
+5 27 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Mon, 07 Oct 2024 17:39:38 +0000) s
+5 16 M
+(Authentication-Results: apache.org; auth=none) s
+5 5 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+_R
+S
+%%Page: (17) 17
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 17 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (17) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 676 M
+(ith ESMTP id 0BE832000B3) s
+5 665 M
+(        for <users@activemq.apache.org>; Mon,  7 Oct 2024 17:39:38 +0000 \(UTC\)) s
+5 654 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 643 M
+(X-Spam-Flag: NO) s
+5 632 M
+(X-Spam-Score: -0.195) s
+5 621 M
+(X-Spam-Level: ) s
+5 610 M
+(X-Spam-Status: No, score=-0.195 tagged_above=-999 required=6.31) s
+5 599 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 588 M
+(        DKIM_VALID_EF=-0.1, RCVD_IN_DNSWL_BLOCKED=0.001,) s
+5 577 M
+(        RCVD_IN_MSPIKE_H3=0.001, RCVD_IN_MSPIKE_WL=0.001,) s
+5 566 M
+(        RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,) s
+5 555 M
+(        RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,) s
+5 544 M
+(        URIBL_BLOCKED=0.001] autolearn=disabled) s
+5 533 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 522 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 511 M
+(Received: from mx1-ec2-va.apache.org \([116.203.227.195]\)) s
+5 500 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 489 M
+(10024\)) s
+5 478 M
+(        with ESMTP id g5YhHbnriS_f for <users@activemq.apache.org>;) s
+5 467 M
+(        Mon,  7 Oct 2024 17:39:37 +0000 \(UTC\)) s
+5 456 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=209.85.160.53; helo=mail-oa1) s
+5 445 M
+(-f53.google.com; envelope-from=mattrpav@gmail.com; receiver=<UNKNOWN> ) s
+5 434 M
+(Received: from mail-oa1-f53.google.com \(mail-oa1-f53.google.com [209.85.160.53]\)) s
+5 423 M
+(        by mx1-ec2-va.apache.org \(ASF Mail Server at mx1-ec2-va.apache.org\) with ESMTPS) s
+5 412 M
+( id DF2C3C0C5D) s
+5 401 M
+(        for <users@activemq.apache.org>; Mon,  7 Oct 2024 17:39:36 +0000 \(UTC\)) s
+5 390 M
+(Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-27e1f62e30eso2585895fac) s
+5 379 M
+(.0) s
+5 368 M
+(        for <users@activemq.apache.org>; Mon, 07 Oct 2024 10:39:36 -0700 \(PDT\)) s
+5 357 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 346 M
+(        d=gmail.com; s=20230601; t=1728322776; x=1728927576; darn=activemq.apache.org;) s
+5 335 M
+(        h=message-id:in-reply-to:to:references:date:subject:mime-version) s
+5 324 M
+(         :content-transfer-encoding:from:from:to:cc:subject:date:message-id) s
+5 313 M
+(         :reply-to;) s
+5 302 M
+(        bh=B4Y2yXVrzlU5/WcidbZ/aiadzTK/AyfulJNXAnUA9Dg=;) s
+5 291 M
+(        b=JgkqPX+2yHu2Yv9wTkCxrnZDundtTCZaR5XuBHUgrx6cMfGe4jxpGjCsUSPKESxA1x) s
+5 280 M
+(         yPhNPo5lLF8hqLByABFZtpkMJl3vtbk8zu1T6pId4D2gBjJ0vMfK7xoIkptBfjmZcE+4) s
+5 269 M
+(         DYSFLKfNQ5rt54AFpS1dSxjFj09lro1a2fSReE3YeydOGVsAgLq6FumFzru8YUQJgBUL) s
+5 258 M
+(         4GIKqJdjps5h9MW0WfFa2sp12m7fDc5JgZoa3sUDn14coSjqhgY9OmUCIjVtARrnyHnJ) s
+5 247 M
+(         htixS6jiQiylnwhKsagFo0sqImjco3cI7Eg1COq7S/ZDeV7vLOysJBaQUkOSR5dSf8Gr) s
+5 236 M
+(         EFKA==) s
+5 225 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 214 M
+(        d=1e100.net; s=20230601; t=1728322776; x=1728927576;) s
+5 203 M
+(        h=message-id:in-reply-to:to:references:date:subject:mime-version) s
+5 192 M
+(         :content-transfer-encoding:from:x-gm-message-state:from:to:cc) s
+5 181 M
+(         :subject:date:message-id:reply-to;) s
+5 170 M
+(        bh=B4Y2yXVrzlU5/WcidbZ/aiadzTK/AyfulJNXAnUA9Dg=;) s
+5 159 M
+(        b=CVoRk1hO1PVSIMT3D/ktYyM6R004sfJDA2Z6Pr+5Ckiqcu49/JcWtvpTcNDemlCDCN) s
+5 148 M
+(         72eKUvZc2FypQ7kHfmXov5GCvjJjEQsm8G78v2cbaMTqn4t1tJrpRN8HsBsltw57qY/o) s
+5 137 M
+(         tB3h77oDB32/4zUp6xCZaKMhs8Uzcl7t6y/4dHbrRn893ezELiDXaaZTqX6MOwyOpIKa) s
+5 126 M
+(         bk1JaA51/F56dCiNg0WF1W6jK1Rp9qZGiZRqE6IEXSxqec4ZY1mZIz+luqGV2NEhuDO4) s
+5 115 M
+(         LDras1pWHsDf6mJ5k/elwfjqgddpAMlayt3uAMszRM56QGB4tUiynQDhteXxEoaD/EG/) s
+5 104 M
+(         ZitQ==) s
+5 93 M
+(X-Gm-Message-State: AOJu0YyqIC4Lr4aFi5Fkljv2NaB5NM8yjGryyNz+s3FIeB/nIAd6YQvr) s
+5 82 M
+(        xgOro/a+TbSloKPJjpY2uTGJXiVX03w2UHBv4kfGAWMAkDuWAKM86D8QTg==) s
+5 71 M
+(X-Google-Smtp-Source: AGHT+IE+QeMvy898WcL1qXkptcZ9fN9okLs/ZrLT3jDcxMjUhpA+IxAZ1L0vm5cHp) s
+5 60 M
+(8reDCK8T4wn4A==) s
+5 49 M
+(X-Received: by 2002:a05:6870:d182:b0:259:8858:a330 with SMTP id 586e51a60fabf-28816e2e7) s
+5 38 M
+(82mr219080fac.22.1728322775917;) s
+5 27 M
+(        Mon, 07 Oct 2024 10:39:35 -0700 \(PDT\)) s
+5 16 M
+(Received: from smtpclient.apple \(108-85-129-236.lightspeed.austtx.sbcglobal.net. [108.8) s
+5 5 M
+(5.129.236]\)) s
+_R
+S
+%%Page: (18) 18
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 18 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (18) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-287d71964aesm2331231fac.31.2024) s
+5 676 M
+(.10.07.10.39.34) s
+5 665 M
+(        for <users@activemq.apache.org>) s
+5 654 M
+(        \(version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128\);) s
+5 643 M
+(        Mon, 07 Oct 2024 10:39:35 -0700 \(PDT\)) s
+5 632 M
+(From: Matt Pavlovich <mattrpav@gmail.com>) s
+5 621 M
+(Content-Type: text/plain;) s
+5 610 M
+(        charset=utf-8) s
+5 599 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 588 M
+(Mime-Version: 1.0 \(Mac OS X Mail 16.0 \\\(3776.700.51\\\)\)) s
+5 577 M
+(Subject: Re: Bridging Artemis with classic) s
+5 566 M
+(Date: Mon, 7 Oct 2024 12:39:24 -0500) s
+5 555 M
+(References: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>) s
+5 544 M
+( <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com>) s
+5 533 M
+( <CAF+kE=QPgjc0TTXo48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.gmail.com>) s
+5 522 M
+( <CAOOFvV_fzb8pdW_y8=8g=XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com>) s
+5 511 M
+( <CAF+kE=Qn3jBr_hBhr-18aKKc8xoE+YtaMBDVJyQ+6hqRHa1+BQ@mail.gmail.com>) s
+5 500 M
+(To: "users@activemq.apache.org" <users@activemq.apache.org>) s
+5 489 M
+(In-Reply-To: <CAF+kE=Qn3jBr_hBhr-18aKKc8xoE+YtaMBDVJyQ+6hqRHa1+BQ@mail.gmail.com>) s
+5 478 M
+(Message-Id: <49A52E01-8487-453C-AFDE-85AEDA2760A1@gmail.com>) s
+5 467 M
+(X-Mailer: Apple Mail \(2.3776.700.51\)) s
+5 445 M
+(Hi Kunal-) s
+5 423 M
+(I expect you=E2=80=99ll get a wide range of responses here =3D\). =) s
+5 412 M
+(ActiveMQ has two brokers, and they do similar things but it essentially =) s
+5 401 M
+(comes down to who is the best fit for supporting your organizations=E2=80=99=) s
+5 390 M
+( ActiveMQ infrastructure?) s
+5 368 M
+(I take exception to Justin=E2=80=99s comments here =E2=80=94 ActiveMQ =) s
+5 357 M
+(Classic has a fresh round of modernized releases that are more than =) s
+5 346 M
+(dependency updates. There is a healthy list of improvements for =) s
+5 335 M
+(observability, extensibility, and improvements for support of =) s
+5 324 M
+(multi-tenant message flows. Plans are being made for ActiveMQ Classic =) s
+5 313 M
+(7.x, as well as an approach for applying modernization without requiring =) s
+5 302 M
+(fork-lift upgrade.) s
+5 280 M
+(I=E2=80=99d also put an asterisk on the notion that recent commits are a =) s
+5 269 M
+(reliable indicator of future community engagement. ActiveMQ Classic is =) s
+5 258 M
+(very stable, processes billions and billions of messages per day and =) s
+5 247 M
+(perhaps doesn=E2=80=99t need as many fixes?) s
+5 225 M
+(Thanks,) s
+5 214 M
+(Matt Pavlovich) s
+5 192 M
+(> On Oct 4, 2024, at 11:07=E2=80=AFPM, Justin Bertram =) s
+5 181 M
+(<jbertram@apache.org> wrote:) s
+5 170 M
+(>=20) s
+5 159 M
+(> Development on Classic has slowed considerably since focus has shifted =) s
+5 148 M
+(to) s
+5 137 M
+(> Artemis. Most of the folks who've contributed the most code to Classic) s
+5 126 M
+(> historically have either left the project or moved over to Artemis. =) s
+5 115 M
+(The) s
+5 104 M
+(> Artemis repo has almost 100 more total committers and almost as many) s
+5 93 M
+(> commits as the Classic repo despite being roughly half its age. That =) s
+5 82 M
+(said,) s
+5 71 M
+(> Classic has a dedicated following of folks who are either unable to =) s
+5 60 M
+(migrate) s
+5 49 M
+(> \(e.g. due to constraints in a legacy environment\) or simply don't need =) s
+5 38 M
+(to.) s
+5 27 M
+(> For these folks there are regular releases which mainly consist of) s
+5 16 M
+(> dependency upgrades \(e.g. to deal with security issues\) and bug fixes.) s
+5 5 M
+(>=20) s
+_R
+S
+%%Page: (19) 19
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 19 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (19) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> Ken mentioned that both Artemis and Classic have different feature =) s
+5 676 M
+(sets,) s
+5 665 M
+(> and while that's technically true there is, of course, a tremendous =) s
+5 654 M
+(amount) s
+5 643 M
+(> of overlap. Pretty much every feature in Classic now has an exact or) s
+5 632 M
+(> functionally equivalent feature in Artemis.) s
+5 621 M
+(>=20) s
+5 610 M
+(> You'd need to get in touch with Amazon to get more details about what =) s
+5 599 M
+(might) s
+5 588 M
+(> or might not be on their roadmap. Generally speaking, we have no =) s
+5 577 M
+(visibility) s
+5 566 M
+(> into that as Apache community members.) s
+5 555 M
+(>=20) s
+5 544 M
+(>=20) s
+5 533 M
+(> Justin) s
+5 522 M
+(>=20) s
+5 511 M
+(> On Thu, Oct 3, 2024 at 8:56=E2=80=AFPM Kunal Rao =) s
+5 500 M
+(<kunal@mechination.com.au> wrote:) s
+5 489 M
+(>=20) s
+5 478 M
+(>> Thanks Justin.) s
+5 467 M
+(>> I am planning to use Amazon MQ \(only supports classic\) as a central =) s
+5 456 M
+(broker) s
+5 445 M
+(>> and Artemis as satellite brokers with the assumption that artemis is =) s
+5 434 M
+(a more) s
+5 423 M
+(>> supported product and classic is treated as legacy with regards to) s
+5 412 M
+(>> development and support.) s
+5 401 M
+(>> Firstly, Is my assumption correct?) s
+5 390 M
+(>>=20) s
+5 379 M
+(>> We are considering three options:) s
+5 368 M
+(>> 1. Use "classic" everywhere. Amazon MQ can be used as a central =) s
+5 357 M
+(broker.) s
+5 346 M
+(>> 2. Use "artemis" everywhere. benefits of Artemis outweigh "classic" =) s
+5 335 M
+(and the) s
+5 324 M
+(>> use of managed service in Amazon MQ.) s
+5 313 M
+(>> 3. Hybrid approach. Use Amazon MQ centrally \( hoping artemis is on =) s
+5 302 M
+(their) s
+5 291 M
+(>> roadmap\) and Artemis on all satellite brokers.) s
+5 280 M
+(>>=20) s
+5 269 M
+(>> I would love to hear your thoughts on this please.) s
+5 258 M
+(>>=20) s
+5 247 M
+(>> Once again thanks for the prompt response.) s
+5 236 M
+(>>=20) s
+5 225 M
+(>> Kunal) s
+5 214 M
+(>>=20) s
+5 203 M
+(>> On Fri, 4 Oct 2024 at 00:51, Justin Bertram <jbertram@apache.org> =) s
+5 192 M
+(wrote:) s
+5 181 M
+(>>=20) s
+5 170 M
+(>>> Just to clarify...ActiveMQ Classic doesn't support the Core protocol =) s
+5 159 M
+(so) s
+5 148 M
+(>>> that is why you can't use a Core bridge to integrate.) s
+5 137 M
+(>>>=20) s
+5 126 M
+(>>>=20) s
+5 115 M
+(>>> Justin) s
+5 104 M
+(>>>=20) s
+5 93 M
+(>>> On Thu, Oct 3, 2024 at 8:29=E2=80=AFAM Justin Bertram =) s
+5 82 M
+(<jbertram@apache.org>) s
+5 71 M
+(>> wrote:) s
+5 60 M
+(>>>=20) s
+5 49 M
+(>>>> Yes. You can bridge messages from Artemis to Classic and vice =) s
+5 38 M
+(versa.) s
+5 27 M
+(>>>> However, you can't use a Core bridge to do it. Core bridges, as the) s
+5 16 M
+(>> name) s
+5 5 M
+(>>>> suggests, use the Core protocol. A Core bridge can't use the AMQP) s
+_R
+S
+%%Page: (20) 20
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 20 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (20) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(>>> protocol.) s
+5 676 M
+(>>>>=20) s
+5 665 M
+(>>>> I recommend Camel since it's mature, powerful, and ubiquitous. You =) s
+5 654 M
+(can) s
+5 643 M
+(>>> set) s
+5 632 M
+(>>>> up Camel routes on either Artemis or Classic. Here's [1] an example =) s
+5 621 M
+(of) s
+5 610 M
+(>>> how) s
+5 599 M
+(>>>> to do it on Artemis.) s
+5 588 M
+(>>>>=20) s
+5 577 M
+(>>>> It's also possible to use the JMS bridge that ships with Artemis =) s
+5 566 M
+([2].) s
+5 555 M
+(>>>>=20) s
+5 544 M
+(>>>>=20) s
+5 533 M
+(>>>> Justin) s
+5 522 M
+(>>>>=20) s
+5 511 M
+(>>>> [1]) s
+5 500 M
+(>>>>=20) s
+5 489 M
+(>>>=20) s
+5 478 M
+(>> =) s
+5 467 M
+(https://github.com/apache/activemq-artemis-examples/tree/main/examples/fea=) s
+5 456 M
+(tures/standard/camel) s
+5 445 M
+(>>>> [2]) s
+5 434 M
+(>>>>=20) s
+5 423 M
+(>>>=20) s
+5 412 M
+(>> =) s
+5 401 M
+(https://github.com/apache/activemq-artemis-examples/tree/main/examples/fea=) s
+5 390 M
+(tures/sub-modules/inter-broker-bridge/artemis-jms-bridge) s
+5 379 M
+(>>>>=20) s
+5 368 M
+(>>>> On Thu, Oct 3, 2024 at 2:38=E2=80=AFAM Kunal Rao =) s
+5 357 M
+(<kunal@mechination.com.au>) s
+5 346 M
+(>>> wrote:) s
+5 335 M
+(>>>>=20) s
+5 324 M
+(>>>>> Hi,) s
+5 313 M
+(>>>>>=20) s
+5 302 M
+(>>>>> Is it possible to bridge artemis with classic broker?) s
+5 291 M
+(>>>>> I am trying with AMQP protocol.) s
+5 280 M
+(>>>>>=20) s
+5 269 M
+(>>>>> I am getting this error) s
+5 258 M
+(>>>>>=20) s
+5 247 M
+(>>>>> p1broker-1       | 2024-10-03 07:34:50,270 WARN) s
+5 236 M
+(>>>>> [org.apache.activemq.artemis.core.server] AMQ224091: Bridge) s
+5 225 M
+(>>>>> BridgeImpl@6a3012f8 [name=3Damqp-bridge,) s
+5 214 M
+(>>> queue=3DQueueImpl[name=3Dp1broker.out,) s
+5 203 M
+(>>>>> postOffice=3DPostOfficeImpl =) s
+5 192 M
+([server=3DActiveMQServerImpl::name=3D0.0.0.0],) s
+5 181 M
+(>>>>> temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl) s
+5 170 M
+(>> \(identity=3DBridge) s
+5 159 M
+(>>>>> amqp-bridge\)) s
+5 148 M
+(>>>>> =) s
+5 137 M
+([initialConnectors=3D[TransportConfiguration\(name=3Dactivemq-classic-amqp,=) s
+5 115 M
+(>>>>>=20) s
+5 104 M
+(>>>>>=20) s
+5 93 M
+(>>>=20) s
+5 82 M
+(>> =) s
+5 71 M
+(factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConnec=) s
+5 60 M
+(torFactory\)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],) s
+5 49 M
+(>>>>> discoveryGroupConfiguration=3Dnull]] is unable to connect to) s
+5 38 M
+(>> destination.) s
+5 27 M
+(>>>>> Retrying) s
+5 16 M
+(>>>>> centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0) s
+5 5 M
+(>> client.) s
+_R
+S
+%%Page: (21) 21
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 21 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (21) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(>>>>> ARTEMIS,0) s
+5 676 M
+(>>>>> centralbroker-1  |  WARN | Transport Connection to: tcp://) s
+5 665 M
+(>>>>> 172.19.0.3:33778) s
+5 654 M
+(>>>>> failed: Connection from client using unsupported AMQP attempted) s
+5 643 M
+(>>>>>=20) s
+5 632 M
+(>>>>> broker.xml) s
+5 621 M
+(>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 610 M
+(>>>>>=20) s
+5 599 M
+(>>>>> <acceptors>) s
+5 588 M
+(>>>>>=20) s
+5 577 M
+(>>>>> <acceptor name=3D"artemis">) s
+5 566 M
+(>>>>> tcp://) s
+5 555 M
+(>>>>>=20) s
+5 544 M
+(>>>>>=20) s
+5 533 M
+(>>>=20) s
+5 522 M
+(>> =) s
+5 511 M
+(0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;a=) s
+5 500 M
+(mqpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,O=) s
+5 489 M
+(PENWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplic=) s
+5 478 M
+(ateDetection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObje=) s
+5 467 M
+(cts=3Dfalse) s
+5 456 M
+(>>>>> </acceptor>) s
+5 445 M
+(>>>>>=20) s
+5 434 M
+(>>>>> <!-- AMQP Acceptor. Listens on default AMQP port for AMQP =) s
+5 423 M
+(traffic.-->) s
+5 412 M
+(>>>>> <acceptor name=3D"amqp">) s
+5 401 M
+(>>>>> tcp://) s
+5 390 M
+(>>>>>=20) s
+5 379 M
+(>>>>>=20) s
+5 368 M
+(>>>=20) s
+5 357 M
+(>> =) s
+5 346 M
+(0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;pr=) s
+5 335 M
+(otocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amq=) s
+5 324 M
+(pMinLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-time=) s
+5 313 M
+(out=3D0) s
+5 302 M
+(>>>>> </acceptor>) s
+5 291 M
+(>>>>>=20) s
+5 280 M
+(>>>>> <!-- STOMP Acceptor. -->) s
+5 269 M
+(>>>>> <acceptor name=3D"stomp">) s
+5 258 M
+(>>>>> tcp://) s
+5 247 M
+(>>>>>=20) s
+5 236 M
+(>>>>>=20) s
+5 225 M
+(>>>=20) s
+5 214 M
+(>> =) s
+5 203 M
+(0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=) s
+5 192 M
+(rotocols=3DSTOMP;useEpoll=3Dtrue) s
+5 181 M
+(>>>>> </acceptor>) s
+5 170 M
+(>>>>>=20) s
+5 159 M
+(>>>>> <!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and =) s
+5 148 M
+(STOMP) s
+5 137 M
+(>> for) s
+5 126 M
+(>>>>> legacy HornetQ) s
+5 115 M
+(>>>>> clients. -->) s
+5 104 M
+(>>>>> <acceptor name=3D"hornetq">) s
+5 93 M
+(>>>>> tcp://) s
+5 82 M
+(>>>>>=20) s
+5 71 M
+(>>>>>=20) s
+5 60 M
+(>>>=20) s
+5 49 M
+(>> =) s
+5 38 M
+(0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;proto=) s
+5 27 M
+(cols=3DHORNETQ,STOMP;useEpoll=3Dtrue) s
+5 16 M
+(>>>>> </acceptor>) s
+5 5 M
+(>>>>>=20) s
+_R
+S
+%%Page: (22) 22
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 22 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (22) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(>>>>> <!-- MQTT Acceptor -->) s
+5 676 M
+(>>>>> <acceptor name=3D"mqtt">) s
+5 665 M
+(>>>>> tcp://) s
+5 654 M
+(>>>>>=20) s
+5 643 M
+(>>>>>=20) s
+5 632 M
+(>>>=20) s
+5 621 M
+(>> =) s
+5 610 M
+(0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;pr=) s
+5 599 M
+(otocols=3DMQTT;useEpoll=3Dtrue) s
+5 588 M
+(>>>>> </acceptor>) s
+5 577 M
+(>>>>>=20) s
+5 566 M
+(>>>>> </acceptors>) s
+5 555 M
+(>>>>>=20) s
+5 544 M
+(>>>>> <bridges>) s
+5 533 M
+(>>>>> <bridge name=3D"amqp-bridge">) s
+5 522 M
+(>>>>> <queue-name>p1broker.out</queue-name>) s
+5 511 M
+(>>>>> <forwarding-address>centralbroker.in</forwarding-address>) s
+5 500 M
+(>>>>> <user>admin</user>) s
+5 489 M
+(>>>>> <password>admin</password>) s
+5 478 M
+(>>>>> <static-connectors>) s
+5 467 M
+(>>>>> <connector-ref>activemq-classic-amqp</connector-ref>) s
+5 456 M
+(>>>>> </static-connectors>) s
+5 445 M
+(>>>>> </bridge>) s
+5 434 M
+(>>>>> </bridges>) s
+5 423 M
+(>>>>>=20) s
+5 412 M
+(>>>>>=20) s
+5 401 M
+(>>>>> <connectors>) s
+5 390 M
+(>>>>> <connector name=3D"activemq-classic-amqp">) s
+5 379 M
+(>>>>> tcp://centralbroker:5672?protocols=3DAMQP</connector>) s
+5 368 M
+(>>>>> </connectors>) s
+5 357 M
+(>>>>>=20) s
+5 346 M
+(>>>>>=20) s
+5 335 M
+(>>>>> activemq.xml) s
+5 324 M
+(>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 313 M
+(>>>>>=20) s
+5 302 M
+(>>>>> <transportConnectors>) s
+5 291 M
+(>>>>> <!-- DOS protection, limit concurrent connections to 1000 and =) s
+5 280 M
+(frame) s
+5 269 M
+(>> size) s
+5 258 M
+(>>>>> to) s
+5 247 M
+(>>>>> 100MB -->) s
+5 236 M
+(>>>>> <transportConnector name=3D"openwire") s
+5 225 M
+(>>>>> uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;) s
+5 214 M
+(>>>>> wireFormat.maxFrameSize=3D104857600000" />) s
+5 203 M
+(>>>>> <transportConnector name=3D"amqp") s
+5 192 M
+(>>>>> uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;) s
+5 181 M
+(>>>>> wireFormat.maxFrameSize=3D104857600" />) s
+5 170 M
+(>>>>> <transportConnector name=3D"stomp") s
+5 159 M
+(>>>>> uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;) s
+5 148 M
+(>>>>> wireFormat.maxFrameSize=3D104857600" />) s
+5 137 M
+(>>>>> <transportConnector name=3D"mqtt") s
+5 126 M
+(>>>>> uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;) s
+5 115 M
+(>>>>> wireFormat.maxFrameSize=3D104857600" />) s
+5 104 M
+(>>>>> <transportConnector name=3D"ws") s
+5 93 M
+(>>>>> uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;) s
+5 82 M
+(>>>>> wireFormat.maxFrameSize=3D104857600" />) s
+5 71 M
+(>>>>> </transportConnectors>) s
+5 60 M
+(>>>>>=20) s
+5 49 M
+(>>>>>=20) s
+5 38 M
+(>>>>> what am i doing wrong?) s
+5 27 M
+(>>>>>=20) s
+5 16 M
+(>>>>> Cheers) s
+5 5 M
+(>>>>> Kunal) s
+_R
+S
+%%Page: (23) 23
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 23 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (23) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(>>>>>=20) s
+5 676 M
+(>>>>=20) s
+5 665 M
+(>>>=20) s
+5 654 M
+(>>=20) s
+5 621 M
+(---------------------------------------------------------------------) s
+5 610 M
+(To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org) s
+5 599 M
+(For additional commands, e-mail: users-help@activemq.apache.org) s
+5 588 M
+(For further information, visit: https://activemq.apache.org/contact) s
+5 555 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 544 M
+(Return-Path: <users-return-57515-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 533 M
+(rg>) s
+5 522 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 511 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 500 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 489 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 347193E6D6) s
+5 478 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 16:51:15 +0000 \(UT) s
+5 467 M
+(C\)) s
+5 456 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 445 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 434 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 423 M
+(        \(No client certificate requested\)) s
+5 412 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 401 M
+(MTPS id 4CF32630C5) s
+5 390 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 16:49:42 +0000 \(UT) s
+5 379 M
+(C\)) s
+5 368 M
+(Received: \(qmail 1198331 invoked by uid 998\); 3 Oct 2024 16:49:41 -0000) s
+5 357 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 346 M
+(Precedence: bulk) s
+5 335 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 324 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 313 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 302 M
+(List-Id: <users.activemq.apache.org>) s
+5 291 M
+(Reply-To: users@activemq.apache.org) s
+5 280 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 269 M
+(Received: \(qmail 1198308 invoked by uid 116\); 3 Oct 2024 16:49:40 -0000) s
+5 258 M
+(Received: from ec2-52-204-25-47.compute-1.amazonaws.com \(HELO mailrelay1-ec2-va.apache.) s
+5 247 M
+(org\) \(52.204.25.47\)) s
+5 236 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 03 Oct 2024 16:49:40 +0000) s
+5 225 M
+(Authentication-Results: apache.org; auth=none) s
+5 214 M
+(Received: from mail-lf1-f47.google.com \(mail-lf1-f47.google.com [209.85.167.47]\)) s
+5 203 M
+(        by mailrelay1-ec2-va.apache.org \(ASF Mail Server at mailrelay1-ec2-va.apache.or) s
+5 192 M
+(g\) with ESMTPSA id 1F81C3E915) s
+5 181 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 16:49:40 +0000 \(UTC\)) s
+5 170 M
+(Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5398cc2fcb7so1436646e87) s
+5 159 M
+(.1) s
+5 148 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 09:49:40 -0700 \(PDT\)) s
+5 137 M
+(X-Gm-Message-State: AOJu0Yx4TkfHdlZ4+b7TWQOejtZxL11crnuGzJ8iDI38bVJwh76RizeP) s
+5 126 M
+(        vv3vNAax8S7THkLkY/+8KPUxVvcjzbUuGFOSN/QI2lfX/1qofBGjbD10D3F4hx3n3XPBmTcVwj+) s
+5 115 M
+(        SW0zzLnWXbOYyoTRw/WIGaJPJCkrSx+BcShGu8g==) s
+5 104 M
+(X-Google-Smtp-Source: AGHT+IEYwLe4oqCxdX62NTmEeJ0mlNhuuivBaRzNI3jcw1u51rESasx0mt8DQHiMD) s
+5 93 M
+(H9bC1gTW8ueLPeQrqnEfAhTr7c=) s
+5 82 M
+(X-Received: by 2002:a05:6512:23a1:b0:52c:fd46:bf07 with SMTP id) s
+5 71 M
+( 2adb3069b0e04-539ab8c1ae7mr16984e87.49.1727974179042; Thu, 03 Oct 2024) s
+5 60 M
+( 09:49:39 -0700 \(PDT\)) s
+5 49 M
+(MIME-Version: 1.0) s
+5 38 M
+(References: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>) s
+5 27 M
+( <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com>) s
+5 16 M
+(In-Reply-To: <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com>) s
+5 5 M
+(From: Justin Bertram <jbertram@apache.org>) s
+_R
+S
+%%Page: (24) 24
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 24 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (24) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Date: Thu, 3 Oct 2024 11:49:12 -0500) s
+5 676 M
+(X-Gmail-Original-Message-ID: <CAF+kE=QPgjc0TTXo48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.) s
+5 665 M
+(gmail.com>) s
+5 654 M
+(Message-ID: <CAF+kE=QPgjc0TTXo48Ye0yYnAwjusPCjuANg+SDchB9R8HE0sQ@mail.gmail.com>) s
+5 643 M
+(Subject: Re: Bridging Artemis with classic) s
+5 632 M
+(To: users@activemq.apache.org) s
+5 621 M
+(Content-Type: multipart/alternative; boundary="0000000000001fb0de0623955774") s
+5 599 M
+(--0000000000001fb0de0623955774) s
+5 588 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 577 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 555 M
+(Just to clarify...ActiveMQ Classic doesn't support the Core protocol so) s
+5 544 M
+(that is why you can't use a Core bridge to integrate.) s
+5 511 M
+(Justin) s
+5 489 M
+(On Thu, Oct 3, 2024 at 8:29=E2=80=AFAM Justin Bertram <jbertram@apache.org>=) s
+5 478 M
+( wrote:) s
+5 456 M
+(> Yes. You can bridge messages from Artemis to Classic and vice versa.) s
+5 445 M
+(> However, you can't use a Core bridge to do it. Core bridges, as the name) s
+5 434 M
+(> suggests, use the Core protocol. A Core bridge can't use the AMQP protoco=) s
+5 423 M
+(l.) s
+5 412 M
+(>) s
+5 401 M
+(> I recommend Camel since it's mature, powerful, and ubiquitous. You can se=) s
+5 390 M
+(t) s
+5 379 M
+(> up Camel routes on either Artemis or Classic. Here's [1] an example of ho=) s
+5 368 M
+(w) s
+5 357 M
+(> to do it on Artemis.) s
+5 346 M
+(>) s
+5 335 M
+(> It's also possible to use the JMS bridge that ships with Artemis [2].) s
+5 324 M
+(>) s
+5 313 M
+(>) s
+5 302 M
+(> Justin) s
+5 291 M
+(>) s
+5 280 M
+(> [1]) s
+5 269 M
+(> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=) s
+5 258 M
+(atures/standard/camel) s
+5 247 M
+(> [2]) s
+5 236 M
+(> https://github.com/apache/activemq-artemis-examples/tree/main/examples/fe=) s
+5 225 M
+(atures/sub-modules/inter-broker-bridge/artemis-jms-bridge) s
+5 214 M
+(>) s
+5 203 M
+(> On Thu, Oct 3, 2024 at 2:38=E2=80=AFAM Kunal Rao <kunal@mechination.com.a=) s
+5 192 M
+(u> wrote:) s
+5 181 M
+(>) s
+5 170 M
+(>> Hi,) s
+5 159 M
+(>>) s
+5 148 M
+(>> Is it possible to bridge artemis with classic broker?) s
+5 137 M
+(>> I am trying with AMQP protocol.) s
+5 126 M
+(>>) s
+5 115 M
+(>> I am getting this error) s
+5 104 M
+(>>) s
+5 93 M
+(>> p1broker-1       | 2024-10-03 07:34:50,270 WARN) s
+5 82 M
+(>>  [org.apache.activemq.artemis.core.server] AMQ224091: Bridge) s
+5 71 M
+(>> BridgeImpl@6a3012f8 [name=3Damqp-bridge, queue=3DQueueImpl[name=3Dp1brok=) s
+5 60 M
+(er.out,) s
+5 49 M
+(>> postOffice=3DPostOfficeImpl [server=3DActiveMQServerImpl::name=3D0.0.0.0=) s
+5 38 M
+(],) s
+5 27 M
+(>> temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl \(identity=3DB=) s
+5 16 M
+(ridge) s
+5 5 M
+(>> amqp-bridge\)) s
+_R
+S
+%%Page: (25) 25
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 25 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (25) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(>> [initialConnectors=3D[TransportConfiguration\(name=3Dactivemq-classic-amq=) s
+5 676 M
+(p,) s
+5 665 M
+(>>) s
+5 654 M
+(>> factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConn=) s
+5 643 M
+(ectorFactory\)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],) s
+5 632 M
+(>> discoveryGroupConfiguration=3Dnull]] is unable to connect to destination=) s
+5 621 M
+(.) s
+5 610 M
+(>> Retrying) s
+5 599 M
+(>> centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0 client.) s
+5 588 M
+(>> ARTEMIS,0) s
+5 577 M
+(>> centralbroker-1  |  WARN | Transport Connection to: tcp://) s
+5 566 M
+(>> 172.19.0.3:33778) s
+5 555 M
+(>> failed: Connection from client using unsupported AMQP attempted) s
+5 544 M
+(>>) s
+5 533 M
+(>> broker.xml) s
+5 522 M
+(>> =3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 511 M
+(>>) s
+5 500 M
+(>> <acceptors>) s
+5 489 M
+(>>) s
+5 478 M
+(>> <acceptor name=3D"artemis">) s
+5 467 M
+(>> tcp://) s
+5 456 M
+(>>) s
+5 445 M
+(>> 0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576=) s
+5 434 M
+(;amqpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,=) s
+5 423 M
+(OPENWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplic=) s
+5 412 M
+(ateDetection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObjec=) s
+5 401 M
+(ts=3Dfalse) s
+5 390 M
+(>> </acceptor>) s
+5 379 M
+(>>) s
+5 368 M
+(>> <!-- AMQP Acceptor. Listens on default AMQP port for AMQP traffic.-->) s
+5 357 M
+(>> <acceptor name=3D"amqp">) s
+5 346 M
+(>> tcp://) s
+5 335 M
+(>>) s
+5 324 M
+(>> 0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=) s
+5 313 M
+(protocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;am=) s
+5 302 M
+(qpMinLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-time=) s
+5 291 M
+(out=3D0) s
+5 280 M
+(>> </acceptor>) s
+5 269 M
+(>>) s
+5 258 M
+(>> <!-- STOMP Acceptor. -->) s
+5 247 M
+(>> <acceptor name=3D"stomp">) s
+5 236 M
+(>> tcp://) s
+5 225 M
+(>>) s
+5 214 M
+(>> 0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576=) s
+5 203 M
+(;protocols=3DSTOMP;useEpoll=3Dtrue) s
+5 192 M
+(>> </acceptor>) s
+5 181 M
+(>>) s
+5 170 M
+(>> <!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and STOMP for) s
+5 159 M
+(>> legacy HornetQ) s
+5 148 M
+(>> clients. -->) s
+5 137 M
+(>> <acceptor name=3D"hornetq">) s
+5 126 M
+(>> tcp://) s
+5 115 M
+(>>) s
+5 104 M
+(>> 0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;pro=) s
+5 93 M
+(tocols=3DHORNETQ,STOMP;useEpoll=3Dtrue) s
+5 82 M
+(>> </acceptor>) s
+5 71 M
+(>>) s
+5 60 M
+(>> <!-- MQTT Acceptor -->) s
+5 49 M
+(>> <acceptor name=3D"mqtt">) s
+5 38 M
+(>> tcp://) s
+5 27 M
+(>>) s
+5 16 M
+(>> 0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=) s
+5 5 M
+(protocols=3DMQTT;useEpoll=3Dtrue) s
+_R
+S
+%%Page: (26) 26
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 26 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (26) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(>> </acceptor>) s
+5 676 M
+(>>) s
+5 665 M
+(>> </acceptors>) s
+5 654 M
+(>>) s
+5 643 M
+(>> <bridges>) s
+5 632 M
+(>> <bridge name=3D"amqp-bridge">) s
+5 621 M
+(>> <queue-name>p1broker.out</queue-name>) s
+5 610 M
+(>> <forwarding-address>centralbroker.in</forwarding-address>) s
+5 599 M
+(>> <user>admin</user>) s
+5 588 M
+(>> <password>admin</password>) s
+5 577 M
+(>> <static-connectors>) s
+5 566 M
+(>> <connector-ref>activemq-classic-amqp</connector-ref>) s
+5 555 M
+(>> </static-connectors>) s
+5 544 M
+(>> </bridge>) s
+5 533 M
+(>> </bridges>) s
+5 522 M
+(>>) s
+5 511 M
+(>>) s
+5 500 M
+(>> <connectors>) s
+5 489 M
+(>> <connector name=3D"activemq-classic-amqp">) s
+5 478 M
+(>> tcp://centralbroker:5672?protocols=3DAMQP</connector>) s
+5 467 M
+(>> </connectors>) s
+5 456 M
+(>>) s
+5 445 M
+(>>) s
+5 434 M
+(>> activemq.xml) s
+5 423 M
+(>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 412 M
+(>>) s
+5 401 M
+(>> <transportConnectors>) s
+5 390 M
+(>> <!-- DOS protection, limit concurrent connections to 1000 and frame size) s
+5 379 M
+(>> to) s
+5 368 M
+(>> 100MB -->) s
+5 357 M
+(>> <transportConnector name=3D"openwire") s
+5 346 M
+(>> uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;) s
+5 335 M
+(>> wireFormat.maxFrameSize=3D104857600000" />) s
+5 324 M
+(>> <transportConnector name=3D"amqp") s
+5 313 M
+(>> uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;) s
+5 302 M
+(>> wireFormat.maxFrameSize=3D104857600" />) s
+5 291 M
+(>> <transportConnector name=3D"stomp") s
+5 280 M
+(>> uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;) s
+5 269 M
+(>> wireFormat.maxFrameSize=3D104857600" />) s
+5 258 M
+(>> <transportConnector name=3D"mqtt") s
+5 247 M
+(>> uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;) s
+5 236 M
+(>> wireFormat.maxFrameSize=3D104857600" />) s
+5 225 M
+(>> <transportConnector name=3D"ws") s
+5 214 M
+(>> uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;) s
+5 203 M
+(>> wireFormat.maxFrameSize=3D104857600" />) s
+5 192 M
+(>> </transportConnectors>) s
+5 181 M
+(>>) s
+5 170 M
+(>>) s
+5 159 M
+(>> what am i doing wrong?) s
+5 148 M
+(>>) s
+5 137 M
+(>> Cheers) s
+5 126 M
+(>> Kunal) s
+5 115 M
+(>>) s
+5 104 M
+(>) s
+5 82 M
+(--0000000000001fb0de0623955774--) s
+5 71 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 60 M
+(Return-Path: <users-return-57505-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 49 M
+(rg>) s
+5 38 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 27 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 16 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 5 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 00A803E6D6) s
+_R
+S
+%%Page: (27) 27
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 27 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (27) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 13:30:40 +0000 \(UT) s
+5 676 M
+(C\)) s
+5 665 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 654 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 643 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 632 M
+(        \(No client certificate requested\)) s
+5 621 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 610 M
+(MTPS id D18DC68B66) s
+5 599 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 13:30:11 +0000 \(UT) s
+5 588 M
+(C\)) s
+5 577 M
+(Received: \(qmail 793224 invoked by uid 998\); 3 Oct 2024 13:30:10 -0000) s
+5 566 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 555 M
+(Precedence: bulk) s
+5 544 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 533 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 522 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 511 M
+(List-Id: <users.activemq.apache.org>) s
+5 500 M
+(Reply-To: users@activemq.apache.org) s
+5 489 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 478 M
+(Received: \(qmail 793205 invoked by uid 116\); 3 Oct 2024 13:30:09 -0000) s
+5 467 M
+(Received: from mailrelay1-he-de.apache.org \(HELO mailrelay1-he-de.apache.org\) \(116.203.) s
+5 456 M
+(21.61\)) s
+5 445 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 03 Oct 2024 13:30:09 +0000) s
+5 434 M
+(Authentication-Results: apache.org; auth=none) s
+5 423 M
+(Received: from mail-lj1-f175.google.com \(mail-lj1-f175.google.com [209.85.208.175]\)) s
+5 412 M
+(        by mailrelay1-he-de.apache.org \(ASF Mail Server at mailrelay1-he-de.apache.org\)) s
+5 401 M
+( with ESMTPSA id C54D83EBFE) s
+5 390 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 13:30:09 +0000 \(UTC\)) s
+5 379 M
+(Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2facf40737eso12445111f) s
+5 368 M
+(a.0) s
+5 357 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 06:30:09 -0700 \(PDT\)) s
+5 346 M
+(X-Gm-Message-State: AOJu0YwQMnvmSK9HHYX3uXZNG4sJtXcTeyA2svZc06EscXU6WaDJ3jHv) s
+5 335 M
+(        eKKkwyws3sJRUQaM0s6mRTgHDxovUJgIx5dCjlSRkxt22MOn1qfAbX9SRPr7AEc+wmZ1t6uIBv+) s
+5 324 M
+(        PunAB4AwA2U8l0gT7Y/mYu9nXEVsVbGWkeZ4ZQg==) s
+5 313 M
+(X-Google-Smtp-Source: AGHT+IFiGO18fvkJANAhDzgMRTUGPdq6GIzbFCUT3RH9yyPKHfE37vZw6iKxZJG+B) s
+5 302 M
+(LjEDMj2n4hgl5X29PMAOgjRNCE=) s
+5 291 M
+(X-Received: by 2002:a2e:be28:0:b0:2fa:d31a:1b77 with SMTP id) s
+5 280 M
+( 38308e7fff4ca-2fae1024545mr42126041fa.9.1727962209255; Thu, 03 Oct 2024) s
+5 269 M
+( 06:30:09 -0700 \(PDT\)) s
+5 258 M
+(MIME-Version: 1.0) s
+5 247 M
+(References: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>) s
+5 236 M
+(In-Reply-To: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>) s
+5 225 M
+(From: Justin Bertram <jbertram@apache.org>) s
+5 214 M
+(Date: Thu, 3 Oct 2024 08:29:42 -0500) s
+5 203 M
+(X-Gmail-Original-Message-ID: <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.) s
+5 192 M
+(gmail.com>) s
+5 181 M
+(Message-ID: <CAF+kE=S5hTff8V6v5dTSKKy0wM0FBA-uzTDJxdxC-8EBmAEb6g@mail.gmail.com>) s
+5 170 M
+(Subject: Re: Bridging Artemis with classic) s
+5 159 M
+(To: users@activemq.apache.org) s
+5 148 M
+(Content-Type: multipart/alternative; boundary="000000000000ab30060623928de8") s
+5 126 M
+(--000000000000ab30060623928de8) s
+5 115 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 104 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 82 M
+(Yes. You can bridge messages from Artemis to Classic and vice versa.) s
+5 71 M
+(However, you can't use a Core bridge to do it. Core bridges, as the name) s
+5 60 M
+(suggests, use the Core protocol. A Core bridge can't use the AMQP protocol.) s
+5 38 M
+(I recommend Camel since it's mature, powerful, and ubiquitous. You can set) s
+5 27 M
+(up Camel routes on either Artemis or Classic. Here's [1] an example of how) s
+5 16 M
+(to do it on Artemis.) s
+_R
+S
+%%Page: (28) 28
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 28 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (28) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(It's also possible to use the JMS bridge that ships with Artemis [2].) s
+5 654 M
+(Justin) s
+5 632 M
+([1]) s
+5 621 M
+(https://github.com/apache/activemq-artemis-examples/tree/main/examples/feat=) s
+5 610 M
+(ures/standard/camel) s
+5 599 M
+([2]) s
+5 588 M
+(https://github.com/apache/activemq-artemis-examples/tree/main/examples/feat=) s
+5 577 M
+(ures/sub-modules/inter-broker-bridge/artemis-jms-bridge) s
+5 555 M
+(On Thu, Oct 3, 2024 at 2:38=E2=80=AFAM Kunal Rao <kunal@mechination.com.au>=) s
+5 544 M
+( wrote:) s
+5 522 M
+(> Hi,) s
+5 511 M
+(>) s
+5 500 M
+(> Is it possible to bridge artemis with classic broker?) s
+5 489 M
+(> I am trying with AMQP protocol.) s
+5 478 M
+(>) s
+5 467 M
+(> I am getting this error) s
+5 456 M
+(>) s
+5 445 M
+(> p1broker-1       | 2024-10-03 07:34:50,270 WARN) s
+5 434 M
+(>  [org.apache.activemq.artemis.core.server] AMQ224091: Bridge) s
+5 423 M
+(> BridgeImpl@6a3012f8 [name=3Damqp-bridge, queue=3DQueueImpl[name=3Dp1broke=) s
+5 412 M
+(r.out,) s
+5 401 M
+(> postOffice=3DPostOfficeImpl [server=3DActiveMQServerImpl::name=3D0.0.0.0]=) s
+5 390 M
+(,) s
+5 379 M
+(> temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl \(identity=3DBr=) s
+5 368 M
+(idge) s
+5 357 M
+(> amqp-bridge\)) s
+5 346 M
+(> [initialConnectors=3D[TransportConfiguration\(name=3Dactivemq-classic-amqp=) s
+5 335 M
+(,) s
+5 324 M
+(>) s
+5 313 M
+(> factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConne=) s
+5 302 M
+(ctorFactory\)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],) s
+5 291 M
+(> discoveryGroupConfiguration=3Dnull]] is unable to connect to destination.) s
+5 280 M
+(> Retrying) s
+5 269 M
+(> centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0 client.) s
+5 258 M
+(> ARTEMIS,0) s
+5 247 M
+(> centralbroker-1  |  WARN | Transport Connection to: tcp://172.19.0.3:3377=) s
+5 236 M
+(8) s
+5 225 M
+(> failed: Connection from client using unsupported AMQP attempted) s
+5 214 M
+(>) s
+5 203 M
+(> broker.xml) s
+5 192 M
+(> =3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 181 M
+(>) s
+5 170 M
+(> <acceptors>) s
+5 159 M
+(>) s
+5 148 M
+(> <acceptor name=3D"artemis">) s
+5 137 M
+(> tcp://) s
+5 126 M
+(>) s
+5 115 M
+(> 0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=) s
+5 104 M
+(amqpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,O=) s
+5 93 M
+(PENWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplica=) s
+5 82 M
+(teDetection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObject=) s
+5 71 M
+(s=3Dfalse) s
+5 60 M
+(> </acceptor>) s
+5 49 M
+(>) s
+5 38 M
+(> <!-- AMQP Acceptor. Listens on default AMQP port for AMQP traffic.-->) s
+5 27 M
+(> <acceptor name=3D"amqp">) s
+5 16 M
+(> tcp://) s
+5 5 M
+(>) s
+_R
+S
+%%Page: (29) 29
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 29 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (29) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> 0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=) s
+5 676 M
+(rotocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amq=) s
+5 665 M
+(pMinLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-timeo=) s
+5 654 M
+(ut=3D0) s
+5 643 M
+(> </acceptor>) s
+5 632 M
+(>) s
+5 621 M
+(> <!-- STOMP Acceptor. -->) s
+5 610 M
+(> <acceptor name=3D"stomp">) s
+5 599 M
+(> tcp://) s
+5 588 M
+(>) s
+5 577 M
+(> 0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;=) s
+5 566 M
+(protocols=3DSTOMP;useEpoll=3Dtrue) s
+5 555 M
+(> </acceptor>) s
+5 544 M
+(>) s
+5 533 M
+(> <!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and STOMP for) s
+5 522 M
+(> legacy HornetQ) s
+5 511 M
+(> clients. -->) s
+5 500 M
+(> <acceptor name=3D"hornetq">) s
+5 489 M
+(> tcp://) s
+5 478 M
+(>) s
+5 467 M
+(> 0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;prot=) s
+5 456 M
+(ocols=3DHORNETQ,STOMP;useEpoll=3Dtrue) s
+5 445 M
+(> </acceptor>) s
+5 434 M
+(>) s
+5 423 M
+(> <!-- MQTT Acceptor -->) s
+5 412 M
+(> <acceptor name=3D"mqtt">) s
+5 401 M
+(> tcp://) s
+5 390 M
+(>) s
+5 379 M
+(> 0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;p=) s
+5 368 M
+(rotocols=3DMQTT;useEpoll=3Dtrue) s
+5 357 M
+(> </acceptor>) s
+5 346 M
+(>) s
+5 335 M
+(> </acceptors>) s
+5 324 M
+(>) s
+5 313 M
+(> <bridges>) s
+5 302 M
+(> <bridge name=3D"amqp-bridge">) s
+5 291 M
+(> <queue-name>p1broker.out</queue-name>) s
+5 280 M
+(> <forwarding-address>centralbroker.in</forwarding-address>) s
+5 269 M
+(> <user>admin</user>) s
+5 258 M
+(> <password>admin</password>) s
+5 247 M
+(> <static-connectors>) s
+5 236 M
+(> <connector-ref>activemq-classic-amqp</connector-ref>) s
+5 225 M
+(> </static-connectors>) s
+5 214 M
+(> </bridge>) s
+5 203 M
+(> </bridges>) s
+5 192 M
+(>) s
+5 181 M
+(>) s
+5 170 M
+(> <connectors>) s
+5 159 M
+(> <connector name=3D"activemq-classic-amqp">) s
+5 148 M
+(> tcp://centralbroker:5672?protocols=3DAMQP</connector>) s
+5 137 M
+(> </connectors>) s
+5 126 M
+(>) s
+5 115 M
+(>) s
+5 104 M
+(> activemq.xml) s
+5 93 M
+(> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 82 M
+(>) s
+5 71 M
+(> <transportConnectors>) s
+5 60 M
+(> <!-- DOS protection, limit concurrent connections to 1000 and frame size =) s
+5 49 M
+(to) s
+5 38 M
+(> 100MB -->) s
+5 27 M
+(> <transportConnector name=3D"openwire") s
+5 16 M
+(> uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;) s
+5 5 M
+(> wireFormat.maxFrameSize=3D104857600000" />) s
+_R
+S
+%%Page: (30) 30
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 30 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (30) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> <transportConnector name=3D"amqp") s
+5 676 M
+(> uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;) s
+5 665 M
+(> wireFormat.maxFrameSize=3D104857600" />) s
+5 654 M
+(> <transportConnector name=3D"stomp") s
+5 643 M
+(> uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;) s
+5 632 M
+(> wireFormat.maxFrameSize=3D104857600" />) s
+5 621 M
+(> <transportConnector name=3D"mqtt") s
+5 610 M
+(> uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;) s
+5 599 M
+(> wireFormat.maxFrameSize=3D104857600" />) s
+5 588 M
+(> <transportConnector name=3D"ws") s
+5 577 M
+(> uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;) s
+5 566 M
+(> wireFormat.maxFrameSize=3D104857600" />) s
+5 555 M
+(> </transportConnectors>) s
+5 544 M
+(>) s
+5 533 M
+(>) s
+5 522 M
+(> what am i doing wrong?) s
+5 511 M
+(>) s
+5 500 M
+(> Cheers) s
+5 489 M
+(> Kunal) s
+5 478 M
+(>) s
+5 456 M
+(--000000000000ab30060623928de8--) s
+5 445 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 434 M
+(Return-Path: <users-return-57504-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 423 M
+(rg>) s
+5 412 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 401 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 390 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 379 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 201993E6D6) s
+5 368 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 07:38:40 +0000 \(UT) s
+5 357 M
+(C\)) s
+5 346 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 335 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 324 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 313 M
+(        \(No client certificate requested\)) s
+5 302 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 291 M
+(MTPS id 07EBA68BF9) s
+5 280 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 07:38:39 +0000 \(UT) s
+5 269 M
+(C\)) s
+5 258 M
+(Received: \(qmail 182058 invoked by uid 998\); 3 Oct 2024 07:38:10 -0000) s
+5 247 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 236 M
+(Precedence: bulk) s
+5 225 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 214 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 203 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 192 M
+(List-Id: <users.activemq.apache.org>) s
+5 181 M
+(Reply-To: users@activemq.apache.org) s
+5 170 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 159 M
+(Received: \(qmail 181710 invoked by uid 116\); 3 Oct 2024 07:38:08 -0000) s
+5 148 M
+(Received: from spamproc1-he-fi.apache.org \(HELO spamproc1-he-fi.apache.org\) \(95.217.134) s
+5 137 M
+(.168\)) s
+5 126 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 03 Oct 2024 07:38:08 +0000) s
+5 115 M
+(Authentication-Results: apache.org; auth=none) s
+5 104 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 93 M
+(        by spamproc1-he-fi.apache.org \(ASF Mail Server at spamproc1-he-fi.apache.org\) w) s
+5 82 M
+(ith ESMTP id 9C697C21F7) s
+5 71 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 07:38:08 +0000 \(UTC\)) s
+5 60 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org) s
+5 49 M
+(X-Spam-Flag: NO) s
+5 38 M
+(X-Spam-Score: 3.202) s
+5 27 M
+(X-Spam-Level: ***) s
+5 16 M
+(X-Spam-Status: No, score=3.202 tagged_above=-999 required=6.31) s
+5 5 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+_R
+S
+%%Page: (31) 31
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 31 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (31) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, MANY_SUBDOM=3.199,) s
+5 676 M
+(        NORMAL_HTTP_TO_IP=0.001, NUMERIC_HTTP_ADDR=0.001, SPF_PASS=-0.001,) s
+5 665 M
+(        URIBL_BLOCKED=0.001, WEIRD_PORT=0.001] autolearn=disabled) s
+5 654 M
+(Authentication-Results: spamproc1-he-fi.apache.org \(amavisd-new\);) s
+5 643 M
+(        dkim=pass \(1024-bit key\) header.d=mechination.com.au) s
+5 632 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 621 M
+(        by localhost \(spamproc1-he-fi.apache.org [95.217.134.168]\) \(amavisd-new, port 1) s
+5 610 M
+(0024\)) s
+5 599 M
+(        with ESMTP id rPajzc9IZMYh for <users@activemq.apache.org>;) s
+5 588 M
+(        Thu,  3 Oct 2024 07:38:07 +0000 \(UTC\)) s
+5 577 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2607:f8b0:4864:20::1136; hel) s
+5 566 M
+(o=mail-yw1-x1136.google.com; envelope-from=kunal@mechination.com.au; receiver=<UNKNOWN>) s
+5 555 M
+( ) s
+5 544 M
+(Received: from mail-yw1-x1136.google.com \(mail-yw1-x1136.google.com [IPv6:2607:f8b0:486) s
+5 533 M
+(4:20::1136]\)) s
+5 522 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 511 M
+(d 816CC81FC6) s
+5 500 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 07:38:07 +0000 \(UTC\)) s
+5 489 M
+(Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-6e21ac45b70so5371037b) s
+5 478 M
+(3.1) s
+5 467 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 00:38:07 -0700 \(PDT\)) s
+5 456 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 445 M
+(        d=mechination.com.au; s=google; t=1727941086; x=1728545886; darn=activemq.apach) s
+5 434 M
+(e.org;) s
+5 423 M
+(        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject) s
+5 412 M
+(         :date:message-id:reply-to;) s
+5 401 M
+(        bh=ejhuBsMN5eEQGZZoRv8Ru3JghzLU5fwjMxrWnzz4SCU=;) s
+5 390 M
+(        b=P5KJ/l8CRVGPk8rUHY/smGGerLsrUTiqBilNEXSFwvFCfGWP7uWbwVBZJNg2dbOnwl) s
+5 379 M
+(         HOXGLzkRqPr/7kW+1XQxn5hS2joCj0IQvxHLDp4BwE1zX5DIJ5Mry4Le+J3/ZJf/xQ8a) s
+5 368 M
+(         mMAfQr3iRQxGI506JQq+55Ys1eXmp5QCEpN+U=) s
+5 357 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 346 M
+(        d=1e100.net; s=20230601; t=1727941086; x=1728545886;) s
+5 335 M
+(        h=to:subject:message-id:date:from:mime-version:x-gm-message-state) s
+5 324 M
+(         :from:to:cc:subject:date:message-id:reply-to;) s
+5 313 M
+(        bh=ejhuBsMN5eEQGZZoRv8Ru3JghzLU5fwjMxrWnzz4SCU=;) s
+5 302 M
+(        b=KNfoFpxsHE7WSMgpRmCgQqKWUVapZzoIZf/Yo6HR3JwY/vwdVGbTChElkmW1pgGyYw) s
+5 291 M
+(         vkxfs+/yEoRtzXODNd2Yn5zJSHMIruBeimMXwIV0G+OKUKj7AeJMQoneEkRuAf+sJDvj) s
+5 280 M
+(         nIstZWkOjkeEJN1zMl4KmOw0CkZ38uRecCjUdfTQH+PBXJDFtVC3jY73qhDym17biHpy) s
+5 269 M
+(         8mKIOeA99nBl+QnmuaYAmVuzQajUx8CVu/xYWZLqlJtEpcl/KrQuAtQuEz8bYrSDjpyV) s
+5 258 M
+(         oKiApMx8wJrHEaFkZ8Le1Fg8iPFy3n4362+CFS5HV/mHTvwa/phZzVhZAvCmqByUpctU) s
+5 247 M
+(         5PeQ==) s
+5 236 M
+(X-Gm-Message-State: AOJu0YyknEo3FQQxkBV+dZsAZJx/qbQRPU138rSF1V1/lEDBw0qCa3XH) s
+5 225 M
+(        nAwgt77GgwwBMiNNODpt+jEMdVBlhTorQoMPM5PT+NWQudxrqIsQC4yBpIkrHZTNm661cl/XPOM) s
+5 214 M
+(        z0KwZruv5Bkki63bAW1WwoWxxyFdcKnM99H5CeBQnhIifrmaZFbU=) s
+5 203 M
+(X-Google-Smtp-Source: AGHT+IHNc0o1941j3Kl3fJxMe12sDNFZwVgrLE3VlTa0qKONAFLctOzdv1rLM4JYg) s
+5 192 M
+(qmQIpez5hbSpvADe219X2FuBNQ=) s
+5 181 M
+(X-Received: by 2002:a05:690c:508a:b0:6af:8662:ff37 with SMTP id) s
+5 170 M
+( 00721157ae682-6e2a2b112d6mr37549377b3.21.1727941085813; Thu, 03 Oct 2024) s
+5 159 M
+( 00:38:05 -0700 \(PDT\)) s
+5 148 M
+(MIME-Version: 1.0) s
+5 137 M
+(From: Kunal Rao <kunal@mechination.com.au>) s
+5 126 M
+(Date: Thu, 3 Oct 2024 15:37:55 +0800) s
+5 115 M
+(Message-ID: <CAOOFvV9RpTXU7vuHJ7qeddrfzCr=P=XZEMPTx6qvghAnMGAjug@mail.gmail.com>) s
+5 104 M
+(Subject: Bridging Artemis with classic) s
+5 93 M
+(To: users@activemq.apache.org) s
+5 82 M
+(Content-Type: multipart/alternative; boundary="0000000000009d004206238da215") s
+5 60 M
+(--0000000000009d004206238da215) s
+5 49 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 38 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 16 M
+(Hi,) s
+_R
+S
+%%Page: (32) 32
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 32 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (32) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Is it possible to bridge artemis with classic broker?) s
+5 676 M
+(I am trying with AMQP protocol.) s
+5 654 M
+(I am getting this error) s
+5 632 M
+(p1broker-1       | 2024-10-03 07:34:50,270 WARN) s
+5 621 M
+( [org.apache.activemq.artemis.core.server] AMQ224091: Bridge) s
+5 610 M
+(BridgeImpl@6a3012f8 [name=3Damqp-bridge, queue=3DQueueImpl[name=3Dp1broker.=) s
+5 599 M
+(out,) s
+5 588 M
+(postOffice=3DPostOfficeImpl [server=3DActiveMQServerImpl::name=3D0.0.0.0],) s
+5 577 M
+(temp=3Dfalse]@7af74850 targetConnector=3DServerLocatorImpl \(identity=3DBrid=) s
+5 566 M
+(ge) s
+5 555 M
+(amqp-bridge\)) s
+5 544 M
+([initialConnectors=3D[TransportConfiguration\(name=3Dactivemq-classic-amqp,) s
+5 533 M
+(factory=3Dorg-apache-activemq-artemis-core-remoting-impl-netty-NettyConnect=) s
+5 522 M
+(orFactory\)?port=3D5672&host=3Dcentralbroker&protocols=3DAMQP],) s
+5 511 M
+(discoveryGroupConfiguration=3Dnull]] is unable to connect to destination.) s
+5 500 M
+(Retrying) s
+5 489 M
+(centralbroker-1  |  WARN | Connection attempt from non AMQP v1.0 client.) s
+5 478 M
+(ARTEMIS,0) s
+5 467 M
+(centralbroker-1  |  WARN | Transport Connection to: tcp://172.19.0.3:33778) s
+5 456 M
+(failed: Connection from client using unsupported AMQP attempted) s
+5 434 M
+(broker.xml) s
+5 423 M
+(=3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 401 M
+(<acceptors>) s
+5 379 M
+(<acceptor name=3D"artemis">) s
+5 368 M
+(tcp://) s
+5 357 M
+(0.0.0.0:61616?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;am=) s
+5 346 M
+(qpMinLargeMessageSize=3D102400;protocols=3DCORE,AMQP,STOMP,HORNETQ,MQTT,OPE=) s
+5 335 M
+(NWIRE;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpDuplicate=) s
+5 324 M
+(Detection=3Dtrue;supportAdvisory=3Dfalse;suppressInternalManagementObjects=) s
+5 313 M
+(=3Dfalse) s
+5 302 M
+(</acceptor>) s
+5 280 M
+(<!-- AMQP Acceptor. Listens on default AMQP port for AMQP traffic.-->) s
+5 269 M
+(<acceptor name=3D"amqp">) s
+5 258 M
+(tcp://) s
+5 247 M
+(0.0.0.0:5672?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;pro=) s
+5 236 M
+(tocols=3DAMQP;useEpoll=3Dtrue;amqpCredits=3D1000;amqpLowCredits=3D300;amqpM=) s
+5 225 M
+(inLargeMessageSize=3D102400;amqpDuplicateDetection=3Dtrue;handshake-timeout=) s
+5 214 M
+(=3D0) s
+5 203 M
+(</acceptor>) s
+5 181 M
+(<!-- STOMP Acceptor. -->) s
+5 170 M
+(<acceptor name=3D"stomp">) s
+5 159 M
+(tcp://) s
+5 148 M
+(0.0.0.0:61613?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;pr=) s
+5 137 M
+(otocols=3DSTOMP;useEpoll=3Dtrue) s
+5 126 M
+(</acceptor>) s
+5 104 M
+(<!-- HornetQ Compatibility Acceptor. Enables HornetQ Core and STOMP for) s
+5 93 M
+(legacy HornetQ) s
+5 82 M
+(clients. -->) s
+5 71 M
+(<acceptor name=3D"hornetq">) s
+5 60 M
+(tcp://) s
+5 49 M
+(0.0.0.0:5445?anycastPrefix=3Djms.queue.;multicastPrefix=3Djms.topic.;protoc=) s
+5 38 M
+(ols=3DHORNETQ,STOMP;useEpoll=3Dtrue) s
+5 27 M
+(</acceptor>) s
+5 5 M
+(<!-- MQTT Acceptor -->) s
+_R
+S
+%%Page: (33) 33
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 33 def
+/fname (./CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAOOFvV_fzb8pdW_y8_8g_XjbdSdEU6g+Xx6mWM-YaQU9S2WCvw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:15:00 2024) def
+/pagenumstr (33) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(<acceptor name=3D"mqtt">) s
+5 676 M
+(tcp://) s
+5 665 M
+(0.0.0.0:1883?tcpSendBufferSize=3D1048576;tcpReceiveBufferSize=3D1048576;pro=) s
+5 654 M
+(tocols=3DMQTT;useEpoll=3Dtrue) s
+5 643 M
+(</acceptor>) s
+5 621 M
+(</acceptors>) s
+5 599 M
+(<bridges>) s
+5 588 M
+(<bridge name=3D"amqp-bridge">) s
+5 577 M
+(<queue-name>p1broker.out</queue-name>) s
+5 566 M
+(<forwarding-address>centralbroker.in</forwarding-address>) s
+5 555 M
+(<user>admin</user>) s
+5 544 M
+(<password>admin</password>) s
+5 533 M
+(<static-connectors>) s
+5 522 M
+(<connector-ref>activemq-classic-amqp</connector-ref>) s
+5 511 M
+(</static-connectors>) s
+5 500 M
+(</bridge>) s
+5 489 M
+(</bridges>) s
+5 456 M
+(<connectors>) s
+5 445 M
+(<connector name=3D"activemq-classic-amqp">) s
+5 434 M
+(tcp://centralbroker:5672?protocols=3DAMQP</connector>) s
+5 423 M
+(</connectors>) s
+5 390 M
+(activemq.xml) s
+5 379 M
+(=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D) s
+5 357 M
+(<transportConnectors>) s
+5 346 M
+(<!-- DOS protection, limit concurrent connections to 1000 and frame size to) s
+5 335 M
+(100MB -->) s
+5 324 M
+(<transportConnector name=3D"openwire") s
+5 313 M
+(uri=3D"tcp://0.0.0.0:61616?maximumConnections=3D1000&amp;) s
+5 302 M
+(wireFormat.maxFrameSize=3D104857600000" />) s
+5 291 M
+(<transportConnector name=3D"amqp") s
+5 280 M
+(uri=3D"amqp://0.0.0.0:5672?maximumConnections=3D1000&amp;) s
+5 269 M
+(wireFormat.maxFrameSize=3D104857600" />) s
+5 258 M
+(<transportConnector name=3D"stomp") s
+5 247 M
+(uri=3D"stomp://0.0.0.0:61613?maximumConnections=3D1000&amp;) s
+5 236 M
+(wireFormat.maxFrameSize=3D104857600" />) s
+5 225 M
+(<transportConnector name=3D"mqtt") s
+5 214 M
+(uri=3D"mqtt://0.0.0.0:1883?maximumConnections=3D1000&amp;) s
+5 203 M
+(wireFormat.maxFrameSize=3D104857600" />) s
+5 192 M
+(<transportConnector name=3D"ws") s
+5 181 M
+(uri=3D"ws://0.0.0.0:61614?maximumConnections=3D1000&amp;) s
+5 170 M
+(wireFormat.maxFrameSize=3D104857600" />) s
+5 159 M
+(</transportConnectors>) s
+5 126 M
+(what am i doing wrong?) s
+5 104 M
+(Cheers) s
+5 93 M
+(Kunal) s
+5 71 M
+(--0000000000009d004206238da215--) s
+_R
+S
+%%Trailer
+%%Pages: 33
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

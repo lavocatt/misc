@@ -1,0 +1,452 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57556-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 1AC0C3E724
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 18:11:59 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 3F32C45BE4
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 18:11:31 +0000 (UTC)
+Received: (qmail 2080821 invoked by uid 998); 21 Oct 2024 18:11:29 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 2080786 invoked by uid 116); 21 Oct 2024 18:11:29 -0000
+Received: from ec2-52-204-25-47.compute-1.amazonaws.com (HELO mailrelay1-ec2-va.apache.org) (52.204.25.47)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 21 Oct 2024 18:11:29 +0000
+Authentication-Results: apache.org; auth=none
+Received: from smtpclient.apple (107-140-187-69.lightspeed.austtx.sbcglobal.net [107.140.187.69])
+	by mailrelay1-ec2-va.apache.org (ASF Mail Server at mailrelay1-ec2-va.apache.org) with ESMTPSA id B0C8C3FCCF
+	for <users@activemq.apache.org>; Mon, 21 Oct 2024 18:11:28 +0000 (UTC)
+From: Matt Pavlovich <mattrpav@apache.org>
+Content-Type: multipart/alternative;
+	boundary="Apple-Mail=_8858299C-A380-4E49-8353-E4F07844012A"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: SSL verification check
+Date: Mon, 21 Oct 2024 13:11:26 -0500
+References: <DB9PR02MB7842CAADB53F7C93964D6AB78C432@DB9PR02MB7842.eurprd02.prod.outlook.com>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+In-Reply-To: <DB9PR02MB7842CAADB53F7C93964D6AB78C432@DB9PR02MB7842.eurprd02.prod.outlook.com>
+Message-Id: <6D25D43E-A9B7-4241-A73E-2A9A162B0E3A@apache.org>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+
+--Apple-Mail=_8858299C-A380-4E49-8353-E4F07844012A
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
+
+Hi John-
+
+Yes, you can do this with a little code stubbing for your unit test.
+
+WARNING: Do not ship any of these dummy test classes to production or =
+other operational environments.
+
+1. Create a dummy ssl socket factory class
+2. Create a test class that extends the ActiveMQ LDAPLoginModule and =
+override the openContext method
+3. Pass an environment variable to the LDAP InitialDirContext pointing =
+to your custom dummy ssl socket factory class:
+env.put ("java.naming.ldap.factory.socket", =
+NonVerifyingSSLSocketFactory.class.getName ());
+4. Run tests using dummy ssl and localhost
+
+ActiveMQ LDAPLoginModule openContext method:
+=
+https://github.com/apache/activemq/blob/4ff78ddab993d62408c8e63ce63a63d575=
+7fe039/activemq-jaas/src/main/java/org/apache/activemq/jaas/LDAPLoginModul=
+e.java#L482
+
+Stack overflow: =
+https://stackoverflow.com/questions/52600211/how-to-programmatically-disab=
+le-certificate-hostname-verification-in-java-ldap-j
+
+Thanks,
+Matt Pavlovich
+
+> On Oct 21, 2024, at 3:53=E2=80=AFAM, John, Richard <richard.john@c
+> apgemini.com.INVALID> wrote:
+>=20
+> Good morning.
+>=20
+> Is it possible to disable SSL certificate verification checks (just =
+for test purposes) - specifically the checks against SANs in the =
+certificate - for LDAPS calls via the LDAPLoginModule?
+>=20
+> Thanks
+>=20
+> ________________________________
+>=20
+> Capgemini is a trading name used by the Capgemini Group of companies =
+which includes Capgemini UK plc, a company registered in England and =
+Wales (number 943935) whose registered office is at No. 1, Forge End, =
+Woking, Surrey, GU21 6DB.
+> This message contains information that may be privileged or =
+confidential and is the property of the Capgemini Group. It is intended =
+only for the person to whom it is addressed. If you are not the intended =
+recipient, you are not authorized to read, print, retain, copy, =
+disseminate, distribute, or use this message or any part thereof. If you =
+receive this message in error, please notify the sender immediately and =
+delete all copies of this message.
+
+
+--Apple-Mail=_8858299C-A380-4E49-8353-E4F07844012A--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57548-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-ec2-va.apache.org (mxout1-ec2-va.apache.org [3.227.148.255])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id 2501A3E680
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 08:54:30 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [116.203.246.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxout1-ec2-va.apache.org (ASF Mail Server at mxout1-ec2-va.apache.org) with ESMTPS id 9819F43AB0
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 08:53:59 +0000 (UTC)
+Received: (qmail 686801 invoked by uid 998); 21 Oct 2024 08:53:57 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 686776 invoked by uid 116); 21 Oct 2024 08:53:56 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 21 Oct 2024 08:53:56 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id C227220015A
+	for <users@activemq.apache.org>; Mon, 21 Oct 2024 08:53:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.005
+X-Spam-Level: 
+X-Spam-Status: No, score=0.005 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,
+	RCVD_IN_MSPIKE_H4=0.001, RCVD_IN_MSPIKE_WL=0.001,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,
+	RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001,
+	URIBL_BLOCKED=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=capgemini.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id 6Ir8N2vvre0a for <users@activemq.apache.org>;
+	Mon, 21 Oct 2024 08:53:56 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=194.165.193.163; helo=esa2.hc2065-58.eu.iphmx.com; envelope-from=richard.john@capgemini.com; receiver=<UNKNOWN> 
+Received: from esa2.hc2065-58.eu.iphmx.com (esa2.hc2065-58.eu.iphmx.com [194.165.193.163])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 59B0C82089
+	for <users@activemq.apache.org>; Mon, 21 Oct 2024 08:53:56 +0000 (UTC)
+X-ASF-DKIM-Sig: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=capgemini.com; i=@capgemini.com; q=dns/txt; s=group3;
+  t=1729500835; x=1761036835;
+  h=from:to:subject:date:message-id:mime-version;
+  bh=9sIqNcrc3dfL3rsM2TxrVRVjsq2xARErl31VuF+10wA=;
+  b=bfEpT09T4/iT4OkllRmtH/97yNPFt62fpBH62gb3+hZLSd/KEazdyz1+
+   HE1rCmLYnJAbxUwJzeSOMg/+sxkU4k4+ECf8tiWsrb4G0thBNGNQxpos2
+   gtAr1dEzix9KKtCg13NT/OnM4nF370h3efkiF3ZlJzAsgFy3OPuvuvo1P
+   S5QocB8NpjOobFeu/PIbGPcBDviTtxqwnJF2Vlu58OEdTRR/DqzkU9jiQ
+   7Cz5+sld2TGD8lozdQ+bsDmD1W4kRP8nv4O49oAAyJAA6nbzmq+Tx5hJ4
+   AZdIG17RFJWSaVIUNFYB/YEisAD/rP9+UFGV0x0BXvYgk8H4XjPC7i4Z9
+   A==;
+X-CSE-ConnectionGUID: vSNUdXp5TzOzKXePSyda4g==
+X-CSE-MsgGUID: trKAJ+jDSDKFrk5TZckFhA==
+X-IronPort-RemoteIP: 80.253.212.219
+X-IronPort-MID: 13482651
+X-IronPort-Reputation: None
+X-IronPort-Listener: OutgoingMail
+X-IronPort-SenderGroup: APPLIST
+X-IronPort-MailFlowPolicy: $APPRELAY
+X-IronPort-AV: E=Sophos;i="6.10,215,1719871200"; 
+   d="scan'208,217";a="13482651"
+Received: from spfnldca02.capgemini.com ([80.253.212.219])
+  by ob1.hc2065-58.eu.iphmx.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 21 Oct 2024 10:53:49 +0200
+X-CSE-ConnectionGUID: dCefbMCvRMicuhb6iXtnmw==
+X-CSE-MsgGUID: +7mxijhFQU2tl2pOz6Oi8w==
+X-IronPort-AV: E=Sophos;i="6.11,220,1725314400"; 
+   d="scan'208,217";a="285778206"
+Received: from intdlp.capgemini.com (HELO NLDCADLP03.CORP.CAPGEMINI.COM) ([10.36.128.102])
+  by IRFRPAR-C695-02-D2-incoming.capgemini.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2024 10:53:50 +0200
+Received: from NLDCADLP03.CORP.CAPGEMINI.COM (NLDCADLP03.CORP.CAPGEMINI.COM [127.0.0.1])
+	by NLDCADLP03.CORP.CAPGEMINI.COM (Service) with ESMTP id 50344A37
+	for <users@activemq.apache.org>; Mon, 21 Oct 2024 10:53:47 +0200 (CEST)
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (unknown [104.47.30.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by NLDCADLP03.CORP.CAPGEMINI.COM (Service) with ESMTPS id 342EE14BDE9
+	for <users@activemq.apache.org>; Mon, 21 Oct 2024 10:53:47 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XJKf7hkp/Lpczh5/obOkHWjQlTu697xE0ZL/FK5suXKxvu8EmbNnKpFhbhg4ww4ShuVVos5R+jMHvsNPwLttQf2PMha+tu2k0VhVRwrMYWPAVkz9tYr1rfWKhl5Ys/gguJAWSgUkPDKJjglO/L7A7aswcAa07a/UYLjOJg9Nvf7bB1J7WR4nx7DjkGe1HU410vkNzcr182yWFHdKIi5l4Ulyf9AnMYnfjTWlgmwypPElMMxEHbBa1Uxn0rHVfWk6MMnWq18S52g8IfCkj0WVwrvf/8yaK4Djw5Q3q6zULzOk3awCgHTb1PRdYPUAw3OsDkoQRLetnmb7y1CQiEWpuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aePhGSu+2qF1grjrQ576j9I6URAmHwcZq3ZukMkoQ5s=;
+ b=m7jvXcwrZMCTgze5V6tMfDuBP/uz7kwcYDEh+k1YnI77KgzVs7QymWb9+yV+ZjBCrf9Xfum0gGDKMc68IfgYqtGpyNoMehM7Q1MaQJ3IgN6n1y78ponEorgOX7yoWg7gYzfYaEHJVypF2bvxLf5CvNhkDAjRGTO77Iu3F9JzbTmfU35BoPxSSTA7iZpqq575seJ65pcdNkp/7dvCNmodAD+3f05aeuwkRNLhOJPkIqbMVEP2QuJ8qCuSr2DgcU1tGmeesqr4TwpsmpvdEnYBbJrQyXOThktFhX4QyRw66TA3dFIs//UWKuQmo5RhCV3sZY6VbaLEBL9JhB32pbZkZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=capgemini.com; dmarc=pass action=none
+ header.from=capgemini.com; dkim=pass header.d=capgemini.com; arc=none
+Received: from DB9PR02MB7842.eurprd02.prod.outlook.com (2603:10a6:10:330::16)
+ by VI1PR02MB6448.eurprd02.prod.outlook.com (2603:10a6:800:196::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Mon, 21 Oct
+ 2024 08:53:48 +0000
+Received: from DB9PR02MB7842.eurprd02.prod.outlook.com
+ ([fe80::9cbf:f010:c6f0:ebcd]) by DB9PR02MB7842.eurprd02.prod.outlook.com
+ ([fe80::9cbf:f010:c6f0:ebcd%7]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
+ 08:53:48 +0000
+From: "John, Richard" <richard.john@capgemini.com.INVALID>
+To: "users@activemq.apache.org" <users@activemq.apache.org>
+Subject: SSL verification check
+Thread-Topic: SSL verification check
+Thread-Index: AdsjlmNRq40wshU8Q2SWKB5OZZiFVw==
+Date: Mon, 21 Oct 2024 08:53:48 +0000
+Message-ID: <DB9PR02MB7842CAADB53F7C93964D6AB78C432@DB9PR02MB7842.eurprd02.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=capgemini.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DB9PR02MB7842:EE_|VI1PR02MB6448:EE_
+x-ms-office365-filtering-correlation-id: 4789fd31-a3e7-4124-14d1-08dcf1ade107
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|8096899003|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?FFGhihbM3yo3dc0p6ch8vK1cgbyoJkCaIWU9dosBPaHlAnONTOPJgRywSRc+?=
+ =?us-ascii?Q?U8WP5bAkwlSPHDjQ5JI2v7DP+bsXPzwWUsEUnQHjo2SeAtWcVU3xf8yYuz6G?=
+ =?us-ascii?Q?oqt75eohGxXpMGo7Io32JTKqPf8Gdyt0ur2pRNfbwkOpI0Mr1D6j55t3IzGR?=
+ =?us-ascii?Q?iscYaL64SPqlpVi7vGYnp9RJiIfncJRmL6BdA4c7kitHPgTNb+0chrjlTn6K?=
+ =?us-ascii?Q?pXEUaQpM6OyKJjVeotE/kvhwAnr4UrcD4z4Pw/mjqD43QGo/7zXZWezIR2ZQ?=
+ =?us-ascii?Q?+x6sVntPPR4m0P+hRSs3u1uLLuTc/Nz1E+ac3Fzm5bOvF6nMI0Dg1YiZKhuC?=
+ =?us-ascii?Q?AoFQEVnlwCNdrx/fIMq6PzX38UvCMP8973Yq7FwMyT+X/RAdF9sRrekAUi5N?=
+ =?us-ascii?Q?4otstKkYa25csZkCG+IOJxrtGm+zJXbN2VBjVJLKw6kXsajQXd3hLLu4k1LQ?=
+ =?us-ascii?Q?s99aIu5/MlW4CnirUQg4s5j3BmyRcckUkMt360srF/8RCIITkgjHaArzj4BO?=
+ =?us-ascii?Q?bybRhQmutslwQjJor3e7gt0Srd3h4+E5rFwMA1GSzhSbi2vV3EGV24g/1cZ/?=
+ =?us-ascii?Q?VP9hk5dDIy3CvjTHahEWUEcIP2d+veNMBT6rU+CtNXmwkpNFl2l8BMd8ehHw?=
+ =?us-ascii?Q?96b6VmeL2bMn3E/tpuhZ2AwY/kVzweGyVJFtz6wiYZc6m+cKw/bS4knG1tpc?=
+ =?us-ascii?Q?6NAwpK/L6JRluWAs9XMroBzVilp6qCfp+ufvzvX+8IHpDolStLx88/+myrq+?=
+ =?us-ascii?Q?40GUUTwsU7ljIqZH4WLmHvM43+nBoQvd7iP46oe0dDBLmZZXRAYagSiFs7/d?=
+ =?us-ascii?Q?oKyjrkRDzDvYGYmOx8/Y/ddIJtSKWPWym38NLu/3KyOtKzoDMKq5W4NbcPEj?=
+ =?us-ascii?Q?mgtIa3Nb/PJVAvgVDYNjpRRXfXZI7htFQMGAvNY1kfcafgDHVm4/0MoQ4Nm3?=
+ =?us-ascii?Q?boZgDnIu6PJFMDS1hg/+HSlg2A3N/qwJ2qcYu22Ycd0F8x7rDSDbg/xeFwOb?=
+ =?us-ascii?Q?BfUgQ+csCpTsuR/YYw3+y3Lv4VXzgWMYVcDfcE+oNF7g7Fb+E+cCeEvcJxO7?=
+ =?us-ascii?Q?6B/MyAdffLYZ6+rVNrMat3fyqmW22T6rK27+dsOWq3aN44w9jr6npf481CNB?=
+ =?us-ascii?Q?kGN6rlJV/hP75dpxVHrvX5yihUJPjtm2l5a00oc758ELeNdnQEPFf/nvHTA+?=
+ =?us-ascii?Q?oXukAtae0pBBFb9XPEtraWztZX7wEH2cGgOjOjow099Pi7Tqm2JqW9SzpVym?=
+ =?us-ascii?Q?3KcT0NMUkI/dUFsdsE4M8tedx8XstjYAV5ss2+fZwZByecMbTp3caAQ4tHlY?=
+ =?us-ascii?Q?+soaU8zO39Ral05Ea9R7DMTqADCLhJev6+Dn2eboQEznCaGmzV4njE8wNrC8?=
+ =?us-ascii?Q?AMtey4o=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR02MB7842.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(8096899003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?UssJxhzRw1ejJKKYmNNBG607QQTVPtT19hz69TvnjN/nL2PRUdZZNtV5CkjB?=
+ =?us-ascii?Q?QMaMe6spcLX11PaFMlgG2b6p2Cqww3P4URIGtmy/Jvf+S+dxH3t/8sLaCcVj?=
+ =?us-ascii?Q?MBU1SET0sjgULkOpfERqVplF7RRTbU3QQvLvDU0WinKyd++RbkpUAy+jlETU?=
+ =?us-ascii?Q?5+UdFhiXLW/zbw69z88qhe53rTaAvAY2H3sTjd0MLHYoRgPpOto5PUL2kNu9?=
+ =?us-ascii?Q?yfiUAvH2vDW3TmwCvVrJ5pvrE04LgiJGm3K9NZZDzzkrUCWaO2K5RsKAoIs4?=
+ =?us-ascii?Q?IysORrbskaEvX9D6LoBTcDBJrsk+KD5M+mBTlAtuV4HXBmkp0LV4fUexrP97?=
+ =?us-ascii?Q?AekmlkyddyPr3XAzKo4d2cYbz3X1pjhVYXITWmW+q+oJXJzssM2D7kojpLV3?=
+ =?us-ascii?Q?PDikXeKsws2wwSgZw+CzCk5ghnHhVJmRIHmGx+TDOubty+818Y7ypO4qMC9o?=
+ =?us-ascii?Q?HnxwwV3Wd5rs5DC5VsDTQwKFl11yw2+wLCg1GixrSTjDIMK0nhRY7vs0W8Td?=
+ =?us-ascii?Q?pPX0xfkHJHRz3ihTiFgCszK8RXoKZ+oCSzNOfcgsbSuTbYroIESv5fcdyUUv?=
+ =?us-ascii?Q?5hwxEoa/9+OWoWbBYuXTT4xSOwTgQYdIJlYRRVXQlHhQR+NsWk9EygCmQHHa?=
+ =?us-ascii?Q?UXFUoHC4jbOlEK+miYixH4ff9PwrS6Ip3TDF2hCYMq8yrPolZ0+8y0E2iPto?=
+ =?us-ascii?Q?wCm8F9b5QAI0vN95I9ohpJhOmhL6blWOMx0A4MeEv88O/G2mugmM8bVt5p2s?=
+ =?us-ascii?Q?QBSpoiboTBPduejNkv14gLJcddWf5mSkxFAklGPs0Oil/k7TABYCvgTcQQ8+?=
+ =?us-ascii?Q?y8ploLb+86b9S4+W9MX+CxcOdS5aGxnoql4EnKkHCF0fy88MsjZLdDrL42JZ?=
+ =?us-ascii?Q?h7uWy1wnPC9lJePxpXm8dp98x6aQIUeC/eOV/SLh+ZwU0FGCNWpvgEZxNTWp?=
+ =?us-ascii?Q?XAcstMr5UDbjV331eOE2n330Hcv5Yj60oKSpFQqniMLVf1xsBG7NBUilZTBs?=
+ =?us-ascii?Q?0CqVD4dG+rp8GTF4yju7T058f1Fgws0GwmCV8sSh0JFA8BzQDJ6miEfXv+UV?=
+ =?us-ascii?Q?9aYL56DcxefiRvvREO3gLX5NUIjLrO6if8mPi7fnYeil1MI1Kv9DB/yKt/K5?=
+ =?us-ascii?Q?j5VvBQ2WUf8nmnOwLWw6w6G+6K7hAE155ZBAKDOiHH7DhNhK8jI0YpP3ZKKz?=
+ =?us-ascii?Q?98XXNr/wEvERZAz8dTOD90utwvxYybein8Wb0UqYymRq3HUXfaPt0Rzil+9J?=
+ =?us-ascii?Q?wv4iMAtwPPFN6lPC5n2asFbkv11k4olWC6zUUCNI44/crB7+f/KpkxqoAkaW?=
+ =?us-ascii?Q?RErvCojOCw6h+BfPkD1O5wrMMC/XjGRxYw4ka9fiTy7RzrWDHfkNSXPr5boc?=
+ =?us-ascii?Q?sL/xOX6V3phY+HDA2dw6vXUSxa0HS5kD4DkNcAeJ1XdOc9xzpBJ1a7gGaNqj?=
+ =?us-ascii?Q?WH3ki65M/mvHvGMkZ3Xir1tokUHHh32zTsKBTCewnPjtAsKepgVWrBLng6Aw?=
+ =?us-ascii?Q?UyH6o7+47rUscDmxX0xc/c5qCqBai1wH4QAJYrdqvNAQSKqYZc0gO5KTTsNl?=
+ =?us-ascii?Q?ZNV2MN2aIEKbOsSocP7BQNFk4EcednjEzcPxMwsvqQ7+YMpmuThU81w3zrX1?=
+ =?us-ascii?Q?FA=3D=3D?=
+Content-Type: multipart/alternative;
+	boundary="_000_DB9PR02MB7842CAADB53F7C93964D6AB78C432DB9PR02MB7842eurp_"
+MIME-Version: 1.0
+X-OriginatorOrg: capgemini.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR02MB7842.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4789fd31-a3e7-4124-14d1-08dcf1ade107
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2024 08:53:48.6205
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 76a2ae5a-9f00-4f6b-95ed-5d33d77c4d61
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bUAKMAjBDsY9+7L1K1QouTTqHQZRMtVMLsoPZJjyN3PuXdG36pw+qQ1uJni+yCKUTalItBqEayrbDK25pG7MTMMl2z/axNpnWm325UJAvV8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB6448
+
+--_000_DB9PR02MB7842CAADB53F7C93964D6AB78C432DB9PR02MB7842eurp_
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+
+Good morning.
+
+Is it possible to disable SSL certificate verification checks (just for tes=
+t purposes) - specifically the checks against SANs in the certificate - for=
+ LDAPS calls via the LDAPLoginModule?
+
+Thanks
+
+________________________________
+
+Capgemini is a trading name used by the Capgemini Group of companies which =
+includes Capgemini UK plc, a company registered in England and Wales (numbe=
+r 943935) whose registered office is at No. 1, Forge End, Woking, Surrey, G=
+U21 6DB.
+This message contains information that may be privileged or confidential an=
+d is the property of the Capgemini Group. It is intended only for the perso=
+n to whom it is addressed. If you are not the intended recipient, you are n=
+ot authorized to read, print, retain, copy, disseminate, distribute, or use=
+ this message or any part thereof. If you receive this message in error, pl=
+ease notify the sender immediately and delete all copies of this message.
+
+--_000_DB9PR02MB7842CAADB53F7C93964D6AB78C432DB9PR02MB7842eurp_--
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57549-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id CA97D3E680
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 09:45:31 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id A3150619D6
+	for <archive-asf-public@cust-asf.ponee.io>; Mon, 21 Oct 2024 09:45:31 +0000 (UTC)
+Received: (qmail 818688 invoked by uid 998); 21 Oct 2024 09:45:30 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 818668 invoked by uid 116); 21 Oct 2024 09:45:29 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Mon, 21 Oct 2024 09:45:29 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 9A2CD20023F
+	for <users@activemq.apache.org>; Mon, 21 Oct 2024 09:45:29 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0
+X-Spam-Level: 
+X-Spam-Status: No, score=0 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,
+	SPF_PASS=-0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id njLsodawNEVi for <users@activemq.apache.org>;
+	Mon, 21 Oct 2024 09:45:29 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2a00:1450:4864:20::52e; helo=mail-ed1-x52e.google.com; envelope-from=bruscinodf@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 446FD820CB
+	for <users@activemq.apache.org>; Mon, 21 Oct 2024 09:45:29 +0000 (UTC)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-5c942ef8d83so673032a12.0
+        for <users@activemq.apache.org>; Mon, 21 Oct 2024 02:45:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729503928; x=1730108728; darn=activemq.apache.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7td4RxVbQmRlsWel6x0MqQjz9ZwUa4Nm9F2TVmdB40o=;
+        b=YwdrAXP6Zs8yT0C6p0dv9xtPh3spfExp3g+y9MOyjPDFG3eQayqoYHu3Yd0d2JQB2B
+         Z1xm1wTQI5wQ0G4SY9/ptfwLnNG0JVj46xf151wYxlvwx/F6EOf/4+mvKPVtLAMrBOwp
+         zhvHEiePkyyV64WjftG2ebdyAz+VdeFX6xGJ2mwW9Aeba47lpIVA8tbFZdUhNA3Jy5R3
+         YJF3uDyxgA/va3qjdvtJpIxLIFG4jE8/ftGSBLb2wAPKUSe9uMjm98NROPY7y6uyrBRv
+         5eHON+Znj+iXVWFKH7RzA8sN81klrMkWDHLyVYi29ts0LHvOTZlF2eZ9zWMwrrAgwWWT
+         bVvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729503928; x=1730108728;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7td4RxVbQmRlsWel6x0MqQjz9ZwUa4Nm9F2TVmdB40o=;
+        b=kXl3PcXDmg0M1tLDMx0UArBVEaqCdZeyeFhsb/OepzEVlDveaJxlYN5wh0QilmqhIN
+         9EKgZRUesAyX0+iM6Hyfifn1jyeZwMDbf3YfBXafWmvg6zUatn3eb2Aw4Yb+7HdqPi20
+         /PDP6cxeRt3JTBlhU/btoe7PtjS5scaTVQrp9etIRTnECAFzhhY+S9dw/CZN3drv+rP5
+         HyCY5LBtV2pQo09tnONlQLK3vt+jJNFRlJy7853ybBh1nBzQHYZ7pLMN4glTJEHGVxy3
+         VUTgRp2f5kMjSt0kOCdPZo4h0REczPHWDbIxvB7qgl4npT4f4xHsDa2tHANCWy1nmbTs
+         78mQ==
+X-Gm-Message-State: AOJu0YxjA/5vGtPXl/aWRaJ65sH6lLFdjEP/Mx8DJGNTuv78Ui66tTMT
+	8L8Wra7Uz3znXmvFoQZOPt+lyL07TDhPuDXMHzirI9XdAUiJWu7KObtQbYhdq/SGWZiYiLZH2Qr
+	8OLfxrohRwXzsxBZQq49RxSmo3Z93eqGp+wA=
+X-Google-Smtp-Source: AGHT+IHyYAqtTx85row0TLQTrpT6GIlgdIHutXxkdODKhk+Ni7qiTH76ebTjg6OK1reAmnBjI2QMk7u6PbouVkrRR2s=
+X-Received: by 2002:a05:6402:40c3:b0:5c3:eb29:50c5 with SMTP id
+ 4fb4d7f45d1cf-5ca0af89464mr3922785a12.9.1729503928236; Mon, 21 Oct 2024
+ 02:45:28 -0700 (PDT)
+MIME-Version: 1.0
+References: <DB9PR02MB7842CAADB53F7C93964D6AB78C432@DB9PR02MB7842.eurprd02.prod.outlook.com>
+In-Reply-To: <DB9PR02MB7842CAADB53F7C93964D6AB78C432@DB9PR02MB7842.eurprd02.prod.outlook.com>
+From: Domenico Francesco Bruscino <bruscinodf@gmail.com>
+Date: Mon, 21 Oct 2024 11:45:16 +0200
+Message-ID: <CAE86sh+Zf4kzTKx_F9R_w9ku7hvsxVsxkmDWwHstvE2ZJKKJgA@mail.gmail.com>
+Subject: Re: SSL verification check
+To: richard.john@capgemini.com.invalid
+Cc: "users@activemq.apache.org" <users@activemq.apache.org>
+Content-Type: multipart/alternative; boundary="00000000000047c2ae0624f98301"
+
+--00000000000047c2ae0624f98301
+Content-Type: text/plain; charset="UTF-8"
+
+Hi John,
+
+I don't think you can disable SSL certificate verification checks
+in LDAPLoginModule but you could use a tool like stunnel to forward you SSL
+traffic disabling certificate verification checks.
+
+Regards,
+Domenico
+
+On Mon, 21 Oct 2024 at 10:54, John, Richard
+<richard.john@capgemini.com.invalid> wrote:
+
+> Good morning.
+>
+> Is it possible to disable SSL certificate verification checks (just for
+> test purposes) - specifically the checks against SANs in the certificate -
+> for LDAPS calls via the LDAPLoginModule?
+>
+> Thanks
+>
+> ________________________________
+>
+> Capgemini is a trading name used by the Capgemini Group of companies which
+> includes Capgemini UK plc, a company registered in England and Wales
+> (number 943935) whose registered office is at No. 1, Forge End, Woking,
+> Surrey, GU21 6DB.
+> This message contains information that may be privileged or confidential
+> and is the property of the Capgemini Group. It is intended only for the
+> person to whom it is addressed. If you are not the intended recipient, you
+> are not authorized to read, print, retain, copy, disseminate, distribute,
+> or use this message or any part thereof. If you receive this message in
+> error, please notify the sender immediately and delete all copies of this
+> message.
+>
+
+--00000000000047c2ae0624f98301--

@@ -1,0 +1,384 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57562-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id B45BF3E817
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 15:26:19 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id 108EE6360F
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 15:24:21 +0000 (UTC)
+Received: (qmail 420180 invoked by uid 998); 22 Oct 2024 15:24:20 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 420161 invoked by uid 116); 22 Oct 2024 15:24:19 -0000
+Received: from spamproc1-he-de.apache.org (HELO spamproc1-he-de.apache.org) (116.203.196.100)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Tue, 22 Oct 2024 15:24:19 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-de.apache.org (ASF Mail Server at spamproc1-he-de.apache.org) with ESMTP id 354F12000E1
+	for <users@activemq.apache.org>; Tue, 22 Oct 2024 15:24:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0
+X-Spam-Level: 
+X-Spam-Status: No, score=0 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, RCVD_IN_DNSWL_BLOCKED=0.001,
+	SPF_PASS=-0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-de.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-de.apache.org [116.203.196.100]) (amavisd-new, port 10024)
+	with ESMTP id s9_hP23XUfTX for <users@activemq.apache.org>;
+	Tue, 22 Oct 2024 15:24:18 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2607:f8b0:4864:20::433; helo=mail-pf1-x433.google.com; envelope-from=milovidoff@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 8F68A816B3
+	for <users@activemq.apache.org>; Tue, 22 Oct 2024 15:24:18 +0000 (UTC)
+Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-71e74900866so3869499b3a.1
+        for <users@activemq.apache.org>; Tue, 22 Oct 2024 08:24:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729610656; x=1730215456; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rwCldVZMrsUoC7cFRlWIIuAfEGc2Maucn/DNHJyS0lU=;
+        b=WIADWpsY/IWGSlFrN4cV8AHIUxLS0xIK/rE2zC4uBtVJEC69s+WgckOvAzL3rdFER8
+         co54084VxFgr0sWUgShoRXTPnB4qL1gpZ62tdB9mRpUDl7TiN1o37mqtzqV3FlUyCZU5
+         TFRYMOwnpWxP7OeUWwBMjoEl7QXrETDdxgkClry4xQkwdEg6khU3XMTiC4iGWuQCgqXN
+         uLQLNesUDJ9FjTDamvBmajoNj/FH9zArBo26Ox0IMK+68pQVJw4PEqR1+CgVr+N+AS+A
+         lsnP546JVI/jlNYs7fhx7LJKFQvgk0m2M1SC5jlDBW6Ei+4MOwMAA1lQGmd+M0v/5iEm
+         WFbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729610656; x=1730215456;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rwCldVZMrsUoC7cFRlWIIuAfEGc2Maucn/DNHJyS0lU=;
+        b=o7Q+4bePE2jMLHJ1j6qrFp8uBHkwRbOdtc/AEX9Bmbx8EsPj+Vpbr6zktqWtb7bHP2
+         k7cqjp5x+kXk/ViV44gKP5sffPGmG+O5rL4uUbMi/IfBGyQZr4fDwlepgGVDd7JuLu2f
+         6j3CbX/BTotVDlJBEeHu9EySlqU7gJUGE70BGjMeRaFawvptnkgXQHViNwtKBkWfebrb
+         iCdq0i8GK686850UrL2fzb3cwX0OYTGZYrl85ZNd+IGwrcr90L9kalSI+DwdzJXXYTP8
+         GYMYp9AZ3AVZkdIoJAoNB4s5vihzAR4VZPSQspa+smmFOXRZ7lzATRt0Fueh481cnw4O
+         G2hQ==
+X-Gm-Message-State: AOJu0Yy5lttj/rCltwtLSqXU6Qq8Ay/PNnAYXZsy2sttIT3ss1PiDGaZ
+	4BBMStQNNCYHhPty5NP/mNXxjlkixJSODgI/cba/NJo0M6VVoaaN7omEwMuOwtk0HmUXfk+PcLO
+	SU2HBSmz1wobX3OSrQEIgQlH1JtlfDjWD
+X-Google-Smtp-Source: AGHT+IHh+TPbowUX7tutZhstNLwycThH/jz0Xm3gZTW2OsuDX1qwXS6Bo+ObN9MUK8RjgIPYLI2lDZhm2+zlJ0lCldI=
+X-Received: by 2002:a05:6a00:194a:b0:71e:786c:3fa9 with SMTP id
+ d2e1a72fcca58-71ea3085322mr22849236b3a.0.1729610656331; Tue, 22 Oct 2024
+ 08:24:16 -0700 (PDT)
+MIME-Version: 1.0
+From: Alexander Milovidov <milovidoff@gmail.com>
+Date: Tue, 22 Oct 2024 18:24:05 +0300
+Message-ID: <CAFQnLh2M7RNsArgARrFtHNtfufG5JMpZ8rNSmG-B0qE7KNAA6A@mail.gmail.com>
+Subject: Artemis message audit logs
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="000000000000c543940625125c2a"
+
+--000000000000c543940625125c2a
+Content-Type: text/plain; charset="UTF-8"
+
+Hi All,
+
+Recently I tried to parse Artemis audit logs to get information about
+message size. It is needed to gather information about client applications
+that cause the most of the message broker load.
+I mentioned that message headers in the audit log usually include duplicate
+"durable" property. Is it the same property of the message, or properties
+of two different objects?
+
+For example:
+messageID=123, durable=true, userID=some_uuid, priority=4, timestamp=some
+timestamp, expiration=some expiration date, durable=true, address=TEST,
+size=309, properties=TypedProperties[...]
+
+I also mentioned that message size is not logged in the large message
+header, but it can be extracted from _AMQ_LARGE_SIZE message property.
+And some headers are separated using comma and space, some with comma only.
+
+By the way, is there a possibility to add metrics with sent/received bytes
+to each address or queue?
+Is it complicated to implement or may cause significant overhead?
+
+-- 
+Regards,
+Alexander
+
+--000000000000c543940625125c2a--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57564-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id D98333E817
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 15:57:24 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id A3021644BF
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 15:57:23 +0000 (UTC)
+Received: (qmail 517967 invoked by uid 998); 22 Oct 2024 15:57:15 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 517909 invoked by uid 116); 22 Oct 2024 15:57:15 -0000
+Received: from ec2-52-204-25-47.compute-1.amazonaws.com (HELO mailrelay1-ec2-va.apache.org) (52.204.25.47)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Tue, 22 Oct 2024 15:57:15 +0000
+Authentication-Results: apache.org; auth=none
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	by mailrelay1-ec2-va.apache.org (ASF Mail Server at mailrelay1-ec2-va.apache.org) with ESMTPSA id 003AE3FCCF
+	for <users@activemq.apache.org>; Tue, 22 Oct 2024 15:57:14 +0000 (UTC)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c9552d02e6so7402354a12.2
+        for <users@activemq.apache.org>; Tue, 22 Oct 2024 08:57:14 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzfevE+oT1+1gFC2CO4s/fLcND8ieFivBmNuEng5AZZXXp2Fc5P
+	wWKLb8l1MPq8yeiIyALkvzJl2yQxgx00l6Scdp/XIk7duPB63x2zGkC7l4edBM58dHJH0s+a2zT
+	ip3aHv9Xu3A36EsRfgJ4Y7pZea2OgADR9rbxL8w==
+X-Google-Smtp-Source: AGHT+IEulQL+oGGU8Jqux6s74xRKHcq285dsKDl/Pk7OztF4mhc5whSatZUP5Ifh9rK/5zgP0T5hHc6ZRH51no4/0Ts=
+X-Received: by 2002:a17:907:7b8e:b0:a9a:6752:ba80 with SMTP id
+ a640c23a62f3a-a9a69774585mr1587089766b.5.1729612634163; Tue, 22 Oct 2024
+ 08:57:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAFQnLh2M7RNsArgARrFtHNtfufG5JMpZ8rNSmG-B0qE7KNAA6A@mail.gmail.com>
+In-Reply-To: <CAFQnLh2M7RNsArgARrFtHNtfufG5JMpZ8rNSmG-B0qE7KNAA6A@mail.gmail.com>
+From: Justin Bertram <jbertram@apache.org>
+Date: Tue, 22 Oct 2024 10:56:47 -0500
+X-Gmail-Original-Message-ID: <CAF+kE=TcxVKY5Hw+POw6j2jxzYyt3K_z92PPmQDGOSsi6QOzag@mail.gmail.com>
+Message-ID: <CAF+kE=TcxVKY5Hw+POw6j2jxzYyt3K_z92PPmQDGOSsi6QOzag@mail.gmail.com>
+Subject: Re: Artemis message audit logs
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="000000000000a8af61062512d24b"
+
+--000000000000a8af61062512d24b
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+What specific logging code is in the audit message you're inspecting?
+
+
+Justin
+
+On Tue, Oct 22, 2024 at 10:25=E2=80=AFAM Alexander Milovidov <milovidoff@gm=
+ail.com>
+wrote:
+
+> Hi All,
+>
+> Recently I tried to parse Artemis audit logs to get information about
+> message size. It is needed to gather information about client application=
+s
+> that cause the most of the message broker load.
+> I mentioned that message headers in the audit log usually include duplica=
+te
+> "durable" property. Is it the same property of the message, or properties
+> of two different objects?
+>
+> For example:
+> messageID=3D123, durable=3Dtrue, userID=3Dsome_uuid, priority=3D4, timest=
+amp=3Dsome
+> timestamp, expiration=3Dsome expiration date, durable=3Dtrue, address=3DT=
+EST,
+> size=3D309, properties=3DTypedProperties[...]
+>
+> I also mentioned that message size is not logged in the large message
+> header, but it can be extracted from _AMQ_LARGE_SIZE message property.
+> And some headers are separated using comma and space, some with comma onl=
+y.
+>
+> By the way, is there a possibility to add metrics with sent/received byte=
+s
+> to each address or queue?
+> Is it complicated to implement or may cause significant overhead?
+>
+> --
+> Regards,
+> Alexander
+>
+
+--000000000000a8af61062512d24b--
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Return-Path: <users-return-57565-archive-asf-public=cust-asf.ponee.io@activemq.apache.org>
+X-Original-To: archive-asf-public@cust-asf.ponee.io
+Delivered-To: archive-asf-public@cust-asf.ponee.io
+Received: from mxout1-he-de.apache.org (mxout1-he-de.apache.org [95.216.194.37])
+	by mx-eu-03.ponee.io (Postfix) with ESMTPS id CA6143E817
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 16:27:38 +0000 (UTC)
+Received: from mail.apache.org (mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxout1-he-de.apache.org (ASF Mail Server at mxout1-he-de.apache.org) with ESMTPS id B7081633ED
+	for <archive-asf-public@cust-asf.ponee.io>; Tue, 22 Oct 2024 16:27:38 +0000 (UTC)
+Received: (qmail 600277 invoked by uid 998); 22 Oct 2024 16:27:37 -0000
+Mailing-List: contact users-help@activemq.apache.org; run by ezmlm
+Precedence: bulk
+List-Help: <mailto:users-help@activemq.apache.org>
+List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>
+List-Post: <mailto:users@activemq.apache.org>
+List-Id: <users.activemq.apache.org>
+Reply-To: users@activemq.apache.org
+Delivered-To: mailing list users@activemq.apache.org
+Received: (qmail 600214 invoked by uid 116); 22 Oct 2024 16:27:36 -0000
+Received: from spamproc1-he-fi.apache.org (HELO spamproc1-he-fi.apache.org) (95.217.134.168)
+ by apache.org (qpsmtpd/0.94) with ESMTP; Tue, 22 Oct 2024 16:27:36 +0000
+Authentication-Results: apache.org; auth=none
+Received: from localhost (localhost [127.0.0.1])
+	by spamproc1-he-fi.apache.org (ASF Mail Server at spamproc1-he-fi.apache.org) with ESMTP id A3ADDC22DC
+	for <users@activemq.apache.org>; Tue, 22 Oct 2024 16:27:36 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org
+X-Spam-Flag: NO
+X-Spam-Score: 0.001
+X-Spam-Level: 
+X-Spam-Status: No, score=0.001 tagged_above=-999 required=6.31
+	tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DKIM_VALID_EF=-0.1, HTML_MESSAGE=0.2, NUMERIC_HTTP_ADDR=0.001,
+	SPF_PASS=-0.001, WEIRD_PORT=0.001] autolearn=disabled
+Authentication-Results: spamproc1-he-fi.apache.org (amavisd-new);
+	dkim=pass (2048-bit key) header.d=gmail.com
+Received: from mx1-he-de.apache.org ([116.203.227.195])
+	by localhost (spamproc1-he-fi.apache.org [95.217.134.168]) (amavisd-new, port 10024)
+	with ESMTP id HgtGHtkql6VA for <users@activemq.apache.org>;
+	Tue, 22 Oct 2024 16:27:35 +0000 (UTC)
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=2607:f8b0:4864:20::534; helo=mail-pg1-x534.google.com; envelope-from=milovidoff@gmail.com; receiver=<UNKNOWN> 
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+	by mx1-he-de.apache.org (ASF Mail Server at mx1-he-de.apache.org) with ESMTPS id 836C1816B6
+	for <users@activemq.apache.org>; Tue, 22 Oct 2024 16:27:35 +0000 (UTC)
+Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-7ea7e250c54so4006721a12.0
+        for <users@activemq.apache.org>; Tue, 22 Oct 2024 09:27:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729614447; x=1730219247; darn=activemq.apache.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+AVfgOibbZp5Ig4p5HGamMJxpMKnRZslKj9JLlB29lU=;
+        b=K9OCKRCUU7Qsi8nxIrbpSzx7zJP44d88NT95lkbJlaSDY6I5LM0UDP0SgALfmzKmyb
+         EiiRBSc+TNYcyXI8NrDqZ9dG2AqOYpN2FX9WS9+SoDJhmFd5y0abW8k0nOUsx4omuLbf
+         FIQK9SgGVuevgmESIS0+axhYGl5ysRn42NvtEJkkyzvZroNsueCqhP7gr2BoIn/X8nfk
+         1vpjBkvngrUY2gpIcThyvOpsm0kWUjNNMbtsZTfu1gWkC29MZHtdpiiBMS+YwsnUcCVU
+         i8i6wfMIjIzwAwReagDZoc9LS2b1QuNjiHXaHqlc2tmJNQ8lmYeZpKDtAZB980CSz3LI
+         DKlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729614447; x=1730219247;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+AVfgOibbZp5Ig4p5HGamMJxpMKnRZslKj9JLlB29lU=;
+        b=JjdmyE0fJWIkytZ7xrd9e5g9K3///EwXomLmY9nCngHcN425hSd22YedkpRSYUUHJe
+         t6KRV37VFH3k6+fojTIfJFXq6QG7woPDvCO5zdoB9+wJDtuS60bYew8iTEH+b7Hhxu1F
+         y5/c7Zkr3cod0zd/PDs06NTVuxGxIaBa4bqKmZYOCoa5+ogErZc7d/Uy7mdqUPVUz1Gh
+         S4qNMuE8CB0Ov2ZE9zvSlaIr6ejR0IMmWWks7/W5Z8n6ZugfM2LV4NicLnKmgw60eceu
+         5kUjAP1QETQYypyWWSrZc4FhYR72UZHJaQN9QE66S7k4P9ZW6re9sbW9thzg2uohqvPG
+         y9+g==
+X-Gm-Message-State: AOJu0Yxxx4mgqZJZdbmtG2OEpZBN5vAJTLaOngZoPF8vkWySQKA3xnFH
+	U9ZazUUxEtOSH1tlS+pLGbF5aN7EN7DEkO+8UgGCcsLzHFg0dgWvyfSaWE43fhOwkuoB2Ep9UnJ
+	pKL6dfm6vkEQW+6kY/CJqP8m33p093I8r
+X-Google-Smtp-Source: AGHT+IG4yKgD5SnrtFNV/iOPV/LIEWyNJkqTackZmVkqAINghIqrjxr88K4/LY4RZVNjC30SRCPz3xxLPIpoR7J4L7M=
+X-Received: by 2002:a05:6a20:d527:b0:1d5:10c1:49c1 with SMTP id
+ adf61e73a8af0-1d9775af67emr165317637.9.1729614447280; Tue, 22 Oct 2024
+ 09:27:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAFQnLh2M7RNsArgARrFtHNtfufG5JMpZ8rNSmG-B0qE7KNAA6A@mail.gmail.com>
+ <CAF+kE=TcxVKY5Hw+POw6j2jxzYyt3K_z92PPmQDGOSsi6QOzag@mail.gmail.com>
+In-Reply-To: <CAF+kE=TcxVKY5Hw+POw6j2jxzYyt3K_z92PPmQDGOSsi6QOzag@mail.gmail.com>
+From: Alexander Milovidov <milovidoff@gmail.com>
+Date: Tue, 22 Oct 2024 19:27:15 +0300
+Message-ID: <CAFQnLh1JaTP2XpB0Fg5GQ9Gjeo7wVzR3gTnT5KtCdvqZMWZsiQ@mail.gmail.com>
+Subject: Re: Artemis message audit logs
+To: users@activemq.apache.org
+Content-Type: multipart/alternative; boundary="000000000000ba87c30625133e18"
+
+--000000000000ba87c30625133e18
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Audit logging of message send and consume events. For example, I'm
+inspecting headers and properties which are included in the square braces
+after CoreMessage.
+(there also can be LargeServerMessage, Reference and PagedReferenceImpl
+with some additional details and variations)
+
+AMQ601500: User admin(amq)@127.0.0.1:54659 sent a message
+CoreMessage[messageID=3D1028, durable=3Dtrue,
+userID=3D7a8579ef-9091-11ef-a78b-207bd234bec6, priority=3D4, timestamp=3DTu=
+e Oct
+22 16:19:57 UTC 2024, expiration=3D0, durable=3Dtrue, address=3DTEST, size=
+=3D372,
+properties=3DTypedProperties[__AMQ_CID=3D791483e5-9091-11ef-a78b-207bd234be=
+c6,
+count=3D999, ThreadSent=3DProducer ActiveMQQueue[TEST], thread=3D0,
+_AMQ_ROUTING_TYPE=3D1]]@394224803, context: RoutingContextImpl(Address=3DTE=
+ST,
+routingType=3DANYCAST, PreviousAddress=3DTEST previousRoute:ANYCAST,
+reusable=3Dtrue, version=3D-2147483644)
+..................................................
+***** durable queues TEST:
+- queueID=3D26 address:TEST name:TEST filter:null
+***** non durable for TEST:
+..................................................
+, transaction: null
+
+I've found that this part of the event is generated by the toString()
+method of the Message object, but did not find its definition.
+
+
+=D0=B2=D1=82, 22 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 18:58, Jus=
+tin Bertram <jbertram@apache.org>:
+
+> What specific logging code is in the audit message you're inspecting?
+>
+>
+> Justin
+>
+> On Tue, Oct 22, 2024 at 10:25=E2=80=AFAM Alexander Milovidov <milovidoff@=
+gmail.com
+> >
+> wrote:
+>
+> > Hi All,
+> >
+> > Recently I tried to parse Artemis audit logs to get information about
+> > message size. It is needed to gather information about client
+> applications
+> > that cause the most of the message broker load.
+> > I mentioned that message headers in the audit log usually include
+> duplicate
+> > "durable" property. Is it the same property of the message, or properti=
+es
+> > of two different objects?
+> >
+> > For example:
+> > messageID=3D123, durable=3Dtrue, userID=3Dsome_uuid, priority=3D4, time=
+stamp=3Dsome
+> > timestamp, expiration=3Dsome expiration date, durable=3Dtrue, address=
+=3DTEST,
+> > size=3D309, properties=3DTypedProperties[...]
+> >
+> > I also mentioned that message size is not logged in the large message
+> > header, but it can be extracted from _AMQ_LARGE_SIZE message property.
+> > And some headers are separated using comma and space, some with comma
+> only.
+> >
+> > By the way, is there a possibility to add metrics with sent/received
+> bytes
+> > to each address or queue?
+> > Is it complicated to implement or may cause significant overhead?
+> >
+> > --
+> > Regards,
+> > Alexander
+> >
+>
+
+--000000000000ba87c30625133e18--

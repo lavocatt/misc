@@ -1,0 +1,3343 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 38 24 574 768
+%%Title: Enscript Output
+%%For: Thomas Lavocat
+%%Creator: GNU Enscript 1.6.6
+%%CreationDate: Tue Apr  1 15:59:19 2025
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 6
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 6
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 6
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      fname length fmodstr length add pagenumstr length add 95 6 idiv add d_header_w 6 idiv le{
+        5 0 moveto fname show
+        45 0 rmoveto fmodstr show
+        45 0 rmoveto pagenumstr show
+      } {
+        5 0 moveto fmodstr show
+        45 0 rmoveto pagenumstr show
+        fname length d_header_w 6 idiv idiv 1 add 10 mul 5 exch moveto
+        1 1 fname length d_header_w 6 idiv idiv
+        {
+          dup fname exch 1 sub d_header_w 6 idiv mul d_header_w 6 idiv getinterval show
+          5 exch 10 mul fname length d_header_w 6 idiv idiv 1 add 10 mul exch sub moveto
+        } for
+        5 10 moveto
+        fname fname length d_header_w 6 idiv idiv d_header_w 6 idiv mul dup fname length exch sub getinterval show
+      }ifelse
+    }ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 536 def
+/d_page_h 744 def
+/d_header_x 0 def
+/d_header_y 700 def
+/d_header_w 536 def
+/d_header_h 44 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 536 def
+/d_footer_h 0 def
+/d_output_w 536 def
+/d_output_h 700 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 676 M
+(Return-Path: <users-return-57506-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 665 M
+(rg>) s
+5 654 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 643 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 632 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 621 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 87FF83E6D6) s
+5 610 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 14:13:28 +0000 \(UT) s
+5 599 M
+(C\)) s
+5 588 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 577 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 566 M
+(        \(No client certificate requested\)) s
+5 555 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 544 M
+(ESMTPS id 9038D4A9A3) s
+5 533 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 14:13:27 +0000 \(UT) s
+5 522 M
+(C\)) s
+5 511 M
+(Received: \(qmail 859264 invoked by uid 998\); 3 Oct 2024 14:13:25 -0000) s
+5 500 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 489 M
+(Precedence: bulk) s
+5 478 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 467 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 456 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 445 M
+(List-Id: <users.activemq.apache.org>) s
+5 434 M
+(Reply-To: users@activemq.apache.org) s
+5 423 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 412 M
+(Received: \(qmail 859247 invoked by uid 116\); 3 Oct 2024 14:13:25 -0000) s
+5 401 M
+(Received: from mailrelay1-he-de.apache.org \(HELO mailrelay1-he-de.apache.org\) \(116.203.) s
+5 390 M
+(21.61\)) s
+5 379 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 03 Oct 2024 14:13:25 +0000) s
+5 368 M
+(Authentication-Results: apache.org; auth=none) s
+5 357 M
+(Received: from mail-qv1-f50.google.com \(mail-qv1-f50.google.com [209.85.219.50]\)) s
+5 346 M
+(        by mailrelay1-he-de.apache.org \(ASF Mail Server at mailrelay1-he-de.apache.org\)) s
+5 335 M
+( with ESMTPSA id 419A73EBFE) s
+5 324 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 14:13:25 +0000 \(UTC\)) s
+5 313 M
+(Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cb2f271043so10264176d6) s
+5 302 M
+(.0) s
+5 291 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 07:13:25 -0700 \(PDT\)) s
+5 280 M
+(X-Gm-Message-State: AOJu0YyFa881cLPoSbRhHCuNxBn2N6/prYf5woUekg6QUWkHez0PnsNn) s
+5 269 M
+(        VqCn4kwoURzcXzJbSjcw1HbTdMkh4LxOvfMYXV72j0Q5M7KOjWMDsm4/IE5WVYnAT3URKbBoVLU) s
+5 258 M
+(        Gl0mmgRWvURACnldRHQ51HS5bcyYJOeHhL7I23w==) s
+5 247 M
+(X-Google-Smtp-Source: AGHT+IFvDHXg/5QIT+eey0ZNukan90CjUXRmkw+Jfyahx9Doa2wu23ho5K2Qvdcn2) s
+5 236 M
+(OYFhTvESgneRweE3mbnYuiTpiI=) s
+5 225 M
+(X-Received: by 2002:a05:6214:3a05:b0:6cb:3baa:7ac with SMTP id) s
+5 214 M
+( 6a1803df08f44-6cb819f6cefmr86789046d6.12.1727964804258; Thu, 03 Oct 2024) s
+5 203 M
+( 07:13:24 -0700 \(PDT\)) s
+5 192 M
+(MIME-Version: 1.0) s
+5 181 M
+(References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>) s
+5 170 M
+(In-Reply-To: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>) s
+5 159 M
+(From: Justin Bertram <jbertram@apache.org>) s
+5 148 M
+(Date: Thu, 3 Oct 2024 09:12:57 -0500) s
+5 137 M
+(X-Gmail-Original-Message-ID: <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.) s
+5 126 M
+(gmail.com>) s
+5 115 M
+(Message-ID: <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com>) s
+5 104 M
+(Subject: Re: [Artemis] Passing message userID into STOMP) s
+5 93 M
+(To: users@activemq.apache.org) s
+5 82 M
+(Content-Type: multipart/alternative; boundary="00000000000057c83306239328c6") s
+5 60 M
+(--00000000000057c83306239328c6) s
+5 49 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 38 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 16 M
+(Can you clarify your use-case and how the message ID is being set on the) s
+5 5 M
+(client sending the message?) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 676 M
+(Typically the message ID is set by the client implementation or by the) s
+5 665 M
+(broker and it can also change in some circumstances so it's not) s
+5 654 M
+(particularly meaningful to the messaging application. Generally speaking we) s
+5 643 M
+(recommend folks set their own unique ID if they're wanting to track) s
+5 632 M
+(messages.) s
+5 599 M
+(Justin) s
+5 577 M
+(On Thu, Oct 3, 2024 at 2:17=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =D0=) s
+5 566 M
+(=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@gmai=) s
+5 555 M
+(l.com>) s
+5 544 M
+(wrote:) s
+5 522 M
+(> Hi, we ran into an issue when receiving messages via STOMP protocol.) s
+5 511 M
+(> Message was sent by java application using JMSSerializer via AMQP protoco=) s
+5 500 M
+(l,) s
+5 489 M
+(> resulting in message id being stored in userID message property. When) s
+5 478 M
+(> receiving this message via STOMP, the value of userID was not present in) s
+5 467 M
+(> any header, unless the sender app manually generates an id for the messag=) s
+5 456 M
+(e) s
+5 445 M
+(> and passes it into some custom-named header.) s
+5 434 M
+(> Could not find any related info on this property in the archive.) s
+5 423 M
+(> Maybe it is possible to add a STOMP configuration flag, similar to) s
+5 412 M
+(> stompEnableMessageId \(stompEnableUserId e.g.\), that would control if a) s
+5 401 M
+(> message's userID value is being passed into STOMP headers?) s
+5 390 M
+(>) s
+5 379 M
+(> artemis version 2.37.0) s
+5 368 M
+(>) s
+5 346 M
+(--00000000000057c83306239328c6--) s
+5 335 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 324 M
+(Return-Path: <users-return-57508-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 313 M
+(rg>) s
+5 302 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 291 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 280 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 269 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 92D653E6D6) s
+5 258 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:06:02 +0000 \(UT) s
+5 247 M
+(C\)) s
+5 236 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 225 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 214 M
+(        \(No client certificate requested\)) s
+5 203 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 192 M
+(ESMTPS id 088AA45C64) s
+5 181 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:05:22 +0000 \(UT) s
+5 170 M
+(C\)) s
+5 159 M
+(Received: \(qmail 967521 invoked by uid 998\); 3 Oct 2024 15:05:21 -0000) s
+5 148 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 137 M
+(Precedence: bulk) s
+5 126 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 115 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 104 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 93 M
+(List-Id: <users.activemq.apache.org>) s
+5 82 M
+(Reply-To: users@activemq.apache.org) s
+5 71 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 60 M
+(Received: \(qmail 967482 invoked by uid 116\); 3 Oct 2024 15:05:20 -0000) s
+5 49 M
+(Received: from spamproc1-he-fi.apache.org \(HELO spamproc1-he-fi.apache.org\) \(95.217.134) s
+5 38 M
+(.168\)) s
+5 27 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 03 Oct 2024 15:05:20 +0000) s
+5 16 M
+(Authentication-Results: apache.org; auth=none) s
+5 5 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 3 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        by spamproc1-he-fi.apache.org \(ASF Mail Server at spamproc1-he-fi.apache.org\) w) s
+5 676 M
+(ith ESMTP id 04A5EC2201) s
+5 665 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:05:20 +0000 \(UTC\)) s
+5 654 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org) s
+5 643 M
+(X-Spam-Flag: NO) s
+5 632 M
+(X-Spam-Score: 0.249) s
+5 621 M
+(X-Spam-Level: ) s
+5 610 M
+(X-Spam-Status: No, score=0.249 tagged_above=-999 required=6.31) s
+5 599 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 588 M
+(        DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,) s
+5 577 M
+(        SPF_PASS=-0.001] autolearn=disabled) s
+5 566 M
+(Authentication-Results: spamproc1-he-fi.apache.org \(amavisd-new\);) s
+5 555 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 544 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 533 M
+(        by localhost \(spamproc1-he-fi.apache.org [95.217.134.168]\) \(amavisd-new, port 1) s
+5 522 M
+(0024\)) s
+5 511 M
+(        with ESMTP id conHQgPC_BM5 for <users@activemq.apache.org>;) s
+5 500 M
+(        Thu,  3 Oct 2024 15:05:19 +0000 \(UTC\)) s
+5 489 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2a00:1450:4864:20::135; helo) s
+5 478 M
+(=mail-lf1-x135.google.com; envelope-from=baigildin97@gmail.com; receiver=<UNKNOWN> ) s
+5 467 M
+(Received: from mail-lf1-x135.google.com \(mail-lf1-x135.google.com [IPv6:2a00:1450:4864:) s
+5 456 M
+(20::135]\)) s
+5 445 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 434 M
+(d 5E57581FC4) s
+5 423 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:04:49 +0000 \(UTC\)) s
+5 412 M
+(Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-5389e24a4d1so1269688e8) s
+5 401 M
+(7.3) s
+5 390 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 08:04:49 -0700 \(PDT\)) s
+5 379 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 368 M
+(        d=gmail.com; s=20230601; t=1727967888; x=1728572688; darn=activemq.apache.org;) s
+5 357 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 346 M
+(         :from:to:cc:subject:date:message-id:reply-to;) s
+5 335 M
+(        bh=CxgSMSKaDns/TQMxvMrZmuZSMPYK0eDmRdVr6AoEHL0=;) s
+5 324 M
+(        b=ZaTM7f3KQY96FVS+xCYpljSjh/86GRXmfvpY2d4O6SDBcHOhA5YKh4OKbZ0ktPXf4R) s
+5 313 M
+(         dpmmczbfGxIGCgMOB1X4edt57yt9hLBKj13GPwR8QVP43rI8x6vKOPknf7RRfZOZJcub) s
+5 302 M
+(         +uMWzyclOmoXX0KyuwVhy11ha1LPXWxOniEMbcnxW7Uh6pYuZIj2UM1DkIAnrtJbC3lK) s
+5 291 M
+(         Sk1VMNkHBpasBSnX9E5cuHU6mnjx2t5hCpmFJ0VgwcWORiO+35hBClDo72a09bkZlW6j) s
+5 280 M
+(         ShB/wLLHCOBpBqU5jqGnDZlfAC5kr18t19ZrzK4iILyyHDp0qfQo82mHo0JTLF+d7FXj) s
+5 269 M
+(         hszw==) s
+5 258 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 247 M
+(        d=1e100.net; s=20230601; t=1727967888; x=1728572688;) s
+5 236 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 225 M
+(         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;) s
+5 214 M
+(        bh=CxgSMSKaDns/TQMxvMrZmuZSMPYK0eDmRdVr6AoEHL0=;) s
+5 203 M
+(        b=LgbWwyaL7Hd8wYcP07BkrNfvWYI6V7C9g4nrX+LCDgeivraZiGqXwQEvv7yfjCA2Ec) s
+5 192 M
+(         tJXwCf/Q74gIbK08CRN4rV2oBX2FQnPNEky5qUF0GmCjyNK+6bq/sgS6YicgWqHWmQtq) s
+5 181 M
+(         xTF2oNA9Kt6qU6akl0heAq6Kr/TYw5QvIU8K5U8fzAemA4CAk6Me6E9mv4lfvISpWKml) s
+5 170 M
+(         gVCljcSVwYXFVpYfPgwfwW7o/qdZFXMd1IuPAFXU55Dyfz2exGvlupKZDdiLz0RVXBxn) s
+5 159 M
+(         f6MBY2hZ50bipqqd1Y4YlJZxEblD9k+odzVkbLM7s1ZbwXkzQquhigZwq3KABySwfeOJ) s
+5 148 M
+(         wQ/w==) s
+5 137 M
+(X-Gm-Message-State: AOJu0Yx2YzR+lBRX4THIuvG4IDsDlZsQDRssoOwH8XxpAb5d0v1zLv/f) s
+5 126 M
+(        1sG/ensHqdCvT9qJ1Q1ZbLa6XmONesF1sDp/oHsxn1RmBInQIoJ9t/jvbZpda+vcrrzOIFU9CdW) s
+5 115 M
+(        ZB+9O24tQungXp4qrkBR441V611uPioeZBPuMlQ==) s
+5 104 M
+(X-Google-Smtp-Source: AGHT+IFtQWoEmbmben1c+IucTs7SAmB3xB6546iYnaGhFLgrRfts5mWvHuqVjIcx+) s
+5 93 M
+(4M6cbifDMGiMLaGNRZE4kENDew=) s
+5 82 M
+(X-Received: by 2002:a05:651c:a0b:b0:2fa:cb44:7bd4 with SMTP id) s
+5 71 M
+( 38308e7fff4ca-2fae10235fdmr47047151fa.5.1727967887890; Thu, 03 Oct 2024) s
+5 60 M
+( 08:04:47 -0700 \(PDT\)) s
+5 49 M
+(MIME-Version: 1.0) s
+5 38 M
+(References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>) s
+5 27 M
+( <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com>) s
+5 16 M
+(In-Reply-To: <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com>) s
+5 5 M
+(From: =?UTF-8?B?0JzRg9GA0LDQtCDQkdCw0LnQs9C40LvRjNC00LjQvQ==?= <baigildin97@gmail.com>) s
+_R
+S
+%%Page: (4) 4
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 4 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Date: Thu, 3 Oct 2024 18:04:35 +0300) s
+5 676 M
+(Message-ID: <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>) s
+5 665 M
+(Subject: Re: [Artemis] Passing message userID into STOMP) s
+5 654 M
+(To: users@activemq.apache.org) s
+5 643 M
+(Content-Type: multipart/alternative; boundary="0000000000002421c7062393e048") s
+5 621 M
+(--0000000000002421c7062393e048) s
+5 610 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 599 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 577 M
+(Hi, Justin!) s
+5 566 M
+(Sender sends message into request queue and expects response message in) s
+5 555 M
+(response queue, with response's JMSCorellationId header being set to) s
+5 544 M
+(message ID that was sent \(and could not be read by responder app\).) s
+5 533 M
+(Sender \(java app\) originally was not explicitly specifying message ID, not) s
+5 522 M
+(really sure if it was set by library used or by the broker) s
+5 500 M
+(Calling msg.setJMSMessageId\(msgId\) with some manually generated value did) s
+5 489 M
+(reflect on userID property of the message, however it still could not be) s
+5 478 M
+(read by responder app via STOMP, unless) s
+5 467 M
+(msg.putStringProperty\('some-header-name', msgId\) was called) s
+5 445 M
+(As a solution for now we settled on manually putting message ID into string) s
+5 434 M
+(properties) s
+5 412 M
+(=D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 17:13, Just=) s
+5 401 M
+(in Bertram <jbertram@apache.org>:) s
+5 379 M
+(> Can you clarify your use-case and how the message ID is being set on the) s
+5 368 M
+(> client sending the message?) s
+5 357 M
+(>) s
+5 346 M
+(> Typically the message ID is set by the client implementation or by the) s
+5 335 M
+(> broker and it can also change in some circumstances so it's not) s
+5 324 M
+(> particularly meaningful to the messaging application. Generally speaking =) s
+5 313 M
+(we) s
+5 302 M
+(> recommend folks set their own unique ID if they're wanting to track) s
+5 291 M
+(> messages.) s
+5 280 M
+(>) s
+5 269 M
+(>) s
+5 258 M
+(> Justin) s
+5 247 M
+(>) s
+5 236 M
+(> On Thu, Oct 3, 2024 at 2:17=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =D0=) s
+5 225 M
+(=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@gmai=) s
+5 214 M
+(l.com>) s
+5 203 M
+(> wrote:) s
+5 192 M
+(>) s
+5 181 M
+(> > Hi, we ran into an issue when receiving messages via STOMP protocol.) s
+5 170 M
+(> > Message was sent by java application using JMSSerializer via AMQP) s
+5 159 M
+(> protocol,) s
+5 148 M
+(> > resulting in message id being stored in userID message property. When) s
+5 137 M
+(> > receiving this message via STOMP, the value of userID was not present i=) s
+5 126 M
+(n) s
+5 115 M
+(> > any header, unless the sender app manually generates an id for the) s
+5 104 M
+(> message) s
+5 93 M
+(> > and passes it into some custom-named header.) s
+5 82 M
+(> > Could not find any related info on this property in the archive.) s
+5 71 M
+(> > Maybe it is possible to add a STOMP configuration flag, similar to) s
+5 60 M
+(> > stompEnableMessageId \(stompEnableUserId e.g.\), that would control if a) s
+5 49 M
+(> > message's userID value is being passed into STOMP headers?) s
+5 38 M
+(> >) s
+5 27 M
+(> > artemis version 2.37.0) s
+5 16 M
+(> >) s
+5 5 M
+(>) s
+_R
+S
+%%Page: (5) 5
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 5 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 676 M
+(--0000000000002421c7062393e048--) s
+5 665 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 654 M
+(Return-Path: <users-return-57509-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 643 M
+(rg>) s
+5 632 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 621 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 610 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 599 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 876533E6D6) s
+5 588 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:14:11 +0000 \(UT) s
+5 577 M
+(C\)) s
+5 566 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 555 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 544 M
+(        \(No client certificate requested\)) s
+5 533 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 522 M
+(ESMTPS id 7B10649539) s
+5 511 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:14:10 +0000 \(UT) s
+5 500 M
+(C\)) s
+5 489 M
+(Received: \(qmail 979311 invoked by uid 998\); 3 Oct 2024 15:14:08 -0000) s
+5 478 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 467 M
+(Precedence: bulk) s
+5 456 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 445 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 434 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 423 M
+(List-Id: <users.activemq.apache.org>) s
+5 412 M
+(Reply-To: users@activemq.apache.org) s
+5 401 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 390 M
+(Received: \(qmail 979291 invoked by uid 116\); 3 Oct 2024 15:14:07 -0000) s
+5 379 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 368 M
+(6.100\)) s
+5 357 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 03 Oct 2024 15:14:07 +0000) s
+5 346 M
+(Authentication-Results: apache.org; auth=none) s
+5 335 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 324 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 313 M
+(ith ESMTP id B40162001AE) s
+5 302 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:14:07 +0000 \(UTC\)) s
+5 291 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 280 M
+(X-Spam-Flag: NO) s
+5 269 M
+(X-Spam-Score: 0.05) s
+5 258 M
+(X-Spam-Level: ) s
+5 247 M
+(X-Spam-Status: No, score=0.05 tagged_above=-999 required=6.31) s
+5 236 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 225 M
+(        DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25,) s
+5 214 M
+(        RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001] autolearn=disabled) s
+5 203 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 192 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 181 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 170 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 159 M
+(10024\)) s
+5 148 M
+(        with ESMTP id FYXwVksdsXws for <users@activemq.apache.org>;) s
+5 137 M
+(        Thu,  3 Oct 2024 15:14:07 +0000 \(UTC\)) s
+5 126 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2607:f8b0:4864:20::734; helo) s
+5 115 M
+(=mail-qk1-x734.google.com; envelope-from=tabish121@gmail.com; receiver=<UNKNOWN> ) s
+5 104 M
+(Received: from mail-qk1-x734.google.com \(mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:) s
+5 93 M
+(20::734]\)) s
+5 82 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 71 M
+(d 3FC0881FBC) s
+5 60 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:14:07 +0000 \(UTC\)) s
+5 49 M
+(Received: by mail-qk1-x734.google.com with SMTP id af79cd13be357-7a99fd0535bso85005285a) s
+5 38 M
+(.3) s
+5 27 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 08:14:07 -0700 \(PDT\)) s
+5 16 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 5 M
+(        d=gmail.com; s=20230601; t=1727968440; x=1728573240; darn=activemq.apache.org;) s
+_R
+S
+%%Page: (6) 6
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 6 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (6) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        h=content-transfer-encoding:in-reply-to:from:content-language) s
+5 676 M
+(         :references:to:subject:user-agent:mime-version:date:message-id:from) s
+5 665 M
+(         :to:cc:subject:date:message-id:reply-to;) s
+5 654 M
+(        bh=LNETEUe49yCTlFX1BTvCXLKNr7tkdvZdbW28fUeWuYU=;) s
+5 643 M
+(        b=AHqyDtZd3O6LH/xXO6yQ9V3zo9wMWz8UzRRyPf9sIgaeaGucMv6jY5XjP4mP5d/xL6) s
+5 632 M
+(         ICOYu/gz3u+dLH+xGgkd7hnE76s+7InsSgfqc1nCVtYMmGr+/ufmzxUjc+FpmJ9PH6HG) s
+5 621 M
+(         lHrwksmurd26oN0nPJS9azTiqI29Ja0RsL+NdtWxs5dkjVK2978eZIaUEZW4J9WFgA+K) s
+5 610 M
+(         S/bt5jZPeX9x+hkrc3hxvpo02VJxCsjS4+FsQ9DWx5pXjagoFulPDalZ5wagiZWfSJyR) s
+5 599 M
+(         2bzOSX7PAWP9m52rqKSRmwdh5G9TOnCkJLE1WSUNdoEp/r2DUOfYr1Dn0hfG5AS2yRQU) s
+5 588 M
+(         fzdw==) s
+5 577 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 566 M
+(        d=1e100.net; s=20230601; t=1727968440; x=1728573240;) s
+5 555 M
+(        h=content-transfer-encoding:in-reply-to:from:content-language) s
+5 544 M
+(         :references:to:subject:user-agent:mime-version:date:message-id) s
+5 533 M
+(         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;) s
+5 522 M
+(        bh=LNETEUe49yCTlFX1BTvCXLKNr7tkdvZdbW28fUeWuYU=;) s
+5 511 M
+(        b=WD+wPQK6kBYBf0c2gqhP4U4P3LbhOBEx0rGu2M/9CZNa2Fplq3xgi3HljDJFFBmDsY) s
+5 500 M
+(         0tqLRa7J+uBZD7qLnt4+XVfoZZwP+0xop5kWu06NiTSFiVevs2BQnO/XsHBbgbGgadFx) s
+5 489 M
+(         +FBdPltwyJje1Oyp9sMWQsJPjFNk0Fvr1xg8HKT9o8jk2LWKUKn8A7y5qLH3M1khHg9o) s
+5 478 M
+(         WZ6F/04+thWvo6ffGwL2qe0LVjRNb8sDim9DtuqYt9OPv0u58ukJLnB8J/Mgzi3eU4tC) s
+5 467 M
+(         N+DvEH9OARsNHWOkVeAhcUFlbLvKmIoLj8axW767wjFKp/Fh5rJWfSnD/htTBiB5L+y0) s
+5 456 M
+(         YXrw==) s
+5 445 M
+(X-Gm-Message-State: AOJu0Yx9LjV6+jie4WE1eHOLE9UWybHtF3697T0vIO0O57L6dIMIOtm1) s
+5 434 M
+(        7rbEN81tm6LB68vH/3osnnEuNT0BcBCHkwXXKKo+2I0MX91np9JAJV77ng==) s
+5 423 M
+(X-Google-Smtp-Source: AGHT+IGg4NzrDhjiLFvWIylGjgXhQaami3DN/5zOlwpiRRf5sLYiZlQ1W+8JHdSZ3) s
+5 412 M
+(Efce/ws50JOOw==) s
+5 401 M
+(X-Received: by 2002:a05:620a:19a4:b0:7ac:a0a5:9be6 with SMTP id af79cd13be357-7ae626bd8) s
+5 390 M
+(8amr1244480185a.19.1727968439603;) s
+5 379 M
+(        Thu, 03 Oct 2024 08:13:59 -0700 \(PDT\)) s
+5 368 M
+(Received: from ?IPV6:2601:140:9300:8e4:5d8:13d9:bedb:3bd0? \([2601:140:9300:8e4:5d8:13d9) s
+5 357 M
+(:bedb:3bd0]\)) s
+5 346 M
+(        by smtp.googlemail.com with ESMTPSA id af79cd13be357-7ae6b3e9028sm56815385a.136) s
+5 335 M
+(.2024.10.03.08.13.58) s
+5 324 M
+(        for <users@activemq.apache.org>) s
+5 313 M
+(        \(version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128\);) s
+5 302 M
+(        Thu, 03 Oct 2024 08:13:59 -0700 \(PDT\)) s
+5 291 M
+(Message-ID: <d4ac8b90-7b91-4edc-bd82-d1a4f8b549f3@gmail.com>) s
+5 280 M
+(Date: Thu, 3 Oct 2024 11:13:58 -0400) s
+5 269 M
+(MIME-Version: 1.0) s
+5 258 M
+(User-Agent: Mozilla Thunderbird) s
+5 247 M
+(Subject: Re: [Artemis] Passing message userID into STOMP) s
+5 236 M
+(To: users@activemq.apache.org) s
+5 225 M
+(References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>) s
+5 214 M
+( <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com>) s
+5 203 M
+( <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>) s
+5 192 M
+(Content-Language: en-US) s
+5 181 M
+(From: Timothy Bish <tabish121@gmail.com>) s
+5 170 M
+(In-Reply-To: <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>) s
+5 159 M
+(Content-Type: text/plain; charset=UTF-8; format=flowed) s
+5 148 M
+(Content-Transfer-Encoding: 8bit) s
+5 126 M
+(On 10/3/24 11:04, \320\\234\321\\203\321\\200\320\260\320\264 \320\\221\320\260\320\271\320\263\320\270\320\273\321\\214\320\264\320\270\320\275 wrote:) s
+5 115 M
+(> Hi, Justin!) s
+5 104 M
+(> Sender sends message into request queue and expects response message in) s
+5 93 M
+(> response queue, with response's JMSCorellationId header being set to) s
+5 82 M
+(> message ID that was sent \(and could not be read by responder app\).) s
+5 71 M
+(> Sender \(java app\) originally was not explicitly specifying message ID, not) s
+5 60 M
+(> really sure if it was set by library used or by the broker) s
+5 49 M
+(>) s
+5 38 M
+(> Calling msg.setJMSMessageId\(msgId\) with some manually generated value did) s
+5 27 M
+(> reflect on userID property of the message, however it still could not be) s
+5 16 M
+(> read by responder app via STOMP, unless) s
+5 5 M
+(> msg.putStringProperty\('some-header-name', msgId\) was called) s
+_R
+S
+%%Page: (7) 7
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 7 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (7) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 676 M
+(The JMS specification prohibits you from using the setJMSMessageID ) s
+5 665 M
+(value; From the API docs) s
+5 643 M
+("This method is for use by JMS providers only to set this field when a ) s
+5 632 M
+(message is sent. This message cannot be used by clients to configure the ) s
+5 621 M
+(message ID. This method is public to allow a JMS provider to set this ) s
+5 610 M
+(field when sending a message whose implementation is not its own.") s
+5 588 M
+(The most reliable way to ensure you have a stable message header to act ) s
+5 577 M
+(on is to set you own value as cross protocol conversions that occur do ) s
+5 566 M
+(not guarantee that the JMS message ID will be converted and reflected ) s
+5 555 M
+(they way you want it to be.) s
+5 522 M
+(>) s
+5 511 M
+(> As a solution for now we settled on manually putting message ID into string) s
+5 500 M
+(> properties) s
+5 489 M
+(>) s
+5 478 M
+(> \321\\207\321\\202, 3 \320\276\320\272\321\\202. 2024\342\\200\257\320\263. \320\262 17:13, Justin Bertram <jbertram@apache.org>) s
+5 467 M
+(:) s
+5 456 M
+(>) s
+5 445 M
+(>> Can you clarify your use-case and how the message ID is being set on the) s
+5 434 M
+(>> client sending the message?) s
+5 423 M
+(>>) s
+5 412 M
+(>> Typically the message ID is set by the client implementation or by the) s
+5 401 M
+(>> broker and it can also change in some circumstances so it's not) s
+5 390 M
+(>> particularly meaningful to the messaging application. Generally speaking we) s
+5 379 M
+(>> recommend folks set their own unique ID if they're wanting to track) s
+5 368 M
+(>> messages.) s
+5 357 M
+(>>) s
+5 346 M
+(>>) s
+5 335 M
+(>> Justin) s
+5 324 M
+(>>) s
+5 313 M
+(>> On Thu, Oct 3, 2024 at 2:17\342\\200\257AM \320\\234\321\\203\321\\200\320\260\320\264 \320\\221\320\260\320\271\320\263\320\270\320\273\321\\214\320\264\320\270\320\275 <) s
+5 302 M
+(baigildin97@gmail.com>) s
+5 291 M
+(>> wrote:) s
+5 280 M
+(>>) s
+5 269 M
+(>>> Hi, we ran into an issue when receiving messages via STOMP protocol.) s
+5 258 M
+(>>> Message was sent by java application using JMSSerializer via AMQP) s
+5 247 M
+(>> protocol,) s
+5 236 M
+(>>> resulting in message id being stored in userID message property. When) s
+5 225 M
+(>>> receiving this message via STOMP, the value of userID was not present in) s
+5 214 M
+(>>> any header, unless the sender app manually generates an id for the) s
+5 203 M
+(>> message) s
+5 192 M
+(>>> and passes it into some custom-named header.) s
+5 181 M
+(>>> Could not find any related info on this property in the archive.) s
+5 170 M
+(>>> Maybe it is possible to add a STOMP configuration flag, similar to) s
+5 159 M
+(>>> stompEnableMessageId \(stompEnableUserId e.g.\), that would control if a) s
+5 148 M
+(>>> message's userID value is being passed into STOMP headers?) s
+5 137 M
+(>>>) s
+5 126 M
+(>>> artemis version 2.37.0) s
+5 115 M
+(>>>) s
+5 93 M
+(-- ) s
+5 82 M
+(Tim Bish) s
+5 49 M
+(---------------------------------------------------------------------) s
+5 38 M
+(To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org) s
+5 27 M
+(For additional commands, e-mail: users-help@activemq.apache.org) s
+5 16 M
+(For further information, visit: https://activemq.apache.org/contact) s
+_R
+S
+%%Page: (8) 8
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 8 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (8) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 676 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 665 M
+(Return-Path: <users-return-57510-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 654 M
+(rg>) s
+5 643 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 632 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 621 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 610 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 2CD893E6DB) s
+5 599 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:21:18 +0000 \(UT) s
+5 588 M
+(C\)) s
+5 577 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 566 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 555 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 544 M
+(        \(No client certificate requested\)) s
+5 533 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 522 M
+(MTPS id B71C668873) s
+5 511 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:20:35 +0000 \(UT) s
+5 500 M
+(C\)) s
+5 489 M
+(Received: \(qmail 1000072 invoked by uid 998\); 3 Oct 2024 15:20:34 -0000) s
+5 478 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 467 M
+(Precedence: bulk) s
+5 456 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 445 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 434 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 423 M
+(List-Id: <users.activemq.apache.org>) s
+5 412 M
+(Reply-To: users@activemq.apache.org) s
+5 401 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 390 M
+(Received: \(qmail 1000053 invoked by uid 116\); 3 Oct 2024 15:20:33 -0000) s
+5 379 M
+(Received: from spamproc1-he-fi.apache.org \(HELO spamproc1-he-fi.apache.org\) \(95.217.134) s
+5 368 M
+(.168\)) s
+5 357 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 03 Oct 2024 15:20:33 +0000) s
+5 346 M
+(Authentication-Results: apache.org; auth=none) s
+5 335 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 324 M
+(        by spamproc1-he-fi.apache.org \(ASF Mail Server at spamproc1-he-fi.apache.org\) w) s
+5 313 M
+(ith ESMTP id 68768C21FF) s
+5 302 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:20:33 +0000 \(UTC\)) s
+5 291 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org) s
+5 280 M
+(X-Spam-Flag: NO) s
+5 269 M
+(X-Spam-Score: 0.249) s
+5 258 M
+(X-Spam-Level: ) s
+5 247 M
+(X-Spam-Status: No, score=0.249 tagged_above=-999 required=6.31) s
+5 236 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 225 M
+(        DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,) s
+5 214 M
+(        SPF_PASS=-0.001] autolearn=disabled) s
+5 203 M
+(Authentication-Results: spamproc1-he-fi.apache.org \(amavisd-new\);) s
+5 192 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 181 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 170 M
+(        by localhost \(spamproc1-he-fi.apache.org [95.217.134.168]\) \(amavisd-new, port 1) s
+5 159 M
+(0024\)) s
+5 148 M
+(        with ESMTP id Eojj2RriJKcf for <users@activemq.apache.org>;) s
+5 137 M
+(        Thu,  3 Oct 2024 15:20:32 +0000 \(UTC\)) s
+5 126 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2a00:1450:4864:20::230; helo) s
+5 115 M
+(=mail-lj1-x230.google.com; envelope-from=baigildin97@gmail.com; receiver=<UNKNOWN> ) s
+5 104 M
+(Received: from mail-lj1-x230.google.com \(mail-lj1-x230.google.com [IPv6:2a00:1450:4864:) s
+5 93 M
+(20::230]\)) s
+5 82 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 71 M
+(d D0B0081FC1) s
+5 60 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:20:32 +0000 \(UTC\)) s
+5 49 M
+(Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso13099581f) s
+5 38 M
+(a.3) s
+5 27 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 08:20:32 -0700 \(PDT\)) s
+5 16 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 5 M
+(        d=gmail.com; s=20230601; t=1727968826; x=1728573626; darn=activemq.apache.org;) s
+_R
+S
+%%Page: (9) 9
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 9 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (9) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 676 M
+(         :from:to:cc:subject:date:message-id:reply-to;) s
+5 665 M
+(        bh=hvzYqF1RZl5xCzoBBzw5eQtBZtgA+1pwZ46oMbSBmQA=;) s
+5 654 M
+(        b=YWMs9RLG+YEc0MejlSaxUhJnTWxJPGi1G34MA3etFlHf9UB+FaTZivC8DzXQHlAYZG) s
+5 643 M
+(         c6d0NxeApNUQE5mY5emzrA7veCbm6DCNku4DQt+xCK72dSI/IFc7betq9szksMZnSeUc) s
+5 632 M
+(         Ys2N8vmrO6xAXYiMrI0O6esuWiNQVNfewICX+RMsWUy80w8N8t1vA2Zl1qWA3kIH1Q0B) s
+5 621 M
+(         g0mWR4+AvHTNOKBJqEZWZ8dyh8gFAKu/Gu5COd+7I3xBQ4lu/uWkUC+IUmnaMuf9p1Y7) s
+5 610 M
+(         XyfHAb3IZexrqRy48rfGCISre19+xW9UtUbGKU6KmaVwwyzbGn6KIvtAyt6CpTkL7f/a) s
+5 599 M
+(         03yg==) s
+5 588 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 577 M
+(        d=1e100.net; s=20230601; t=1727968826; x=1728573626;) s
+5 566 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 555 M
+(         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;) s
+5 544 M
+(        bh=hvzYqF1RZl5xCzoBBzw5eQtBZtgA+1pwZ46oMbSBmQA=;) s
+5 533 M
+(        b=LXHyvmDk85a9/qFqvzSj8iGWpUdh08wd/4QrPy/auPzM2IdVQy54UdeL70zjPU6EXN) s
+5 522 M
+(         pm0NVWoIrRhHh8kzKutFfgy8EWqORUGeDj1Zv+HDIQL9+nhVzVY+LeRXi2qYgCMX/jUu) s
+5 511 M
+(         +sxHxbLwu4cw/OttB5yvw7h2aPMU7sOfnbDK9fhChOEgIN+ceKzauHc5Je702XoSeAoG) s
+5 500 M
+(         +Ka8/xN9LZ/6IAtVK6CrbvvlZWe65Pgk/Tom+9s83DbGKuu4fuJu2Vt5ar3g3dm9E4gX) s
+5 489 M
+(         vbeWktKzFE9U0TEAatVGqxdNAbRwz4Xkvy7MrtoPJiI46FiBLkJboy4kOejOxE3bCexE) s
+5 478 M
+(         595Q==) s
+5 467 M
+(X-Gm-Message-State: AOJu0Yzc6zVt2+9iJVE+rnuUg8S/gxPR+H+J5HsggnRMJE5E+2o7SwRS) s
+5 456 M
+(        CzfTElHHAQlrkjV49+uZuHP5OGUDQ5eCLR0tuZhGUfxq4lLUNkoJcUE53agvWF6+JUJzt2tfJQy) s
+5 445 M
+(        9wjFxHNQ3DrRzYxMNgYXr+K9DGJPTi0dkGjLj4Q==) s
+5 434 M
+(X-Google-Smtp-Source: AGHT+IHrlWIHRyYLbf084FCZtgCDd3LPztoTuIn2DxxF0YPCnp06ZYuUrY/FRtYMp) s
+5 423 M
+(m1iLsWeXwpre9wF4ML1bdMQueA=) s
+5 412 M
+(X-Received: by 2002:a2e:b889:0:b0:2fa:d2eb:c3d0 with SMTP id) s
+5 401 M
+( 38308e7fff4ca-2fae1029823mr45719171fa.23.1727968825491; Thu, 03 Oct 2024) s
+5 390 M
+( 08:20:25 -0700 \(PDT\)) s
+5 379 M
+(MIME-Version: 1.0) s
+5 368 M
+(References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>) s
+5 357 M
+( <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com> <CAOrKGWzYkh_u=qg) s
+5 346 M
+(Jq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>) s
+5 335 M
+(In-Reply-To: <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>) s
+5 324 M
+(From: =?UTF-8?B?0JzRg9GA0LDQtCDQkdCw0LnQs9C40LvRjNC00LjQvQ==?= <baigildin97@gmail.com>) s
+5 313 M
+(Date: Thu, 3 Oct 2024 18:20:13 +0300) s
+5 302 M
+(Message-ID: <CAOrKGWxo-Xf3nG135kBNDftYb+wcP2KjpNKWPikJvEqwu7PZ2w@mail.gmail.com>) s
+5 291 M
+(Subject: Re: [Artemis] Passing message userID into STOMP) s
+5 280 M
+(To: users@activemq.apache.org) s
+5 269 M
+(Content-Type: multipart/alternative; boundary="00000000000006d7690623941870") s
+5 247 M
+(--00000000000006d7690623941870) s
+5 236 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 225 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 203 M
+(As far as i know library that sender team uses automatically maps request) s
+5 192 M
+(with response, they just need to set up response handler class.) s
+5 181 M
+(Setting own unique id and mapping request with response would require) s
+5 170 M
+(reimplementing library classes, not really sure if that's an ideal approach) s
+5 148 M
+(=D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 18:04, =D0=) s
+5 137 M
+(=9C=D1=83=D1=80=D0=B0=D0=B4 =D0=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=) s
+5 126 M
+(=B4=D0=B8=D0=BD <baigildin97@gmail.com>:) s
+5 104 M
+(> Hi, Justin!) s
+5 93 M
+(> Sender sends message into request queue and expects response message in) s
+5 82 M
+(> response queue, with response's JMSCorellationId header being set to) s
+5 71 M
+(> message ID that was sent \(and could not be read by responder app\).) s
+5 60 M
+(> Sender \(java app\) originally was not explicitly specifying message ID, no=) s
+5 49 M
+(t) s
+5 38 M
+(> really sure if it was set by library used or by the broker) s
+5 27 M
+(>) s
+5 16 M
+(> Calling msg.setJMSMessageId\(msgId\) with some manually generated value did) s
+5 5 M
+(> reflect on userID property of the message, however it still could not be) s
+_R
+S
+%%Page: (10) 10
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 10 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (10) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> read by responder app via STOMP, unless) s
+5 676 M
+(> msg.putStringProperty\('some-header-name', msgId\) was called) s
+5 665 M
+(>) s
+5 654 M
+(> As a solution for now we settled on manually putting message ID into) s
+5 643 M
+(> string properties) s
+5 632 M
+(>) s
+5 621 M
+(> =D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 17:13, Ju=) s
+5 610 M
+(stin Bertram <jbertram@apache.org>:) s
+5 599 M
+(>) s
+5 588 M
+(>> Can you clarify your use-case and how the message ID is being set on the) s
+5 577 M
+(>> client sending the message?) s
+5 566 M
+(>>) s
+5 555 M
+(>> Typically the message ID is set by the client implementation or by the) s
+5 544 M
+(>> broker and it can also change in some circumstances so it's not) s
+5 533 M
+(>> particularly meaningful to the messaging application. Generally speaking) s
+5 522 M
+(>> we) s
+5 511 M
+(>> recommend folks set their own unique ID if they're wanting to track) s
+5 500 M
+(>> messages.) s
+5 489 M
+(>>) s
+5 478 M
+(>>) s
+5 467 M
+(>> Justin) s
+5 456 M
+(>>) s
+5 445 M
+(>> On Thu, Oct 3, 2024 at 2:17=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =) s
+5 434 M
+(=D0=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@g=) s
+5 423 M
+(mail.com>) s
+5 412 M
+(>> wrote:) s
+5 401 M
+(>>) s
+5 390 M
+(>> > Hi, we ran into an issue when receiving messages via STOMP protocol.) s
+5 379 M
+(>> > Message was sent by java application using JMSSerializer via AMQP) s
+5 368 M
+(>> protocol,) s
+5 357 M
+(>> > resulting in message id being stored in userID message property. When) s
+5 346 M
+(>> > receiving this message via STOMP, the value of userID was not present =) s
+5 335 M
+(in) s
+5 324 M
+(>> > any header, unless the sender app manually generates an id for the) s
+5 313 M
+(>> message) s
+5 302 M
+(>> > and passes it into some custom-named header.) s
+5 291 M
+(>> > Could not find any related info on this property in the archive.) s
+5 280 M
+(>> > Maybe it is possible to add a STOMP configuration flag, similar to) s
+5 269 M
+(>> > stompEnableMessageId \(stompEnableUserId e.g.\), that would control if a) s
+5 258 M
+(>> > message's userID value is being passed into STOMP headers?) s
+5 247 M
+(>> >) s
+5 236 M
+(>> > artemis version 2.37.0) s
+5 225 M
+(>> >) s
+5 214 M
+(>>) s
+5 203 M
+(>) s
+5 181 M
+(--00000000000006d7690623941870--) s
+5 170 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 159 M
+(Return-Path: <users-return-57511-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 148 M
+(rg>) s
+5 137 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 126 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 115 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 104 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 74C613E6D6) s
+5 93 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:33:37 +0000 \(UT) s
+5 82 M
+(C\)) s
+5 71 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 60 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 49 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 38 M
+(        \(No client certificate requested\)) s
+5 27 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 16 M
+(MTPS id 48DE262803) s
+5 5 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:33:37 +0000 \(UT) s
+_R
+S
+%%Page: (11) 11
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 11 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (11) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(C\)) s
+5 676 M
+(Received: \(qmail 1025209 invoked by uid 998\); 3 Oct 2024 15:33:36 -0000) s
+5 665 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 654 M
+(Precedence: bulk) s
+5 643 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 632 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 621 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 610 M
+(List-Id: <users.activemq.apache.org>) s
+5 599 M
+(Reply-To: users@activemq.apache.org) s
+5 588 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 577 M
+(Received: \(qmail 1025188 invoked by uid 116\); 3 Oct 2024 15:33:36 -0000) s
+5 566 M
+(Received: from ec2-52-204-25-47.compute-1.amazonaws.com \(HELO mailrelay1-ec2-va.apache.) s
+5 555 M
+(org\) \(52.204.25.47\)) s
+5 544 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 03 Oct 2024 15:33:36 +0000) s
+5 533 M
+(Authentication-Results: apache.org; auth=none) s
+5 522 M
+(Received: from mail-lj1-f174.google.com \(mail-lj1-f174.google.com [209.85.208.174]\)) s
+5 511 M
+(        by mailrelay1-ec2-va.apache.org \(ASF Mail Server at mailrelay1-ec2-va.apache.or) s
+5 500 M
+(g\) with ESMTPSA id 577293E915) s
+5 489 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:33:35 +0000 \(UTC\)) s
+5 478 M
+(Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso13310151f) s
+5 467 M
+(a.3) s
+5 456 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 08:33:35 -0700 \(PDT\)) s
+5 445 M
+(X-Gm-Message-State: AOJu0YzJaGJdUDXy4poZZAGko5fHnX2RTTtFJmxaFyzMEX6Fe4f7hcaG) s
+5 434 M
+(        swny0PXSBy0qs4n6KVjxUx6Krp8X7kOnLMutZMhQA3EPkyDbLDi52BmBCya/P51OVTkSJBZ1ow/) s
+5 423 M
+(        in0T6u+ATOLEP3dCpewE7XVSD8zrKY16cwaR7zA==) s
+5 412 M
+(X-Google-Smtp-Source: AGHT+IHqduMHIRMJ7JbjbMxTPeRCsD26E8U7fyuz2Fn+b6UKCPhjOWn4SAbZ2QGsB) s
+5 401 M
+(FFlvosSsNhQlMTZNCPwkF/VUYo=) s
+5 390 M
+(X-Received: by 2002:a2e:4619:0:b0:2fa:c014:4b6b with SMTP id) s
+5 379 M
+( 38308e7fff4ca-2fae10a90c5mr35863641fa.41.1727969614277; Thu, 03 Oct 2024) s
+5 368 M
+( 08:33:34 -0700 \(PDT\)) s
+5 357 M
+(MIME-Version: 1.0) s
+5 346 M
+(References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>) s
+5 335 M
+( <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com> <CAOrKGWzYkh_u=qg) s
+5 324 M
+(Jq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>) s
+5 313 M
+(In-Reply-To: <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>) s
+5 302 M
+(From: Justin Bertram <jbertram@apache.org>) s
+5 291 M
+(Date: Thu, 3 Oct 2024 10:33:07 -0500) s
+5 280 M
+(X-Gmail-Original-Message-ID: <CAF+kE=RDXQjAZ5_3CA1VqmBiA_b5_ZWPBiNOG25jDu2WAhBsmQ@mail.) s
+5 269 M
+(gmail.com>) s
+5 258 M
+(Message-ID: <CAF+kE=RDXQjAZ5_3CA1VqmBiA_b5_ZWPBiNOG25jDu2WAhBsmQ@mail.gmail.com>) s
+5 247 M
+(Subject: Re: [Artemis] Passing message userID into STOMP) s
+5 236 M
+(To: users@activemq.apache.org) s
+5 225 M
+(Content-Type: multipart/alternative; boundary="0000000000000ae537062394471a") s
+5 203 M
+(--0000000000000ae537062394471a) s
+5 192 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 181 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 159 M
+(If the sender is invoking Message.setJMSCorrelationID\(String\) [1] that) s
+5 148 M
+(should be mapped onto the STOMP message using "correlation-id" \(and vice) s
+5 137 M
+(versa\). Again, using message ID is not recommended. You should be using) s
+5 126 M
+(correlation ID as that is what it was designed for.) s
+5 93 M
+(Justin) s
+5 71 M
+([1]) s
+5 60 M
+(https://docs.oracle.com/javaee/7/api/javax/jms/Message.html#setJMSCorrelati=) s
+5 49 M
+(onID-java.lang.String-) s
+5 27 M
+(On Thu, Oct 3, 2024 at 10:06=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =D0=) s
+5 16 M
+(=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@gmai=) s
+5 5 M
+(l.com>) s
+_R
+S
+%%Page: (12) 12
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 12 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (12) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(wrote:) s
+5 665 M
+(> Hi, Justin!) s
+5 654 M
+(> Sender sends message into request queue and expects response message in) s
+5 643 M
+(> response queue, with response's JMSCorellationId header being set to) s
+5 632 M
+(> message ID that was sent \(and could not be read by responder app\).) s
+5 621 M
+(> Sender \(java app\) originally was not explicitly specifying message ID, no=) s
+5 610 M
+(t) s
+5 599 M
+(> really sure if it was set by library used or by the broker) s
+5 588 M
+(>) s
+5 577 M
+(> Calling msg.setJMSMessageId\(msgId\) with some manually generated value did) s
+5 566 M
+(> reflect on userID property of the message, however it still could not be) s
+5 555 M
+(> read by responder app via STOMP, unless) s
+5 544 M
+(> msg.putStringProperty\('some-header-name', msgId\) was called) s
+5 533 M
+(>) s
+5 522 M
+(> As a solution for now we settled on manually putting message ID into stri=) s
+5 511 M
+(ng) s
+5 500 M
+(> properties) s
+5 489 M
+(>) s
+5 478 M
+(> =D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 17:13, Ju=) s
+5 467 M
+(stin Bertram <jbertram@apache.org>:) s
+5 456 M
+(>) s
+5 445 M
+(> > Can you clarify your use-case and how the message ID is being set on th=) s
+5 434 M
+(e) s
+5 423 M
+(> > client sending the message?) s
+5 412 M
+(> >) s
+5 401 M
+(> > Typically the message ID is set by the client implementation or by the) s
+5 390 M
+(> > broker and it can also change in some circumstances so it's not) s
+5 379 M
+(> > particularly meaningful to the messaging application. Generally speakin=) s
+5 368 M
+(g) s
+5 357 M
+(> we) s
+5 346 M
+(> > recommend folks set their own unique ID if they're wanting to track) s
+5 335 M
+(> > messages.) s
+5 324 M
+(> >) s
+5 313 M
+(> >) s
+5 302 M
+(> > Justin) s
+5 291 M
+(> >) s
+5 280 M
+(> > On Thu, Oct 3, 2024 at 2:17=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =) s
+5 269 M
+(=D0=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@g=) s
+5 258 M
+(mail.com>) s
+5 247 M
+(> > wrote:) s
+5 236 M
+(> >) s
+5 225 M
+(> > > Hi, we ran into an issue when receiving messages via STOMP protocol.) s
+5 214 M
+(> > > Message was sent by java application using JMSSerializer via AMQP) s
+5 203 M
+(> > protocol,) s
+5 192 M
+(> > > resulting in message id being stored in userID message property. When) s
+5 181 M
+(> > > receiving this message via STOMP, the value of userID was not present) s
+5 170 M
+(> in) s
+5 159 M
+(> > > any header, unless the sender app manually generates an id for the) s
+5 148 M
+(> > message) s
+5 137 M
+(> > > and passes it into some custom-named header.) s
+5 126 M
+(> > > Could not find any related info on this property in the archive.) s
+5 115 M
+(> > > Maybe it is possible to add a STOMP configuration flag, similar to) s
+5 104 M
+(> > > stompEnableMessageId \(stompEnableUserId e.g.\), that would control if =) s
+5 93 M
+(a) s
+5 82 M
+(> > > message's userID value is being passed into STOMP headers?) s
+5 71 M
+(> > >) s
+5 60 M
+(> > > artemis version 2.37.0) s
+5 49 M
+(> > >) s
+5 38 M
+(> >) s
+5 27 M
+(>) s
+5 5 M
+(--0000000000000ae537062394471a--) s
+_R
+S
+%%Page: (13) 13
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 13 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (13) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 676 M
+(Return-Path: <users-return-57512-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 665 M
+(rg>) s
+5 654 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 643 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 632 M
+(Received: from mxout1-he-de.apache.org \(mxout1-he-de.apache.org [95.216.194.37]\)) s
+5 621 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id D34123E6D6) s
+5 610 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:47:53 +0000 \(UT) s
+5 599 M
+(C\)) s
+5 588 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [IPv6:2a01:4f8:c2c:d4aa::1]\)) s
+5 577 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)) s
+5 566 M
+(         key-exchange X25519 server-signature RSA-PSS \(4096 bits\) server-digest SHA256\)) s
+5 555 M
+(        \(No client certificate requested\)) s
+5 544 M
+(        by mxout1-he-de.apache.org \(ASF Mail Server at mxout1-he-de.apache.org\) with ES) s
+5 533 M
+(MTPS id 6B249634D2) s
+5 522 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 15:47:53 +0000 \(UT) s
+5 511 M
+(C\)) s
+5 500 M
+(Received: \(qmail 1058074 invoked by uid 998\); 3 Oct 2024 15:47:52 -0000) s
+5 489 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 478 M
+(Precedence: bulk) s
+5 467 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 456 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 445 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 434 M
+(List-Id: <users.activemq.apache.org>) s
+5 423 M
+(Reply-To: users@activemq.apache.org) s
+5 412 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 401 M
+(Received: \(qmail 1058030 invoked by uid 116\); 3 Oct 2024 15:47:51 -0000) s
+5 390 M
+(Received: from spamproc1-he-fi.apache.org \(HELO spamproc1-he-fi.apache.org\) \(95.217.134) s
+5 379 M
+(.168\)) s
+5 368 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 03 Oct 2024 15:47:51 +0000) s
+5 357 M
+(Authentication-Results: apache.org; auth=none) s
+5 346 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 335 M
+(        by spamproc1-he-fi.apache.org \(ASF Mail Server at spamproc1-he-fi.apache.org\) w) s
+5 324 M
+(ith ESMTP id D7F85C2202) s
+5 313 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:47:50 +0000 \(UTC\)) s
+5 302 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org) s
+5 291 M
+(X-Spam-Flag: NO) s
+5 280 M
+(X-Spam-Score: -0.197) s
+5 269 M
+(X-Spam-Level: ) s
+5 258 M
+(X-Spam-Status: No, score=-0.197 tagged_above=-999 required=6.31) s
+5 247 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 236 M
+(        DKIM_VALID_EF=-0.1, RCVD_IN_MSPIKE_H3=0.001, RCVD_IN_MSPIKE_WL=0.001,) s
+5 225 M
+(        RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001,) s
+5 214 M
+(        RCVD_IN_VALIDITY_SAFE_BLOCKED=0.001, SPF_PASS=-0.001]) s
+5 203 M
+(        autolearn=disabled) s
+5 192 M
+(Authentication-Results: spamproc1-he-fi.apache.org \(amavisd-new\);) s
+5 181 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 170 M
+(Received: from mx1-ec2-va.apache.org \([116.203.227.195]\)) s
+5 159 M
+(        by localhost \(spamproc1-he-fi.apache.org [95.217.134.168]\) \(amavisd-new, port 1) s
+5 148 M
+(0024\)) s
+5 137 M
+(        with ESMTP id Qb2i8lDEVrQw for <users@activemq.apache.org>;) s
+5 126 M
+(        Thu,  3 Oct 2024 15:47:50 +0000 \(UTC\)) s
+5 115 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=209.85.214.170; helo=mail-pl) s
+5 104 M
+(1-f170.google.com; envelope-from=robbie.gemmell@gmail.com; receiver=<UNKNOWN> ) s
+5 93 M
+(Received: from mail-pl1-f170.google.com \(mail-pl1-f170.google.com [209.85.214.170]\)) s
+5 82 M
+(        by mx1-ec2-va.apache.org \(ASF Mail Server at mx1-ec2-va.apache.org\) with ESMTPS) s
+5 71 M
+( id BFE88C0C4B) s
+5 60 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 15:47:49 +0000 \(UTC\)) s
+5 49 M
+(Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20bb610be6aso12158835a) s
+5 38 M
+(d.1) s
+5 27 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 08:47:49 -0700 \(PDT\)) s
+5 16 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 5 M
+(        d=gmail.com; s=20230601; t=1727970462; x=1728575262; darn=activemq.apache.org;) s
+_R
+S
+%%Page: (14) 14
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 14 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (14) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        h=content-transfer-encoding:to:subject:message-id:date:from) s
+5 676 M
+(         :in-reply-to:references:mime-version:from:to:cc:subject:date) s
+5 665 M
+(         :message-id:reply-to;) s
+5 654 M
+(        bh=73EPQCiSEFvSUFRUZSi7ppt5Vq8xfOKvczxMNXiKSNQ=;) s
+5 643 M
+(        b=NW6WCLnrD/ZS48FTgj+HCOyJAykCwgaKaLbDLr5xUMoIc0QF+tYd0NItwwJbhcC/q+) s
+5 632 M
+(         u3wcVYcJoK3oDFr60t/PRWLCIL0QgfYf54ER17xEB/Dl/1pFUni25hhI7IYDmS12Zn1X) s
+5 621 M
+(         BVruoyMSCKgWz9KPc5niSZeFeDGg6RsarqZ9J4JcMQJnf2uHKskqhR6l6Y5KGVNFRs1m) s
+5 610 M
+(         graZuSlRIQ3Ib6ff26vFIaYZyhQBr4o8nEpHkk2a51Y7ioS8nMOU1ztrwADfeb0e6OOF) s
+5 599 M
+(         NvBhwnHOnjSdvMBe79oA92Rh42ZlJie77zo4Rqi95gvfgCGU70QwTrawtdJZKXGhqnAY) s
+5 588 M
+(         dckg==) s
+5 577 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 566 M
+(        d=1e100.net; s=20230601; t=1727970462; x=1728575262;) s
+5 555 M
+(        h=content-transfer-encoding:to:subject:message-id:date:from) s
+5 544 M
+(         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc) s
+5 533 M
+(         :subject:date:message-id:reply-to;) s
+5 522 M
+(        bh=73EPQCiSEFvSUFRUZSi7ppt5Vq8xfOKvczxMNXiKSNQ=;) s
+5 511 M
+(        b=qK0vS56Zktmn8oGvodMv0QX8IQMFGC8R3A1Lruj3Y7lijc5bpTIpVKHK/ZiOUxTbtw) s
+5 500 M
+(         88iRAsOTQF7Myo2eJW6/nXPS2TYT1aNrSzR/SA4BYUl+uWxHepZ4eMzOVcRZ+AySx6+x) s
+5 489 M
+(         aMh8eFfjuLxHjpXaas7KJUC3eh3YFyi3BILSexOMYcmiCxzBd0HNZK6x/Wh5ToqyWVnA) s
+5 478 M
+(         BHJvMhDJbntXfFrgEX8mBBIO0VjLqg4Zh97tV83LQo2Hyayyj0j3jOrTGcSIvYWRjaG5) s
+5 467 M
+(         HTkUlEWUhkQHNPiGgk871IWAjxc3jtkhsOLNUxRDT7Kp0ADtYqptpWFSpLZ0R1nZKnMq) s
+5 456 M
+(         4fDw==) s
+5 445 M
+(X-Gm-Message-State: AOJu0Yze+daubYrOVLOiXxb/JDrPYrWvXH/TtgOmxC/9R246Re2Jn8qy) s
+5 434 M
+(        ySL9ng69n/9YyE4H2qDvhxNOQQBP6ALyN0TRMpoYSbNvhyaCYHeLmi5DAXLclWqTJhGsgyvvCId) s
+5 423 M
+(        nrNiSJw+p+QfR7b7kKefdHmiTWWzi+w==) s
+5 412 M
+(X-Google-Smtp-Source: AGHT+IHPKx76Nlca+ZAVfqdnUdxt34zw7nrdeqNy2yLK53zazwb4zjh7hV05utJ/O) s
+5 401 M
+(e9LemfTsFVqYYllTCuN6aufDrw=) s
+5 390 M
+(X-Received: by 2002:a17:902:c951:b0:20b:49f5:9999 with SMTP id) s
+5 379 M
+( d9443c01a7336-20bc5a3da1amr94115185ad.30.1727970462199; Thu, 03 Oct 2024) s
+5 368 M
+( 08:47:42 -0700 \(PDT\)) s
+5 357 M
+(MIME-Version: 1.0) s
+5 346 M
+(References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>) s
+5 335 M
+( <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com> <CAOrKGWzYkh_u=qg) s
+5 324 M
+(Jq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>) s
+5 313 M
+(In-Reply-To: <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com>) s
+5 302 M
+(From: Robbie Gemmell <robbie.gemmell@gmail.com>) s
+5 291 M
+(Date: Thu, 3 Oct 2024 16:47:29 +0100) s
+5 280 M
+(Message-ID: <CAFitrpS0BfUM-ySf8Uw4Pmw3yZ9PRpPv7HCtpHvir-dx3qxLfw@mail.gmail.com>) s
+5 269 M
+(Subject: Re: [Artemis] Passing message userID into STOMP) s
+5 258 M
+(To: users@activemq.apache.org) s
+5 247 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 236 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 214 M
+(Given the mentions of JMS and AMQP I would presume that) s
+5 203 M
+(qpid-jms-client is being used. It will populate the JMSMessageID) s
+5 192 M
+(header itself during send \(unless configured not to\) as per the JMS) s
+5 181 M
+(requirements the field is set by provider-on-send.) s
+5 170 M
+(Message.setJMSMessageID\(\) \(and most other header setters like it\) is) s
+5 159 M
+(exclusively for the use of JMS implementations for handling other) s
+5 148 M
+(vendors message objects, it is not for applications to use to set a) s
+5 137 M
+(MessageID on a sent message \(if you try, the value will be overwritten) s
+5 126 M
+(on send with the provider-populated value\).) s
+5 104 M
+(Artemis handles STOMP messages internally using its Core protocol) s
+5 93 M
+(message objects, so it is presumably converting the AMQP message into) s
+5 82 M
+(a Core message on the way to the STOMP client. Qpid JMS uses a) s
+5 71 M
+(string-based message-id field in the underlying AMQP message by) s
+5 60 M
+(default. Core messages require a UUID message id, and so I expect it) s
+5 49 M
+(is generating a new one at that conversion point. Qpid JMS can be) s
+5 38 M
+(configured to use a pure UUID as the underlying AMQP message-id field,) s
+5 27 M
+(setting URI option jms.messageIDPolicy.messageIDType=3DUUID . Though) s
+5 16 M
+(JMSMessageID values must be prefixed with "ID:" so the client will) s
+5 5 M
+(synthesize that locally for JMSMessageID, meaning you could still then) s
+_R
+S
+%%Page: (15) 15
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 15 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (15) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(find that the JMSCorrelationID string you get back on the response) s
+5 676 M
+(lacks that "ID:" prefix \(since the Core JMS client would normally add) s
+5 665 M
+(that to getJMSMessageID...but you are using a STOMP client\).) s
+5 643 M
+(In fact, ignore all that, as I see the broker is generating a specific) s
+5 632 M
+(formatted message-id for the STOMP messages. So you simply can't get) s
+5 621 M
+(the original AMQP message-id on the STOMP receiver.) s
+5 599 M
+(Your most compatible route in JMS terms would be using the) s
+5 588 M
+(JMSCorrelationID field to correlate your messages, setting the) s
+5 577 M
+(JMSCorrelationID value on the request message before sending, getting) s
+5 566 M
+(that value as the correlation-id on the reciever and setting that) s
+5 555 M
+(value on the response message before replying, which the requester can) s
+5 544 M
+(retrieve from JMSCorrelationID again on the response.) s
+5 522 M
+(As I see others have said already whilst I got interrupted during) s
+5 511 M
+(typing this reply :\)) s
+5 478 M
+(Robbie) s
+5 456 M
+(On Thu, 3 Oct 2024 at 16:06, =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =D0=91=D0=B0=D0=) s
+5 445 M
+(=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@gmail.com> wrote=) s
+5 434 M
+(:) s
+5 423 M
+(>) s
+5 412 M
+(> Hi, Justin!) s
+5 401 M
+(> Sender sends message into request queue and expects response message in) s
+5 390 M
+(> response queue, with response's JMSCorellationId header being set to) s
+5 379 M
+(> message ID that was sent \(and could not be read by responder app\).) s
+5 368 M
+(> Sender \(java app\) originally was not explicitly specifying message ID, no=) s
+5 357 M
+(t) s
+5 346 M
+(> really sure if it was set by library used or by the broker) s
+5 335 M
+(>) s
+5 324 M
+(> Calling msg.setJMSMessageId\(msgId\) with some manually generated value did) s
+5 313 M
+(> reflect on userID property of the message, however it still could not be) s
+5 302 M
+(> read by responder app via STOMP, unless) s
+5 291 M
+(> msg.putStringProperty\('some-header-name', msgId\) was called) s
+5 280 M
+(>) s
+5 269 M
+(> As a solution for now we settled on manually putting message ID into stri=) s
+5 258 M
+(ng) s
+5 247 M
+(> properties) s
+5 236 M
+(>) s
+5 225 M
+(> =D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 17:13, Ju=) s
+5 214 M
+(stin Bertram <jbertram@apache.org>:) s
+5 203 M
+(>) s
+5 192 M
+(> > Can you clarify your use-case and how the message ID is being set on th=) s
+5 181 M
+(e) s
+5 170 M
+(> > client sending the message?) s
+5 159 M
+(> >) s
+5 148 M
+(> > Typically the message ID is set by the client implementation or by the) s
+5 137 M
+(> > broker and it can also change in some circumstances so it's not) s
+5 126 M
+(> > particularly meaningful to the messaging application. Generally speakin=) s
+5 115 M
+(g we) s
+5 104 M
+(> > recommend folks set their own unique ID if they're wanting to track) s
+5 93 M
+(> > messages.) s
+5 82 M
+(> >) s
+5 71 M
+(> >) s
+5 60 M
+(> > Justin) s
+5 49 M
+(> >) s
+5 38 M
+(> > On Thu, Oct 3, 2024 at 2:17=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =) s
+5 27 M
+(=D0=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@g=) s
+5 16 M
+(mail.com>) s
+5 5 M
+(> > wrote:) s
+_R
+S
+%%Page: (16) 16
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 16 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (16) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> >) s
+5 676 M
+(> > > Hi, we ran into an issue when receiving messages via STOMP protocol.) s
+5 665 M
+(> > > Message was sent by java application using JMSSerializer via AMQP) s
+5 654 M
+(> > protocol,) s
+5 643 M
+(> > > resulting in message id being stored in userID message property. When) s
+5 632 M
+(> > > receiving this message via STOMP, the value of userID was not present=) s
+5 621 M
+( in) s
+5 610 M
+(> > > any header, unless the sender app manually generates an id for the) s
+5 599 M
+(> > message) s
+5 588 M
+(> > > and passes it into some custom-named header.) s
+5 577 M
+(> > > Could not find any related info on this property in the archive.) s
+5 566 M
+(> > > Maybe it is possible to add a STOMP configuration flag, similar to) s
+5 555 M
+(> > > stompEnableMessageId \(stompEnableUserId e.g.\), that would control if =) s
+5 544 M
+(a) s
+5 533 M
+(> > > message's userID value is being passed into STOMP headers?) s
+5 522 M
+(> > >) s
+5 511 M
+(> > > artemis version 2.37.0) s
+5 500 M
+(> > >) s
+5 489 M
+(> >) s
+5 467 M
+(---------------------------------------------------------------------) s
+5 456 M
+(To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org) s
+5 445 M
+(For additional commands, e-mail: users-help@activemq.apache.org) s
+5 434 M
+(For further information, visit: https://activemq.apache.org/contact) s
+5 401 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 390 M
+(Return-Path: <users-return-57514-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 379 M
+(rg>) s
+5 368 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 357 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 346 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 335 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 2ECC23E6D6) s
+5 324 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 16:22:32 +0000 \(UT) s
+5 313 M
+(C\)) s
+5 302 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 291 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 280 M
+(        \(No client certificate requested\)) s
+5 269 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 258 M
+(ESMTPS id 15042490A5) s
+5 247 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 16:22:30 +0000 \(UT) s
+5 236 M
+(C\)) s
+5 225 M
+(Received: \(qmail 1148272 invoked by uid 998\); 3 Oct 2024 16:22:29 -0000) s
+5 214 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 203 M
+(Precedence: bulk) s
+5 192 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 181 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 170 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 159 M
+(List-Id: <users.activemq.apache.org>) s
+5 148 M
+(Reply-To: users@activemq.apache.org) s
+5 137 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 126 M
+(Received: \(qmail 1148253 invoked by uid 116\); 3 Oct 2024 16:22:28 -0000) s
+5 115 M
+(Received: from spamproc1-he-de.apache.org \(HELO spamproc1-he-de.apache.org\) \(116.203.19) s
+5 104 M
+(6.100\)) s
+5 93 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 03 Oct 2024 16:22:28 +0000) s
+5 82 M
+(Authentication-Results: apache.org; auth=none) s
+5 71 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 60 M
+(        by spamproc1-he-de.apache.org \(ASF Mail Server at spamproc1-he-de.apache.org\) w) s
+5 49 M
+(ith ESMTP id 045DE2001C4) s
+5 38 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 16:22:28 +0000 \(UTC\)) s
+5 27 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-de.apache.org) s
+5 16 M
+(X-Spam-Flag: NO) s
+5 5 M
+(X-Spam-Score: 0.25) s
+_R
+S
+%%Page: (17) 17
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 17 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (17) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(X-Spam-Level: ) s
+5 676 M
+(X-Spam-Status: No, score=0.25 tagged_above=-999 required=6.31) s
+5 665 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 654 M
+(        DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,) s
+5 643 M
+(        RCVD_IN_DNSWL_BLOCKED=0.001, SPF_PASS=-0.001] autolearn=disabled) s
+5 632 M
+(Authentication-Results: spamproc1-he-de.apache.org \(amavisd-new\);) s
+5 621 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 610 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 599 M
+(        by localhost \(spamproc1-he-de.apache.org [116.203.196.100]\) \(amavisd-new, port ) s
+5 588 M
+(10024\)) s
+5 577 M
+(        with ESMTP id zehpRCM0vMvs for <users@activemq.apache.org>;) s
+5 566 M
+(        Thu,  3 Oct 2024 16:22:27 +0000 \(UTC\)) s
+5 555 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2a00:1450:4864:20::235; helo) s
+5 544 M
+(=mail-lj1-x235.google.com; envelope-from=baigildin97@gmail.com; receiver=<UNKNOWN> ) s
+5 533 M
+(Received: from mail-lj1-x235.google.com \(mail-lj1-x235.google.com [IPv6:2a00:1450:4864:) s
+5 522 M
+(20::235]\)) s
+5 511 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 500 M
+(d 4575981FBE) s
+5 489 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 16:22:27 +0000 \(UTC\)) s
+5 478 M
+(Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2fabc9bc5dfso16477311f) s
+5 467 M
+(a.0) s
+5 456 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 09:22:27 -0700 \(PDT\)) s
+5 445 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 434 M
+(        d=gmail.com; s=20230601; t=1727972546; x=1728577346; darn=activemq.apache.org;) s
+5 423 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 412 M
+(         :from:to:cc:subject:date:message-id:reply-to;) s
+5 401 M
+(        bh=r8GLfvkQhajuUcOVD9G+iiP68hzEwElO/zYrEAq7ZxM=;) s
+5 390 M
+(        b=d6xxRpot6PVdG/e3SXvCRS7m3ciBS85D9gY0KRxBkULenO0I9kPLA7tdgNEhYhCvkU) s
+5 379 M
+(         P9qXN98d75MTCqUszFDJRM+sA99PJnfHSf31HX2ZdzPsvWoiTPMRNoJtZ8sS1JuiTGyI) s
+5 368 M
+(         F2v3TZ4oNV10U9WNbhKfzCkFV7TOOc1FsDGVr993huONlqKBU3IhO7paVdcCf2wzyCR0) s
+5 357 M
+(         we7SaUuAVi8h8e+Zm8WCmrqLeqibijCfDNKkIXI7zKUp/xerWavnl3RhXrStTT+pDprn) s
+5 346 M
+(         anxyW5wFy+SWddMPhD+CFKgl8vvwM9P/pUmCMHaCF2FxZqfIU5smfbOIRxSDzBIR0YnW) s
+5 335 M
+(         yG5g==) s
+5 324 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 313 M
+(        d=1e100.net; s=20230601; t=1727972546; x=1728577346;) s
+5 302 M
+(        h=to:subject:message-id:date:from:in-reply-to:references:mime-version) s
+5 291 M
+(         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;) s
+5 280 M
+(        bh=r8GLfvkQhajuUcOVD9G+iiP68hzEwElO/zYrEAq7ZxM=;) s
+5 269 M
+(        b=AXf5IwW+0qEI0b9zoOo2ZEbb3Ee4dGxIn/+y4N5HDZ+1x6VMujEgAXTSRcMOhwpKAv) s
+5 258 M
+(         lfBkEyttl4BBtAxQv356kG+L2rtX9yo0IJNWIG7FTwrrZT/D4Gv7EQc5+6NZDkL+IDE6) s
+5 247 M
+(         RJ/lcoUUsVK8uT0Q6foZB8+uwvVUAHMAu4JIprgrUmq6LSJaa3zNDHjDEyulq6QfaQag) s
+5 236 M
+(         DoyvaMCfjD4ZmJ5VdYPnLFFEgycSfrws5O6HzzHx8B9NsuHrxX6Ar935V3PyXGPL1Wst) s
+5 225 M
+(         aaDzQuCA6YGGuv24FkwQGn5fdezmXnFfP2v99lyCBih6FZBk1Xylv507gZr336da535d) s
+5 214 M
+(         9/Qw==) s
+5 203 M
+(X-Gm-Message-State: AOJu0YzWw57NA+Z93BbRXCZp/orca4t/14vgWrL0ZJTddg1hm9/a2eG9) s
+5 192 M
+(        aUCuwPtVWS+T+rJSJE0DjzJ4AHNQTOrlonl2ch3/Tk+SL2lNfqdcjpigwWWP7MDcU8cvMzVt1ug) s
+5 181 M
+(        hM4Zqi5XyaP8B3qYIUgvxAJssaN1OCjeHaSI=) s
+5 170 M
+(X-Google-Smtp-Source: AGHT+IGZoGBh1IJ71aCreRWZ1GWglflDyuodugh+W4zWdG/BQAaJ7XJ7GU2d38HHE) s
+5 159 M
+(3u1SjwucDsbBEuJ5j0zG2kwKFg=) s
+5 148 M
+(X-Received: by 2002:a05:6512:23a0:b0:536:5646:251e with SMTP id) s
+5 137 M
+( 2adb3069b0e04-539a065853dmr4514934e87.10.1727972545820; Thu, 03 Oct 2024) s
+5 126 M
+( 09:22:25 -0700 \(PDT\)) s
+5 115 M
+(MIME-Version: 1.0) s
+5 104 M
+(References: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>) s
+5 93 M
+( <CAF+kE=T1PAqOQom=DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com>) s
+5 82 M
+( <CAOrKGWzYkh_u=qgJq-nPZP4jL1ZF828CcJgGWEzmKp8NTN7inA@mail.gmail.com> <CAFitrpS0BfUM-yS) s
+5 71 M
+(f8Uw4Pmw3yZ9PRpPv7HCtpHvir-dx3qxLfw@mail.gmail.com>) s
+5 60 M
+(In-Reply-To: <CAFitrpS0BfUM-ySf8Uw4Pmw3yZ9PRpPv7HCtpHvir-dx3qxLfw@mail.gmail.com>) s
+5 49 M
+(From: =?UTF-8?B?0JzRg9GA0LDQtCDQkdCw0LnQs9C40LvRjNC00LjQvQ==?= <baigildin97@gmail.com>) s
+5 38 M
+(Date: Thu, 3 Oct 2024 19:22:13 +0300) s
+5 27 M
+(Message-ID: <CAOrKGWyVYnmw7HLshSLXGRTFAtRY0yP-pQjk7j+ap_YPp4Yt8g@mail.gmail.com>) s
+5 16 M
+(Subject: Re: [Artemis] Passing message userID into STOMP) s
+5 5 M
+(To: users@activemq.apache.org) s
+_R
+S
+%%Page: (18) 18
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 18 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (18) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(Content-Type: multipart/alternative; boundary="000000000000c68652062394f53a") s
+5 665 M
+(--000000000000c68652062394f53a) s
+5 654 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 643 M
+(Content-Transfer-Encoding: quoted-printable) s
+5 621 M
+(I see, so message ID is not really meant to be used as identifier by client) s
+5 610 M
+(apps.) s
+5 599 M
+(We will try setting JMSCorellationId on sender, if thats not gonna work) s
+5 588 M
+(will probably redefine request-response mapper) s
+5 577 M
+(Thank you all for clarification!) s
+5 555 M
+(=D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 18:47, Robb=) s
+5 544 M
+(ie Gemmell <robbie.gemmell@gmail.com>:) s
+5 522 M
+(> Given the mentions of JMS and AMQP I would presume that) s
+5 511 M
+(> qpid-jms-client is being used. It will populate the JMSMessageID) s
+5 500 M
+(> header itself during send \(unless configured not to\) as per the JMS) s
+5 489 M
+(> requirements the field is set by provider-on-send.) s
+5 478 M
+(> Message.setJMSMessageID\(\) \(and most other header setters like it\) is) s
+5 467 M
+(> exclusively for the use of JMS implementations for handling other) s
+5 456 M
+(> vendors message objects, it is not for applications to use to set a) s
+5 445 M
+(> MessageID on a sent message \(if you try, the value will be overwritten) s
+5 434 M
+(> on send with the provider-populated value\).) s
+5 423 M
+(>) s
+5 412 M
+(> Artemis handles STOMP messages internally using its Core protocol) s
+5 401 M
+(> message objects, so it is presumably converting the AMQP message into) s
+5 390 M
+(> a Core message on the way to the STOMP client. Qpid JMS uses a) s
+5 379 M
+(> string-based message-id field in the underlying AMQP message by) s
+5 368 M
+(> default. Core messages require a UUID message id, and so I expect it) s
+5 357 M
+(> is generating a new one at that conversion point. Qpid JMS can be) s
+5 346 M
+(> configured to use a pure UUID as the underlying AMQP message-id field,) s
+5 335 M
+(> setting URI option jms.messageIDPolicy.messageIDType=3DUUID . Though) s
+5 324 M
+(> JMSMessageID values must be prefixed with "ID:" so the client will) s
+5 313 M
+(> synthesize that locally for JMSMessageID, meaning you could still then) s
+5 302 M
+(> find that the JMSCorrelationID string you get back on the response) s
+5 291 M
+(> lacks that "ID:" prefix \(since the Core JMS client would normally add) s
+5 280 M
+(> that to getJMSMessageID...but you are using a STOMP client\).) s
+5 269 M
+(>) s
+5 258 M
+(> In fact, ignore all that, as I see the broker is generating a specific) s
+5 247 M
+(> formatted message-id for the STOMP messages. So you simply can't get) s
+5 236 M
+(> the original AMQP message-id on the STOMP receiver.) s
+5 225 M
+(>) s
+5 214 M
+(> Your most compatible route in JMS terms would be using the) s
+5 203 M
+(> JMSCorrelationID field to correlate your messages, setting the) s
+5 192 M
+(> JMSCorrelationID value on the request message before sending, getting) s
+5 181 M
+(> that value as the correlation-id on the reciever and setting that) s
+5 170 M
+(> value on the response message before replying, which the requester can) s
+5 159 M
+(> retrieve from JMSCorrelationID again on the response.) s
+5 148 M
+(>) s
+5 137 M
+(> As I see others have said already whilst I got interrupted during) s
+5 126 M
+(> typing this reply :\)) s
+5 115 M
+(>) s
+5 104 M
+(>) s
+5 93 M
+(> Robbie) s
+5 82 M
+(>) s
+5 71 M
+(> On Thu, 3 Oct 2024 at 16:06, =D0=9C=D1=83=D1=80=D0=B0=D0=B4 =D0=91=D0=B0=) s
+5 60 M
+(=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@gmail.com>) s
+5 49 M
+(> wrote:) s
+5 38 M
+(> >) s
+5 27 M
+(> > Hi, Justin!) s
+5 16 M
+(> > Sender sends message into request queue and expects response message in) s
+5 5 M
+(> > response queue, with response's JMSCorellationId header being set to) s
+_R
+S
+%%Page: (19) 19
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 19 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (19) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> > message ID that was sent \(and could not be read by responder app\).) s
+5 676 M
+(> > Sender \(java app\) originally was not explicitly specifying message ID,) s
+5 665 M
+(> not) s
+5 654 M
+(> > really sure if it was set by library used or by the broker) s
+5 643 M
+(> >) s
+5 632 M
+(> > Calling msg.setJMSMessageId\(msgId\) with some manually generated value d=) s
+5 621 M
+(id) s
+5 610 M
+(> > reflect on userID property of the message, however it still could not b=) s
+5 599 M
+(e) s
+5 588 M
+(> > read by responder app via STOMP, unless) s
+5 577 M
+(> > msg.putStringProperty\('some-header-name', msgId\) was called) s
+5 566 M
+(> >) s
+5 555 M
+(> > As a solution for now we settled on manually putting message ID into) s
+5 544 M
+(> string) s
+5 533 M
+(> > properties) s
+5 522 M
+(> >) s
+5 511 M
+(> > =D1=87=D1=82, 3 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 17:13, =) s
+5 500 M
+(Justin Bertram <jbertram@apache.org>:) s
+5 489 M
+(> >) s
+5 478 M
+(> > > Can you clarify your use-case and how the message ID is being set on) s
+5 467 M
+(> the) s
+5 456 M
+(> > > client sending the message?) s
+5 445 M
+(> > >) s
+5 434 M
+(> > > Typically the message ID is set by the client implementation or by th=) s
+5 423 M
+(e) s
+5 412 M
+(> > > broker and it can also change in some circumstances so it's not) s
+5 401 M
+(> > > particularly meaningful to the messaging application. Generally) s
+5 390 M
+(> speaking we) s
+5 379 M
+(> > > recommend folks set their own unique ID if they're wanting to track) s
+5 368 M
+(> > > messages.) s
+5 357 M
+(> > >) s
+5 346 M
+(> > >) s
+5 335 M
+(> > > Justin) s
+5 324 M
+(> > >) s
+5 313 M
+(> > > On Thu, Oct 3, 2024 at 2:17=E2=80=AFAM =D0=9C=D1=83=D1=80=D0=B0=D0=B4=) s
+5 302 M
+( =D0=91=D0=B0=D0=B9=D0=B3=D0=B8=D0=BB=D1=8C=D0=B4=D0=B8=D0=BD <baigildin97@=) s
+5 291 M
+(gmail.com) s
+5 280 M
+(> >) s
+5 269 M
+(> > > wrote:) s
+5 258 M
+(> > >) s
+5 247 M
+(> > > > Hi, we ran into an issue when receiving messages via STOMP protocol=) s
+5 236 M
+(.) s
+5 225 M
+(> > > > Message was sent by java application using JMSSerializer via AMQP) s
+5 214 M
+(> > > protocol,) s
+5 203 M
+(> > > > resulting in message id being stored in userID message property. Wh=) s
+5 192 M
+(en) s
+5 181 M
+(> > > > receiving this message via STOMP, the value of userID was not) s
+5 170 M
+(> present in) s
+5 159 M
+(> > > > any header, unless the sender app manually generates an id for the) s
+5 148 M
+(> > > message) s
+5 137 M
+(> > > > and passes it into some custom-named header.) s
+5 126 M
+(> > > > Could not find any related info on this property in the archive.) s
+5 115 M
+(> > > > Maybe it is possible to add a STOMP configuration flag, similar to) s
+5 104 M
+(> > > > stompEnableMessageId \(stompEnableUserId e.g.\), that would control i=) s
+5 93 M
+(f) s
+5 82 M
+(> a) s
+5 71 M
+(> > > > message's userID value is being passed into STOMP headers?) s
+5 60 M
+(> > > >) s
+5 49 M
+(> > > > artemis version 2.37.0) s
+5 38 M
+(> > > >) s
+5 27 M
+(> > >) s
+5 16 M
+(>) s
+5 5 M
+(> ---------------------------------------------------------------------) s
+_R
+S
+%%Page: (20) 20
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 20 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (20) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(> To unsubscribe, e-mail: users-unsubscribe@activemq.apache.org) s
+5 676 M
+(> For additional commands, e-mail: users-help@activemq.apache.org) s
+5 665 M
+(> For further information, visit: https://activemq.apache.org/contact) s
+5 654 M
+(>) s
+5 643 M
+(>) s
+5 632 M
+(>) s
+5 610 M
+(--000000000000c68652062394f53a--) s
+5 599 M
+(From mboxrd@z Thu Jan  1 00:00:00 1970) s
+5 588 M
+(Return-Path: <users-return-57503-archive-asf-public=cust-asf.ponee.io@activemq.apache.o) s
+5 577 M
+(rg>) s
+5 566 M
+(X-Original-To: archive-asf-public@cust-asf.ponee.io) s
+5 555 M
+(Delivered-To: archive-asf-public@cust-asf.ponee.io) s
+5 544 M
+(Received: from mxout1-ec2-va.apache.org \(mxout1-ec2-va.apache.org [3.227.148.255]\)) s
+5 533 M
+(        by mx-eu-03.ponee.io \(Postfix\) with ESMTPS id 131773E6D6) s
+5 522 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 07:17:02 +0000 \(UT) s
+5 511 M
+(C\)) s
+5 500 M
+(Received: from mail.apache.org \(mailgw-he-de.apache.org [116.203.246.181]\)) s
+5 489 M
+(        \(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 \(256/256 bits\)\)) s
+5 478 M
+(        \(No client certificate requested\)) s
+5 467 M
+(        by mxout1-ec2-va.apache.org \(ASF Mail Server at mxout1-ec2-va.apache.org\) with ) s
+5 456 M
+(ESMTPS id 1A35844B2E) s
+5 445 M
+(        for <archive-asf-public@cust-asf.ponee.io>; Thu,  3 Oct 2024 07:17:01 +0000 \(UT) s
+5 434 M
+(C\)) s
+5 423 M
+(Received: \(qmail 134625 invoked by uid 998\); 3 Oct 2024 07:16:59 -0000) s
+5 412 M
+(Mailing-List: contact users-help@activemq.apache.org; run by ezmlm) s
+5 401 M
+(Precedence: bulk) s
+5 390 M
+(List-Help: <mailto:users-help@activemq.apache.org>) s
+5 379 M
+(List-Unsubscribe: <mailto:users-unsubscribe@activemq.apache.org>) s
+5 368 M
+(List-Post: <mailto:users@activemq.apache.org>) s
+5 357 M
+(List-Id: <users.activemq.apache.org>) s
+5 346 M
+(Reply-To: users@activemq.apache.org) s
+5 335 M
+(Delivered-To: mailing list users@activemq.apache.org) s
+5 324 M
+(Received: \(qmail 134600 invoked by uid 116\); 3 Oct 2024 07:16:58 -0000) s
+5 313 M
+(Received: from spamproc1-he-fi.apache.org \(HELO spamproc1-he-fi.apache.org\) \(95.217.134) s
+5 302 M
+(.168\)) s
+5 291 M
+( by apache.org \(qpsmtpd/0.94\) with ESMTP; Thu, 03 Oct 2024 07:16:58 +0000) s
+5 280 M
+(Authentication-Results: apache.org; auth=none) s
+5 269 M
+(Received: from localhost \(localhost [127.0.0.1]\)) s
+5 258 M
+(        by spamproc1-he-fi.apache.org \(ASF Mail Server at spamproc1-he-fi.apache.org\) w) s
+5 247 M
+(ith ESMTP id 0D011C21F7) s
+5 236 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 07:16:58 +0000 \(UTC\)) s
+5 225 M
+(X-Virus-Scanned: Debian amavisd-new at spamproc1-he-fi.apache.org) s
+5 214 M
+(X-Spam-Flag: NO) s
+5 203 M
+(X-Spam-Score: 0.249) s
+5 192 M
+(X-Spam-Level: ) s
+5 181 M
+(X-Spam-Status: No, score=0.249 tagged_above=-999 required=6.31) s
+5 170 M
+(        tests=[DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,) s
+5 159 M
+(        DKIM_VALID_EF=-0.1, FREEMAIL_ENVFROM_END_DIGIT=0.25, HTML_MESSAGE=0.2,) s
+5 148 M
+(        SPF_PASS=-0.001] autolearn=disabled) s
+5 137 M
+(Authentication-Results: spamproc1-he-fi.apache.org \(amavisd-new\);) s
+5 126 M
+(        dkim=pass \(2048-bit key\) header.d=gmail.com) s
+5 115 M
+(Received: from mx1-he-de.apache.org \([116.203.227.195]\)) s
+5 104 M
+(        by localhost \(spamproc1-he-fi.apache.org [95.217.134.168]\) \(amavisd-new, port 1) s
+5 93 M
+(0024\)) s
+5 82 M
+(        with ESMTP id gO70MX7T4fOm for <users@activemq.apache.org>;) s
+5 71 M
+(        Thu,  3 Oct 2024 07:16:57 +0000 \(UTC\)) s
+5 60 M
+(Received-SPF: Pass \(mailfrom\) identity=mailfrom; client-ip=2a00:1450:4864:20::12d; helo) s
+5 49 M
+(=mail-lf1-x12d.google.com; envelope-from=baigildin97@gmail.com; receiver=<UNKNOWN> ) s
+5 38 M
+(Received: from mail-lf1-x12d.google.com \(mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:) s
+5 27 M
+(20::12d]\)) s
+5 16 M
+(        by mx1-he-de.apache.org \(ASF Mail Server at mx1-he-de.apache.org\) with ESMTPS i) s
+5 5 M
+(d 785E381FC4) s
+_R
+S
+%%Page: (21) 21
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 21 def
+/fname (./CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+/fdir (.) def
+/ftail (CAF+kE_T1PAqOQom_DwCshzMEiRPHP5fM08imsukic9hzLJyrMw@mail.gmail.com.mbx.txt) def
+% User defined strings:
+/fmodstr (Tue Nov 12 15:14:58 2024) def
+/pagenumstr (21) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 687 M
+(        for <users@activemq.apache.org>; Thu,  3 Oct 2024 07:16:57 +0000 \(UTC\)) s
+5 676 M
+(Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-53993564cb1so657960e87) s
+5 665 M
+(.2) s
+5 654 M
+(        for <users@activemq.apache.org>; Thu, 03 Oct 2024 00:16:57 -0700 \(PDT\)) s
+5 643 M
+(DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 632 M
+(        d=gmail.com; s=20230601; t=1727939816; x=1728544616; darn=activemq.apache.org;) s
+5 621 M
+(        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject) s
+5 610 M
+(         :date:message-id:reply-to;) s
+5 599 M
+(        bh=zH1LTXmhGgTZg3kquxwRZNoUk5SxBjGLzpM+b8B6UWc=;) s
+5 588 M
+(        b=ASe5ZviftyEUT0tBzwGu77ELZAuaPy5FWToq9oudmrk/rnMUkJCVhgVnJlVpbXHp/h) s
+5 577 M
+(         RTDxrXbeUU3HhuT5dgKuyrDemoD94itkqr5V48XtkNg6t14fIgncF+nhdzIq8hlrE645) s
+5 566 M
+(         rHS0pPjeLV8XCyQYvPn4fIYffJg/4FAqzKnrbQjLjP7asDSiiL1RVFRWFaRYN2Tx+pmv) s
+5 555 M
+(         A0zFKQTFgQ4LU+VBl5v3RwIfWfKwRSZg3oqxJZ/v+bFN1ztIqGU4zRVRtwqEwyC22dB6) s
+5 544 M
+(         MnLMULNiXSg1Si2xGGKVqOqrLNkFG3ZRXa1N2ZJ4CHEbugF4n5eh9u0EPhV9GMw8Cay2) s
+5 533 M
+(         R2iA==) s
+5 522 M
+(X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;) s
+5 511 M
+(        d=1e100.net; s=20230601; t=1727939816; x=1728544616;) s
+5 500 M
+(        h=to:subject:message-id:date:from:mime-version:x-gm-message-state) s
+5 489 M
+(         :from:to:cc:subject:date:message-id:reply-to;) s
+5 478 M
+(        bh=zH1LTXmhGgTZg3kquxwRZNoUk5SxBjGLzpM+b8B6UWc=;) s
+5 467 M
+(        b=o/u2+oIDZhZer8QRcH3ddCWqy/S0Pq083RNPnQ0c+dfqvyWQ2UggnrBLLNM3haQZnF) s
+5 456 M
+(         gFvn6V4ZboSHM1InJ+O9RQNZUE/pHGaIBDJEBi1TJaPNEiweACjyrHFmmVRZm+3yIfsm) s
+5 445 M
+(         Fch7MpIPfQXzpilCdC7zB/vNFGIRDeFK55sJ/rQsRuZz2Wmi0URS/d+l0yKHaJZ/Wnjp) s
+5 434 M
+(         y9F5/oREDDzXR1BnekQsW0oci0i4dmRQY0BOc/LHKGg0vI7NhTdK8XaeQ+5ZY175+dxu) s
+5 423 M
+(         wisrOrAWC/5If7rxDDh1Os5QX8cj7JXNJAZSP1IEFnNBJMVh/7WLXhpfnuYJzm47yfuF) s
+5 412 M
+(         Vlgw==) s
+5 401 M
+(X-Gm-Message-State: AOJu0YyVPNbtGbMxdQjkGsi7OJ52lz5qzGKr2exiSTCZXNCkYiYtzw9Y) s
+5 390 M
+(        zdWEfv2LNxKAiE9MQUtZ9qjIw5MGfp6jt2POJ4HBud4JPADEbFnffO/c9rvr1cvxw/Z4TKQgt8p) s
+5 379 M
+(        1bnUthfZib76vhQ3BUXoF+RM4vvflpyMUG5OykQ==) s
+5 368 M
+(X-Google-Smtp-Source: AGHT+IG+6BqpIQ26e2tyfOMRMHyVW7WQ62nzXrpfFs9JrBfUuEVRuhXejvU3gXfG3) s
+5 357 M
+(TxkyaTm+mfXwUfd5KPoSxdnvDI=) s
+5 346 M
+(X-Received: by 2002:a05:6512:3f11:b0:52c:d626:77aa with SMTP id) s
+5 335 M
+( 2adb3069b0e04-539a07a66e6mr3061015e87.58.1727939815967; Thu, 03 Oct 2024) s
+5 324 M
+( 00:16:55 -0700 \(PDT\)) s
+5 313 M
+(MIME-Version: 1.0) s
+5 302 M
+(From: =?UTF-8?B?0JzRg9GA0LDQtCDQkdCw0LnQs9C40LvRjNC00LjQvQ==?= <baigildin97@gmail.com>) s
+5 291 M
+(Date: Thu, 3 Oct 2024 10:16:44 +0300) s
+5 280 M
+(Message-ID: <CAOrKGWxYFxXoKeWhECUjSYqVowSbL2RsH3S-DTex1tQXkSL3RQ@mail.gmail.com>) s
+5 269 M
+(Subject: [Artemis] Passing message userID into STOMP) s
+5 258 M
+(To: users@activemq.apache.org) s
+5 247 M
+(Content-Type: multipart/alternative; boundary="000000000000ec978006238d56b6") s
+5 225 M
+(--000000000000ec978006238d56b6) s
+5 214 M
+(Content-Type: text/plain; charset="UTF-8") s
+5 192 M
+(Hi, we ran into an issue when receiving messages via STOMP protocol.) s
+5 181 M
+(Message was sent by java application using JMSSerializer via AMQP protocol,) s
+5 170 M
+(resulting in message id being stored in userID message property. When) s
+5 159 M
+(receiving this message via STOMP, the value of userID was not present in) s
+5 148 M
+(any header, unless the sender app manually generates an id for the message) s
+5 137 M
+(and passes it into some custom-named header.) s
+5 126 M
+(Could not find any related info on this property in the archive.) s
+5 115 M
+(Maybe it is possible to add a STOMP configuration flag, similar to) s
+5 104 M
+(stompEnableMessageId \(stompEnableUserId e.g.\), that would control if a) s
+5 93 M
+(message's userID value is being passed into STOMP headers?) s
+5 71 M
+(artemis version 2.37.0) s
+5 49 M
+(--000000000000ec978006238d56b6--) s
+_R
+S
+%%Trailer
+%%Pages: 21
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF
