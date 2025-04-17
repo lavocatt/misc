@@ -28,7 +28,7 @@ echo
 cd $DEV_DIR/activemq-artemis-broker-image
 cekit build --dry-run docker
 cd target/image
-cp $DEV_DIR/activemq-artemis/artemis-distribution/target/apache-artemis-2.34.0-SNAPSHOT-bin.zip apache-artemis-bin.zip
+cp $DEV_DIR/activemq-artemis/artemis-distribution/target/apache-artemis-2.40.0-SNAPSHOT-bin.zip apache-artemis-bin.zip
 docker build .
 docker tag $(docker images --format='{{.ID}}' | head -1) quay.io/$QUAY_USER/activemq-artemis-broker-image:$TAG
 docker push quay.io/$QUAY_USER/activemq-artemis-broker-image:$TAG
